@@ -46,7 +46,7 @@ To upgrade the Omnia OIM, do the following:
 
     +-----------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------+
     |  Variable Name              | Description                                                                                                                                     |
-    +-----------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------+
+    +=============================+=================================================================================================================================================+
     | ``installed_omnia_path``    | * This variable points to the currently installed Omnia 1.7 source code directory.                                                              |
     |      Required               | * **Example**: ``/root/omnia17/omnia``                                                                                                          |
     |                             | .. note:: Verify that the directory has not been altered since the last execution of ``discovery_provision.yml`` and ``omnia.yml`` playbooks.   |
