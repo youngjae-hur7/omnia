@@ -56,7 +56,7 @@ crio_socket: /var/run/crio/crio.sock
 metallb_files:
   - "/var/lib/ipaddresspool.yaml"
   - "/var/lib/l2advertisement.yaml"
-bin_dir: /usr/local/bin
+bin_dir: /usr/bin
 grace_period: 0
 kube_folder_path: /root/.kube
 k8s_bin_files:
@@ -120,7 +120,7 @@ max_delay: 10
 timescaledb_file_fail_msg: "Backup file {{ k8s_backup_location }}/{{ timescale_telemetry_backup_file }} does not exist!"
 timescaledb_restore_success_msg: "Timescaledb restored successfully"
 python_version: "{{ ansible_python_interpreter }}"
-db_schema_utility: "{{ installed_omnia_path }}/telemetry/roles/omnia_telemetry_prepare_cp/files/omnia_telemetry_schema_creation.py"
+db_schema_utility: "{{ installed_omnia_path }}/telemetry/roles/omnia_telemetry_prepare_oim/files/omnia_telemetry_schema_creation.py"
 
 # Usage: main.yml
 omnia_inv_path: /opt/omnia/omnia_inventory/
@@ -134,8 +134,8 @@ file_permission: "0644"
 nerdctl:
   folder_dest: "{{ nerdctl_directory }}/nerdctl"
   folder_permission: "+x"
-  url: "https://github.com/containerd/nerdctl/releases/download/v1.5.0/nerdctl-1.5.0-linux-amd64.tar.gz"
-  archive_dest: "{{ nerdctl_directory }}/nerdctl-1.5.0-linux-amd64.tar.gz"
+  url: "https://github.com/containerd/nerdctl/releases/download/v1.7.4/nerdctl-1.7.4-linux-amd64.tar.gz"
+  archive_dest: "{{ nerdctl_directory }}/nerdctl-1.7.4-linux-amd64.tar.gz"
   binary_files_path:
     - "/usr/local/bin/nerdctl"
     - "/usr/bin/nerdctl"
