@@ -78,4 +78,6 @@ autoinstall:
     chmod u+x #HOSTNAME#.post;
     cp ./#HOSTNAME#.post /target/root/post.script;
     curtin in-target --target /target /root/post.script;
+    echo "Force rebooting the system...";
+    reboot -f;
     } >>/target/var/log/xcat/xcat.log 2>&1'
