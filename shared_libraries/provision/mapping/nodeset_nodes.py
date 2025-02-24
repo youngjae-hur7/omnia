@@ -72,14 +72,12 @@ def nodeset_mapping_nodes():
     conn_x = omniadb_connection.create_connection()
     cursor_x = conn_x.cursor()
     new_mapping_nodes = []
-    print("node_name", node_name)
     for node in node_name:
         sql = "SELECT node, role FROM cluster.nodeinfo WHERE node = %s AND status = ''"
         cursor_x.execute(sql, (node[0],))
         output = cursor_x.fetchone()
-        print("Output:", output)
         if output:
-            if 'service' in output[1]:
+            if service_osimage != "None" and 'service' in output[1]:
                 osimage = service_osimage
             else:
                 osimage = install_osimage
