@@ -45,12 +45,9 @@ def validate_osimage(osimage):
 
 def nodeset_mapping_nodes():
     """
-    Retrieves the list of nodes from the `cluster.nodeinfo` table in the database
-    and checks if each node is present in the `nodelist` table of the `xcatdb` database.
-    If a node is present in both tables and status is NULL,
-    it is added to the `new_mapping_nodes` list.
-    The function then executes the `/opt/xcat/sbin/nodeset` command for each node in the
-    `new_mapping_nodes` list with the specified `osimage` parameter.
+    This function retrieves the nodes from the cluster.nodeinfo table in the omniadb based on the discovery mechanism.
+    It then executes another SQL query to select the node, role from the cluster.nodeinfo table where the node status is ''.
+    It executes nodeset command to sets the osimage based on role.
 
     Parameters:
         None
@@ -68,17 +65,24 @@ def nodeset_mapping_nodes():
     cursor.close()
     conn.close()
 
-    osimage = validate_osimage(sys.argv[2])
+    install_osimage = validate_osimage(sys.argv[2])
+    service_osimage = validate_osimage(sys.argv[3])
 
-    # Establish connection with xcatdb
-    conn_x = omniadb_connection.create_connection_xcatdb()
+    # Establish connection with omniadb
+    conn_x = omniadb_connection.create_connection()
     cursor_x = conn_x.cursor()
     new_mapping_nodes = []
+    print("node_name", node_name)
     for node in node_name:
-        sql = "SELECT exists(SELECT node FROM nodelist WHERE node = %s AND status IS NULL)"
+        sql = "SELECT node, role FROM cluster.nodeinfo WHERE node = %s AND status = ''"
         cursor_x.execute(sql, (node[0],))
-        output = cursor_x.fetchone()[0]
+        output = cursor_x.fetchone()
+        print("Output:", output)
         if output:
+            if 'service' in output[1]:
+                osimage = service_osimage
+            else:
+                osimage = install_osimage
             new_mapping_nodes.append(node[0])
             command = ["/opt/xcat/sbin/nodeset", node[0], f"osimage={osimage}"]
             subprocess.run(command, capture_output=True, shell=False, check=True)

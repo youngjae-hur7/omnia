@@ -33,6 +33,10 @@
 - name: Include provision configuration variables
   ansible.builtin.include_tasks: include_provision_config.yml
 
+- name: Include composable role data
+  ansible.builtin.include_tasks: fetch_composable_roles_config.yml
+
+
 - name: Include local_repo variables
   ansible.builtin.include_tasks: include_local_repo_config.yml
 
