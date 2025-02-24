@@ -57,17 +57,18 @@ def fetch_bmc_details(groups_data, roles_data, layer):
         valid_roles = set(roles_data.keys()) - FIRST_LAYER_ROLES
 
     bmc_check = False
+    switch_check = False
     bmc_details = {}
 
     for role in valid_roles:
         for group in roles_data[role]["groups"]:
-            if groups_data.get(group, {}) and check_bmc_required(groups_data[group]):
-                bmc_check = True
-                switch_check = check_switch_required(groups_data[group])
+            if groups_data.get(group, {}):
+                bmc_check = bmc_check or check_bmc_required(groups_data[group])
+                switch_check = switch_check or check_switch_required(groups_data[group])
                 bmc_details[role] = {}
                 bmc_details[role][group] = groups_data[group]
             else:
-                raise Exception("Group `{}` doesn't exist in role_config.yml Groups dict".format(group))
+                raise Exception("Group `{}` doesn't exist in roles_config.yml Groups dict".format(group))
     return bmc_check, switch_check, bmc_details
 
 
