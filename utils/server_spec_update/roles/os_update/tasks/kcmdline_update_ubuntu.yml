@@ -20,23 +20,33 @@
     mode: "{{ file_permission }}"
     remote_src: true
 
+
 - name: Update kernel parameters on Ubuntu systems
   when: cmdline_value != ""
   block:
     - name: Reading existing kernel parameters
       ansible.builtin.shell: >
-        set -o pipefail && \
-        cat "{{ grub_path }}" | grep '^GRUB_CMDLINE_LINUX=' | cut -d'"' -f2
+        set -o pipefail && grep '^GRUB_CMDLINE_LINUX=' "{{ grub_path }}" | cut -d'"' -f2
       register: existing_grub_cmdline
-      changed_when: existing_grub_cmdline.rc != 0
+      changed_when: false
 
-    - name: Adding grub_commandline_kernel to existing parameters
+    - name: Set updated kernel parameters
+      set_fact:
+        new_kernel_cmdline: "{{ cmdline_value }}"
+
+    - name: Merge existing parameters if not empty
+      set_fact:
+        new_kernel_cmdline: "{{ cmdline_value }} {{ existing_grub_cmdline.stdout | trim }}"
+      when: existing_grub_cmdline.stdout | trim | length > 0
+
+    - name: Ensure GRUB_CMDLINE_LINUX is correctly formatted
       ansible.builtin.lineinfile:
         path: "{{ grub_path }}"
         regexp: '^GRUB_CMDLINE_LINUX='
-        line: 'GRUB_CMDLINE_LINUX="{{ existing_grub_cmdline.stdout }} {{ cmdline_value }} "'
+        line: 'GRUB_CMDLINE_LINUX="{{ new_kernel_cmdline | trim }}"'
+        backrefs: no
 
     - name: Update Grub configuration
-      ansible.builtin.command: sudo update-grub
+      ansible.builtin.command: update-grub
       register: output
-      changed_when: output.rc != 0
+      changed_when: output.rc == 0
