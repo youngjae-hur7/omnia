@@ -37,6 +37,59 @@
       ansible.builtin.set_fact:
          overall_status_dict: "{{ overall_status_dict | default({}) | combine({ item.key: task_results.overall_status }) }}"
 
+    - name: Check if the status file exists
+      ansible.builtin.stat:
+        path: "{{ base_path }}/software.csv"
+      register: file_stat
+
+    - name: Create a default status file if it does not exist
+      ansible.builtin.copy:
+        dest: "{{ base_path }}/software.csv"
+        content: "name,status\n"
+      when: not file_stat.stat.exists
+
+
+    - name: Read the existing file if it exists
+      ansible.builtin.slurp:
+        src: "{{ base_path }}/software.csv"
+      register: file_content
+      ignore_errors: yes
+
+    - name: Decode file content if it exists
+      ansible.builtin.set_fact:
+        existing_status_list: "{{ (file_content['content'] | b64decode).splitlines() 
+                                if file_content is defined and file_content['content'] is not none 
+                                and file_content['content'] | length > 0 
+                                else ['name,status'] }}"
+
+    - name: Create a dictionary from the existing rows (excluding header row)
+      ansible.builtin.set_fact:
+        status_dict: "{{ dict(existing_status_list[1:] | map('split', ',') | map('list')) }}"
+
+    - name: Merge new statuses into the existing dictionary
+      ansible.builtin.set_fact:
+        merged_status_dict: "{{ status_dict | combine(overall_status_dict, recursive=True) }}"
+
+    - name: Convert merged dictionary back to a list of rows, replacing 'FAILURE' with 'failed'
+      ansible.builtin.set_fact:
+        final_status_list: "{{ ['name,status'] + (merged_status_dict | dict2items 
+                           | map(attribute='key') 
+                           | zip(merged_status_dict | dict2items | map(attribute='value') 
+                                  | map('lower') 
+                                  | map('regex_replace', 'failure', 'failed'))
+                           | map('join', ',')) | list }}"
+
+    - name: Write the updated status list to the file
+      ansible.builtin.copy:
+        dest: "{{ base_path }}/software.csv"
+        content: "{{ final_status_list | join('\n') }}"
+
+
+    - name: Print the output
+      ansible.builtin.debug:
+        msg: "{{ final_status_list | join('\n') }}"
+
+
   rescue:
     - name: Log the failure with directory details
       ansible.builtin.debug:

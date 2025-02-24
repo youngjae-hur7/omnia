@@ -40,6 +40,7 @@ from ansible.module_utils.software_utils import (
     get_subgroup_dict
 )
 import json
+
  
 def determine_function(task, repo_store_path, csv_file_path, user_data, version_variables):
     """
@@ -67,7 +68,11 @@ def determine_function(task, repo_store_path, csv_file_path, user_data, version_
  
          #version_variables = {"k8s_version": "1.28.1"}
         task_type = task.get("type")
+
         status_file = f'{csv_file_path}/status.csv'
+        if not os.path.exists(status_file) or os.stat(status_file).st_size == 0:
+            with open(status_file, 'w') as file:
+                file.write('name,type,status\n')
  
         if task_type == "manifest":
             return process_manifest, [task, repo_store_path, status_file]
@@ -111,6 +116,7 @@ def generate_pretty_table(task_results, total_duration, overall_status):
     table.add_row(["Total Duration", total_duration,""])
     table.add_row(["Overall Status", overall_status,""])
     return table.get_string()
+
  
 def main():
     """
@@ -197,7 +203,8 @@ def main():
         #slogger.info(f"version var= {version_variables['version']}")
         slogger.info(f"cluster os is= {cluster_os_type}")
         first_entry_dict = dict([list(version_variables.items())[0]])
-       
+        
+ 
         # Execute tasks in parallel
         overall_status, task_results = execute_parallel(tasks, determine_function, nthreads, repo_store_path, csv_file_path, log_dir, user_data, first_entry_dict, slogger, timeout)
  
@@ -225,7 +232,6 @@ def main():
         # Generate and log the pretty table
         table_output = generate_pretty_table(task_results, total_duration, overall_status)
         log_table_output(table_output, log_file)
- 
         # Update the result dictionary with task results
         result["total_duration"] = total_duration
         result["task_results"] = task_results
