@@ -57,10 +57,13 @@ conf_file_mode: "0644"
 # Usage: include_local_repo_config.yml
 local_repo_config_file: "{{ hostvars['localhost']['input_project_dir'] }}/local_repo_config.yml"
 software_config_file: "{{ hostvars['localhost']['input_project_dir'] }}/software_config.json"
-invalid_software_config_fail_msg: "Failed. Please provide valid software_config.json file with cluster_os_type, cluster_os_version, repo_config
-and repo_config values."
+invalid_software_config_fail_msg: "Failed. Please provide valid software_config.json file with cluster_os_type, cluster_os_version, iso_file_path and repo_config values."
 local_repo_config_syntax_fail_msg: "Failed. Syntax errors present in local_repo_config.yml. Fix errors and re-run playbook again."
 software_config_syntax_fail_msg: "Failed. Syntax errors present in software_config.json. Fix errors and re-run playbook again."
+iso_file_path_missing_msg: "Incorrect iso_file_path provided. Make sure ISO file is present in the provided iso_file_path."
+iso_file_path_success_msg: "iso_file_path validated"
+iso_file_path_fail_msg: "Failed. Invalid iso_file_path: {{ iso_file_path }} provided. Make sure iso_file_path variable in software_config.json contains value
+ mentioned in the variables cluster_type: {{ provision_os }} and cluster_os_version: {{ provision_os_version }} mentioned in software_config.json"
 
 # Usage: validate_local_repo.yml
 metadata_file_path: "/opt/omnia/offline/.data/metadata.yml"
@@ -165,10 +168,6 @@ provision_os_success_msg: "cluster_os_type validated"
 provision_os_fail_msg: |
   "Failed. Incorrect cluster_os_type selected.
   If Omnia Infrastructure Manager OS RHEL, only cluster_os_type {{ os_supported_rhel }} is supported."
-iso_file_path_missing_msg: "Incorrect iso_file_path provided. Make sure ISO file is present in the provided iso_file_path."
-iso_file_path_success_msg: "iso_file_path validated"
-iso_file_path_fail_msg: "Failed. Invalid iso_file_path: {{ iso_file_path }} provided. Make sure iso_file_path variable in provision_config.yml contains value
-mentioned in the variables cluster_type: {{ provision_os }} and cluster_os_version: {{ provision_os_version }} mentioned in software_config.json"
 ping_search_key: "100% packet loss"
 min_length: 8
 max_length: 30
