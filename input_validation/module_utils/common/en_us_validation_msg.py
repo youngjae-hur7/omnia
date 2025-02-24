@@ -14,6 +14,12 @@
 
 ### All of these messages are used in logical_validation.py
 
+# roles_config.yml
+max_number_of_roles_msg = "a max of 100 roles can be supported."
+min_number_of_groups_msg = "at least 1 group is required."
+min_number_of_roles_msg = "at least 1 role is required."
+resource_mgr_id_msg = "The resource_mgr_id needs to be set if and only if the group of nodes belongs to k8worker or slurmworker roles."
+
 # provision_config.yml 
 default_lease_time_fail_msg = "Please provide a valid default_lease_time."
 timezone_fail_msg = "Unsupported Timezone. Please check the timezone.txt file for a list of valid timezones."

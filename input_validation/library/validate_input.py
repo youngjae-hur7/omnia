@@ -29,6 +29,12 @@ import logical_validation
 import validation_utils
 import config
 
+# Global dictionary for custom schema regex error messages
+regex_errors = {
+    "Groups" : "Groups must be defined in the form of grp<n> where n is 0-99.",
+    "location_id" : "location_id must follow the format SU-<n>.RACK-<n> where n is 0-99."
+}
+
 def createLogger(project_name, tag_name=None):
     if tag_name:
         log_filename = f"{tag_name}_validation_omnia_{project_name}.log"
@@ -177,6 +183,12 @@ def main():
             if errors:    
                 for error in errors:
                     error_path = ".".join(map(str, error.path))
+
+                    # Custom error messages for regex pattern failures
+                    if 'Groups' == error_path:
+                        error.message = regex_errors.get('Groups')
+                    elif 'location_id' in error_path:
+                        error.message = regex_errors.get('location_id')
                     error_msg = f"Validation Error at {error_path}: {error.message}"
 
                     # For passwords, mask the value so that no password values are logged

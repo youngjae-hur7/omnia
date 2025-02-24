@@ -17,6 +17,7 @@ sys.path.append("module_utils/validation_flows")
 
 import provision_validation
 import common_validation
+import roles_validation
 
 # L2 Validation Code - validate anything that could not have been validated with JSON schema
 # Main validation code that calls one of the validation functions based on the tag(s) used. input_file_inventory in validate_input.py contains dict of the tags being called.
@@ -38,12 +39,14 @@ def validate_input_logic(input_file_path, data, logger, module, omnia_base_dir, 
         "roce_plugin_config.yml": common_validation.validate_roce_plugin_config,
         "storage_config.yml": common_validation.validate_storage_config,
         "login_node_security_config.yml": common_validation.validate_login_node_security_config,
-        "site_config.yml": common_validation.validate_site_config
+        "site_config.yml": common_validation.validate_site_config,
+        "roles_config.yml": roles_validation.validate_roles_config
     }
     
     path_parts = input_file_path.split("/")
     file_name = path_parts[-1]
     validation_function = validation_functions.get(file_name, None)
+    print("validation_function", validation_function)
     if validation_function:
         return validation_function(
             input_file_path, data, logger, module, omnia_base_dir, project_name
