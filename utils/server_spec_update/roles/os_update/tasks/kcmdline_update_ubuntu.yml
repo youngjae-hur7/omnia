@@ -31,11 +31,11 @@
       changed_when: false
 
     - name: Set updated kernel parameters
-      set_fact:
+      ansible.builtin.set_fact:
         new_kernel_cmdline: "{{ cmdline_value }}"
 
     - name: Merge existing parameters if not empty
-      set_fact:
+      ansible.builtin.set_fact:
         new_kernel_cmdline: "{{ cmdline_value }} {{ existing_grub_cmdline.stdout | trim }}"
       when: existing_grub_cmdline.stdout | trim | length > 0
 
@@ -44,7 +44,7 @@
         path: "{{ grub_path }}"
         regexp: '^GRUB_CMDLINE_LINUX='
         line: 'GRUB_CMDLINE_LINUX="{{ new_kernel_cmdline | trim }}"'
-        backrefs: no
+        backrefs: false
 
     - name: Update Grub configuration
       ansible.builtin.command: update-grub
