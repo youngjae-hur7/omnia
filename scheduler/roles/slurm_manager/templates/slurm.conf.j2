@@ -20,6 +20,7 @@ SlurmUser={{ slurm_user }}
 #SlurmctldParameters
 {% elif slurm_installation_type == configless_slurm %}
 SlurmctldParameters=enable_configless
+{% endif %}
 SlurmctldPort={{ slurmctld_port }}
 SlurmdPort={{ slurmd_port }}
 SrunPortRange={{ srun_port_range }}
@@ -37,7 +38,6 @@ MpiDefault=none
 SlurmctldPidFile={{ slurmctld_pid }}
 SlurmdPidFile={{ slurmd_pid }}
 ProctrackType=proctrack/cgroup
-{% endif %}
 {% if slurm_installation_type == nfs_share_slurm %}
 {% if ansible_distribution | lower == "ubuntu" %}
 PluginDir={{ plugin_slurm_dir_ubuntu }}
