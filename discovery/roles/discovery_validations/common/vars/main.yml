@@ -204,7 +204,7 @@ server_hostname_fail_msg: "Failed. Hostname set is not valid"
 server_domain_name_blank_msg: "Failed. domain_name is not set in hostname. It should have hostname.domain_name format"
 server_domain_name_success_msg: "domain_name in server hostname validated"
 server_domain_name_fail_msg: "Failed. domain_name set is not same as domain_name in provision_config.yml"
-hosts_file_path: /etc/hosts
+hosts_file_path: /opt/omnia/hosts
 hosts_file_mode: "0644"
 hostname_success_msg: "Hostname length successfully validated."
 hostname_fail_msg: "Failed. Hostname comprises of domain name, node name and 6 characters (00001 and .) that is used by omnia.
