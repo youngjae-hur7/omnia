@@ -68,7 +68,7 @@ cleanup_omnia_core() {
         echo -e "${GREEN}Aborting.${NC}"
         exit 0
     elif [ "$confirm" = "y" ] || [ "$confirm" = "Y" ]; then
-        
+
         # Fetch the configuration from the Omnia core container.
         fetch_config
 
@@ -412,12 +412,15 @@ post_setup_config() {
         } >> "$omnia_path/omnia/input/default.yml"
     fi
 
-    # Copy input files from pod to /opt/omnia/project_default/
-    echo -e "${BLUE} Copying input files from container to project_default folder.${NC}"
-    podman exec -u root omnia_core mv /omnia/input /opt/omnia/input/project_default
+    # Copy input files from /omnia to /opt/omnia/project_default/ inside omnia_core container
+    echo -e "${BLUE} Moving input files from /omnia dir to project_default folder.${NC}"
+    podman exec -u root omnia_core bash -c "
+    mkdir -p /opt/omnia/input/project_default
+    cp -r /omnia/input/* /opt/omnia/input/project_default
+    rm -rf /omnia/input"
 
-    # Copy shard libraries from pod to /opt/omnia/shard_libraries/
-    echo -e "${BLUE} Copying shard libraries from container to shard_libraries folder.${NC}"
+    # Copy shared libraries from /omnia to /opt/omnia/shard_libraries/ inside omnia_core container
+    echo -e "${BLUE} Copying shared libraries from container to shared_libraries folder.${NC}"
     podman exec -u root omnia_core cp -r /omnia/shared_libraries/ /opt/omnia/
 
     # Create the .data directory if it does not exist.
@@ -562,7 +565,7 @@ main() {
                 exit
             fi
         fi
-            
+
     # If core container is not present
     else
 
