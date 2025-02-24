@@ -94,21 +94,21 @@
 - name: Update metadata.yml file for bmc discovery_mechanism
   when: hostvars['omnia_provision']['bmc_details_status']
   block:
-    - name: Update md_bmc_static_start_range
+    - name: Update md_bmc_conversion_static_start_range
       ansible.builtin.lineinfile:
         path: "{{ meta_path }}"
-        regexp: '^md_bmc_static_start_range:(.*)$'
+        regexp: '^md_bmc_conversion_static_start_range:(.*)$'
         insertafter: "EOF"
         state: present
-        line: "md_bmc_static_start_range: {{ hostvars['omnia_provision']['bmc_static_start_range'] }}"
+        line: "md_bmc_conversion_static_start_range: {{ hostvars['omnia_provision']['bmc_conversion_static_start_range'] }}"
 
-    - name: Update md_bmc_static_end_range
+    - name: Update md_bmc_conversion_static_end_range
       ansible.builtin.lineinfile:
         path: "{{ meta_path }}"
-        regexp: '^md_bmc_static_end_range:(.*)$'
+        regexp: '^md_bmc_conversion_static_end_range:(.*)$'
         insertafter: "EOF"
         state: present
-        line: "md_bmc_static_end_range: {{ hostvars['omnia_provision']['bmc_static_end_range'] }}"
+        line: "md_bmc_conversion_static_end_range: {{ hostvars['omnia_provision']['bmc_conversion_static_end_range'] }}"
 
     - name: Update md_bmc_dynamic_start_range
       ansible.builtin.lineinfile:

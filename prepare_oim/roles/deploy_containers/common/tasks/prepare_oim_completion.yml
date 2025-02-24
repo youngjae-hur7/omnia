@@ -17,3 +17,11 @@
 - name: Prepare oim completion
   ansible.builtin.debug:
     msg: "{{ prepare_oim_completion_msg }}"
+
+- name: Capture end time
+  command: date +%s
+  register: end_time
+
+- name: Display execution time
+  ansible.builtin.debug:
+    msg: "Execution time: {{ (end_time.stdout | int - start_time.stdout | int) }} seconds"

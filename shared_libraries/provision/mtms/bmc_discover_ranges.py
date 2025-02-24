@@ -53,12 +53,10 @@ if len(sys.argv) <= 3:
 
 # Pass proper variables
 if len(sys.argv) > 3:
-    discovery_ranges = sys.argv[1]
-    discover_stanza = os.path.abspath(sys.argv[2])
-    bmc_static_subnet = sys.argv[3]
-    static_stanza = os.path.abspath(sys.argv[4])
-    netmask_bits = sys.argv[5]
-    bmc_static_range = sys.argv[6]
+    bmc_static_subnet = sys.argv[1]
+    static_stanza = os.path.abspath(sys.argv[2])
+    netmask_bits = sys.argv[3]
+    bmc_static_range = sys.argv[4]
     bmc_static_range = validate(bmc_static_range)
 
 def cal_ranges(start_ip, end_ip):
@@ -209,9 +207,6 @@ def create_ranges():
 	"""
 
     if len(sys.argv) > 3:
-        if discovery_ranges != "0.0.0.0":
-            bmc_mode = "discovery"
-            create_ranges_discovery(bmc_mode)
         if bmc_static_range != "":
             bmc_mode = "static"
             create_ranges_static(bmc_mode)

@@ -22,7 +22,6 @@ import omniadb_connection
 node_obj_nm = []
 groups_static = "all,bmc,bmc_static"
 groups_dynamic = "all,bmc,bmc_dynamic"
-groups_discover = "all,bmc,bmc_discover"
 chain_setup = "runcmd=bmcsetup"
 os_name = sys.argv[1]
 chain_os = f"osimage={os_name}"
@@ -67,8 +66,6 @@ def update_node_obj_nm():
 	- If the condition is true, it prints a warning message.
 	- Checks if the mode is equal to "static".
 	- If the condition is true, it executes a command to update the node object with the given admin_ip, groups, and chain.
-	- Checks if the mode is equal to "discovery".
-	- If the condition is true, it executes a command to update the node object with the given admin_ip, groups, and chain.
 	- Checks if the mode is equal to "dynamic".
 	- If the condition is true, it executes a command to update the node object with the given admin_ip, groups, and chain.
 	- Executes a SQL query to select the bmc_ip from the cluster.nodeinfo table where the service_tag is equal to the current serial_output.
@@ -109,10 +106,6 @@ def update_node_obj_nm():
                 print("No device is found!")
             if mode == "static":
                 command = ["/opt/xcat/bin/chdef", node_name[0], f"ip={admin_ip[0]}", f"groups={groups_static}",
-                           f"chain={chain_setup},{chain_os}"]
-                subprocess.run(command)
-            if mode == "discovery":
-                command = ["/opt/xcat/bin/chdef", node_name[0], f"ip={admin_ip[0]}", f"groups={groups_discover}",
                            f"chain={chain_setup},{chain_os}"]
                 subprocess.run(command)
             if mode == "dynamic":

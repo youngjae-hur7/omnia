@@ -15,10 +15,9 @@
     - bmc_network:
         nic_name: ""
         netmask_bits: ""
-        static_range: ""
         dynamic_range: ""
+        dynamic_conversion_static_range: ""
         reassignment_to_static: true
-        discover_ranges: ""
         network_gateway: ""
         MTU: "1500"
 
