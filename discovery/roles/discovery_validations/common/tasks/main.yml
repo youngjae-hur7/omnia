@@ -33,10 +33,6 @@
 - name: Include provision configuration variables
   ansible.builtin.include_tasks: include_provision_config.yml
 
-- name: Include composable role data
-  ansible.builtin.include_tasks: fetch_composable_roles_config.yml
-
-
 - name: Include local_repo variables
   ansible.builtin.include_tasks: include_local_repo_config.yml
 
@@ -54,6 +50,9 @@
 
 - name: Validate discovery parameters
   ansible.builtin.include_tasks: validate_discovery_params.yml
+
+- name: Include composable role data
+  ansible.builtin.include_tasks: fetch_composable_roles_config.yml
 
 - name: Include vars for metadata
   ansible.builtin.include_vars: "{{ role_path }}/../../metadata_creation/vars/main.yml"
