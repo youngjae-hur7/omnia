@@ -27,10 +27,11 @@
 #   grpN:                 - <Mandatory> "grpN" -  User defined name of the group. Range for N is 0-99
 #     location_id:        - <Mandatory> su-<n>.rack-<n> Scalable unit and rack number range is 0-99.
 #     resource_mgr_id:    - <Conditional Mandatory> list of service tag of active head node(s).
-#                         - Set the value only for group of nodes belonging to k8worker and slurmworker roles,
+#                         - Set the value only for group of nodes belonging to k8sworker and slurmworker roles,
 #                         - And empty for other roles.
 #     parent:             - <Conditional Mandatory> list of service tag of associated active service node(s).
-#                         - This field will be empty for group of nodes which is associated with ‘login’, ‘compiler’, ‘service’, ‘k8head’,’slurmhead’.
+#                         - This field will be empty for group of nodes which is associated with ‘login’, ‘compiler’, ‘service’,
+#                         - ‘k8shead’, ‘k8setcd’, 'slurmhead’, ‘slurmdbd’.
 #                         - If ‘service’ role is not defined, then value will be empty for worker and default role.
 #     bmc_details:        - <Conditional Mandatory> BMC IP static range in the format 10.5.0.1-10.5.0.200
 #        static_range:    - <Mandatory> This field mandatory in case of BMC discovery of subset of nodes

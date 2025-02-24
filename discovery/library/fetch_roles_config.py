@@ -19,6 +19,20 @@ from ansible.module_utils.utility import load_csv
 
 FIRST_LAYER_ROLES = {"service", "login", "compiler", "k8setcd", "k8shead", "slurmhead", "slurmdbd"}
 
+def check_switch_required(group_data):
+    switch_data = group_data.get("switch_details", {})
+    if switch_data and switch_data.get("ip", '') and switch_data.get("ports", ''):
+        return True
+    else:
+        return False
+
+def check_bmc_required(group_data):
+    bmc_data = group_data.get("bmc_details", {})
+    if bmc_data and bmc_data.get("static_range", ''):
+        return True
+    else:
+        return False
+
 
 def fetch_bmc_details(groups_data, roles_data, layer):
     """
@@ -30,8 +44,8 @@ def fetch_bmc_details(groups_data, roles_data, layer):
         layer (str): The layer of the roles.
 
     Returns:
-        tuple: A tuple containing a boolean indicating if the bmc details are present and
-               a dictionary of bmc details based on layer.
+        tuple: A tuple containing a boolean indicating if the bmc details are present,
+        a boolean indicating if the switch details are present, and a dictionary of bmc details based on layer.
 
     Raises:
         Exception: If a group does not exist in the role_config.yml Groups dictionary.
@@ -47,14 +61,14 @@ def fetch_bmc_details(groups_data, roles_data, layer):
 
     for role in valid_roles:
         for group in roles_data[role]["groups"]:
-            if groups_data.get(group, {}):
-                if groups_data[group].get("bmc_details").get("static_range"):
-                    bmc_check = True
-                    bmc_details[role] = {}
-                    bmc_details[role][group] = groups_data[group]
+            if groups_data.get(group, {}) and check_bmc_required(groups_data[group]):
+                bmc_check = True
+                switch_check = check_switch_required(groups_data[group])
+                bmc_details[role] = {}
+                bmc_details[role][group] = groups_data[group]
             else:
                 raise Exception("Group `{}` doesn't exist in role_config.yml Groups dict".format(group))
-    return bmc_check, bmc_details
+    return bmc_check, switch_check, bmc_details
 
 
 def fetch_mapping_details(groups_data, roles_data, node_df, layer):
@@ -126,10 +140,10 @@ def main():
         layer = module.params["layer"]
         node_df = load_csv(module.params["mapping_file_path"])
         roles = {role.pop('name'): role for role in roles_list}
-        bmc_required, bmc_details = fetch_bmc_details(groups, roles, layer)
+        bmc_required, switch_required, bmc_details = fetch_bmc_details(groups, roles, layer)
         mapping_details = fetch_mapping_details(groups, roles, node_df, layer)
         module.exit_json(changed=False, mapping_details=mapping_details, roles_data=roles, groups_data=groups,
-                            bmc_required=bmc_required, bmc_details=bmc_details if bmc_required else {})
+                            bmc_required=bmc_required, bmc_details=bmc_details if bmc_required else {}, switch_required=switch_required)
     except Exception as e:
         module.fail_json(msg=str(e))
 
