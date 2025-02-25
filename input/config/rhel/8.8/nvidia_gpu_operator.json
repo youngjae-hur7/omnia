@@ -1,0 +1,11 @@
+{
+    "nvidia_gpu_operator": {
+      "cluster": [
+      {
+        "package": "nvidia-gpu-operator-v{{ nvidia_gpu_operator_version}}",
+        "type": "tarball",
+        "test": "https://helm.ngc.nvidia.com/nvidia/charts/gpu-operator-v24.9.2.tgz",
+        "url": "https://github.com/NVIDIA/gpu-operator/archive/refs/tags/v{{ nvidia_gpu_operator_version}}.tar.gz"
+      }]
+    }
+}

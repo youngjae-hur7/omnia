@@ -13,6 +13,7 @@
         {"name": "nfs"},
         {"name": "beegfs", "version": "7.4.5"},
         {"name": "k8s", "version":"1.31.4"},
+        {"name": "nvidia_gpu_operator", "version":"v24.9.2"},
         {"name": "jupyter"},
         {"name": "kubeflow"},
         {"name": "kserve"},
