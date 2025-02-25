@@ -14,8 +14,7 @@ spec:
       template:
         spec:
           containers:
-            - image: vault.habana.ai/gaudi-docker/1.19.1/ubuntu22.04/habanalabs/pytorch-installer-2.5.1:latest
-              # In case of Ubuntu 24.04 OS, use image:vault.habana.ai/gaudi-docker/1.18.0/ubuntu24.04/habanalabs/pytorch-installer-2.4.0:latest
+            - image: vault.habana.ai/gaudi-docker/1.19.2/ubuntu24.04/habanalabs/pytorch-installer-2.5.1:latest
               name: gaudi-llm-ds-ft-launcher
               env:
                 - name: HF_HOME
@@ -75,19 +74,19 @@ spec:
                     https_var="os.environ[\"https_proxy\"] = \"${https_proxy}\""
                     http_var="os.environ[\"http_proxy\"] = \"${http_proxy}\""
                     no_proxy_var="os.environ[\"no_proxy\"] = \"${no_proxy}\""
-                    sed -i "56i\\${https_var}" examples/language-modeling/run_lora_clm.py
-                    sed -i "57i\\${http_var}" examples/language-modeling/run_lora_clm.py
-                    sed -i "58i\\${hf_home_var}" examples/language-modeling/run_lora_clm.py
-                    sed -i "59i\\${token_var}" examples/language-modeling/run_lora_clm.py
-                    sed -i "60i\\${no_proxy_var}" examples/language-modeling/run_lora_clm.py
 
+                    sed -i "56i\\${hf_home_var}" examples/language-modeling/run_lora_clm.py
+                    sed -i "57i\\${token_var}" examples/language-modeling/run_lora_clm.py
+                    sed -i "58i\\${no_proxy_var}" examples/language-modeling/run_lora_clm.py
                     pip install .
                     pip install -r examples/language-modeling/requirements.txt
                     pip install git+https://github.com/HabanaAI/DeepSpeed.git@1.19.0
                     ';
 
                     cd /optimum-habana/examples/language-modeling/;
-                    python ../gaudi_spawn.py --hostfile=$HOSTSFILE --use_deepspeed --world_size $N_CARDS  run_lora_clm.py --model_name_or_path $LLM_MODEL \
+                    eval $(ssh-agent);
+                    ssh-add;
+                    python3 ../gaudi_spawn.py --hostfile=$HOSTSFILE --use_deepspeed --world_size $N_CARDS  run_lora_clm.py --model_name_or_path $LLM_MODEL \
                     --dataset_name tatsu-lab/alpaca \
                     --bf16 True \
                     --output_dir ./model_lora_llama_ddp \
@@ -131,8 +130,7 @@ spec:
         spec:
           hostIPC: true
           containers:
-            - image: vault.habana.ai/gaudi-docker/1.19.1/ubuntu22.04/habanalabs/pytorch-installer-2.5.1:latest
-              # In case of Ubuntu 24.04 OS, use image:vault.habana.ai/gaudi-docker/1.18.0/ubuntu24.04/habanalabs/pytorch-installer-2.4.0:latest
+            - image: vault.habana.ai/gaudi-docker/1.19.2/ubuntu24.04/habanalabs/pytorch-installer-2.5.1:latest
               name: gaudi-llm-ds-ft-worker
               resources:
                 limits:
