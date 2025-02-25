@@ -98,6 +98,7 @@ def main():
         fresh_installation = 1 if not check_csv_existence(csv_file_path) else 0
         logger.info(f"Fresh install: {fresh_installation}")
 
+        csv_softwares = []
         if not fresh_installation:
             csv_softwares = get_csv_software(csv_file_path)
             logger.info(f"software from software.csv: {csv_softwares}")
