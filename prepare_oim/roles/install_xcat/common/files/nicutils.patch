@@ -119,7 +119,7 @@
 +    echo "    $ifname:"  >> $str_conf_file
 +    echo "      dhcp4: true" >> $str_conf_file
 +    echo "  vlans:" >> $str_conf_file
-+    echo "    $ifname.$vlanid:"  >> $str_conf_file
++    echo "    vlan.$vlanid:"  >> $str_conf_file
 +    echo "      id: $vlanid" >> $str_conf_file
 +    echo "      link: $ifname" >> $str_conf_file
 +    echo "      addresses:"  >> $str_conf_file
