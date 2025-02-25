@@ -88,6 +88,7 @@
   gather_facts: false
   roles:
     - k8s_start_services
+    - multus_and_whereabouts
 
 - name: CSI powerscale image pulling
   hosts: kube_node, kube_control_plane
@@ -139,9 +140,3 @@
   gather_facts: true
   roles:
     - install_benchmarks_tools
-
-- name: Configure multus & whereabouts on kube control nodes
-  hosts: kube_control_plane
-  gather_facts: true
-  roles:
-    - multus_and_whereabouts
