@@ -13,10 +13,17 @@
 #  limitations under the License.
 ---
 
-- name: Ensure firewalld is installed and running
-  ansible.builtin.yum:
-    name: firewalld
-    state: present
+- name: Ensure firewalld is installed
+  block:
+    - name: Install firewalld
+      ansible.builtin.yum:
+        name: firewalld
+        state: present
+
+  rescue:
+    - name: Failed to install firewalld
+      ansible.builtin.fail:
+        msg: "{{ oim_os_repo_fail_msg }}"
 
 - name: Start and enable firewalld
   ansible.builtin.service:
