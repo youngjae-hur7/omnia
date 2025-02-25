@@ -44,19 +44,15 @@
     mapping_details: "{{ composable_roles_output.mapping_details }}"
     bmc_required: "{{ composable_roles_output.bmc_required }}"
     switch_required: "{{ composable_roles_output.switch_required }}"
+    group_to_roles: "{{ composable_roles_output.group_to_roles }}"
 
-- name: Show mapping setails
+- name: Show mapping details
   ansible.builtin.debug:
     msg: "{{ mapping_details }}"
     verbosity: 2
 
-- name: Display filtered bmc details
+- name: Display filtered group wise details
   ansible.builtin.debug:
-    msg: "{{ roles_groups_data }}"
+    msg: "{{ group_to_roles }}"
     verbosity: 2
   when: bmc_required or switch_required
-
-- name: Display all roles and groups
-  ansible.builtin.debug:
-    msg: "Groups: {{ groups_data }}, Roles: {{ roles_data }}"
-    verbosity: 2

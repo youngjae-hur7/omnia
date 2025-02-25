@@ -98,7 +98,12 @@ def fetch_mapping_details(groups_data, roles_data, node_df, layer):
 
     for role_name in valid_roles:
         for group in roles_data[role_name]["groups"]:
-            group_to_roles.setdefault(group, []).append(role_name)
+            group_to_roles.setdefault(group, {}).setdefault('roles', []).append(role_name)
+            if groups_data.get(group, {}):
+                group_to_roles[group].update(groups_data.get(group))
+            else:
+                raise Exception("Group `{}` doesn't exist in roles_config.yml Groups dict".format(group))
+
 
     # Organize node details
     filtered_nodes = []
@@ -114,17 +119,17 @@ def fetch_mapping_details(groups_data, roles_data, node_df, layer):
                 "admin_ip": node["ADMIN_IP"],
                 "bmc_ip": node["BMC_IP"],
                 "group_name": group,
-                "roles": ",".join(group_to_roles[group]),
-                "location_id": groups_data.get(group, {}).get("location_id", ""),
-                "resource_mgr_id": groups_data.get(group, {}).get("resource_mgr_id", ""),
-                "parent": groups_data.get(group, {}).get("parent", ""),
-                "bmc_details": groups_data.get(group, {}).get("bmc_details", {}),
-                "switch_details": groups_data.get(group, {}).get("switch_details", {}),
-                "architecture": groups_data.get(group, {}).get("architecture", ""),
+                "roles": ",".join(group_to_roles[group].get("roles")),
+                "location_id": group_to_roles[group].get("location_id", ""),
+                "resource_mgr_id": group_to_roles[group].get("resource_mgr_id", ""),
+                "parent": group_to_roles[group].get("parent", ""),
+                "bmc_details": group_to_roles[group].get("bmc_details", {}),
+                "switch_details": group_to_roles[group].get("switch_details", {}),
+                "architecture": group_to_roles[group].get("architecture", ""),
             }
             filtered_nodes.append(node_data)
 
-    return filtered_nodes
+    return filtered_nodes, group_to_roles
 
 def main():
     module_args = dict(
@@ -143,8 +148,8 @@ def main():
         node_df = load_csv(module.params["mapping_file_path"])
         roles = {role.pop('name'): role for role in roles_list}
         bmc_required, switch_required, roles_groups_data = fetch_roles_groups_details(groups, roles, layer)
-        mapping_details = fetch_mapping_details(groups, roles, node_df, layer)
-        module.exit_json(changed=False, mapping_details=mapping_details, roles_data=roles, groups_data=groups,
+        mapping_details, group_to_roles = fetch_mapping_details(groups, roles, node_df, layer)
+        module.exit_json(changed=False, mapping_details=mapping_details, roles_data=roles, groups_data=groups, group_to_roles=group_to_roles,
                             bmc_required=bmc_required, roles_groups_data=roles_groups_data, switch_required=switch_required)
     except Exception as e:
         module.fail_json(msg=str(e))
