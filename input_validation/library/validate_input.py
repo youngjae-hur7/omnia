@@ -277,10 +277,12 @@ def main():
                 return True
         except ValueError as ve:
             message = f"Value error: {ve}"
-            logger.error(message)
+            logger.error(message, exc_info=True)
+            return False
         except Exception as e:
             message = f"An unexpected error occurred: {e}"
-            logger.error(message)
+            logger.error(message, exc_info=True)
+            return False
             
     # Start validation execution        
     message = f"{'#' * 30} START EXECUTION {'#' * 30}"

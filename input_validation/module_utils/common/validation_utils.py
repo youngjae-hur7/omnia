@@ -209,3 +209,10 @@ def check_overlap(ip_list):
                 overlaps.append((ranges[i], ranges[j]))
 
     return len(overlaps) > 0, overlaps
+
+# Check a list of dictionaries for a key value pair
+def key_value_exists(list_of_dicts, key, value):
+    for dictionary in list_of_dicts:
+        if dictionary.get(key) == value:
+            return True
+    return False

@@ -19,6 +19,11 @@ max_number_of_roles_msg = "a max of 100 roles can be supported."
 min_number_of_groups_msg = "at least 1 group is required."
 min_number_of_roles_msg = "at least 1 role is required."
 resource_mgr_id_msg = "The resource_mgr_id needs to be set if and only if the group of nodes belongs to k8worker or slurmworker roles."
+grp_exist_msg = "A valid group must be provided."
+switch_details_required_msg = "Switch credentials were supplied, please provide switch details."
+switch_details_not_required_msg = "Switch credentials were not supplied, please remove switch details or add switch credentials in provision_config_credentials.yml."
+parent_service_node_msg = "Group is associated with login, compiler, service, k8head, slurmhead role(s)."
+parent_service_role_dne_msg = "A service role does not exist, parent should be empty for groups associated with worker or default roles."
 
 # provision_config.yml 
 default_lease_time_fail_msg = "Please provide a valid default_lease_time."

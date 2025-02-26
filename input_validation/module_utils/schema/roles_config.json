@@ -40,8 +40,8 @@
                 },
                 "ports": {
                   "type": "string",
-                  "description": "Ports of the switch",
-                  "pattern": "^(?:|[1-9][0-9]*)$"
+                  "description": "Ports on the switch. Format can be '1-48', '49:3', '50', or a combination.",
+                  "pattern": "^((\\d+(-\\d+)?|\\d+:\\d+)(,(\\d+(-\\d+)?|\\d+:\\d+))*)?$"
                 }
               },
               "required": [
