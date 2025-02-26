@@ -41,6 +41,9 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
     BMC_DETAILS = "bmc_details"
     STATIC_RANGE = "static_range"
     RESOURCE_MGR_ID = "resource_mgr_id"
+    ROLES_PER_GROUP = 5
+
+    roles_per_group = {}
     empty_parent_roles = {'login', 'compiler', 'service', 'k8head', 'slurmhead'}
 
     errors = []
@@ -94,6 +97,9 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
             
             # Validate each group and its configs under each role
             for group in role[ROLE_GROUPS]:
+                roles_per_group[group] = roles_per_group.get(group, 0) + 1
+                if roles_per_group[group] > ROLES_PER_GROUP:
+                    errors.append(create_error_msg(group, "Current number of roles per group is " + str(roles_per_group[group]) + ":", en_us_validation_msg.max_number_of_roles_per_group_msg))
                 if group in groups:
                     if switch_details_required:
                         # Validate switch details based on if switch credentials were provided

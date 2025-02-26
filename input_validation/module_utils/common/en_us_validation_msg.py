@@ -18,6 +18,7 @@
 max_number_of_roles_msg = "a max of 100 roles can be supported."
 min_number_of_groups_msg = "at least 1 group is required."
 min_number_of_roles_msg = "at least 1 role is required."
+max_number_of_roles_per_group_msg = "Groups can support a maximum of 5 roles."
 resource_mgr_id_msg = "The resource_mgr_id needs to be set if and only if the group of nodes belongs to k8worker or slurmworker roles."
 grp_exist_msg = "A valid group must be provided."
 switch_details_required_msg = "Switch credentials were supplied, please provide switch details."
