@@ -21,7 +21,28 @@ file_names = config.files
 create_error_msg = validation_utils.create_error_msg
 create_file_path = validation_utils.create_file_path
 
+"""
+Validates the L2 logic of the roles_config.yaml file.
+
+Returns:
+    list: A list of errors.
+"""
 def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir, project_name):
+    NAME = "name"
+    ROLES = "Roles"
+    GROUPS = "Groups"
+    ROLE_GROUPS = "groups"
+    SLURMWORKER = "slurmworker"
+    K8WORKER = "k8worker"
+    SWITCH_DETAILS = "switch_details"
+    IP = "ip"
+    PORTS = "ports"
+    PARENT = "parent"
+    BMC_DETAILS = "bmc_details"
+    STATIC_RANGE = "static_range"
+    RESOURCE_MGR_ID = "resource_mgr_id"
+    empty_parent_roles = {'login', 'compiler', 'service', 'k8head', 'slurmhead'}
+
     errors = []
     provision_config_file_path = create_file_path(input_file_path, file_names["provision_config"])
     provision_config_json = validation_utils.load_yaml_as_json(provision_config_file_path, omnia_base_dir, project_name, logger, module)
@@ -29,14 +50,9 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
     provision_config_credentials_file_path = create_file_path(input_file_path, file_names["provision_config_credentials"])
     provision_config_credentials_json = validation_utils.load_yaml_as_json(provision_config_credentials_file_path, omnia_base_dir, project_name, logger, module)
 
+    roles = data[ROLES]
+    groups = data[GROUPS]
     
-    roles = data["Roles"]
-    groups = data["Groups"]
-    empty_parent_roles = {'login', 'compiler', 'service', 'k8head', 'slurmhead'}
-
-    errors.append(create_error_msg(roles, None, en_us_validation_msg.min_number_of_groups_msg))
-    errors.append(create_error_msg(groups, None, en_us_validation_msg.min_number_of_groups_msg))
-
     # Check for at least 1 group
     # Check for at least 1 role
      # Check to make sure there are not more than 100 roles
@@ -46,67 +62,78 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
         errors.append(create_error_msg("Current number of roles is " + str(len(roles)) + ":", None, en_us_validation_msg.min_number_of_roles_msg))
     if len(roles) > 100:
         errors.append(create_error_msg("Current number of roles is " + str(len(roles)) + ":", None, en_us_validation_msg.max_number_of_roles_msg))
-
     
     if len(errors) <= 0:
         # List of groups which need to have their resource_mgr_id set
         set_resource_mgr_id = set()
 
-        # Set switch_details_required based on if credentials are provided and enable_switch_based is True
+        # Set switch_details_required based on if credentials are provided
         switch_details_required = False
         switch_snmp3_username = provision_config_credentials_json.get("switch_snmp3_username", "")
         switch_snmp3_password = provision_config_credentials_json("switch_snmp3_password", "")
         if (not validation_utils.is_string_empty(switch_snmp3_username) and not validation_utils.is_string_empty(switch_snmp3_password)):
             switch_details_required = True
+        
+        # Get enable_switch_based boolean from provision config
+        enable_switch_based = provision_config_json.get("enable_switch_based", False)
+
+        # Check if the bmc_network is defined
+        bmc_network_defined = validation_utils.check_bmc_network(input_file_path, logger, module, omnia_base_dir, project_name)
 
         service_role_defined = False
-        if validation_utils.key_value_exists(roles, "name", "service"):
+        if validation_utils.key_value_exists(roles, NAME, "service"):
             service_role_defined = True
 
         for role in roles:
             # Check role-group association, all roles must have a group
-            if len(role["groups"]) == 0:
-                errors.append(role["name"], create_error_msg("Role " + role["name"] + " must be associated with a group.", en_us_validation_msg.min_number_of_groups_msg))
-            if role["name"] == "slurmworker" or role["name"] == "k8worker":
-                for group in role["groups"]:
+            if len(role[ROLE_GROUPS]) == 0:
+                errors.append(role[NAME], create_error_msg("Role " + role[NAME] + " must be associated with a group.", en_us_validation_msg.min_number_of_groups_msg))
+            if role[NAME] == SLURMWORKER or role[NAME] == K8WORKER:
+                for group in role[ROLE_GROUPS]:
                     set_resource_mgr_id.add(group)
             
-            for group in role["groups"]:
+            # Validate each group and its configs under each role
+            for group in role[ROLE_GROUPS]:
                 if group in groups:
                     if switch_details_required:
                         # Validate switch details based on if switch credentials were provided
                         # If switch credentials provided then IP and Ports info must be present
                         # If switch credentials not provided then IP and Ports info should be empty
-                        if validation_utils.is_string_empty(groups[group].get("switch_details", {}).get("ip", None)):
+                        if validation_utils.is_string_empty(groups[group].get(SWITCH_DETAILS, {}).get(IP, None)):
                             errors.append(create_error_msg(group, "Switch is missing IP information.", en_us_validation_msg.switch_details_required_msg))
-                        if validation_utils.is_string_empty(groups[group].get("switch_details", {}).get("ports", None)):
+                        if validation_utils.is_string_empty(groups[group].get(SWITCH_DETAILS, {}).get(PORTS, None)):
                             errors.append(create_error_msg(group, "Switch is missing ports information.", en_us_validation_msg.switch_details_required_msg))
                     else:
-                        if not validation_utils.is_string_empty(groups[group].get("switch_details", {}).get("ip", None)) or not validation_utils.is_string_empty(groups[group].get("switch_details", {}).get("ports", None)):
+                        if not validation_utils.is_string_empty(groups[group].get("switch_details", {}).get(IP, None)) or not validation_utils.is_string_empty(groups[group].get("switch_details", {}).get("ports", None)):
                             errors.append(create_error_msg(group, "Switch should not have IP or ports information set.", en_us_validation_msg.switch_details_not_required_msg))
                 
                     # Validate parent feild is empty for specific role cases
-                    if role["name"] in empty_parent_roles:
+                    if role[NAME] in empty_parent_roles:
                         # If parent is not empty and group  is associated with login, compiler, service, k8head, or slurmhead
-                        if not validation_utils.is_string_empty(groups[group].get("parent", None)):
+                        if not validation_utils.is_string_empty(groups[group].get(PARENT, None)):
                             errors.append(create_error_msg(group, "Group " + group + " should not have parent defined.", en_us_validation_msg.parent_service_node_msg))
-                    if not service_role_defined and role["name"] == "worker" or role["name"] == "default":
+                    if not service_role_defined and role[NAME] == "worker" or role[NAME] == "default":
                         # If a service role is not present, the parent is not empty and the group is associated with worker or default roles. 
-                        if not validation_utils.is_string_empty(groups[group].get("parent", None)):
+                        if not validation_utils.is_string_empty(groups[group].get(PARENT, None)):
                             errors.append(create_error_msg(group, "Group " + group + " should not have parent defined.", en_us_validation_msg.parent_service_role_dne_msg))
+                
+                    if not validation_utils.is_string_empty(groups[group].get(BMC_DETAILS, {}).get(STATIC_RANGE, None)):
+                        # Check if bmc details are defined, but enable_switch_based is true or the bmc_network is not defined
+                        if enable_switch_based or not bmc_network_defined:
+                            errors.append(create_error_msg(group, "Group " + group + " BMC static range invalid use case.", en_us_validation_msg.bmc_static_range_msg))
+                        # Validate the static range is properly defined
+                        elif not validation_utils.validate_ipv4_range(groups[group].get(SWITCH_DETAILS, {}).get(SWITCH_DETAILS, "")):
+                            errors.append(create_error_msg(group, "Group " + group + " BMC static range is invalid.", en_us_validation_msg.bmc_static_range_invalid_msg))
                 else: 
-                    # Error log for if a group under a role DNE
+                    # Error log for if a group under a role does not exist
                     errors.append(create_error_msg(group, "Group " + group + " does not exist.", en_us_validation_msg.grp_exist_msg))
         
         for group in groups.keys():
             # Validate resource_mgr_id is set for groups that belong to k8worker or slurmworker roles
-            if group in set_resource_mgr_id and validation_utils.is_string_empty(groups[group].get("resource_mgr_id", None)):
+            if group in set_resource_mgr_id and validation_utils.is_string_empty(groups[group].get(RESOURCE_MGR_ID, None)):
                 errors.append(create_error_msg(group, "Group " + group + " is missing resource_mgr_id.", en_us_validation_msg.resource_mgr_id_msg))
-            elif group not in set_resource_mgr_id and not validation_utils.is_string_empty(groups[group].get("resource_mgr_id", None)):
+            elif group not in set_resource_mgr_id and not validation_utils.is_string_empty(groups[group].get(RESOURCE_MGR_ID, None)):
             # Validate resource_mgr_id is not set for groups that do not belong to k8worker or slurmworker roles
                 errors.append(create_error_msg(group, "Group " + group + " should not have the resource_mgr_id set.", en_us_validation_msg.resource_mgr_id_msg))
 
-        pxe_mapping_file_path = provision_config_json["pxe_mapping_file_path"]
-        
-  
     return errors

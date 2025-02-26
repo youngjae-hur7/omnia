@@ -24,6 +24,8 @@ switch_details_required_msg = "Switch credentials were supplied, please provide 
 switch_details_not_required_msg = "Switch credentials were not supplied, please remove switch details or add switch credentials in provision_config_credentials.yml."
 parent_service_node_msg = "Group is associated with login, compiler, service, k8head, slurmhead role(s)."
 parent_service_role_dne_msg = "A service role does not exist, parent should be empty for groups associated with worker or default roles."
+bmc_static_range_msg = "The bmc_network is not defined in network_spec.yml OR enable_switch_based is set to true in provision_config.yml."
+bmc_static_range_invalid_msg = "Static range should be in the following format: IPv4Start-IPv4End (example: 10.5.0.1-10.5.0.200)."
 
 # provision_config.yml 
 default_lease_time_fail_msg = "Please provide a valid default_lease_time."

@@ -19,6 +19,7 @@ import subprocess
 import yaml
 import en_us_validation_msg
 import config
+import common_validation
 
 def load_yaml_as_json(yaml_file, omnia_base_dir, project_name, logger, module):
     try:
@@ -210,9 +211,53 @@ def check_overlap(ip_list):
 
     return len(overlaps) > 0, overlaps
 
-# Check a list of dictionaries for a key value pair
-def key_value_exists(list_of_dicts, key, value):
+"""
+Check if a key-value pair exists in a list of dictionaries.
+
+Args:
+    list_of_dicts (List[Dict[Any, Any]]): The list of dictionaries to search.
+    key (Any): The key to search for.
+    value (Any): The value to search for.
+
+Returns:
+    bool: True if the key-value pair exists, False otherwise.
+"""
+def key_value_exists(list_of_dicts, key, value) -> bool:
     for dictionary in list_of_dicts:
         if dictionary.get(key) == value:
             return True
     return False
+
+"""
+Check if the BMC network is defined in the given input file.
+
+Returns:
+    bool: True if the BMC network's nic_name and netmask_bits are defined, False otherwise.
+"""
+def check_bmc_network(input_file_path, logger, module, omnia_base_dir, project_name) -> bool:
+    admin_bmc_networks = common_validation.get_admin_bmc_networks(input_file_path, logger, module, omnia_base_dir, project_name)
+    bmc_network_defined = admin_bmc_networks["bmc_network"].get("nic_name", None) != None and admin_bmc_networks["bmc_network"].get("netmask_bits", None) != None
+
+    return bmc_network_defined
+
+"""
+Validates if the given IP range is a valid IPv4 range.
+
+Args:
+    ip_range (str): The IP range to be validated.
+
+Returns:
+    bool: True if the IP range is valid, False otherwise.
+"""
+def validate_ipv4_range(ip_range) -> bool:
+    try:
+        start, end = ip_range.split('-')
+        start_ip = ipaddress.IPv4Address(start)
+        end_ip = ipaddress.IPv4Address(end)
+
+        if end_ip > start_ip:
+            return True
+        else:
+            return False
+    except ValueError:
+        return False
