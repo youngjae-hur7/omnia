@@ -88,6 +88,7 @@
   gather_facts: false
   roles:
     - k8s_start_services
+    - multus_and_whereabouts
 
 - name: CSI powerscale image pulling
   hosts: kube_node, kube_control_plane

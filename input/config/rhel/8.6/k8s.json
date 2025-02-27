@@ -1,7 +1,18 @@
 {
   "k8s": {
-    "cluster": [ 
-    { 
+    "cluster": [
+    {
+      "package": "multus-daemonset",
+       "type": "manifest",
+       "url": "https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset.yml"
+    },
+    {
+       "package": "whereabouts",
+       "url": "https://github.com/k8snetworkplumbingwg/whereabouts.git",
+       "type": "git",
+       "version": "v0.8.0"
+    },
+    {
       "package": "containerd.io-1.6.16-3.1.el8",
       "type": "rpm",
       "repo_name": "docker-ce-repo"

@@ -122,6 +122,11 @@
         success_msg: "{{ success_msg_nvidia_gpu_operator_version }}"
         fail_msg: "{{ fail_msg_nvidia_gpu_operator_version }}"
 
+    - name: Fail when nvidia_gpu_operator_support is true and k8s_support is false
+      ansible.builtin.fail:
+        msg: "{{ fail_msg_k8s_support_false }}"
+      when: not k8s_support
+
 - name: Prepare kubernetes installation variables
   when: k8s_support is true
   block:
