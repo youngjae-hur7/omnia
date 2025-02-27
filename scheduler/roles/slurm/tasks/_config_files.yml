@@ -1,13 +1,17 @@
 ---
-- name: Slurm dict ops
-  ansible.builtin.set_fact:
-    slurm_conf_dict: "{{ __slurm_default_config | ansible.builtin.combine(slurm_config | default({})) }}"
-    cgroup_conf_dict: "{{ __cgroup_default_config | ansible.builtin.combine(cgroup | default({})) }}"
-    slurm_dbd_conf_dict: "{{ __slurm_dbd_default_config | ansible.builtin.combine(slurm_dbd_config | default({})) }}"
-
 - name: Append share path if NFS
   ansible.builtin.set_fact:
     slurm_share_prefix: "{{ share_path }}/{{ slurm_dir_name }}"
+
+- name: Ensure directories - {{ item }}
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "{{ common_mode }}"
+  loop:
+    - "{{ slurm_share_prefix }}{{ slurm_config_dir }}"
 
 - name: Ensure directories - {{ item }}
   ansible.builtin.file:
@@ -17,7 +21,6 @@
     group: "{{ slurm_user_group }}"
     mode: "{{ common_mode }}"
   loop:
-    - "{{ slurm_share_prefix }}{{ slurm_config_dir }}"
     - "{{ slurm_conf_dict['StateSaveLocation'] }}"
     - "{{ slurm_config_dir }}"
 
@@ -41,8 +44,8 @@
   ansible.builtin.template: # Create dest directory before
     src: "slurm.conf.j2"
     dest: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
-    owner: root
-    group: root
+    # owner: root
+    # group: root
     mode: "{{ conf_file_mode }}"
   run_once: true
   notify:

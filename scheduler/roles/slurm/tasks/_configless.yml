@@ -37,7 +37,6 @@
     - Reload slurmd
     - Restart slurmd
 
-# Environment Var SLURM_CONF
 - name: Set env variable
   community.general.ini_file:
     path: "/etc/environment"
@@ -57,9 +56,19 @@
   when: slurm_installation_type != 'configless'
   notify:
     - Reload slurmd
-    - Restart slurmd
 
-# Environment Var SLURM_CONF
+- name: Edit the service to fetch specific conf 
+  community.general.ini_file:
+    path: "{{ slurmd_service_path }}"
+    section: Service
+    option: ExecStart
+    value: "/usr/sbin/slurmd -D -s $SLURMD_OPTIONS -f {{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
+    no_extra_spaces: true
+    mode: u=rw,g=r,o=r
+  when: slurm_installation_type != 'configless'
+  notify:
+    - Reload slurmd
+
 - name: Set env variable
   community.general.ini_file:
     path: "/etc/environment"
@@ -68,3 +77,5 @@
     no_extra_spaces: true
     mode: u=rw,g=r,o=r
   when: slurm_installation_type != 'configless'
+  notify:
+    - Restart slurmd

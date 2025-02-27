@@ -8,12 +8,15 @@
   ansible.builtin.include_tasks: validation.yml
   run_once: true
 
-- name: Create DB tasks
-  ansible.builtin.include_tasks: db.yml
-  when: inventory_hostname == db_host
+# - name: Create DB tasks
+#   ansible.builtin.include_tasks: db.yml
+#   when: inventory_hostname == db_host
 
 - name: Include common tasks
   ansible.builtin.include_tasks: common.yml
+
+- name: Install configs on all
+  ansible.builtin.include_tasks: _config_files.yml
 
 - name: Include controller installation tasks
   ansible.builtin.include_tasks: controller.yml
@@ -23,10 +26,11 @@
   ansible.builtin.include_tasks: compute.yml
   when: '"slurm_node" in group_names'
 
-- name: Include slurm DBD installation tasks
-  ansible.builtin.include_tasks: dbd.yml
-  when: '"slurm_dbd" in group_names'
+# - name: Include slurm DBD installation tasks
+#   ansible.builtin.include_tasks: dbd.yml
+#   when: '"slurm_dbd" in group_names'
 
 - name: Include login node installation tasks
   ansible.builtin.include_tasks: login.yml
   when: '"login" in group_names'
+

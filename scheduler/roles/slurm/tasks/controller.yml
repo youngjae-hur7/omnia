@@ -44,4 +44,14 @@
     mode: u=rw,g=r,o=r
   notify:
     - Reload slurmctld
-    - Restart slurmctld
+
+- name: Edit the service to fetch specific conf 
+  community.general.ini_file:
+    path: "{{ ctld_service['status']['FragmentPath'] | default('/usr/lib/systemd/system/slurmctld.service') }}"
+    section: Service
+    option: ExecStart
+    value: "/usr/sbin/slurmctld -D -f {{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf -s $SLURMCTLD_OPTIONS"
+    no_extra_spaces: true
+    mode: u=rw,g=r,o=r
+  notify:
+    - Reload slurmctld
