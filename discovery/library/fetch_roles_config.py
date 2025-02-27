@@ -59,10 +59,14 @@ def roles_groups_mapping(groups_data, roles_data, layer):
             if groups_data.get(group, {}):
                 groups_roles_info.setdefault(group, {}).setdefault('roles', []).append(role)
                 groups_roles_info[group].update(groups_data.get(group))
-                bmc_check = bmc_check or check_bmc_required(groups_data[group])
-                switch_check = switch_check or check_switch_required(groups_data[group], layer)
+                grp_bmc_check = check_bmc_required(groups_data[group])
+                bmc_check = bmc_check or grp_bmc_check
+                grp_switch_check = grp_bmc_check and check_switch_required(groups_data[group], layer)
+                switch_check = switch_check or grp_switch_check
                 roles_groups_data[role] = {}
                 roles_groups_data[role][group] = groups_data[group]
+                groups_roles_info[group]['switch_status'] = grp_switch_check
+                groups_roles_info[group]['bmc_static_status'] = grp_bmc_check
             else:
                 raise Exception("Group `{}` doesn't exist in roles_config.yml Groups dict".format(group))
 
