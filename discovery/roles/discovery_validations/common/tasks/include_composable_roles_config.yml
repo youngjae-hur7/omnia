@@ -48,4 +48,4 @@
   ansible.builtin.debug:
     msg: "{{ groups_roles_info }}"
     verbosity: 2
-  when: bmc_required or switch_required
+  when: bmc_static_status or switch_status
