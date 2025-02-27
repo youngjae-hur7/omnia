@@ -19,7 +19,6 @@ import subprocess
 import yaml
 import en_us_validation_msg
 import config
-import common_validation
 
 def load_yaml_as_json(yaml_file, omnia_base_dir, project_name, logger, module):
     try:
@@ -227,18 +226,6 @@ def key_value_exists(list_of_dicts, key, value) -> bool:
         if dictionary.get(key) == value:
             return True
     return False
-
-"""
-Check if the BMC network is defined in the given input file.
-
-Returns:
-    bool: True if the BMC network's nic_name and netmask_bits are defined, False otherwise.
-"""
-def check_bmc_network(input_file_path, logger, module, omnia_base_dir, project_name) -> bool:
-    admin_bmc_networks = common_validation.get_admin_bmc_networks(input_file_path, logger, module, omnia_base_dir, project_name)
-    bmc_network_defined = admin_bmc_networks["bmc_network"].get("nic_name", None) != None and admin_bmc_networks["bmc_network"].get("netmask_bits", None) != None
-
-    return bmc_network_defined
 
 """
 Validates if the given IP range is a valid IPv4 range.

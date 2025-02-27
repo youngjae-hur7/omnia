@@ -16,6 +16,7 @@ import json
 import validation_utils
 import config
 import en_us_validation_msg
+import common_validation
 
 file_names = config.files
 create_error_msg = validation_utils.create_error_msg
@@ -73,7 +74,7 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
         # Set switch_details_required based on if credentials are provided
         switch_details_required = False
         switch_snmp3_username = provision_config_credentials_json.get("switch_snmp3_username", "")
-        switch_snmp3_password = provision_config_credentials_json("switch_snmp3_password", "")
+        switch_snmp3_password = provision_config_credentials_json.get("switch_snmp3_password", "")
         if (not validation_utils.is_string_empty(switch_snmp3_username) and not validation_utils.is_string_empty(switch_snmp3_password)):
             switch_details_required = True
         
@@ -81,7 +82,7 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
         enable_switch_based = provision_config_json.get("enable_switch_based", False)
 
         # Check if the bmc_network is defined
-        bmc_network_defined = validation_utils.check_bmc_network(input_file_path, logger, module, omnia_base_dir, project_name)
+        bmc_network_defined = check_bmc_network(input_file_path, logger, module, omnia_base_dir, project_name)
 
         service_role_defined = False
         if validation_utils.key_value_exists(roles, NAME, "service"):
@@ -99,7 +100,7 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
             for group in role[ROLE_GROUPS]:
                 roles_per_group[group] = roles_per_group.get(group, 0) + 1
                 if roles_per_group[group] > ROLES_PER_GROUP:
-                    errors.append(create_error_msg(group, "Current number of roles per group is " + str(roles_per_group[group]) + ":", en_us_validation_msg.max_number_of_roles_per_group_msg))
+                    errors.append(create_error_msg(group, "Current number of roles for " + group + " is " + str(roles_per_group[group]) + ":", en_us_validation_msg.max_number_of_roles_per_group_msg))
                 if group in groups:
                     if switch_details_required:
                         # Validate switch details based on if switch credentials were provided
@@ -143,3 +144,15 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
                 errors.append(create_error_msg(group, "Group " + group + " should not have the resource_mgr_id set.", en_us_validation_msg.resource_mgr_id_msg))
 
     return errors
+
+"""
+Check if the BMC network is defined in the given input file.
+
+Returns:
+    bool: True if the BMC network's nic_name and netmask_bits are defined, False otherwise.
+"""
+def check_bmc_network(input_file_path, logger, module, omnia_base_dir, project_name) -> bool:
+    admin_bmc_networks = common_validation.get_admin_bmc_networks(input_file_path, logger, module, omnia_base_dir, project_name)
+    bmc_network_defined = admin_bmc_networks["bmc_network"].get("nic_name", None) != None and admin_bmc_networks["bmc_network"].get("netmask_bits", None) != None
+
+    return bmc_network_defined
