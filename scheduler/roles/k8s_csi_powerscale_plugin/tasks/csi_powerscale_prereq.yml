@@ -99,6 +99,70 @@
         group: "{{ group_value }}"
         mode: "{{ permission_644 }}"
 
+    # check if powerscale is pininging
+    - name: Load values.yaml file
+      ansible.builtin.include_vars:
+        file: "{{ hostvars['localhost']['csi_powerscale_driver_values_file_path'] }}"
+        name: csi_powerscale_values_file
+
+    - name: Load secret file for input validation
+      ansible.builtin.include_vars:
+        file: "{{ hostvars['localhost']['csi_powerscale_driver_secret_file_path'] }}"
+        name: clusters
+      no_log: true
+
+    - name: Extract PowerScale endpoint IP or Host from loaded secret data
+      set_fact:
+        powerscale_host: "{{ clusters.isilonClusters[0].endpoint | regex_replace('https?://', '') | regex_replace('/.*', '') }}"
+
+    - name: Check if the extracted PowerScale IP or Host is reachable
+      ansible.builtin.command:
+        cmd: "ping -c 1 {{ powerscale_host }}"  # Replace {{ power_scale_host }} with your actual host variable
+      register: ping_result
+      ignore_errors: yes  # Continue even if the ping fail
+
+    - name: Print ping result or error if ping fails
+      debug:
+        msg: >
+          {% if ping_result.rc == 0 %}
+            Powerscale Host reachable! Output: {{ ping_result.stdout }}
+          {% else %}
+            Powerscale Host not reachable. Error: {{ ping_result.stderr }}
+          {% endif %}
+
+    - name: Generate Base64 authentication token
+      ansible.builtin.shell: >
+        set -o pipefail && \
+        echo -n "{{ clusters.isilonClusters[0].username }}:{{ clusters.isilonClusters[0].password }}" | base64
+      register: auth_token
+      changed_when: false
+      no_log: true
+
+    - name: Set the URL for the API request
+      ansible.builtin.set_fact:
+        api_url: >-
+          {{
+             'https://' +  item.endpoint if 'https' not in  item.endpoint else  item.endpoint
+          }}:{{  item.endpointPort if  item.endpointPort is defined else csi_powerscale_values_file.endpointPort }}/platform/1/auth/id
+      loop: "{{ clusters.isilonClusters }}"
+      no_log: true
+
+    - name: Make GET request to verify powerscale endpoint and credential
+      ansible.builtin.uri:
+        url: "{{ api_url }}"
+        method: GET
+        headers:
+          Authorization: "Basic {{ auth_token.stdout }}"
+        validate_certs: false
+      register: response
+      ignore_errors: true
+      no_log: true
+
+    - name: Fail if API call to powerscale was not successful
+      ansible.builtin.fail:
+        msg: "{{ fail_msg_api_call }}: {{ response.msg }}"
+      when: response.status != 200
+
     - name: Encrypt secret file
       ansible.builtin.command: >-
         ansible-vault encrypt {{ hostvars['localhost']['csi_powerscale_driver_secret_file_path'] }}
