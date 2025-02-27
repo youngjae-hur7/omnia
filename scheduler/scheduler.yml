@@ -12,90 +12,90 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-# - name: Update Inventory with ansible_host information
-#   ansible.builtin.import_playbook: ../utils/servicetag_host_mapping.yml
-#   when: not ( hostvars['127.0.0.1']['update_inventory_executed'] | default(false) | bool )
+- name: Update Inventory with ansible_host information
+  ansible.builtin.import_playbook: ../utils/servicetag_host_mapping.yml
+  when: not ( hostvars['127.0.0.1']['update_inventory_executed'] | default(false) | bool )
 
 - name: Gather facts from all the nodes
   hosts: slurm_control_node, kube_control_plane, slurm_node, kube_node, login, slurm_dbd, etcd
 
-# - name: Validate scheduler input parameters
-#   hosts: localhost
-#   connection: local
-#   gather_facts: false
-#   tasks:
-#     - name: Validate scheduler input parameters
-#       ansible.builtin.include_role:
-#         name: cluster_validation
-#         tasks_from: validation_status_check.yml
+- name: Validate scheduler input parameters
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Validate scheduler input parameters
+      ansible.builtin.include_role:
+        name: cluster_validation
+        tasks_from: validation_status_check.yml
 
-# - name: Update Repositories/Registries on nodes
-#   ansible.builtin.import_playbook: ../utils/update_user_repo.yml
-#   when: not ( hostvars['127.0.0.1']['update_user_repo_executed'] | default(false) | bool )
+- name: Update Repositories/Registries on nodes
+  ansible.builtin.import_playbook: ../utils/update_user_repo.yml
+  when: not ( hostvars['127.0.0.1']['update_user_repo_executed'] | default(false) | bool )
 
-# - name: Prepare kube control plane for kubernetes installations
-#   hosts: kube_control_plane
-#   gather_facts: false
-#   roles:
-#     - k8s_manager
+- name: Prepare kube control plane for kubernetes installations
+  hosts: kube_control_plane
+  gather_facts: false
+  roles:
+    - k8s_manager
 
-# - name: Prepare kube control plane, kube nodes and etcd for kubernetes installations
-#   hosts: kube_control_plane, kube_node, etcd
-#   gather_facts: false
-#   any_errors_fatal: true
-#   roles:
-#     - k8s_prepare_nodes
+- name: Prepare kube control plane, kube nodes and etcd for kubernetes installations
+  hosts: kube_control_plane, kube_node, etcd
+  gather_facts: false
+  any_errors_fatal: true
+  roles:
+    - k8s_prepare_nodes
 
-# - name: Start Kubernetes Installations
-#   ansible.builtin.import_playbook: "{{ playbook_dir }}/playbooks/k8s_start_setup.yml"
+- name: Start Kubernetes Installations
+  ansible.builtin.import_playbook: "{{ playbook_dir }}/playbooks/k8s_start_setup.yml"
 
-# - name: Add nodes to kubernetes cluster
-#   ansible.builtin.import_playbook: "{{ playbook_dir }}/playbooks/k8s_add_node.yml"
+- name: Add nodes to kubernetes cluster
+  ansible.builtin.import_playbook: "{{ playbook_dir }}/playbooks/k8s_add_node.yml"
 
-# - name: Prepare habana container runtime
-#   hosts: kube_node
-#   gather_facts: false
-#   roles:
-#     - k8s_habana_container_runtime
+- name: Prepare habana container runtime
+  hosts: kube_node
+  gather_facts: false
+  roles:
+    - k8s_habana_container_runtime
 
-# - name: Install nvidia-container-toolkit on nodes with Nvidia GPU
-#   hosts: kube_control_plane, kube_node, etcd
-#   gather_facts: false
-#   roles:
-#     - k8s_nvidia_container_toolkit
+- name: Install nvidia-container-toolkit on nodes with Nvidia GPU
+  hosts: kube_control_plane, kube_node, etcd
+  gather_facts: false
+  roles:
+    - k8s_nvidia_container_toolkit
 
-# - name: Install Plugin only when one of nodes with AMD GPU
-#   hosts: kube_control_plane, kube_node, etcd
-#   gather_facts: false
-#   roles:
-#     - k8s_amd
+- name: Install Plugin only when one of nodes with AMD GPU
+  hosts: kube_control_plane, kube_node, etcd
+  gather_facts: false
+  roles:
+    - k8s_amd
 
-# - name: Prepare kube control plane and kube nodes for kubernetes services installations
-#   hosts: kube_control_plane, kube_node
-#   gather_facts: false
-#   roles:
-#     - k8s_prepare_services
+- name: Prepare kube control plane and kube nodes for kubernetes services installations
+  hosts: kube_control_plane, kube_node
+  gather_facts: false
+  roles:
+    - k8s_prepare_services
 
-# - name: Start K8s worker servers on kube control nodes
-#   hosts: kube_control_plane
-#   gather_facts: false
-#   roles:
-#     - k8s_start_services
+- name: Start K8s worker servers on kube control nodes
+  hosts: kube_control_plane
+  gather_facts: false
+  roles:
+    - k8s_start_services
 
-# - name: CSI powerscale image pulling
-#   hosts: kube_node, kube_control_plane
-#   tasks:
-#     - name: Pull images
-#       ansible.builtin.include_role:
-#         name: k8s_csi_powerscale_plugin
-#         tasks_from: csi_powerscale_image_pull.yml
-#       when: hostvars['127.0.0.1']['csi_driver_powerscale_precheck_pass'] | default(false) | bool
+- name: CSI powerscale image pulling
+  hosts: kube_node, kube_control_plane
+  tasks:
+    - name: Pull images
+      ansible.builtin.include_role:
+        name: k8s_csi_powerscale_plugin
+        tasks_from: csi_powerscale_image_pull.yml
+      when: hostvars['127.0.0.1']['csi_driver_powerscale_precheck_pass'] | default(false) | bool
 
-# - name: Install CSI powerscale plugin on kube control nodes
-#   hosts: kube_control_plane
-#   gather_facts: false
-#   roles:
-#     - k8s_csi_powerscale_plugin
+- name: Install CSI powerscale plugin on kube control nodes
+  hosts: kube_control_plane
+  gather_facts: false
+  roles:
+    - k8s_csi_powerscale_plugin
 
 - name: Install Slurm
   hosts: slurm_control_node, slurm_node, login, slurm_dbd
@@ -116,8 +116,8 @@
   roles:
     - role: slurm
 
-# - name: Compile and install the ucx and openmpi on the nfs share of compute nodes
-#   hosts: slurm_control_node, kube_control_plane
-#   gather_facts: true
-#   roles:
-#     - install_benchmarks_tools
+- name: Compile and install the ucx and openmpi on the nfs share of compute nodes
+  hosts: slurm_control_node, kube_control_plane
+  gather_facts: true
+  roles:
+    - install_benchmarks_tools
