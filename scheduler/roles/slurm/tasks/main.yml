@@ -10,7 +10,7 @@
 
 - name: Create DB tasks
   ansible.builtin.include_tasks: db.yml
-  run_once: true
+  when: inventory_hostname == db_host
 
 - name: Include common tasks
   ansible.builtin.include_tasks: common.yml
