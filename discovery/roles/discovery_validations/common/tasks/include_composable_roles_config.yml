@@ -32,7 +32,6 @@
   fetch_roles_config:
     roles_data: "{{ Roles }}"
     groups_data: "{{ Groups }}"
-    mapping_file_path: "{{ pxe_mapping_file_path }}"
     layer: "{{ layer }}"
   register: composable_roles_output
 
@@ -41,18 +40,12 @@
     roles_data: "{{ composable_roles_output.roles_data }}"
     groups_data: "{{ composable_roles_output.groups_data }}"
     roles_groups_data: "{{ composable_roles_output.roles_groups_data }}"
-    mapping_details: "{{ composable_roles_output.mapping_details }}"
     bmc_required: "{{ composable_roles_output.bmc_required }}"
     switch_required: "{{ composable_roles_output.switch_required }}"
-    group_to_roles: "{{ composable_roles_output.group_to_roles }}"
-
-- name: Show mapping details
-  ansible.builtin.debug:
-    msg: "{{ mapping_details }}"
-    verbosity: 2
+    groups_roles_info: "{{ composable_roles_output.groups_roles_info }}"
 
 - name: Display filtered group wise details
   ansible.builtin.debug:
-    msg: "{{ group_to_roles }}"
+    msg: "{{ groups_roles_info }}"
     verbosity: 2
   when: bmc_required or switch_required

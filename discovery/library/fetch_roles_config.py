@@ -19,7 +19,9 @@ from ansible.module_utils.utility import load_csv
 
 FIRST_LAYER_ROLES = {"service", "login", "compiler", "k8setcd", "k8shead", "slurmhead", "slurmdbd"}
 
-def check_switch_required(group_data):
+def check_switch_required(group_data, layer):
+    if layer == 'first':
+        return False
     switch_data = group_data.get("switch_details", {})
     if switch_data and switch_data.get("ip", '') and switch_data.get("ports", ''):
         return True
@@ -33,109 +35,43 @@ def check_bmc_required(group_data):
     else:
         return False
 
-
-def fetch_roles_groups_details(groups_data, roles_data, layer):
-    """
-    Fetches the all details for the given roles and respective groups.
-
-    Args:
-        groups_data (dict): A dictionary containing group information.
-        roles_data (dict): A dictionary containing role information.
-        layer (str): The layer of the roles.
-
-    Returns:
-        tuple: A tuple containing a boolean indicating if the bmc details are present,
-        a boolean indicating if the switch details are present, and a dictionary of all
-        roles -> groups details based on layer.
-
-    Raises:
-        Exception: If a group does not exist in the role_config.yml Groups dictionary.
-    """
+def filter_roles(groups_data, roles_data, layer):
 
     if layer == "first":
         valid_roles = set(roles_data.keys()).intersection(FIRST_LAYER_ROLES)
     else:
         valid_roles = set(roles_data.keys()) - FIRST_LAYER_ROLES
+    return valid_roles
+
+
+def roles_groups_mapping(groups_data, roles_data, layer):
+
+    valid_roles = filter_roles(groups_data, roles_data, layer)
 
     bmc_check = False
     switch_check = False
     roles_groups_data = {}
+    groups_roles_info = {}
 
     for role in valid_roles:
         for group in roles_data[role]["groups"]:
+
             if groups_data.get(group, {}):
+                groups_roles_info.setdefault(group, {}).setdefault('roles', []).append(role)
+                groups_roles_info[group].update(groups_data.get(group))
                 bmc_check = bmc_check or check_bmc_required(groups_data[group])
-                switch_check = switch_check or check_switch_required(groups_data[group])
+                switch_check = switch_check or check_switch_required(groups_data[group], layer)
                 roles_groups_data[role] = {}
                 roles_groups_data[role][group] = groups_data[group]
             else:
                 raise Exception("Group `{}` doesn't exist in roles_config.yml Groups dict".format(group))
-    return bmc_check, switch_check, roles_groups_data
 
-
-def fetch_mapping_details(groups_data, roles_data, node_df, layer):
-    """
-    Fetches the mapping details for the given groups and roles.
-
-    Args:
-        groups_data (dict): A dictionary containing group information.
-        roles_data (dict): A dictionary containing role information.
-        node_df (DataFrame): A DataFrame containing node information.
-        layer (str): The layer of the roles.
-
-    Returns:
-        list: A list of dictionaries containing the filtered node details based on layer.
-
-    """
-
-    if layer == "first":
-        valid_roles = set(FIRST_LAYER_ROLES).intersection(set(roles_data.keys()))
-    else:
-        valid_roles = set(roles_data.keys()) - FIRST_LAYER_ROLES
-
-    # Create mappings
-    group_to_roles = {}
-
-    for role_name in valid_roles:
-        for group in roles_data[role_name]["groups"]:
-            group_to_roles.setdefault(group, {}).setdefault('roles', []).append(role_name)
-            if groups_data.get(group, {}):
-                group_to_roles[group].update(groups_data.get(group))
-            else:
-                raise Exception("Group `{}` doesn't exist in roles_config.yml Groups dict".format(group))
-
-
-    # Organize node details
-    filtered_nodes = []
-    node_df = node_df[node_df['GROUP_NAME'].isin(group_to_roles.keys())]
-    for _, node in node_df.iterrows():
-        group = node["GROUP_NAME"]
-
-        if group in group_to_roles:
-            node_data = {
-                "service_tag": node["SERVICE_TAG"],
-                "hostname": node["HOSTNAME"],
-                "admin_mac": node["ADMIN_MAC"],
-                "admin_ip": node["ADMIN_IP"],
-                "bmc_ip": node["BMC_IP"],
-                "group_name": group,
-                "roles": ",".join(group_to_roles[group].get("roles")),
-                "location_id": group_to_roles[group].get("location_id", ""),
-                "resource_mgr_id": group_to_roles[group].get("resource_mgr_id", ""),
-                "parent": group_to_roles[group].get("parent", ""),
-                "bmc_details": group_to_roles[group].get("bmc_details", {}),
-                "switch_details": group_to_roles[group].get("switch_details", {}),
-                "architecture": group_to_roles[group].get("architecture", ""),
-            }
-            filtered_nodes.append(node_data)
-
-    return filtered_nodes, group_to_roles
+    return bmc_check, switch_check, roles_groups_data, groups_roles_info
 
 def main():
     module_args = dict(
         roles_data=dict(type="list", required=True),
         groups_data=dict(type="dict", required=True),
-        mapping_file_path=dict(type="str", required=True),
         layer=dict(type="str", choices=["first", "default"], required=True)
     )
 
@@ -145,12 +81,10 @@ def main():
         roles_list = module.params["roles_data"]
         groups = module.params["groups_data"]
         layer = module.params["layer"]
-        node_df = load_csv(module.params["mapping_file_path"])
         roles = {role.pop('name'): role for role in roles_list}
-        bmc_required, switch_required, roles_groups_data = fetch_roles_groups_details(groups, roles, layer)
-        mapping_details, group_to_roles = fetch_mapping_details(groups, roles, node_df, layer)
-        module.exit_json(changed=False, mapping_details=mapping_details, roles_data=roles, groups_data=groups, group_to_roles=group_to_roles,
-                            bmc_required=bmc_required, roles_groups_data=roles_groups_data, switch_required=switch_required)
+        need_bmc, need_switch, roles_groups_data, groups_roles_info = roles_groups_mapping(groups, roles, layer)
+        module.exit_json(changed=False, roles_data=roles, groups_data=groups, groups_roles_info=groups_roles_info,
+                            bmc_required=need_bmc, roles_groups_data=roles_groups_data, switch_required=need_switch)
     except Exception as e:
         module.fail_json(msg=str(e))
 
