@@ -90,7 +90,10 @@
             "items": {
               "type": "string",
               "pattern": "^grp\\d{1,2}$"
-            }
+            },
+            "minItems": 1,
+            "uniqueItems": true,
+            "maxItems": 2
           }
         },
         "required": [

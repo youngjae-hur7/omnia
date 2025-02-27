@@ -90,12 +90,14 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
 
         for role in roles:
             # Check role-group association, all roles must have a group
-            if len(role[ROLE_GROUPS]) == 0:
+            if role[ROLE_GROUPS] and len(role[ROLE_GROUPS]) == 0:
                 errors.append(role[NAME], create_error_msg("Role " + role[NAME] + " must be associated with a group.", en_us_validation_msg.min_number_of_groups_msg))
             if role[NAME] == SLURMWORKER or role[NAME] == K8WORKER:
                 for group in role[ROLE_GROUPS]:
                     set_resource_mgr_id.add(group)
             
+            if not role[ROLE_GROUPS]:
+                role[ROLE_GROUPS] = []
             # Validate each group and its configs under each role
             for group in role[ROLE_GROUPS]:
                 roles_per_group[group] = roles_per_group.get(group, 0) + 1
