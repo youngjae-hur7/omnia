@@ -28,3 +28,9 @@ __slurm_default_config:
   CryptoType: crypto/munge
   SlurmctldTimeout: 120
   SlurmdTimeout: 300
+__slurm_dbd_default_config:
+  AuthType: auth/munge
+  LogFile: /var/log/slurmdbd.log
+  PidFile: /var/run/slurmdbd.pid
+  SlurmUser: "{{ slurm_user }}"
+  StorageType: accounting_storage/mysql

@@ -11,6 +11,20 @@
     name: munge
     state: restarted
 
+- name: Reload slurmdbd
+  ansible.builtin.systemd_service:
+    name: slurmdbd
+    state: reloaded
+    daemon_reload: true
+    enabled: true
+  when: restart_slurm_services and ('slurm_dbd' in group_names)
+
+- name: Restart slurmdbd
+  ansible.builtin.systemd_service:
+    name: slurmdbd
+    state: restarted
+  when: restart_slurm_services and ('slurm_dbd' in group_names)
+
 - name: Reload slurmctld
   ansible.builtin.systemd_service:
     name: slurmctld

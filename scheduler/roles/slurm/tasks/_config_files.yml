@@ -3,6 +3,7 @@
   ansible.builtin.set_fact:
     slurm_conf_dict: "{{ __slurm_default_config | ansible.builtin.combine(slurm_config | default({})) }}"
     cgroup_conf_dict: "{{ __cgroup_default_config | ansible.builtin.combine(cgroup | default({})) }}"
+    slurm_dbd_conf_dict: "{{ __slurm_dbd_default_config | ansible.builtin.combine(slurm_dbd_config | default({})) }}"
 
 - name: Append share path if NFS
   ansible.builtin.set_fact:
@@ -19,6 +20,22 @@
     - "{{ slurm_share_prefix }}{{ slurm_config_dir }}"
     - "{{ slurm_conf_dict['StateSaveLocation'] }}"
     - "{{ slurm_config_dir }}"
+
+# TODO: Can't use run_once and when condition on same task,
+# maybe should move to seperate file with a when condtion for inlcude task
+- name: Create slurmdbd.conf
+  ansible.builtin.template: # Create dest directory before
+    src: "dbd.conf.j2"
+    dest: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurmdbd.conf"
+    owner: "{{ slurm_user }}"
+    group: "{{ slurm_user }}"
+    mode: "{{ slurm_dbd_mode }}"
+  # run_once: true
+  when: '"slurm_dbd" in group_names'
+  notify:
+    - Restart slurmctld
+    - Restart slurmdbd
+    - Restart slurmd
 
 - name: Create slurm.conf
   ansible.builtin.template: # Create dest directory before
@@ -52,6 +69,18 @@
     value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
     no_extra_spaces: true
     mode: u=rw,g=r,o=r
+
+- name: Local copy slurmdbd.conf /etc/slurm/conf # parallel writes
+  ansible.builtin.template: # Local copy #FAILSAFE
+    src: "dbd.conf.j2"
+    dest: "{{ slurm_config_dir }}/slurmdbd.conf"
+    owner: "{{ slurm_user }}"
+    group: "{{ slurm_user }}"
+    mode: "{{ slurm_dbd_mode }}"
+  ignore_errors: true
+  notify:
+    - Restart slurmctld
+    - Restart slurmdbd
 
 - name: All other host configs # TODO: failsafe
   ansible.builtin.template:

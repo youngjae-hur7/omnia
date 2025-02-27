@@ -10,15 +10,17 @@ share_path: "{{ share_mounted_path }}"
 slurm_share_prefix: ""
 slurm_config_dir: /etc/slurm
 slurm_dir_name: slurm
+slurm_dbd_port: 6819
 slurm_munge_key_path: "{{ share_path }}/{{ slurm_dir_name }}/munge.key"
 slurm_partition_name: normal
 slurm_ctld_parameters: []
 partitions: {}
-_clean_before_install: false
+_clean_before_install: true
 conf_file_mode: "0644"
 slurm_mode: "0644"
 munge_mode: "0400"
 common_mode: "0755"
+slurm_dbd_mode: "0600"
 common_packages:
   RedHat:
     - firewalld
@@ -35,6 +37,9 @@ slurm_compute_packages:
 slurm_login_packages:
   RedHat:
     - slurm
+slurm_dbd_packages:
+  RedHat:
+    - slurm-slurmdbd
 
 # messages
 inv_validation_fail_msg: "Failed. slurm_control_node and slurm_node groups should be defined in inventory and should have at least one node provided."

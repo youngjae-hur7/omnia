@@ -6,6 +6,7 @@
     state: stopped
   loop:
     - slurmctld
+    - slurmdbd
     - slurmd
     - munge
   ignore_errors: true
@@ -16,6 +17,7 @@
     path: "{{ item }}"
     state: absent
   loop:
+    - "/var/spool/state"
     - "{{ share_path }}/{{ slurm_dir_name }}"
     - "{{ slurm_config_dir }}"
     - "/etc/munge/munge.key"
@@ -39,6 +41,7 @@
     state: absent
   loop:
     - slurm-slurmctld
+    - slurm-slurmdbd
     - slurm-slurmd
     - munge
 

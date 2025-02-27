@@ -1,0 +1,46 @@
+---
+- name: Install DBD Packages
+  ansible.builtin.debug:
+    msg: "Welcome to DBD {{ansible_hostname}} {{ slurm_dbd_packages[ansible_os_family] }}"
+
+- name: Install DBD packages
+  ansible.builtin.package:
+    name: "{{ slurm_dbd_packages[ansible_os_family] }}"
+    state: present
+
+- name: Create files - {{ item }} # TODO: file required?
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: touch
+    owner: "{{ slurm_user }}"
+    group: "{{ slurm_user_group }}"
+    mode: 644
+  loop:
+    - "{{ slurm_dbd_conf_dict['LogFile'] }}"
+    - "{{ slurm_dbd_conf_dict['PidFile'] }}"
+
+# Port Config
+- name: Enable SlurmdbdPort
+  ansible.posix.firewalld:
+    port: "{{ slurm_dbd_port }}/tcp"
+    permanent: true
+    state: enabled
+    immediate: true
+
+# Edit service
+- name: Enable the service
+  ansible.builtin.service:
+    name: slurmdbd
+    enabled: true
+  register: ctld_service
+
+- name: Edit the service
+  community.general.ini_file:
+    path: "{{ ctld_service['status']['FragmentPath'] | default('/usr/lib/systemd/system/slurmdbd.service') }}"
+    section: Unit
+    option: ConditionPathExists
+    value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurmdbd.conf"
+    no_extra_spaces: true
+  notify:
+    - Reload slurmdbd
+    - Restart slurmdbd

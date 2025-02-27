@@ -14,6 +14,15 @@
     state: started
     enabled: true
 
+# Port Config
+- name: Enable DB Port
+  ansible.posix.firewalld:
+    port: "{{ db_port }}/tcp"
+    permanent: true
+    state: enabled
+    immediate: true
+  when: inventory_hostname == db_host
+
 - name: Create user and group
   ansible.builtin.include_tasks: _user.yml
 

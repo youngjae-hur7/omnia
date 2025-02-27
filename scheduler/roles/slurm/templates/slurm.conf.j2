@@ -15,6 +15,13 @@ SlurmctldParameters={{ slurm_ctld_parameters | join(',') }}
 {% endif %}
 {% endfor %}
 
+# SLURM DBD
+{% if 'slurm_dbd' in groups %}
+AccountingStorageHost={{ groups['slurm_dbd'][0] }}
+AccountingStoragePort={{ slurm_dbd_port }}
+AccountingStorageType=accounting_storage/slurmdbd
+{% endif %}
+
 # COMPUTE NODES
 NodeName=DEFAULT State=UNKNOWN
 {% if 'slurm_node' in groups %}
