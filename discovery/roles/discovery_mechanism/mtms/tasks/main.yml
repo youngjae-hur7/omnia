@@ -13,23 +13,24 @@
 # limitations under the License.
 ---
 
-#- name: Update IPMI table and create genesis images
-#  when: discovery_mech_bmc
-#  block:
-#    - name: Perform operations on discovery range
-#      when: bmc_static_status
-#      block:
-#        - name: Perform bmc discover on discovery range
-#          ansible.builtin.include_tasks: bmc_discover_ranges.yml
-#
-#        - name: Create database for discovery bmc mode
-#          ansible.builtin.include_tasks: update_db_static.yml
-#
-#       - name: Update node objects for static bmc mode
-#         ansible.builtin.include_tasks: update_node_obj.yml
-#
-#        - name: Configure dhcp
-#          ansible.builtin.include_tasks: "{{ role_path }}/../common/tasks/configure_dhcp.yml"
+- name: Update IPMI table and create genesis images
+  when: bmc_required
+  block:
+    - name: Perform operations on discovery range for first_layer
+      when: '"first_layer" in ansible_run_tags'
+      loop: "{{ group_to_roles | dict2items }}"
+      block:
+        - name: Perform bmc discover on discovery range
+          ansible.builtin.include_tasks: bmc_discover_ranges.yml
+
+        # - name: Create database for discovery bmc mode
+        #   ansible.builtin.include_tasks: update_db_static.yml
+
+        # - name: Update node objects for static bmc mode
+        #   ansible.builtin.include_tasks: update_node_obj.yml
+
+    - name: Configure dhcp
+      ansible.builtin.include_tasks: "{{ role_path }}/../common/tasks/configure_dhcp.yml"
 
 - name: Perform operations for dynamic range
   when:
