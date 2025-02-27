@@ -16,8 +16,8 @@
 - name: Perform bmc discover on static range
   ansible.builtin.include_tasks: bmc_discover_ranges.yml
 
-# - name: Create database for discovery bmc mode
-#   ansible.builtin.include_tasks: update_db_static.yml
+- name: Create database for discovery bmc mode
+  ansible.builtin.include_tasks: update_db_static.yml
 
-# - name: Update node objects for static bmc mode
-#   ansible.builtin.include_tasks: update_node_obj.yml
+- name: Update node objects for static bmc mode
+  ansible.builtin.include_tasks: update_node_obj.yml

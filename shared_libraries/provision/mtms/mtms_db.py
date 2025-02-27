@@ -27,7 +27,7 @@ import omniadb_connection
 bmc_static_range = sys.argv[1]
 bmc_static_subnet = sys.argv[2]
 static_stanza_path = os.path.abspath(sys.argv[3])
-node_name = sys.argv[4]
+node_name = "node" + sys.argv[4]
 domain_name = sys.argv[5]
 admin_static_range = sys.argv[6]
 admin_subnet = sys.argv[7]
