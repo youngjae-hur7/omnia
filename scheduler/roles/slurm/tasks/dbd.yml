@@ -1,8 +1,4 @@
 ---
-- name: Install DBD Packages
-  ansible.builtin.debug:
-    msg: "Welcome to DBD {{ansible_hostname}} {{ slurm_dbd_packages[ansible_os_family] }}"
-
 - name: Install DBD packages
   ansible.builtin.package:
     name: "{{ slurm_dbd_packages[ansible_os_family] }}"
@@ -14,7 +10,7 @@
     state: touch
     owner: "{{ slurm_user }}"
     group: "{{ slurm_user_group }}"
-    mode: 644
+    mode: "{{ slurm_mode }}"
   loop:
     - "{{ slurm_dbd_conf_dict['LogFile'] }}"
     - "{{ slurm_dbd_conf_dict['PidFile'] }}"

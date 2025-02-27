@@ -60,6 +60,7 @@
     - "{{ slurm_config_dir }}/cgroup.conf"
   notify:
     - Restart slurmctld
+    - Restart slurmdbd
 
 # Environment Var SLURM_CONF
 - name: Set env variable

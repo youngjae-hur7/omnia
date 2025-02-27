@@ -11,6 +11,16 @@
     name: munge
     state: restarted
 
+- name: Restart mysqld
+  ansible.builtin.systemd_service:
+    name: mysqld
+    state: restarted
+
+- name: Restart mariadb
+  ansible.builtin.systemd_service:
+    name: mariadb
+    state: restarted
+
 - name: Reload slurmdbd
   ansible.builtin.systemd_service:
     name: slurmdbd

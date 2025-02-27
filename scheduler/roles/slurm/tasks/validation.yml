@@ -1,5 +1,5 @@
 ---
-- name: Slurm control and node group to contain atleast 1 node
+- name: Slurm control and node group to contain at least 1 node
   ansible.builtin.assert:
     that:
       - "'slurm_control_node' in groups"
@@ -20,3 +20,7 @@
     that:
       - groups['slurm_control_node'] | difference(ansible_play_hosts) | length | int == 0
     fail_msg: "All control nodes are not reachable."
+
+# TODO: Add validation for slurmdbd inputs
+
+# TODO: Add validation for db inputs

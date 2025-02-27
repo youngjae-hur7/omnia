@@ -31,6 +31,18 @@ ansible_config_file_path: "/etc/ansible"
 # The password must not contain -,\, ',"
 mariadb_password: "password"
 
+# Host and port of the db.
+db_host: hn2
+db_port: 3306
+
+# Username and password that the slurmdbd user will use
+# to access the db.
+db_password: password
+db_username: slurm
+
+# Type of db to be used. Options are mysql or mariadb.
+db_type: mysql
+
 # This variable accepts whether slurm installation is supported in configless mode or slurm in nfs
 # Default value is "configless"
 # If the value is "nfs_share", then share_path has to be mentioned

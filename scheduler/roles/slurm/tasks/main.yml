@@ -8,6 +8,10 @@
   ansible.builtin.include_tasks: validation.yml
   run_once: true
 
+- name: Create DB tasks
+  ansible.builtin.include_tasks: db.yml
+  run_once: true
+
 - name: Include common tasks
   ansible.builtin.include_tasks: common.yml
 
@@ -19,7 +23,7 @@
   ansible.builtin.include_tasks: compute.yml
   when: '"slurm_node" in group_names'
 
-- name: Include DB installation tasks
+- name: Include slurm DBD installation tasks
   ansible.builtin.include_tasks: dbd.yml
   when: '"slurm_dbd" in group_names'
 

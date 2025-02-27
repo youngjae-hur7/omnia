@@ -1,0 +1,48 @@
+--- #db.yml TODO: Add ansible collection for mysql to omnia core list
+# Needed?
+# - name: Sync time
+#   ansible.builtin.include_tasks: time_sync.yml
+
+- name: Install db packages
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present 
+  loop:
+    - "{{ db_packages[ansible_os_family]['common'] }}"
+    - "{{ db_packages[ansible_os_family][db_type] }}"
+
+# Port Config
+- name: Enable db port
+  ansible.posix.firewalld:
+    port: "{{ db_port }}/tcp"
+    permanent: true
+    state: enabled
+    immediate: true
+
+- name: Enable and start the mysql service
+  ansible.builtin.service:
+    name: mysqld
+    enabled: true
+    state: started
+  register: ctld_service
+  when: db_type == 'mysql'
+
+- name: Enable and start the mariadb service
+  ansible.builtin.service:
+    name: mariadb
+    enabled: true
+    state: started
+  register: ctld_service
+  when: db_type == 'mariadb'
+
+- name: Add db user # TODO: Modify to account for slurmdbd HA
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: ""
+    name: "{{ db_username }}"
+    password: "{{ db_password }}"
+    host: "{{ groups['slurm_dbd'][0] }}"
+    priv: '*.*:ALL,GRANT'
+    state: present
+
+# TODO: Enable port 3306 in the mysqul.cnf file?
