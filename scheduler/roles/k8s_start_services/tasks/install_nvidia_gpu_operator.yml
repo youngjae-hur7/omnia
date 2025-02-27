@@ -63,7 +63,7 @@
     - name: GPU Operators deploy
       command: >
         helm upgrade --cleanup-on-fail \
-        --install {{ gpu_operators_namespace }} {{ nvidia_gpu_operator_path }}/gpu-operator-{{ hostvars['localhost']['nvidia_gpu_operator_version'] }}/deployments/gpu-operator \
+        --install {{ gpu_operators_namespace }} {{ nvidia_gpu_operator_path }}/gpu-operator \
         --values {{ nvidia_gpu_operator_config_file_path }} \
         --namespace {{ gpu_operators_namespace }} \
         --create-namespace \
@@ -82,7 +82,7 @@
     - name: GPU Operators deploy
       command: >
         helm upgrade --cleanup-on-fail \
-        --install {{ gpu_operators_namespace }} {{ nvidia_gpu_operator_path }}/gpu-operator-{{ hostvars['localhost']['nvidia_gpu_operator_version'] }}/deployments/gpu-operator \
+        --install {{ gpu_operators_namespace }} {{ nvidia_gpu_operator_path }}/gpu-operator \
         --namespace {{ gpu_operators_namespace }} \
         --create-namespace \
         --values {{ nvidia_gpu_operator_config_file_path }} \
