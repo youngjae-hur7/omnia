@@ -84,7 +84,7 @@ def main():
         roles = {role.pop('name'): role for role in roles_list}
         need_bmc, need_switch, roles_groups_data, groups_roles_info = roles_groups_mapping(groups, roles, layer)
         module.exit_json(changed=False, roles_data=roles, groups_data=groups, groups_roles_info=groups_roles_info,
-                            bmc_required=need_bmc, roles_groups_data=roles_groups_data, switch_required=need_switch)
+                            bmc_static_status=need_bmc, roles_groups_data=roles_groups_data, switch_status=need_switch)
     except Exception as e:
         module.fail_json(msg=str(e))
 

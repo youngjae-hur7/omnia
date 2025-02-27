@@ -40,8 +40,8 @@
     roles_data: "{{ composable_roles_output.roles_data }}"
     groups_data: "{{ composable_roles_output.groups_data }}"
     roles_groups_data: "{{ composable_roles_output.roles_groups_data }}"
-    bmc_required: "{{ composable_roles_output.bmc_required }}"
-    switch_required: "{{ composable_roles_output.switch_required }}"
+    bmc_static_status: "{{ composable_roles_output.bmc_static_status }}"
+    switch_status: "{{ composable_roles_output.switch_status }}"
     groups_roles_info: "{{ composable_roles_output.groups_roles_info }}"
 
 - name: Display filtered group wise details
