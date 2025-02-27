@@ -27,7 +27,7 @@ import omniadb_connection
 bmc_static_range = sys.argv[1]
 bmc_static_subnet = sys.argv[2]
 static_stanza_path = os.path.abspath(sys.argv[3])
-node_name = "node" + sys.argv[4]
+node_name = sys.argv[4] + "node"
 domain_name = sys.argv[5]
 admin_static_range = sys.argv[6]
 admin_subnet = sys.argv[7]
@@ -89,7 +89,7 @@ def update_db():
                 temp = cursor.fetchone()
                 if temp is None:
                     temp = [0]
-                count = '%05d' % (int(temp[0]) + 1)
+                count = '%03d' % (int(temp[0]) + 1)
                 node = node_name + str(count)
                 host_name = node_name + str(count) + "." + domain_name
                 modify_network_details.update_stanza_file(serial[key].lower(), node, static_stanza_path)
