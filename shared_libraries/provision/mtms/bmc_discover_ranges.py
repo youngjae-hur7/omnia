@@ -188,8 +188,11 @@ def run_bmc_discover(final_range, stanza_path, bmc_mode):
         command = ["/opt/xcat/bin/bmcdiscover", "--range", final_range, "-z", "-w"]
     try:
         node_objs = subprocess.run(command, capture_output=True, timeout=600, check=True)
-        with open(stanza_path, 'r+') as f:
-            f.write(node_objs.stdout.decode())
+        if os.path.exists(stanza_path):
+            with open(stanza_path, 'r+') as f:
+                f.write(node_objs.stdout.decode())
+        else:
+            print(f"File {stanza_path} does not exist. Unable to write to it.")
     except subprocess.TimeoutExpired:
         print(
             "The discovery did not finish within the timeout period.Please provide a smaller range or a correct range.")

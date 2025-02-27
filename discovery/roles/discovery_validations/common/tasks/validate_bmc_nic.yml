@@ -140,7 +140,7 @@
                 argv:
                   - "{{ python_version }}"
                   - "{{ ip_range_netmask_script_script }}"
-                  - "{{ network_data.bmc_network.bmc_conversion_static_start_range }}"
+                  - "{{ network_data.bmc_network.dynamic_conversion_static_range }}"
                   - "{{ network_data.bmc_network.netmask_bits }}"
               changed_when: false
               register: static_range_check

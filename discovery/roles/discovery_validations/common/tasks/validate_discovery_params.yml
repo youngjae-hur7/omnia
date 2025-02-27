@@ -22,8 +22,8 @@
 - name: Validate the switch based related parameters
   ansible.builtin.include_tasks: "{{ role_path }}/../switch_based/tasks/main.yml"
 
-- name: Validate if all discovery mechanisms invalid
-  ansible.builtin.assert:
-    that:
-      - discovery_mech_bmc or discovery_mech_mapping or discovery_mech_switch_based
-    fail_msg: "{{ discovery_mechanism_fail_msg }}"
+# - name: Validate if all discovery mechanisms invalid
+#   ansible.builtin.assert:
+#     that:
+#       - discovery_mech_bmc or discovery_mech_mapping or discovery_mech_switch_based
+#     fail_msg: "{{ discovery_mechanism_fail_msg }}"

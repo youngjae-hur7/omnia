@@ -41,8 +41,6 @@
       - '"node-" not in node_name'
     quiet: true
     fail_msg: "{{ nodename_chars_fail_msg }}"
-  when:
-    - discovery_mech_bmc or discovery_mech_switch_based
 
 - name: Validate default lease time
   ansible.builtin.assert:

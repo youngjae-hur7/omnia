@@ -37,12 +37,12 @@
   ansible.builtin.pause:
     seconds: "{{ warning_wait_time }}"
     prompt: "{{ bmc_discovery_warning_msg }}"
-  when: discovery_mech_bmc
+  when: bmc_required
 
 - name: Set discovery_mech_switch_based to true
   ansible.builtin.set_fact:
     discovery_mech_switch_based: true
-    discovery_mech_bmc: false
+    bmc_required: false
   when:
     - bmc_details_status
     - switch_details_status
