@@ -21,6 +21,26 @@
     - "{{ slurm_conf_dict['StateSaveLocation'] }}"
     - "{{ slurm_config_dir }}"
 
+- name: Is db_host defined
+  ansible.builtin.set_fact:
+    db_host: "{{ groups['slurm_dbd'][0] }}"
+  when: db_host is not defined and '"slurm_node" in group_names'
+
+- name: Is db_port defined
+  ansible.builtin.set_fact:
+    db_port: "{{ db_port_default }}"
+  when: db_port is not defined and '"slurm_node" in group_names'
+
+- name: Set db_host
+  ansible.builtin.set_fact:
+    db_host: "{{ groups['slurm_dbd'][0] }}"
+  when: db_host == None or db_host == "" and '"slurm_node" in group_names'
+
+- name: Set db_port
+  ansible.builtin.set_fact:
+    db_port: "{{ db_port_default }}"
+  when: db_port == None and '"slurm_node" in group_names'
+
 # TODO: Can't use run_once and when condition on same task,
 # maybe should move to seperate file with a when condtion for inlcude task
 - name: Create slurmdbd.conf

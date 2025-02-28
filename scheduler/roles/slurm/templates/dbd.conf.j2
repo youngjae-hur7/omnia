@@ -6,8 +6,8 @@
 {% endif %}
 {% endfor %}
 
-# USER DEFINED SLURM DBD INFO
 {% if 'slurm_dbd' in groups %}
+# USER DEFINED SLURM DBD INFO
 DbdHost={{ groups['slurm_dbd'][0] }}
 DbdPort={{ slurm_dbd_port }}
 {% endif %}

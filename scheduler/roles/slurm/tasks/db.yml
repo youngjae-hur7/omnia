@@ -8,7 +8,6 @@
     name: "{{ item }}"
     state: present 
   loop:
-    - "{{ db_packages[ansible_os_family]['common'] }}"
     - "{{ db_packages[ansible_os_family][db_type] }}"
 
 # Port Config
@@ -35,13 +34,23 @@
   register: ctld_service
   when: db_type == 'mariadb'
 
-- name: Add db user # TODO: Modify to account for slurmdbd HA
+- name: Add db user - shortname # TODO: Modify to account for slurmdbd HA
   community.mysql.mysql_user:
     login_user: root
     login_password: ""
     name: "{{ db_username }}"
     password: "{{ db_password }}"
     host: "{{ groups['slurm_dbd'][0] }}"
+    priv: '*.*:ALL,GRANT'
+    state: present
+
+- name: Add db user - FQDN # TODO: Modify to account for slurmdbd HA
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: ""
+    name: "{{ db_username }}"
+    password: "{{ db_password }}"
+    host: "{{ groups['slurm_dbd'][0] }}.%"
     priv: '*.*:ALL,GRANT'
     state: present
 

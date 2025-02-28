@@ -11,6 +11,9 @@ slurm_share_prefix: ""
 slurm_config_dir: /etc/slurm
 slurm_dir_name: slurm
 slurm_dbd_port: 6819
+db_port_default: 3306
+# slurm_db_username: 
+# slurm_db_password: 
 slurm_munge_key_path: "{{ share_path }}/{{ slurm_dir_name }}/munge.key"
 slurm_partition_name: normal
 slurm_ctld_parameters: []
@@ -42,11 +45,11 @@ slurm_dbd_packages:
     - slurm-slurmdbd
 db_packages:
   RedHat:
-    common:
-      - python3-PyMySQL
     mysql:
+      - python3-PyMySQL
       - mysql-server
     mariadb:
+      - python3-PyMySQL
       - mariadb-server
 
 # messages

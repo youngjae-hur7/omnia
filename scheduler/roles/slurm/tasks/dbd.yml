@@ -1,4 +1,31 @@
 ---
+- name: Is db_host defined
+  ansible.builtin.set_fact:
+    db_host: "{{ groups['slurm_dbd'][0] }}"
+  when: db_host is not defined and '"slurm_node" in group_names'
+
+- name: Is db_port defined
+  ansible.builtin.set_fact:
+    db_port: "{{ db_port_default }}"
+  when: db_port is not defined and '"slurm_node" in group_names'
+
+- name: Set db_host
+  ansible.builtin.set_fact:
+    db_host: "{{ groups['slurm_dbd'][0] }}"
+  when: db_host == None or db_host == "" and '"slurm_node" in group_names'
+
+- name: Set db_port
+  ansible.builtin.set_fact:
+    db_port: "{{ db_port_default }}"
+  when: db_port == None and '"slurm_node" in group_names'
+
+- name: Create DB tasks
+  ansible.builtin.include_tasks: db.yml
+  args:
+    apply:
+        delegate_to: "{{ db_host }}"
+  run_once: true
+
 - name: Install DBD packages
   ansible.builtin.package:
     name: "{{ slurm_dbd_packages[ansible_os_family] }}"
