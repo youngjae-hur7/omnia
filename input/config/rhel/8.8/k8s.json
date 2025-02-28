@@ -88,9 +88,9 @@
       "url": "https://raw.githubusercontent.com/ROCm/k8s-device-plugin/r1.16/k8s-ds-amdgpu-dp.yaml"
     },
     {
-      "package": "mpi-operator-v0.4.0",
+      "package": "mpi-operator-v0.6.0",
       "type": "manifest",
-      "url": "https://raw.githubusercontent.com/kubeflow/mpi-operator/v0.4.0/deploy/v2beta1/mpi-operator.yaml"
+      "url": "https://raw.githubusercontent.com/kubeflow/mpi-operator/v0.6.0/deploy/v2beta1/mpi-operator.yaml"
     },
     {
       "package": "xilinx-device-plugin",
@@ -219,7 +219,7 @@
     },
     {
       "package": "docker.io/mpioperator/mpi-operator",
-      "tag": "master",
+      "tag": "0.6.0",
       "type": "image"
     },
     {

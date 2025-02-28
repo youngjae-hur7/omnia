@@ -94,9 +94,9 @@
       "url": "https://vault.habana.ai/artifactory/docker-k8s-device-plugin/habana-k8s-device-plugin.yaml"
     },
     {
-      "package": "mpi-operator-v0.5.0",
+      "package": "mpi-operator-v0.6.0",
       "type": "manifest",
-      "url": "https://raw.githubusercontent.com/kubeflow/mpi-operator/v0.5.0/deploy/v2beta1/mpi-operator.yaml"
+      "url": "https://raw.githubusercontent.com/kubeflow/mpi-operator/v0.6.0/deploy/v2beta1/mpi-operator.yaml"
     },
     {
       "package": "xilinx-device-plugin",
@@ -225,7 +225,7 @@
     },
     {
       "package": "docker.io/mpioperator/mpi-operator",
-      "tag": "0.5.0",
+      "tag": "0.6.0",
       "type": "image"
     },
     {
