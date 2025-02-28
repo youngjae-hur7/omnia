@@ -10,15 +10,6 @@ Edit the ``input/provision_config.yml``, ``input/provision_config.yml``, and ``i
 [Optional] Additional configurations handled by the provision tool
 -------------------------------------------------------------------------
 
-**Using multiple versions of a given OS**
-
-Omnia now supports deploying different versions of the same OS. With each run of ``discovery_provision.yml``, a new deployable OS image is created with a distinct type depending on the values provided in ``input/software_config.json``. Supported RHEL/Rocky Linux OS's are:
-
-    * RHEL 8.6, 8.7, 8.8
-    * Rocky Linux 8.6, 8.7, 8.8
-
-.. note:: By default, Omnia deploys the minimal version of the Rocky Linux OS. But in order to utilize the multiple version feature, the user must provide the full (DVD) version of the Rocky Linux OS.
-
 **Disk partitioning**
 
     Omnia now allows for customization of disk partitions applied to remote servers. The disk partition ``desired_capacity`` has to be provided in MB. Valid ``mount_point`` values accepted for disk partition are  ``/var``, ``/tmp``, ``/usr``, ``swap``. The default partition size provided for RHEL/Rocky Linux is /boot: 1024MB, /boot/efi: 256MB and remaining space to / partition. Default partition size provided for Ubuntu is /boot: 2148MB, /boot/efi: 1124MB and remaining space to / partition. Values are accepted in the form of JSON list such as:
