@@ -21,10 +21,15 @@
   ansible.builtin.file:
     path: "{{ share_path }}/{{ slurm_dir_name }}"
     state: directory
-    mode: u=rw,g=r,o=r
+    owner: root
+    group: root
+    mode: "{{ common_mode }}"
 
 - name: Install and configure Munge
   ansible.builtin.include_tasks: _munge.yml
 
-- name: Install configs on all
-  ansible.builtin.include_tasks: _config_files.yml
+- name: Slurm dict ops
+  ansible.builtin.set_fact:
+    slurm_conf_dict: "{{ __slurm_default_config | ansible.builtin.combine(slurm_config | default({})) }}"
+    cgroup_conf_dict: "{{ __cgroup_default_config | ansible.builtin.combine(cgroup | default({})) }}"
+    slurm_dbd_conf_dict: "{{ __slurm_dbd_default_config | ansible.builtin.combine(slurm_dbd_config | default({})) }}"

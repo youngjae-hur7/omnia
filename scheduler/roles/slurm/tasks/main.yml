@@ -1,15 +1,14 @@
 ---
 # tasks file for slurm
-- name: Include common tasks
-  ansible.builtin.include_tasks: cleanall.yml
-  when: _clean_before_install
-
 - name: Validate inventory
   ansible.builtin.include_tasks: validation.yml
   run_once: true
 
 - name: Include common tasks
   ansible.builtin.include_tasks: common.yml
+
+- name: Install configs on all
+  ansible.builtin.include_tasks: _config_files.yml
 
 - name: Include controller installation tasks
   ansible.builtin.include_tasks: controller.yml

@@ -10,3 +10,4 @@
     comment: Slurm User Account
     uid: "{{ slurm_uid }}"
     group: slurm
+    create_home: false # TODO: if share path is /home this is needed
