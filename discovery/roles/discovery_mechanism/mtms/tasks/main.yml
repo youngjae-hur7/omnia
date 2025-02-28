@@ -30,7 +30,6 @@
 - name: Perform operations for dynamic range
   when:
     - discovery_mech_dynamic_bmc
-    - '"first_layer" not in ansible_run_tags'
   block:
     - name: Before starting dynamic discovery wait for "{{ dhcp_timeout }}"
       ansible.builtin.pause:

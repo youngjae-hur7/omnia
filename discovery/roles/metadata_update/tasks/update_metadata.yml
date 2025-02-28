@@ -142,13 +142,29 @@
         state: present
         line: "md_bmc_nic_subnet: {{ hostvars['omnia_provision']['bmc_nic_subnet'] }}"
 
+- name: Update md_discovery_mech_dynamic_bmc
+  ansible.builtin.lineinfile:
+    path: "{{ meta_path }}"
+    regexp: '^md_discovery_mech_dynamic_bmc:(.*)$'
+    insertafter: "EOF"
+    state: present
+    line: "md_discovery_mech_dynamic_bmc: {{ hostvars['omnia_provision']['discovery_mech_dynamic_bmc'] }}"
+
+- name: Update md_discovery_mech_static_bmc
+  ansible.builtin.lineinfile:
+    path: "{{ meta_path }}"
+    regexp: '^md_discovery_mech_static_bmc:(.*)$'
+    insertafter: "EOF"
+    state: present
+    line: "md_discovery_mech_static_bmc: {{ hostvars['omnia_provision']['bmc_static_status'] }}"
+
 - name: Update md_discovery_mech_switch_based
   ansible.builtin.lineinfile:
     path: "{{ meta_path }}"
     regexp: '^md_discovery_mech_switch_based:(.*)$'
     insertafter: "EOF"
     state: present
-    line: "md_discovery_mech_switch_based: {{ hostvars['omnia_provision']['discovery_mech_switch_based'] }}"
+    line: "md_discovery_mech_switch_based: {{ hostvars['omnia_provision']['switch_status'] }}"
 
 - name: Update installed_version
   ansible.builtin.lineinfile:
