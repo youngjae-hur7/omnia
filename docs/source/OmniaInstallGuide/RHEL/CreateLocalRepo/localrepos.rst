@@ -63,7 +63,7 @@ Configuring specific local repositories
             {"name": "ofed", "version": "24.01-0.3.3.1"},
 
 
-    For a list of repositories (and their types) configured for OFED, view the ``input/config/<cluster_os_type>/<cluster_os_version>/ofed.json`` file. To customize your OFED installation, update the file.:
+    For a list of repositories (and their types) configured for OFED, view the ``input/config/<cluster_os_type>/<cluster_os_version>/ofed.json`` file. To customize your OFED installation, update the file.
 
     For RHEL or Rocky Linux: ::
 
