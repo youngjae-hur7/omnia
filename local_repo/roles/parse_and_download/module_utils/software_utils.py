@@ -70,6 +70,27 @@ def load_yaml(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         return yaml.safe_load(file)
 
+def validate_repo_mappings(yaml_data, json_data):
+    valid_repos = [repo["name"] for repo in yaml_data.get("omnia_repo_url_rhel", [])]
+    valid_repos.extend(['baseos' , 'appstream', 'codeready-builder'])
+    data = load_json(json_data)
+
+    errors = []
+    for section, section_data in data.items():
+        if isinstance(section_data, dict):
+            for cluster_name, cluster_data in section_data.items():
+                for package in cluster_data:
+                    if package.get("type") == 'rpm':
+                        repo_name = package.get("repo_name")
+                        if repo_name not in valid_repos:
+                            error_msg = (
+                                f"Error: Repository '{repo_name}' for package '{package['package']}' "
+                                f"in subgroup '{section}' is not found in local_repo_config.yml"
+                            )
+                            errors.append(error_msg)
+    return errors
+
+
 def get_json_file_path(software_name, cluster_os_type, cluster_os_version, user_json_path):
     """
     Generate the file path for a JSON file based on the provided software name, cluster OS type, cluster OS version, and user JSON path.

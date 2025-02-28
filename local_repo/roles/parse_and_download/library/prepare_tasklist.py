@@ -18,6 +18,7 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.standard_logger import setup_standard_logger
 from datetime import datetime
 from ansible.module_utils.software_utils import (
+    validate_repo_mappings,
     get_software_names,
     check_csv_existence,
     get_failed_software,
@@ -112,6 +113,14 @@ def main():
             json_path = get_json_file_path(software, cluster_os_type, cluster_os_version, user_json_file)
             csv_path = get_csv_file_path(software, log_dir)
             logger.info(f"csv_path: {csv_path}")
+
+            repo_validation_result = validate_repo_mappings(repo_config_data, json_path)
+            if repo_validation_result:  # Only fail if errors exist
+                logger.error(f"Repository validation failed: {repo_validation_result}")
+                module.fail_json(msg="\n".join(repo_validation_result))
+            else:
+                logger.info("Repository validation passed successfully.")
+
 
             if not json_path:
                 logger.warning(f"Skipping {software}: JSON path does not exist.")
