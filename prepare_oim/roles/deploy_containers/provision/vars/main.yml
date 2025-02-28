@@ -76,7 +76,7 @@ xcat_services:
   - xcatd
   - postgresql
 xcat_init_finished: "/xcat-init.finished"
-wait_time_xcat_init: 180
+wait_time_xcat_init: 600
 xcat_init_failed_msg: "xcat-init.bash execution failed. Check the logs in /opt/omnia/log/provision/xcat/xcat-init-output.log"
 
 pgsqlsetup_path: /opt/xcat/bin/pgsqlsetup
