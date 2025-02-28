@@ -37,11 +37,7 @@ SwitchType=switch/none
 MpiDefault=none
 SlurmctldPidFile={{ slurmctld_pid }}
 SlurmdPidFile={{ slurmd_pid }}
-{% if ansible_distribution | lower == "ubuntu" %}
 ProctrackType=proctrack/cgroup
-{% elif ansible_distribution | lower in ["redhat", "rocky"] %}
-ProctrackType=proctrack/pgid
-{% endif %}
 {% if slurm_installation_type == nfs_share_slurm %}
 {% if ansible_distribution | lower == "ubuntu" %}
 PluginDir={{ plugin_slurm_dir_ubuntu }}
@@ -114,3 +110,4 @@ AccountingStorageType=accounting_storage/slurmdbd
 AccountingStoragePort={{ acct_port }}
 # COMPUTE NODES
 PartitionName=normal Nodes=ALL Default=YES MaxTime=INFINITE State=UP
+

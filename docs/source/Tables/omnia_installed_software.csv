@@ -6,8 +6,8 @@ Docker CE,Apache 2.0,Docker Service,20.10.20
 NVIDIA container runtime,"Apache 2.0, GPL-3.0, LGPL-3.0",NVIDIA container runtime library,3.4.2
 habanalabs-container-runtime,Apache 2.0,"Intel Habana container runtime library
 
-.. note:: This is preliminary code and may change before official release.",1.19.1-26
-habanalabs-k8s-device-plugin,Apache 2.0,HABANA device plugin for Kubernetes,1.19.1-26
+.. note:: This is preliminary code and may change before official release.",1.19.2-32
+habanalabs-k8s-device-plugin,Apache 2.0,HABANA device plugin for Kubernetes,1.19.2-32
 Python-pip,MIT License,Python Package,24.2
 kubelet,Apache 2.0,"Provides external, versioned ComponentConfig API types for configuring the kubelet",1.31.4
 kubeadm,Apache 2.0,Provides “fast paths” for creating Kubernetes clusters.,1.31.4
@@ -108,6 +108,6 @@ calico,Apache 2.0,"Calico is an open-source networking and security solution for
 flannel,Apache 2.0,Flannel is a simple and easy-to-configure network fabric for containers. It is part of the Kubernetes ecosystem and primarily used to provide a network overlay that connects containers across multiple nodes.,0.22.0
 csi-powerscale,Apache 2.0,CSI Driver for Dell PowerScale devices,2.13.0
 external-snapshotter,Apache 2.0,Sidecar container that watches Kubernetes Snapshot CRD objects and triggers CreateSnapshot/DeleteSnapshot against a CSI endpoint.,8.0.1
-Prometheus Gaudi metric exporter,Apache 2.0,This is a Prometheus exporter implementation that enables the collection of Intel Gaudi AI accelerator metrics in a container cluster for compute workload.,1.19.1-26
+Prometheus Gaudi metric exporter,Apache 2.0,This is a Prometheus exporter implementation that enables the collection of Intel Gaudi AI accelerator metrics in a container cluster for compute workload.,1.19.2-32
 DeepSpeed Intel,Apache 2.0,"DeepSpeed is a deep learning optimization library that makes distributed training and inference easy, efficient, and effective.",v2Beta1
 Jinja2,BSD 3 Clause License,"Jinja is a fast, expressive, extensible templating engine written in Python.",3.1.5

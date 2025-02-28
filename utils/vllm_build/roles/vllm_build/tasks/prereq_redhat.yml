@@ -12,6 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 ---
+- name: Read software_config.json
+  ansible.builtin.include_vars:
+    file: "{{ software_config_file }}"
+    name: software_config
+
 - name: Load and parse vllm.json
   ansible.builtin.set_fact:
     vllm: "{{ lookup('file', vllm_json_path) | from_json }}"

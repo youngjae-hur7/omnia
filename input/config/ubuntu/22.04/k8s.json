@@ -2,6 +2,17 @@
   "k8s": {
     "cluster": [
     {
+      "package": "multus-daemonset",
+       "type": "manifest",
+       "url": "https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset.yml"
+    },
+    {
+       "package": "whereabouts",
+       "url": "https://github.com/k8snetworkplumbingwg/whereabouts.git",
+       "type": "git",
+       "version": "v0.8.0"
+    },
+    {
       "package": "nvidia-container-toolkit",
       "type": "deb",
       "repo_name": "nvidia-repo"
@@ -229,7 +240,7 @@
     },
     {
       "package": "vault.habana.ai/docker-k8s-device-plugin/docker-k8s-device-plugin",
-      "tag": "1.19.1-26",
+      "tag": "1.19.2-32",
       "type": "image"
     },
     {
