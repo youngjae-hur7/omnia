@@ -23,17 +23,9 @@
   ansible.builtin.set_fact:
     rem_nodes: "{{ (slurm_nodes['stdout_lines'] | difference(groups['slurm_node'])) | unique | sort }}"
 
-# - name: pause
-#   ansible.builtin.pause:
-
 - name: Edit the partition
   ansible.builtin.lineinfile:
     path: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
     state: present
     line: "PartitionName={{ slurm_partition_name }} Nodes={{ rem_nodes | join(',') }} MaxTime=INFINITE State=UP"
     regexp: "^PartitionName={{ slurm_partition_name }} "
-  # notify:
-  #   - Restart slurmctld
-
-# - name: Reconfig ctld
-#   ansible.builtin.shell: scontrol reconfigure

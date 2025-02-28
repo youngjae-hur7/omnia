@@ -26,8 +26,6 @@
   register: node_check
   when: not item.changed
   loop: "{{ node_check.results }}"
-  # notify:
-  #   - Restart slurmctld
 
 - name: Get slurm info output if slurm is installed
   ansible.builtin.shell: scontrol show node | awk '/NodeName/ {print $1}' | cut -d= -f2
@@ -37,17 +35,10 @@
   ansible.builtin.set_fact:
     all_nodes: "{{ (groups['slurm_node'] + slurm_nodes['stdout_lines']) | unique | sort }}"
 
-# - name: pause
-#   ansible.builtin.pause:
-
 - name: Add the partition
   ansible.builtin.lineinfile:
     path: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
     state: present
     line: "PartitionName={{ slurm_partition_name }} Nodes={{ all_nodes | join(',') }} MaxTime=INFINITE State=UP"
     regexp: "^PartitionName={{ slurm_partition_name }} "
-  # notify:
-  #   - Restart slurmctld
 
-- name: Reconfig ctld
-  ansible.builtin.shell: scontrol reconfigure

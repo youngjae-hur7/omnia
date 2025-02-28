@@ -13,7 +13,7 @@
   ansible.builtin.debug:
     var: rem_nodes
 
-- name: Restart slurmd on all nodes
+- name: Restart slurmd on remaining nodes
   ansible.builtin.systemd_service:
     name: slurmd
     state: restarted
