@@ -20,7 +20,7 @@ sys.path.insert(0, db_path)
 import omniadb_connection
 
 node_obj_nm = []
-groups_static = "all,bmc_static,"
+groups_static = "all,bmc_static"
 groups_dynamic = "all,bmc_dynamic"
 chain_setup = "runcmd=bmcsetup"
 provision_os_image = sys.argv[1]
@@ -105,7 +105,7 @@ def update_node_obj_nm():
             if mode == "static":
                 if service_os_image != "None" and 'service' in role:
                     chain_os = f"osimage={service_os_image}"
-                command = ["/opt/xcat/bin/chdef", node_name, f"ip={admin_ip}", f"groups={groups_static}{group_name}",
+                command = ["/opt/xcat/bin/chdef", node_name, f"ip={admin_ip}", f"groups={groups_static},{role},{group_name}",
                            f"chain={chain_setup},{chain_os}", f"arch={architecture}"]
                 subprocess.run(command)
             if mode == "dynamic":
