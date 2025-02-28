@@ -16,6 +16,7 @@
 - name: Include input project directory
   when: not project_dir_status | default(false) | bool
   ansible.builtin.import_playbook: ../utils/include_input_dir.yml
+  tags: ["scheduler", "provision", "security", "monitoring", "local_repo", "k8", "roce", "storage", "proxy", "roles"]
   
 - name: Validate omnia input config
   hosts: localhost

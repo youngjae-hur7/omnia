@@ -395,8 +395,8 @@ def main():
     
     # Ansible success/failure message
     if False in vstatus:
-        status = validation_status['input']['status']
-        tag = validation_status['input']['tag']
+        status = validation_status[project_name]['status']
+        tag = validation_status[project_name]['tag']
         failed_files = [file for item in status for file, result in item.items() if result == 'Failed']
         passed_files = [file.split("/")[-1] for item in status for file, result in item.items() if result == 'Passed']
         message = (
