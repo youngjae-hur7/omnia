@@ -11,21 +11,19 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
----
 
-# Usage: main.yml
-discovery_mech_vars_common:
-  - "{{ role_path }}/../common/vars/main.yml"
-xcat_path: /opt/xcat/bin
+#!/usr/bin/python
 
-# Usage: update_db_mapping.yml
-db_path: "{{ provision_shared_library_path }}/db_operations"
+import pandas as pd
 
-# Usage: node_object_creation_mapping.yml
-mapping_node_group: "mapping"
-temp_pxe_file_path: "/opt/omnia/provision/temp_pxe_file.csv"
-file_mode: "0644"
+def load_csv(file_path):
+    """
+    Load a CSV file into a DataFrame.
 
-# Usage: check_nodes_mapping.yml
-mapping_nodes_warning_msg: "[WARNING] Nodes provided in mapping file were already provisioned by omnia using other discovery mechanism."
-warning_wait_time: 10
+    Parameters:
+        file_path (str): The path to the CSV file.
+
+    Returns:
+        pandas.DataFrame: The DataFrame containing the loaded CSV data.
+    """
+    return pd.read_csv(file_path)

@@ -16,16 +16,20 @@
 - name: Task for set osimage to node object for mapping
   block:
     - name: Set osimage to node object for mapping
-      ansible.builtin.command: "{{ python_version }} {{ nodeset_nodes_py }} {{ db_operations_file_path }} {{ provision_os_image }}"
+      nodeset:
+        db_path: "{{ db_operations_file_path }}"
+        discovery_mechanism: "{{ mapping_node_group }}"
+        install_osimage: "{{ provision_os_image }}"
+        service_osimage: "{{ service_os_image }}"
       changed_when: false
       register: set_osimage_mapping
 
     - name: Status for nodeset command
       ansible.builtin.debug:
-        msg: "{{ set_osimage_mapping.stdout }} {{ mapping_xcat_install_success_msg }}"
+        msg: "{{ set_osimage_mapping.nodes_updated }} {{ mapping_xcat_install_success_msg }}"
       when:
-        - set_osimage_mapping.stdout is defined
-        - set_osimage_mapping.stdout | length > 0
+        - set_osimage_mapping.nodes_updated is defined
+        - set_osimage_mapping.nodes_updated | length > 0
   rescue:
     - name: Verify set node object is successful for mapping
       ansible.builtin.debug:
