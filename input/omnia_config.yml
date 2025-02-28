@@ -32,11 +32,11 @@ ansible_config_file_path: "/etc/ansible"
 mariadb_password: "password"
 
 # Host and port of the db.
-db_host: hn2
-db_port: 3306
+db_host:
+db_port:
 
-# Username and password that the slurmdbd user will use
-# to access the db.
+# Username and password for ansible to access the db if it exists
+# or what the username and password will be set to when creating the db.
 db_password: password
 db_username: slurm
 
