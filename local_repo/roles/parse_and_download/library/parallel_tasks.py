@@ -1,3 +1,17 @@
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 #!/usr/bin/python
 
 from ansible.module_utils.basic import AnsibleModule
@@ -108,8 +122,23 @@ def update_status_csv(csv_dir, software, overall_status):
 
 
 def determine_function(task, repo_store_path, csv_file_path, user_data, version_variables):
+
     """
     Determines the appropriate function and its arguments to process a given task.
+ 
+    Args:
+        task (dict): A dictionary containing information about the task to be processed.
+        repo_store_path (str): The path to the repository store.
+        csv_file_path (str): The path to the CSV file.
+        user_data (dict): A dictionary containing user data.
+        version_variables (dict): A dictionary containing version variables.
+ 
+    Returns:
+        tuple: A tuple containing the function to process the task and its arguments.
+ 
+    Raises:
+        ValueError: If the task type is unknown.
+        RuntimeError: If an error occurs while determining the function.
     """
     try:
         # Ensure the CSV directory exists.
@@ -154,6 +183,14 @@ def determine_function(task, repo_store_path, csv_file_path, user_data, version_
 def generate_pretty_table(task_results, total_duration, overall_status):
     """
     Generates a pretty table with the task results, total duration, and overall status.
+ 
+    Args:
+        task_results (list): A list of dictionaries containing the task results.
+        total_duration (str): The total duration of the tasks.
+        overall_status (str): The overall status of the tasks.
+ 
+    Returns:
+        str: The pretty table as a string.
     """
     table = PrettyTable(["Task", "Status", "LogFile"])
     for result in task_results:
@@ -166,6 +203,26 @@ def generate_pretty_table(task_results, total_duration, overall_status):
 def main():
     """
     Executes a list of tasks in parallel using multiple worker processes.
+ 
+    Args:
+        tasks (list): A list of tasks (dictionaries) that need to be processed in parallel.
+        nthreads (int): The number of worker processes to run in parallel.
+        timeout (int): The maximum time allowed for all tasks to execute. If `None`, no timeout is enforced.
+        log_dir (str): The directory where log files for the worker processes will be saved.
+        log_file (str): The path to the log file for the overall task execution.
+        slog_file (str): The path to the log file for the standard logger.
+        csv_file_path (str): The path to a CSV file that may be needed for processing some tasks.
+        repo_store_path (str): The path to the repository where task-related files are stored.
+        software (list): A list of software names.
+        user_json_file (str): The path to the JSON file containing user data.
+ 
+    Returns:
+        tuple: A tuple containing:
+            - overall_status (str): The overall status of task execution ("SUCCESS", "FAILED", "PARTIAL", "TIMEOUT").
+            - task_results_data (list): A list of dictionaries, each containing the result of an individual task.
+ 
+    Raises:
+        Exception: If an error occurs during execution.
     """
     module_args = dict(
         tasks=dict(type="list", required=True),
