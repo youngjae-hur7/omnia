@@ -41,12 +41,14 @@ then
     ROCE_VERSION=$(echo "$extracted_driver_name" | grep -oP '\d+' | head -n 1)
     echo "RoCE Major Version: $ROCE_VERSION" >> $LOG_FILE
 
-    # install the L2, RoCE, and Peer Memory Direct (GPU direct) drivers
-    echo "starting RoCE netxtreme-peer-mem-dkms Installation" >> $LOG_FILE
+    # Installing bnxt_re_conf and niccli
+    echo "Searching for bnxt_re_conf with RoCE version $ROCE_VERSION" >> "$LOG_FILE"
+    BNXT_RE_CONF_FILES=$(find "./$extracted_driver_name/" -type f -name "bnxt_re_conf_${ROCE_VERSION}*.deb" | head -n 1)
+    install_deb_files "$BNXT_RE_CONF_FILES"
 
-    # Search for .deb files using full OS version
-    echo "Searching for files matching OS version: $OS_VERSION" >> $LOG_FILE
-    FILES=$(find ./$extracted_driver_name/ -wholename ".*$OS_VERSION*/netxtreme-peer-mem-dkms*.deb")
+    echo "Searching for niccli with RoCE version $ROCE_VERSION" >> "$LOG_FILE"
+    NICCLI_FILES=$(find "./$extracted_driver_name/" -type f -name "niccli_${ROCE_VERSION}*.deb" | head -n 1)
+    install_deb_files "$NICCLI_FILES"
 
     # If files are found for the full OS version, move to RoCE version check
     if [[ -n $FILES ]]; then
@@ -85,7 +87,7 @@ then
             echo "No netxtreme-peer-mem-dkms debian file found matching ROCE version $ROCE_VERSION ." >> $LOG_FILE
             echo "Installing all : $FILES" >> $LOG_FILE
             for file in $FILES; do
-                install_deb_files -y "$file"
+                install_deb_files "$file"
             done
         fi
         echo "Completed RoCE netxtreme-peer-mem-dkms Installation" >> $LOG_FILE
@@ -94,35 +96,14 @@ then
         exit 1
     fi
 
-    # Installing bnxt_re_conf and niccli
-    echo "Searching for bnxt_re_conf with RoCE version $ROCE_VERSION" >> "$LOG_FILE"
-    BNXT_RE_CONF_FILES=$(find "./$extracted_driver_name/" -type f -name "bnxt_re_conf_${ROCE_VERSION}*.deb" | head -n 1)
-    install_deb_files "$BNXT_RE_CONF_FILES"
+    echo "RoCE required packages Installation starting" >> $LOG_FILE
 
-    echo "Searching for niccli with RoCE version $ROCE_VERSION" >> "$LOG_FILE"
-    NICCLI_FILES=$(find "./$extracted_driver_name/" -type f -name "niccli_${ROCE_VERSION}*.deb" | head -n 1)
-    install_deb_files "$NICCLI_FILES"
-
-    # Download the roce_Drivers tar file
     sudo apt install -y linux-headers-"$(uname -r)"
     sudo apt install -y libelf-dev gcc make libtool autoconf librdmacm-dev rdmacm-utils infiniband-diags ibverbs-utils perftest ethtool libibverbs-dev rdma-core strace
     if [ "{{ roce_src_package_name }}" != "omnia_default" ]; then
         wget --quiet --show-progress "http://{{ admin_nic_ip }}:80/install{{ repo_store_path }}/cluster/tarball/{{ roce_src_package_name }}"
         extracted_source_name=$(tar -tzf "{{ roce_src_package_name }}" | head -n 1)
         tar -xvzf "{{ roce_src_package_name }}"
-        find ./$extracted_source_name/ -name "*netxtreme-bnxt_en*.tar.*" -exec sh -c '
-            # Extract the tar file
-            tar -xvzf "$0" -C "$(dirname "$0")"
-            # Navigate to the extracted directory and run make
-            extracted_dir="$(dirname "$0")/$(basename "$0" | sed 's/\.tar\..*$//')"
-            if [ -d "$extracted_dir" ]; then
-                cd "$extracted_dir" || exit 1
-                make
-            else
-                echo "Extracted directory $extracted_dir does not exist"
-            fi
-        ' {} \;
-        # compile and install the RoCE library
         echo "Installing RoCE library" >> $LOG_FILE
 
         find ./$extracted_source_name/ -name "*libbnxt_re*.tar.*" -exec sh -c '
@@ -143,6 +124,10 @@ then
             fi
         ' {} \;
         find /usr/lib64/ /usr/lib -name "libbnxt_re-rdmav*.so" -exec mv {} {}.inbox \;
+        sudo sh -c "echo bnxt_en >> /etc/initramfs-tools/modules"
+        sudo sh -c "echo bnxt_re >> /etc/initramfs-tools/modules"
+        ls /lib/modules | xargs -n1 dkms autoinstall -k
+        update-initramfs -u
     fi
     echo "RoCE Installation completed" >> $LOG_FILE
 else

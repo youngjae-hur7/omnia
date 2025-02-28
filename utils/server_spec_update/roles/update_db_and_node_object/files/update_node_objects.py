@@ -77,8 +77,8 @@ def update_node_obj():
             node_name = node_row[0]
             status = node_row[1]
             # Check with the inventory and node status
-            if ((status.lower() != "booted") if inventory_status else (status.lower() == "booted")):      
- 
+            if (not status or status.lower() != "booted") if inventory_status else (status.lower() == "booted"):
+
             # Iterate over network_names list
                 for network_name in network_names:
                     # Fetch the network value
@@ -101,6 +101,9 @@ def update_node_obj():
                                     , f"nicips.{network_nic}={network_ip}"
                                     , f"nicnetworks.{network_nic}={network_name}"]
                             subprocess.run(command)
+                            if network_metric and shlex.quote(network_info['network_gateway']):
+                                command = ["/opt/xcat/bin/chdef", node_name, f"nicextraparams.{network_nic}={network_metric}-{shlex.quote(network_info['network_gateway'])}"]
+                                subprocess.run(command)
 
                         else:
                             sql_query_network = f"SELECT {network_name}_device FROM cluster.nicinfo WHERE id = %s"
@@ -110,15 +113,15 @@ def update_node_obj():
                             if primary_nic[0]:
                                 command = ["/opt/xcat/bin/chdef", node_name
                                         , f"nictypes.{primary_nic[0]}=ethernet"
-                                        , f"nicips.{network_nic}={network_ip}"
-                                        , f"nicnetworks.{network_nic}={network_name}"
-                                        , f"nictypes.{network_nic}={network_type}"
-                                        , f"nicdevices.{network_nic}={primary_nic[0]}"
-                                        , f"nichostnamesuffixes.{network_nic}=-{primary_nic[0]}"]
+                                        , f"nicips.{primary_nic[0]}.{network_nic.split('.')[1]}={network_ip}"
+                                        , f"nicnetworks.{primary_nic[0]}.{network_nic.split('.')[1]}={network_name}"
+                                        , f"nictypes.{primary_nic[0]}.{network_nic.split('.')[1]}={network_type}"
+                                        , f"nicdevices.{primary_nic[0]}.{network_nic.split('.')[1]}={primary_nic[0]}"
+                                        , f"nichostnamesuffixes.{primary_nic[0]}.{network_nic.split('.')[1]}=-{primary_nic[0]}"]
                                 subprocess.run(command)
-                        if network_metric and shlex.quote(network_info['network_gateway']):
-                            command = ["/opt/xcat/bin/chdef", node_name, f"nicextraparams.{network_nic}={network_metric}-{shlex.quote(network_info['network_gateway'])}"]
-                            subprocess.run(command)
+                                if network_metric and shlex.quote(network_info['network_gateway']):
+                                    command = ["/opt/xcat/bin/chdef", node_name, f"nicextraparams.{primary_nic[0]}.{network_nic.split('.')[1]}={network_metric}-{shlex.quote(network_info['network_gateway'])}"]
+                                    subprocess.run(command)
 
                 if not inventory_status:
                     command = ["/opt/xcat/bin/updatenode", node_name, "-P", "confignetwork,omnia_hostname"]

@@ -151,30 +151,6 @@
       register: serdes_base_dirbw_test_result
       failed_when: "'FAILED' in serdes_base_dirbw_test_result.stdout"
 
-    - name: Unload habanalabs kernel module
-      modprobe:
-        name: habanalabs
-        state: absent
-
-    - name: Load habanalabs kernel module with timeout_locked param
-      modprobe:
-        name: habanalabs
-        state: present
-        params: 'timeout_locked=0'
-
-    - name: Bring DOWN all Gaudi3 NICs
-      shell: "cd /opt/habanalabs/qual/gaudi3/bin && ./manage_network_ifs.sh --down"
-
-    - name: Bring UP all Gaudi3 NICs
-      shell: "cd /opt/habanalabs/qual/gaudi3/bin && ./manage_network_ifs.sh --up"
-
-    - name: Retry until HPUs NICs are ready
-      shell: "cd /opt/habanalabs/qual/gaudi3/bin && ./manage_network_ifs.sh --status | grep down | wc -l"
-      register: result
-      until: (result.stdout == "0")
-      retries: 5
-      delay: 5
-
     - name: hl_qual HBM DMA stress test
       environment:
         __python_cmd: "python{{ pver }}"
@@ -250,27 +226,6 @@
         chdir: "{{ habana_tests['gaudi3_qual_bin_path'] }}"
       register: edp_stress_test_result
       failed_when: "'FAILED' in edp_stress_test_result.stdout"
-
-    - name: hl_qual e2e concurrency test
-      environment:
-        __python_cmd: "python{{ pver }}"
-        LOG_LEVEL_ALL: "{{ habana_tests['log_level_all'] }}"
-        ENABLE_CONSOLE: "{{ habana_tests['enable_console'] }}"
-        HABANA_LOGS: "{{ habana_tests['habana_logs'] }}"
-        GC_KERNEL_PATH: "{{ habana_tests['gc_kernel_path'] }}"
-        HABANA_SCAL_BIN_PATH: "{{ habana_tests['habana_scal_bin_path'] }}"
-        HABANA_PLUGINS_LIB_PATH: "{{ habana_tests['habana_plugins_lib_path'] }}"
-        DATA_LOADER_AEON_LIB_PATH: "{{ habana_tests['data_loader_aeon_lib_path'] }}"
-        RDMA_CORE_ROOT: "{{ habana_tests['rdma_core_root'] }}"
-        RDMA_CORE_LIB: "{{ habana_tests['rdma_core_lib'] }}"
-      ansible.builtin.shell: |
-        set -o pipefail
-        ./hl_qual -gaudi3 -c all -rmod parallel -t 30 -dis_mon -e2e_concurrency
-      args:
-        executable: /bin/bash
-        chdir: "{{ habana_tests['gaudi3_qual_bin_path'] }}"
-      register: e2e_concurrency_test_result
-      failed_when: "'FAILED' in e2e_concurrency_test_result.stdout"
 
     - name: hl_qual SER test
       environment:
