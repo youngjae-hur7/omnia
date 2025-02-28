@@ -142,15 +142,7 @@
         state: present
         line: "md_bmc_nic_subnet: {{ hostvars['omnia_provision']['bmc_nic_subnet'] }}"
 
-- name: Update md_bmc_required
-  ansible.builtin.lineinfile:
-    path: "{{ meta_path }}"
-    regexp: '^md_bmc_required:(.*)$'
-    insertafter: "EOF"
-    state: present
-    line: "md_bmc_required: {{ hostvars['omnia_provision']['bmc_required'] }}"
-
-- name: Update md_discovery_mech_bmc
+- name: Update md_discovery_mech_switch_based
   ansible.builtin.lineinfile:
     path: "{{ meta_path }}"
     regexp: '^md_discovery_mech_switch_based:(.*)$'

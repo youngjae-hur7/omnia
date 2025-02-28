@@ -20,8 +20,8 @@
   failed_when: false
   changed_when: false
   when:
-    - bmc_required
-    - '"first_layer" in ansible_run_tags'
+    - item.value.bmc_static_status is defined
+    - item.value.bmc_static_status
 
 - name: Create dynamic temp node objects
   ansible.builtin.shell: >
@@ -30,8 +30,8 @@
   failed_when: false
   changed_when: false
   when: 
-    - discovery_mech_dynamic_bmc
     - '"first_layer" not in ansible_run_tags'
+    - discovery_mech_dynamic_bmc
 
 - name: Delete the extra node objects
   ansible.builtin.command: |

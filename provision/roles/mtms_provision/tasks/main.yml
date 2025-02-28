@@ -19,7 +19,6 @@
     PATH: "{{ ansible_env.PATH }}:{{ xcat_path_env }}"
     MANPATH: "{{ xcat_manpath_env }}"
     PERL_BADLANG: "{{ perl_badlang_env }}"
-  when: bmc_required
   block:
     - name: Include vars
       ansible.builtin.include_vars: "{{ role_path }}/../../../discovery/roles/discovery_mechanism/mtms/vars/main.yml"

@@ -163,8 +163,9 @@ postgresdb_password_fail_msg: "Failed. postgresdb_password should contain only a
 fail_msg_bmc_credentials: "Failed. bmc_username, bmc_password are invalid in provision_config_credentials.yml"
 
 # Usage: validate_provision_vars.yml
-input_provision_fail_msg: "Failed! Please provide all the required provision parameters in provision_config.yml, namely,
-iso_file_path, domain_name,timezone, default_lease_time and provision_os, provision_os_version in software_config.json."
+input_provision_fail_msg: |
+  "Failed! Please provide all the required provision parameters in provision_config.yml, namely,
+  domain_name,timezone and default_lease_time in provision_config.yml."
 default_lease_time_success_msg: "default_lease_time validated"
 default_lease_time_fail_msg: "Failed. Please provide a valid default_lease_time"
 timezone_file_path: "{{ provision_shared_library_path }}/validation/timezone.txt"
@@ -178,20 +179,15 @@ provision_os_success_msg: "cluster_os_type validated"
 provision_os_fail_msg: |
   "Failed. Incorrect cluster_os_type selected.
   If Omnia Infrastructure Manager OS RHEL, only cluster_os_type {{ os_supported_rhel }} is supported."
-iso_file_path_missing_msg: "Incorrect iso_file_path provided. Make sure ISO file is present in the provided iso_file_path."
-iso_file_path_success_msg: "iso_file_path validated"
-iso_file_path_fail_msg: "Failed. Invalid iso_file_path: {{ iso_file_path }} provided. Make sure iso_file_path variable in provision_config.yml contains value
-mentioned in the variables cluster_type: {{ provision_os }} and cluster_os_version: {{ provision_os_version }} mentioned in software_config.json"
 ping_search_key: "100% packet loss"
 min_length: 8
 max_length: 30
 warning_wait_time: 30
 supported_rhel_os_version: ["9.4"]
 supported_ubuntu_os_version: ["20.04", "22.04", "24.04"]
-provision_os_version_fail_msg: "Failed. Invalid cluster_os_version: {{ provision_os_version }} provided in software_config.json.
-Supported cluster_os_version values for cluster_os_type rhel is only 9.4"
-nodename_chars_fail_msg: "Failed. node_name empty or invalid in provision_config.yml.
-node_name should not contain _ or . or space or node- as it might result in issues with provisioning/authentication tools like FreeIPA."
+provision_os_version_fail_msg: |
+  "Failed. Invalid cluster_os_version: {{ provision_os_version }} provided in software_config.json.
+  Supported cluster_os_version values for cluster_os_type rhel is only 9.4"
 ubuntu_kernel_fail_msg: "Failed. ubuntu_kernel_flavor should be either hwe or generic"
 ubuntu22_version: "22.04"
 ubuntu24_version: "24.04"

@@ -14,11 +14,13 @@
 ---
 
 - name: Perform operations for static range
-  when: bmc_required
   block:
     - name: BMC discover for first layer of nodes
       ansible.builtin.include_tasks: bmc_first_layer.yml
-      when: '"first_layer" in ansible_run_tags'
+      when:
+        - '"first_layer" in ansible_run_tags'
+        - item.value.bmc_static_status is defined
+        - item.value.bmc_static_status
       loop: "{{ group_to_roles | dict2items }}"
 
     - name: Configure dhcp

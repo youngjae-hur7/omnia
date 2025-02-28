@@ -49,5 +49,4 @@
     - name: Set facts for discovery mechanism
       ansible.builtin.set_fact:
         discovery_mech_mapping: "{{ md_discovery_mech_mapping }}"
-        bmc_required: "{{ md_bmc_required }}"
         discovery_mech_switch_based: "{{ md_discovery_mech_switch_based }}"
