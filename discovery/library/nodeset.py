@@ -69,16 +69,15 @@ def nodeset_mapping_nodes(install_osimage, service_osimage, discovery_mechanism)
     return {"changed": changed, "nodes_updated": new_mapping_nodes}
 
 def main():
-    module = AnsibleModule(
-        argument_spec={
-            "db_path": {"type": "str", "required": True},
-            "discovery_mechanism": {"type": "str", "required": True},
-            "install_osimage": {"type": "str", "required": True},
-            "service_osimage": {"type": "str", "required": True},
-        }
+    module_args = dict(
+        db_path=dict(type="str", required=True),
+        discovery_mechanism=dict(type="str", required=True),
+        install_osimage=dict(type="str", required=True),
+        service_osimage=dict(type="str", required=True)
     )
-    sys.path.insert(0, module.params["db_path"])  # Change this to the actual path
 
+    module = AnsibleModule( argument_spec=module_args, supports_check_mode=True)
+    sys.path.insert(0, module.params["db_path"])  # Change this to the actual path
 
     try:
         if module.params["discovery_mechanism"] == "mapping":

@@ -18,12 +18,12 @@ from ansible.module_utils.basic import AnsibleModule
 import json
 import sys
 
-module_args = {
-    "db_path": {"type": "str", "required": True},
-    "node_details": {"type": "list", "elements": "dict", "required": True},
-    "domain_name": {"type": "str", "required": True},
-    "discovery_mechanism": {"type": "str", "required": True}
-}
+module_args = dict(
+    db_path=dict(type="str", required=True),
+    node_details=dict(type="list", elements="dict", required=True),
+    domain_name=dict(type="str", required=True),
+    discovery_mechanism=dict(type="str", required=True)
+)
 
 module = AnsibleModule(argument_spec=module_args, supports_check_mode=True)
 
