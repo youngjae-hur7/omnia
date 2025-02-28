@@ -1,4 +1,4 @@
-# Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,5 +14,5 @@
 ---
 
 - name: Configure addkcmdline
-  ansible.builtin.command: "{{ xcat_path }}/chdef all -p addkcmdline=\"network-config=disabled\""
+  ansible.builtin.command: "{{ xcat_path }}/chdef all addkcmdline=\"network-config=disabled\""
   changed_when: true
