@@ -25,4 +25,4 @@
       ansible.builtin.include_tasks: install_nvidia_gpu_operator.yml
       when:
         - hostvars['localhost']['is_nvidia_cluster'] is defined
-        - hostvars['127.0.0.1']['nvidia_gpu_operator_support'] is true
+        - hostvars['127.0.0.1']['nvidia_gpu_operator_support']

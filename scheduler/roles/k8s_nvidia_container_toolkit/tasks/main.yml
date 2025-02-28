@@ -23,4 +23,4 @@
       ansible.builtin.include_tasks: install_nvidia_container_toolkit.yml
       when:
         - install_nvidia_container_toolkit
-        - hostvars['127.0.0.1']['nvidia_gpu_operator_support'] is false
+        - not hostvars['127.0.0.1']['nvidia_gpu_operator_support']
