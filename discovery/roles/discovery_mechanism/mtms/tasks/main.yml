@@ -14,6 +14,7 @@
 ---
 
 - name: Perform operations for static range
+  when: bmc_static_status
   block:
     - name: BMC discover for first layer of nodes
       ansible.builtin.include_tasks: bmc_first_layer.yml
