@@ -1,4 +1,4 @@
-#  Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+#  Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import omniadb_connection as omniadb
 
 def service_tag_node_mapping():
     """
-    outputs the node name for the service tag or admin IP 
+    outputs the node name for the service tag or admin IP
     and runs chdef command to add the kernel parameters
 
     """
@@ -39,7 +39,7 @@ def service_tag_node_mapping():
         cursor = connection.cursor()
 
         node_name = ""
-        # Check if the inventory hostname(can be service tag, or admin_IP) is not empty 
+        # Check if the inventory hostname(can be service tag, or admin_IP) is not empty
         if len(inventory_hostname) > 0:
 
             # Query string: get host IP if service tag or node name is given
@@ -57,7 +57,7 @@ def service_tag_node_mapping():
             else:
                 syslog.syslog(syslog.LOG_INFO,
                     f"servicetag_node_mapping:service_tag_node_mapping(): query failed to fetch node name for service tag: {inventory_hostname}")
-                
+
                 query = "select node from cluster.nodeinfo where admin_ip=%s"
                 params = (inventory_hostname,)
 
@@ -69,9 +69,9 @@ def service_tag_node_mapping():
                     # Collect host ip if result is valid
                     node_name = row[0]
                     print(f"{node_name}")
-        
+
         if len(node_name) > 0:
-            command = ["/opt/xcat/bin/chdef", node_name, f"addkcmdline={kernel_params}"]
+            command = ["/opt/xcat/bin/chdef", node_name, f"addkcmdline={kernel_params} network-config=disabled" ]
             print(f"{command}")
             subprocess.run(command)
 
