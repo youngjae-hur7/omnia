@@ -63,7 +63,7 @@ Configuring specific local repositories
             {"name": "ofed", "version": "24.01-0.3.3.1"},
 
 
-    For a list of repositories (and their types) configured for OFED, view the ``input/config/<cluster_os_type>/<cluster_os_version>/ofed.json`` file. To customize your OFED installation, update the file.:
+    For a list of repositories (and their types) configured for OFED, view the ``input/config/<cluster_os_type>/<cluster_os_version>/ofed.json`` file. To customize your OFED installation, update the file.
 
     For RHEL or Rocky Linux: ::
 
@@ -72,7 +72,7 @@ Configuring specific local repositories
                 "cluster": [
                   { "package": "ofed",
                     "type": "iso",
-                    "url": "https://content.mellanox.com/ofed/MLNX_OFED-24.01-0.3.3.1/MLNX_OFED_LINUX-24.01-0.3.3.1-rhel8.7-x86_64.iso",
+                    "url": "https://content.mellanox.com/ofed/MLNX_OFED-24.01-0.3.3.1/MLNX_OFED_LINUX-24.01-0.3.3.1-rhel8.8-x86_64.iso"",
                     "path": ""
                   }
                 ]

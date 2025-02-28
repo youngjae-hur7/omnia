@@ -54,8 +54,7 @@
 - name: K8s installation on Omnia Infrastructure Manager (Wait 10 mins for kubernetes installation to complete)
   ansible.builtin.command: >
     ansible-playbook {{ kubespray_path }}/{{ telemetry_package_map['kubespray'] }}/cluster.yml \
-    -i {{ role_path }}/files/k8s_inv.ini \
-    --extra-vars "@{{ role_path }}/files/k8s_var.yml"
+    -i {{ role_path }}/files/k8s_inv.ini --extra-vars "@{{ role_path }}/files/k8s_var.yml"
   args:
     chdir: "{{ kubespray_path }}/{{ telemetry_package_map['kubespray'] }}"
   environment:
