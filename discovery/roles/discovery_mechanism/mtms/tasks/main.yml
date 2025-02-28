@@ -21,7 +21,7 @@
         - '"first_layer" in ansible_run_tags'
         - item.value.bmc_static_status is defined
         - item.value.bmc_static_status
-      loop: "{{ group_to_roles | dict2items }}"
+      loop: "{{ roles_groups_data | dict2items }}"
 
     - name: Configure dhcp
       ansible.builtin.include_tasks: "{{ role_path }}/../common/tasks/configure_dhcp.yml"
