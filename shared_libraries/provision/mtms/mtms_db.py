@@ -46,34 +46,29 @@ admin_static_end_range = ipaddress.IPv4Address(admin_static_range.split('-')[1])
 
 def update_db():
     """
-    Updates the database based on the given parameters.
+	Updates the database with node information.
 
-    This function performs the following tasks:
-    1. Creates a connection to the database.
-    2. Retrieves the cursor object from the connection.
-    3. Checks if the `discovery_ranges` variable is not equal to "0.0.0.0".
-    4. If the `bmc_static_range` variable is not empty, it performs the following actions:
-       - Extracts the serial and bmc information from the `static_stanza_path` file.
-       - Iterates over the serial and bmc information and performs the following actions:
-         - Executes a SQL query to check if the serial exists in the `cluster.nodeinfo` table.
-         - Checks if the bmc IP is present in the database.
-         - If both conditions are false, it performs the following actions:
-           - Increments the node ID and generates the node and host names.
-           - Updates the stanza file with the serial and node information.
-           - Calculates the admin IP based on the correlation between the bmc and admin subnet.
-           - Checks if the admin IP is present in the database.
-           - If the admin IP is not present, it inserts the node information into the `cluster.nodeinfo` table.
-           - If the admin IP is present, it calculates the uncorrelated admin IP and inserts the node information.
-         - If the conditions are true, it prints a warning message and the serial.
+	This function establishes a connection with the database and performs the following tasks:
+	- Checks if the bmc_static_range is not empty.
+	- If it is not empty, it extracts the serial and bmc information from the static_stanza_path.
+	- It iterates over the serial and checks if the service tag exists in the cluster.nodeinfo table.
+	- If the service tag does not exist, it generates a new node name and host name.
+	- It updates the stanza file with the new serial and node.
+	- It checks if the bmc_ip is already present in the cluster.nodeinfo table.
+	- If the bmc_ip is not present, it calculates the admin_ip based on the bmc_ip and admin_subnet.
+	- It checks if the admin_ip is within the admin_static_range.
+	- If it is, it checks if the admin_ip is already present in the cluster.nodeinfo table.
+	- If it is not present, it inserts the node information into the cluster.nodeinfo table.
+	- If the admin_ip is not within the admin_static_range, it calculates the uncorrelated_admin_ip.
+	- It inserts the node information into the cluster.nodeinfo table.
+	- If the service tag already exists in the cluster.nodeinfo table, it prints a warning.
 
-    7. Closes the cursor and the database connection.
+	Parameters:
+	None
 
-    Parameters:
-    None
-
-    Returns:
-    None
-    """
+	Returns:
+	None
+	"""
 
     conn = omniadb_connection.create_connection()
     cursor = conn.cursor()

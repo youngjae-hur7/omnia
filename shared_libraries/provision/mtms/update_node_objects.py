@@ -48,37 +48,29 @@ def get_node_obj():
 
 def update_node_obj_nm():
     """
-	Update the node objects with proper details as per their bmc mode.
+    Updates the node objects in the database.
 
-	This function establishes a connection with omniadb and performs the following tasks:
-	- Executes a SQL query to select the service_tag from the cluster.nodeinfo table where the discovery_mechanism is equal to the given discovery_mechanism.
-	- Iterates over the serial_output and checks if the service_tag is not None.
-	- If the condition is true, it converts the service_tag to lowercase.
-	- Iterates over the serial_output and prints the service_tag.
-	- Checks if the service_tag is not None.
-	- If the condition is true, it converts the service_tag to uppercase.
-	- Executes a SQL query to select the node from the cluster.nodeinfo table where the service_tag is equal to the current serial_output.
-	- Fetches the node_name.
-	- Executes a SQL query to select the admin_ip from the cluster.nodeinfo table where the service_tag is equal to the current serial_output.
-	- Fetches the admin_ip.
-	- Executes a SQL query to select the bmc_mode from the cluster.nodeinfo table where the service_tag is equal to the current serial_output.
-	- Fetches the mode.
-	- Checks if the mode is None.
-	- If the condition is true, it prints a warning message.
-	- Checks if the mode is equal to "static".
-	- If the condition is true, it executes a command to update the node object with the given admin_ip, groups, and chain.
-	- Checks if the mode is equal to "dynamic".
-	- If the condition is true, it executes a command to update the node object with the given admin_ip, groups, and chain.
-	- Executes a SQL query to select the bmc_ip from the cluster.nodeinfo table where the service_tag is equal to the current serial_output.
-	- Fetches the bmc_ip.
-	- Executes a command to update the node object with the given bmc_ip.
+    - This function establishes a connection with omniadb and retrieves the service tags of the nodes
+      from the cluster.nodeinfo table.
+    - It then iterates over the service tags and converts them to lowercase. 
+    - After that, it iterates over the service tags again and converts them to uppercase.
+    - For each service tag, it retrieves the node, admin_ip, bmc_ip, bmc_mode, role, group_name, and
+      architecture from the cluster.nodeinfo table. 
+    - If the bmc_mode is None, it prints "No device is found!". 
+    - If the bmc_mode is "static", it checks if the service_os_image is not "None" and if the
+      role contains the string "service". 
+    - If both conditions are true, it sets the chain_os variable to "osimage={service_os_image}". 
+    - It then executes a command to update the node objects using the /opt/xcat/bin/chdef command. 
+    - If the bmc_mode is "dynamic", it executes a command to update the node objects using the
+      /opt/xcat/bin/chdef command.
+    - Finally, it closes the cursor and the database connection.
 
-	Parameters:
-	None
+    Parameters:
+        None
 
-	Returns:
-	None
-	"""
+    Returns:
+        None
+    """
 
     # Establish a connection with omniadb
     conn = omniadb_connection.create_connection()
