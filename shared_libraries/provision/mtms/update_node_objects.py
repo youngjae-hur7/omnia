@@ -15,16 +15,17 @@
 import subprocess
 import sys
 
-db_path = sys.argv[2]
+db_path = sys.argv[3]
 sys.path.insert(0, db_path)
 import omniadb_connection
 
 node_obj_nm = []
-groups_static = "all,bmc,bmc_static"
-groups_dynamic = "all,bmc,bmc_dynamic"
+groups_static = "all,bmc_static,"
+groups_dynamic = "all,bmc_dynamic"
 chain_setup = "runcmd=bmcsetup"
-os_name = sys.argv[1]
-chain_os = f"osimage={os_name}"
+provision_os_image = sys.argv[1]
+service_os_image = sys.argv[2]
+chain_os = f"osimage={provision_os_image}"
 discovery_mechanism = "mtms"
 
 
@@ -92,30 +93,26 @@ def update_node_obj_nm():
         print(serial_output[i])
         if serial_output[i][0] is not None:
             serial_output[i] = serial_output[i].upper()
-            sql = "SELECT node FROM cluster.nodeinfo WHERE service_tag = '" + serial_output[i] + "'"
-            cursor.execute(sql)
-            node_name = cursor.fetchone()
-            sql = "select admin_ip from cluster.nodeinfo where service_tag = '" + serial_output[i] + "'"
-            cursor.execute(sql)
-            admin_ip = cursor.fetchone()
-            sql = "select bmc_mode from cluster.nodeinfo where service_tag = '" + serial_output[i] + "'"
-            cursor.execute(sql)
-            mode = cursor.fetchone()[0]
+            params = (serial_output[i],)
+            sql = """SELECT node, admin_ip, bmc_ip, bmc_mode, role, group_name, architecture
+                     FROM cluster.nodeinfo
+                     WHERE service_tag = %s"""
+            cursor.execute(sql, params)
+            node_name, admin_ip, bmc_ip, mode, role, group_name, architecture = cursor.fetchone()
 
             if mode is None:
                 print("No device is found!")
             if mode == "static":
-                command = ["/opt/xcat/bin/chdef", node_name[0], f"ip={admin_ip[0]}", f"groups={groups_static}",
-                           f"chain={chain_setup},{chain_os}"]
+                if service_os_image != "None" and 'service' in role:
+                    chain_os = f"osimage={service_os_image}"
+                command = ["/opt/xcat/bin/chdef", node_name, f"ip={admin_ip}", f"groups={groups_static}{group_name}",
+                           f"chain={chain_setup},{chain_os}", f"arch={architecture}"]
                 subprocess.run(command)
             if mode == "dynamic":
-                sql = "select bmc_ip from cluster.nodeinfo where service_tag = '" + serial_output[i] + "'"
-                cursor.execute(sql)
-                bmc_ip = cursor.fetchone()
-                command = ["/opt/xcat/bin/chdef", node_name[0], f"ip={admin_ip[0]}", f"groups={groups_dynamic}",
-                           f"chain={chain_setup},{chain_os}"]
-                subprocess.run(command)
-                command = ["/opt/xcat/bin/chdef", node_name[0], f" bmc={bmc_ip[0]}"]
+                command = ["/opt/xcat/bin/chdef", node_name,
+                           f"ip={admin_ip}", f"groups={groups_dynamic}",
+                           f"chain={chain_setup},{chain_os}",
+                           f"bmc={bmc_ip}"]
                 subprocess.run(command)
 
     cursor.close()
