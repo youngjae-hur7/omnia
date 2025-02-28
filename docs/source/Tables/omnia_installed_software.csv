@@ -54,7 +54,7 @@ xCAT,Eclipse Public License 1.0,"xCAT is an open-source tool for automating depl
 CUDA Toolkit,NVIDIA License,CUDA (or Compute Unified Device Architecture) is a parallel computing platform and application programming interface (API) that allows software to use certain types of graphics processing units (GPUs) for general purpose processing,12.3.2
 MLNX_OFED,BSD License,"MLNX_OFED is based on the OpenFabrics Enterprise Distribution (OFED™), an open-source software for RDMA and kernel bypass applications provided by Open Fabric Alliance",24.01-0.3.3.1
 ansible pylibssh,LGPL 2.1,Python bindings specific to Ansible use case for libssh,1.2.2
-perl-DBD-Pg,GNU-General Public License v3.0,Perl module that works with the DBI module to provide access to PostgreSQL databases.,3.7.4
+perl-DBD-Pg,GNU-General Public License v3.0,Perl module that works with the DBI module to provide access to PostgreSQL databases.,3.15.1
 ansible.utils,GPL 3.0,"Ansible Collection with utilities to ease the management, manipulation, and validation of data within a playbook",2.10.3
 pandas,BSD-3-Clause License,"pandas is a fast, powerful, flexible and easy to use open source data analysis and manipulation tool, built on top of the Python programming language.",2.2.3
 python3-netaddr,BSD License,A Python library for representing and manipulating network addresses.,1.2.1
