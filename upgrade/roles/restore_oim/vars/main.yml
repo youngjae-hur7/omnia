@@ -42,9 +42,9 @@ mysqldb_local_backup_file: "mysqldb_dump.sql"
 timescale_telemetry_backup_file: "telemetry_tsdb_dump.sql"
 
 # Usage: validate_venv.yml
-venv_fail_msg: "The venv_path is incorrect! Expected /opt/omnia/omnia161_venv but got {{ venv_path }}.
-Please deactivate existing venv  using command: deactivate  and activate venv using command: source /opt/omnia/omnia161_venv/bin/activate and rerun playbook"
-venv_active_fail_msg: "It seems the Python virtual environment for Omnia isn’t active. Please activate it using the following command: source /opt/omnia/omnia161_venv/bin/activate and rerun playbook." # noqa: yaml[line-length]
+venv_fail_msg: "The venv_path is incorrect! Expected /opt/omnia/omnia17_venv but got {{ venv_path }}.
+Please deactivate existing venv  using command: deactivate  and activate venv using command: source /opt/omnia/omnia17_venv/bin/activate and rerun playbook"
+venv_active_fail_msg: "It seems the Python virtual environment for Omnia isn’t active. Please activate it using the following command: source /opt/omnia/omnia17_venv/bin/activate and rerun playbook." # noqa: yaml[line-length]
 
 # validate_upgrade_config.yml
 valid_installed_path_msg: "Please provide a valid path for 'installed_omnia_path' in the upgrade_config.yml file
@@ -56,7 +56,7 @@ crio_socket: /var/run/crio/crio.sock
 metallb_files:
   - "/var/lib/ipaddresspool.yaml"
   - "/var/lib/l2advertisement.yaml"
-bin_dir: /usr/bin
+bin_dir: /usr/local/bin
 grace_period: 0
 kube_folder_path: /root/.kube
 k8s_bin_files:
