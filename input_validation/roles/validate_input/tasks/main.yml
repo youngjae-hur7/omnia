@@ -12,43 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- name: Include variables
-  ansible.builtin.include_vars:
-    file: vars/vars.yml
-
-- name: Get omnia base directory
-  ansible.builtin.set_fact:
-    omnia_base_dir: "{{ playbook_dir | dirname }}"
-
-- name: Check if omnia base directory exists
-  ansible.builtin.stat:
-    path: "{{ omnia_base_dir }}"
-  register: omnia_base_dir_stat
-
-- name: Fail if omnia base directory does not exist
-  ansible.builtin.fail:
-    msg: "{{ messages.omnia_base_dir_not_exist }}"
-  when: not omnia_base_dir_stat.stat.exists
-
-- name: Find input directories
-  ansible.builtin.find:
-    paths: "{{ omnia_base_dir }}"
-    file_type: directory
-    patterns: 'input'
-  register: found_directories
-
-- name: Check if input directories were found
-  ansible.builtin.fail:
-    msg: "{{ messages.no_input_directories_found }}"
-  when: found_directories.matched == 0
-
-- name: Set input directory paths
-  ansible.builtin.set_fact:
-    project_name: "{{ found_directories.files[0].path | basename }}"
 
 - name: Validate omnia input config
   validate_input:
-    omnia_base_dir: "{{ omnia_base_dir }}/"
+    omnia_base_dir: "{{ input_dir }}/../"
     project_name: "{{ project_name }}"
     tag_names: "{{ ansible_run_tags }}"
     files: "{{ files | default([]) }}"

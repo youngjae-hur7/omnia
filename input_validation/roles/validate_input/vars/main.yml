@@ -13,6 +13,7 @@
 # limitations under the License.
 ---
 messages:
-  omnia_base_dir_not_exist: "The directory {{ omnia_base_dir }} does not exist."
   no_input_directories_found: "No input directories found in {{ omnia_base_dir }}."
   validation_success: "Successfully validated Omnia input config file(s)"
+
+input_dir: "{{ hostvars['localhost']['input_project_dir'] }}"

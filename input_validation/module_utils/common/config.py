@@ -15,25 +15,22 @@
 from datetime import datetime
 import os
 
-omnia_log = '/var/log/omnia'
+input_validator_log = '/opt/omnia/log/core/playbooks/input_validator/'
 
 module_log_dir = {
-    "omnia": omnia_log + "/_"+ datetime.now().strftime('_%d-%m-%Y.log')
+    "input_validator_log": input_validator_log + "/_"+ datetime.now().strftime('_%d-%m-%Y.log')
 }
 
 # dict to hold the file names. If any file's name changes just change it here.
 files = {
-    "accelerator_config": "accelerator_config.yml",
     "k8s_access_config": "k8s_access_config.yml",
     "local_repo_config": "local_repo_config.yml",
     "login_node_security_config": "login_node_security_config.yml",
-    "network_config": "network_config.yml",
     "network_spec": "network_spec.yml",
     "omnia_config": "omnia_config.yml",
     "passwordless_ssh_config": "passwordless_ssh_config.yml",
     "provision_config_credentials": "provision_config_credentials.yml",
     "provision_config": "provision_config.yml",
-    "rhsm_config": "rhsm_config.yml",
     "roce_plugin_config": "roce_plugin_config.yml",
     "security_config": "security_config.yml",
     "server_spec": "server_spec.yml",
@@ -61,7 +58,6 @@ input_file_inventory = {
         files["software_config"]
     ],
     "monitoring": [files["telemetry_config"]],
-    "network": [files["network_config"]],
     "local_repo": [files["local_repo_config"], files["software_config"]],
     "k8": [files["k8s_access_config"]],
     "roce": [files["roce_plugin_config"]],
@@ -77,7 +73,6 @@ input_file_inventory = {
         files["provision_config_credentials"],
         files["security_config"],
         files["login_node_security_config"],
-        files["network_config"],
         files["telemetry_config"],
         files["provision_config"],
         files["roce_plugin_config"],

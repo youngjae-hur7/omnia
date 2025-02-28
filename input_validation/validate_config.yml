@@ -13,10 +13,14 @@
 # limitations under the License.
 ---
 
+- name: Include input project directory
+  when: not project_dir_status | default(false) | bool
+  ansible.builtin.import_playbook: ../utils/include_input_dir.yml
+  
 - name: Validate omnia input config
   hosts: localhost
   connection: local
   gather_facts: false
   roles:
     - role: validate_input
-      tags: ["scheduler","provision","security","monitoring","network","local_repo","k8","roce", "storage", "proxy", "roles"]
+      tags: ["scheduler", "provision", "security", "monitoring", "local_repo", "k8", "roce", "storage", "proxy", "roles"]

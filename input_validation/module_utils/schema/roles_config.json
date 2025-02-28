@@ -35,8 +35,7 @@
               "properties": {
                "ip": {
                  "type": "string",
-                 "description": "IP address of the switch",
-                 "format": "ipv4"
+                 "description": "IP address of the switch"
                 },
                 "ports": {
                   "type": "string",
@@ -75,9 +74,9 @@
             "enum": [
               "default",
               "service",
-              "k8shead",
-              "k8sworker",
-              "k8setcd",
+              "k8head",
+              "k8worker",
+              "k8etcd",
               "slurmworker",
               "slurmdbd",
               "login",
@@ -93,7 +92,7 @@
             },
             "minItems": 1,
             "uniqueItems": true,
-            "maxItems": 2
+            "maxItems": 100
           }
         },
         "required": [

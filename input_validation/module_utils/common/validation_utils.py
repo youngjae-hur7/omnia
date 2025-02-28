@@ -248,3 +248,25 @@ def validate_ipv4_range(ip_range) -> bool:
             return False
     except ValueError:
         return False
+
+"""
+Checks if the given static BMC range overlaps with any of the ranges in other groups.
+
+Args:
+    static_range (str): The static BMC range to check for overlaps.
+    static_range_group_mapping (Dict[str, str]): A dictionary mapping group names to their corresponding bmc static ranges.
+
+Returns:
+    list: A list of group names that have overlapping ranges with the given static_range.
+"""
+def check_bmc_static_range_overlap(static_range, static_range_group_mapping) -> list:
+    grp_overlaps = []
+    ip_ranges = [static_range]
+    for grp, grp_static_range in static_range_group_mapping.items():
+        ip_ranges.append(grp_static_range)
+        overlap_exists, _ = check_overlap(ip_ranges)
+        if overlap_exists:
+            grp_overlaps.append(grp)
+        ip_ranges.pop()
+    
+    return grp_overlaps
