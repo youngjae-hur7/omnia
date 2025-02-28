@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-multus_pod_network_url: "{{ hostvars['localhost']['offline_manifest_path'] }}/multus-daemonset.yaml"
+multus_pod_network_url: "{{ hostvars['localhost']['offline_manifest_path'] }}/multus-daemonset-thick.yaml"
 whereabouts_git_url: "{{ hostvars['localhost']['offline_git_path'] }}/whereabouts.tar.gz"
 whereabouts_dest_folder: "/tmp/whereabouts.tar.gz"
 whereabouts_folder: "/tmp/whereabouts"

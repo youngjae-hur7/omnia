@@ -2,9 +2,9 @@
   "k8s": {
     "cluster": [
     {
-      "package": "multus-daemonset",
+      "package": "multus-daemonset-thick",
        "type": "manifest",
-       "url": "https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset.yml"
+       "url": "https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset-thick.yml"
     },
     {
        "package": "whereabouts",
