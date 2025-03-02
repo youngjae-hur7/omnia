@@ -13,7 +13,12 @@
     - slurmdbd.service
     - slurmd.service
     - munge.service
-  register: ignore_errors_reg
+
+- name: Remove share slurm path
+  ansible.builtin.file:
+    path: "{{ share_path }}/{{ slurm_dir_name }}"
+    state: absent
+  run_once: true
 
 - name: Remove files and folders
   ansible.builtin.file:
@@ -21,11 +26,8 @@
     state: absent
   loop:
     - "/var/spool/state"
-    - "{{ share_path }}/{{ slurm_dir_name }}"
     - "{{ slurm_config_dir }}"
     - "/etc/munge/munge.key"
-  ignore_errors: true
-  register: ignore_errors_reg
 
 - name: Remove packages
   ansible.builtin.package:
