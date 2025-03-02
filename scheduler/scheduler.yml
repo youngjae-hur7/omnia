@@ -17,7 +17,7 @@
   when: not ( hostvars['127.0.0.1']['update_inventory_executed'] | default(false) | bool )
 
 - name: Gather facts from all the nodes
-  hosts: slurm_control_node, kube_control_plane, slurm_node, kube_node, login, slurm_dbd, etcd
+  hosts: kube_control_plane, kube_node, etcd
 
 - name: Validate scheduler input parameters
   hosts: localhost
@@ -101,18 +101,19 @@
   hosts: slurm_control_node, slurm_node, login, slurm_dbd
   any_errors_fatal: true
   vars:
-    share_mounted_path: /opt/omnia
+    share_mounted_path: "{{ hostvars['localhost']['share_path'] | default('/home') }}" # from storage.yml
+    #TODO: nfs_client role here, slurm depends on a mandatory share path
   pre_tasks:
-    - name: Get the project input path
-      ansible.builtin.set_fact:
-        project_input_path: "{{ share_mounted_path }}/input/{{ ( lookup('file', share_mounted_path+'/input/default.yml') | from_yaml ).project_name | default('project_default') }}"
+    - name: Include input project directory
+      ansible.builtin.import_role:
+        name: ../utils/roles/include_input_dir
       run_once: true
-    - name: Include vars omnia.yml
+      delegate_to: localhost
+    - name: Include vars omnia_config.yml
       ansible.builtin.include_vars:
-        file: "{{ project_input_path }}/omnia_config.yml"
-    - name: debug
-      ansible.builtin.debug:
-        var: slurm_installation_type
+        file: "{{ input_project_dir }}/omnia_config.yml"
+      run_once: true
+      delegate_to: localhost
   roles:
     - role: slurm
 

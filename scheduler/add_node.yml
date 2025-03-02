@@ -1,6 +1,6 @@
 ---
-- name: Remove nodes Slurm
-  hosts: slurm_control_node, slurm_node
+- name: Add nodes Slurm
+  hosts: slurm_control_node, slurm_node, login, slurm_dbd
   any_errors_fatal: true
   vars:
     share_mounted_path: "{{ hostvars['localhost']['share_path'] | default('/home') }}" # from storage.yml
@@ -17,7 +17,7 @@
       run_once: true
       delegate_to: localhost
   tasks:
-    - name: Remove node
+    - name: Add node
       ansible.builtin.import_role:
         name: slurm
-        tasks_from: rm_node
+        tasks_from: add_node
