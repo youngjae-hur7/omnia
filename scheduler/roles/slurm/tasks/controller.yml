@@ -1,8 +1,4 @@
 ---
-- name: Install Controller Packages
-  ansible.builtin.debug:
-    msg: "Welcome to Controller {{ ansible_hostname }} {{ slurm_controller_packages[ansible_os_family] }}"
-
 - name: Install controller packages
   ansible.builtin.package:
     name: "{{ slurm_controller_packages[ansible_os_family] }}"
