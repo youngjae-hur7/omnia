@@ -19,7 +19,7 @@ import yaml
 from collections import defaultdict
 import re
 from jinja2 import Template
- 
+import requests
  
 PACKAGE_TYPES = ['rpm', 'deb', 'tarball', 'image', 'manifest', 'git',
                  'pip_module', 'deb', 'shell', 'ansible_galaxy_collection', 'iso']
@@ -103,7 +103,27 @@ def get_csv_file_path(software_name, user_csv_dir):
     if os.path.exists(csv_file_path):
         return csv_file_path
  
- 
+def is_remote_url_reachable(remote_url, timeout=10):
+    """
+    Check if a remote URL is reachable.
+
+    This function sends an HTTP GET request to the specified remote URL with a given timeout.
+    If the response status code is 200, the URL is considered reachable and the function returns True.
+    In case of any exception (e.g., connection issues or timeouts), the function returns False.
+
+    Args:
+        remote_url (str): The URL to check for reachability.
+        timeout (int, optional): The maximum number of seconds to wait for a response. Defaults to 10.
+
+    Returns:
+        bool: True if the URL is reachable (HTTP status 200), False otherwise.
+    """
+    try:
+        response = requests.get(remote_url, timeout=timeout)
+        return response.status_code == 200
+    except Exception:
+        return False
+
 def transform_package_dict(data):
     """
     Transforms a dictionary of packages into a new dictionary.
@@ -153,27 +173,36 @@ def parse_repo_urls(local_repo_config_path, version_variables):
         version_variables (dict): A dictionary of version variables.
 
     Returns:
-        str: The parsed repository URLs as a JSON string.
-
+        tuple: A tuple where the first element is either the parsed repository URLs as a JSON string 
+               (on success) or the rendered URL (if unreachable), and the second element is a boolean 
+               indicating success (True) or failure (False).
     """
-    
+
     local_yaml = load_yaml(local_repo_config_path)
     repo_entries = local_yaml.get("omnia_repo_url_rhel", [])
     parsed_repos = []
- 
+
     for repo in repo_entries:
         name = repo.get("name", "unknown")  # Default name
         url = repo.get("url", "")  # Default to empty string if missing
         gpgkey = repo.get("gpgkey")  # Default is None (no need to specify explicitly)
         version = version_variables.get(f"{name}_version")  # Extract version dynamically
- 
+
         # Render URL using Jinja2 templating
         try:
             rendered_url = Template(url).render(version_variables)
         except Exception as e:
             print(f"Warning: Error rendering URL {url} - {str(e)}")
             rendered_url = url  # Fallback to original URL
- 
+
+        # To handle special case when softeare_config.json does not contain these
+        if name in ["amdgpu", "rocm", "beegfs"] and (version is None or version == "null"):
+            continue
+
+        # Edge case for oneapi, snoopy
+        elif not is_remote_url_reachable(rendered_url) and name not in ["oneapi","snoopy"]:
+            return rendered_url, False
+
         parsed_repos.append({
             "package": name,
             "url": rendered_url,
@@ -181,7 +210,7 @@ def parse_repo_urls(local_repo_config_path, version_variables):
             "version": version if version else "null"  # Ensure None if empty
         })
  
-    return json.dumps(parsed_repos)
+    return json.dumps(parsed_repos), True
  
  
 def set_version_variables(user_data, software_names, cluster_os_version):
