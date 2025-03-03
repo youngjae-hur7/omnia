@@ -26,22 +26,21 @@ ansible_config_file_path: "/etc/ansible"
 
 # -----------------------------SLURM------------------------------------------------
 
-# Password used for Slurm database.
+# Username and password used for Slurm database.
 # The Length of the password should be at least 8.
 # The password must not contain -,\, ',"
-mariadb_password: "password"
-
-# Host and port of the db.
-db_host:
-db_port:
-
-# Username and password for ansible to access the db if it exists
-# or what the username and password will be set to when creating the db.
+db_username: ansible
 db_password: password
-db_username: slurm
 
-# Type of db to be used. Options are mysql or mariadb.
-db_type: mysql
+# Host and port of the Slurm database.
+# If no database is intalled on the given node, one will be created.
+# Defaults to the slurmdbd host if no host is given.
+db_host: cn1
+db_port: 3306
+
+# Type of db to be used.
+# Options are mysql or mariadb. Defaults to mariadb.
+db_type: mariadb
 
 # This variable accepts whether slurm installation is supported in configless mode or slurm in nfs
 # Default value is "configless"

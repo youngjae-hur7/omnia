@@ -5,10 +5,9 @@
 
 - name: Install db packages
   ansible.builtin.package:
-    name: "{{ item }}"
+    name: "{{ db_packages[ansible_os_family][db_type] }}"
     state: present 
-  loop:
-    - "{{ db_packages[ansible_os_family][db_type] }}"
+  register: new_install
 
 # Port Config
 - name: Enable db port
@@ -34,23 +33,35 @@
   register: ctld_service
   when: db_type == 'mariadb'
 
-- name: Add db user - shortname # TODO: Modify to account for slurmdbd HA
+- name: Add ansible db user
   community.mysql.mysql_user:
-    login_user: root
-    login_password: ""
+    login_user: "{{ db_username_default }}"
+    login_password: "{{ db_password_default }}"
     name: "{{ db_username }}"
     password: "{{ db_password }}"
+    host: "localhost"
+    priv: '*.*:ALL,GRANT'
+    login_unix_socket: /var/lib/mysql/mysql.sock
+    state: present
+  when: new_install.changed
+
+- name: Add db user - shortname
+  community.mysql.mysql_user:
+    login_user: "{{ db_username }}"
+    login_password: "{{ db_password }}"
+    name: "{{ slurm_db_username }}"
+    password: "{{ slurm_db_password }}"
     host: "{{ groups['slurm_dbd'][0] }}"
     priv: '*.*:ALL,GRANT'
     login_unix_socket: /var/lib/mysql/mysql.sock
     state: present
 
-- name: Add db user - FQDN # TODO: Modify to account for slurmdbd HA
+- name: Add db user - FQDN
   community.mysql.mysql_user:
-    login_user: root
-    login_password: ""
-    name: "{{ db_username }}"
-    password: "{{ db_password }}"
+    login_user: "{{ db_username }}"
+    login_password: "{{ db_password }}"
+    name: "{{ slurm_db_username }}"
+    password: "{{ slurm_db_password }}"
     host: "{{ groups['slurm_dbd'][0] }}.%"
     priv: '*.*:ALL,GRANT'
     login_unix_socket: /var/lib/mysql/mysql.sock

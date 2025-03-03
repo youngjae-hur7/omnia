@@ -12,8 +12,11 @@ slurm_config_dir: /etc/slurm
 slurm_dir_name: slurm
 slurm_dbd_port: 6819
 db_port_default: 3306
-# slurm_db_username: 
-# slurm_db_password: 
+db_type_default: mariadb
+db_username_default: root
+db_password_default: password
+slurm_db_username: "{{ slurm_user }}"
+slurm_db_password: slurmPassword123!
 slurm_munge_key_path: "{{ share_path }}/{{ slurm_dir_name }}/munge.key"
 slurm_partition_name: normal
 slurm_ctld_parameters: []

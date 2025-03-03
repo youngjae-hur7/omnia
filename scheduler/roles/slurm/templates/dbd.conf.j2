@@ -17,5 +17,5 @@ StorageHost={{ db_host }}
 {% if db_port is not none and db_port != omit %}
 StoragePort={{ db_port }}
 {% endif %}
-StoragePass={{ db_password }}
-StorageUser={{ db_username }}
+StorageUser={{ slurm_db_username }}
+StoragePass={{ slurm_db_password }}

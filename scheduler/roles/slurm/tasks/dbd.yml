@@ -2,22 +2,17 @@
 - name: Is db_host defined
   ansible.builtin.set_fact:
     db_host: "{{ groups['slurm_dbd'][0] }}"
-  when: db_host is not defined and '"slurm_node" in group_names'
+  when: (db_host is not defined) or (not db_host)
 
 - name: Is db_port defined
   ansible.builtin.set_fact:
     db_port: "{{ db_port_default }}"
-  when: db_port is not defined and '"slurm_node" in group_names'
+  when: (db_port is not defined) or (not db_port)
 
-- name: Set db_host
+- name: Is db_type defined
   ansible.builtin.set_fact:
-    db_host: "{{ groups['slurm_dbd'][0] }}"
-  when: db_host == None or db_host == "" and '"slurm_node" in group_names'
-
-- name: Set db_port
-  ansible.builtin.set_fact:
-    db_port: "{{ db_port_default }}"
-  when: db_port == None and '"slurm_node" in group_names'
+    db_type: "{{ db_type_default }}"
+  when: (db_type is not defined) or (not db_type)
 
 - name: Create DB tasks
   ansible.builtin.include_tasks: db.yml
@@ -41,6 +36,30 @@
   loop:
     - "{{ slurm_dbd_conf_dict['LogFile'] }}"
     - "{{ slurm_dbd_conf_dict['PidFile'] }}"
+
+- name: Create slurmdbd.conf
+  ansible.builtin.template: # Create dest directory before
+    src: "dbd.conf.j2"
+    dest: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurmdbd.conf"
+    owner: "{{ slurm_user }}"
+    group: "{{ slurm_user }}"
+    mode: "{{ slurm_dbd_mode }}"
+    run_once: true
+  notify:
+    - Restart slurmdbd
+
+- name: Local copy slurmdbd.conf /etc/slurm/
+  ansible.builtin.template: # Local copy #FAILSAFE
+    src: "dbd.conf.j2"
+    dest: "{{ slurm_config_dir }}/slurmdbd.conf"
+    owner: "{{ slurm_user }}"
+    group: "{{ slurm_user }}"
+    mode: "{{ slurm_dbd_mode }}"
+  when: '"slurm_dbd" in group_names'
+  ignore_errors: true
+  notify:
+    - Restart slurmdbd
+    - Restart slurmctld
 
 # Port Config
 - name: Enable SlurmdbdPort

@@ -22,30 +22,6 @@
     - "{{ slurm_conf_dict['StateSaveLocation'] }}"
     - "{{ slurm_config_dir }}"
 
-- name: Is db_host defined
-  ansible.builtin.set_fact:
-    db_host: "{{ groups['slurm_dbd'][0] }}"
-  when: ((db_host is not defined) or (not db_host)) and ('slurm_dbd' in group_names)
-
-- name: Is db_port defined
-  ansible.builtin.set_fact:
-    db_port: "{{ db_port_default }}"
-  when: ((db_port is not defined) or (not db_port)) and ('slurm_dbd' in group_names)
-
-# TODO: Can't use run_once and when condition on same task,
-# maybe should move to seperate file with a when condtion for inlcude task
-- name: Create slurmdbd.conf
-  ansible.builtin.template: # Create dest directory before
-    src: "dbd.conf.j2"
-    dest: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurmdbd.conf"
-    owner: "{{ slurm_user }}"
-    group: "{{ slurm_user }}"
-    mode: "{{ slurm_dbd_mode }}"
-  # run_once: true
-  when: '"slurm_dbd" in group_names'
-  notify:
-    - Restart slurmdbd
-
 - name: Create slurm.conf
   ansible.builtin.template: # Create dest directory before
     src: "slurm.conf.j2"
@@ -79,19 +55,6 @@
     value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
     no_extra_spaces: true
     mode: u=rw,g=r,o=r
-
-- name: Local copy slurmdbd.conf /etc/slurm/
-  ansible.builtin.template: # Local copy #FAILSAFE
-    src: "dbd.conf.j2"
-    dest: "{{ slurm_config_dir }}/slurmdbd.conf"
-    owner: "{{ slurm_user }}"
-    group: "{{ slurm_user }}"
-    mode: "{{ slurm_dbd_mode }}"
-  when: '"slurm_dbd" in group_names'
-  ignore_errors: true
-  notify:
-    - Restart slurmdbd
-    - Restart slurmctld
 
 - name: All other host configs # TODO: failsafe
   ansible.builtin.template:
