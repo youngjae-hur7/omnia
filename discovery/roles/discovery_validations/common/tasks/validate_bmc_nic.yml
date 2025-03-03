@@ -20,7 +20,7 @@
     - name: Validate bmc_nic details
       ansible.builtin.assert:
         that:
-          - network_data.bmc_network.nic_name | default("", true) | length > 0
+          - network_data.bmc_network.oim_nic_name | default("", true) | length > 0
           - network_data.bmc_network.netmask_bits | default("", true) | length > 0
           - network_data.bmc_network.static_range | default("", true) | length > 0
           - network_data.bmc_network.dynamic_range | default("", true) | length > 0
@@ -194,7 +194,7 @@
     - name: Set bmc_ip
       ansible.builtin.set_fact:
         bmc_nic_ip: "{{ script_output.stdout }}"
-        bmc_nic: "{{ network_data.bmc_network.nic_name }}"
+        bmc_nic: "{{ network_data.bmc_network.oim_nic_name }}"
       when:
         - script_output.rc == 0
 
