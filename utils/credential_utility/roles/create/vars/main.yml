@@ -14,3 +14,4 @@
 ---
 omnia_credential_template: "{{ role_path }}/templates/omnia_credential.j2"
 omnia_credential_file: "{{ input_project_dir }}/omnia_credentials.yml"
+omnia_credential_file_mode: 600

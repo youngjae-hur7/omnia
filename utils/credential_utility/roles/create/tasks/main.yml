@@ -17,6 +17,4 @@
   ansible.builtin.template:
     src: "{{ omnia_credential_template }}"
     dest: "{{ omnia_credential_file }}"
-    owner: "{{ omnia_credential_file_owner }}"
-    group: "{{ omnia_credential_file_group }}"
     mode: "{{ omnia_credential_file_mode }}"

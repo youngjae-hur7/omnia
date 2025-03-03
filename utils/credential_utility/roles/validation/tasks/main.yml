@@ -18,4 +18,3 @@
 
 - name: Include pre_requisite.yml
   ansible.builtin.include_tasks: pre_requisite.yml
-  when: cred_file_status
