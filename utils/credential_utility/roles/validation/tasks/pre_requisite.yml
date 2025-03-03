@@ -29,10 +29,10 @@
       changed_when: false
       when: ansible_vault_search_key in omnia_credentials_content.stdout
 
-- name: Include omnia_credentials.yml
-  ansible.builtin.include_vars: "{{ omnia_credential_file }}"
-  register: include_omnia_credentials
-  no_log: true
+    - name: Include omnia_credentials.yml
+      ansible.builtin.include_vars: "{{ omnia_credential_file }}"
+      register: include_omnia_credentials
+      no_log: true
 
 - name: Create ansible vault key
   ansible.builtin.set_fact:
