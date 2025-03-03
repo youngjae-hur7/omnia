@@ -16,7 +16,7 @@
 - name: Fetch "{{ username }}" if empty
   when: vars[username] is defined and (vars[username] | length == 0)
   block:
-    - name: Prompt user for a username
+    - name: Prompt user for a "{{ username }}"
       pause:
         prompt: "Enter the username:"
       register: username_input
