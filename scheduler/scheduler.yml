@@ -65,28 +65,28 @@
   hosts: omnia_kubespray
   vars:
     k8s_nfs_share: "/opt/omnia/kubespray"
+    k8s_logs_dir: "/opt/omnia/log/kubespray"
+    dir_mode: '0755'
   tasks:
     - name: Copy k8s_start_setup to kubespray nfs share
       ansible.builtin.copy:
         src: "{{ playbook_dir }}/playbooks/k8s_start_setup.yml"
         dest: "{{ k8s_nfs_share }}/k8s_start_setup.yml"
     
-    - name: Ensure /logs directory exists
+    - name: Ensure /log/kubespray directory exists
       ansible.builtin.file:
-        path: "{{ k8s_nfs_share }}/logs"
+        path: "{{ k8s_logs_dir }}"
         state: directory
-        mode: '0755'
+        mode: "{{ dir_mode }}"
 
     - name: Execute ansible-playbook for Kubernetes setup asynchronously
       ansible.builtin.shell:
-        cmd: /venv/bin/ansible-playbook {{ k8s_nfs_share }}/k8s_start_setup.yml -i {{ k8s_nfs_share }}/inv_k8s --extra-vars "@{{ k8s_nfs_share }}/k8s_all_vars.yml" -vvv | /usr/bin/tee {{ k8s_nfs_share }}/logs/k8s_deployment.log
+        cmd: ansible-playbook {{ k8s_nfs_share }}/k8s_start_setup.yml -i {{ k8s_nfs_share }}/inv_k8s --extra-vars "@{{ k8s_nfs_share }}/k8s_all_vars.yml" -vvv | /usr/bin/tee {{ k8s_logs_dir }}//k8s_deployment.log
       async: 3600  # Set async timeout (e.g., 1 hour)
       poll: 0  # Non-blocking (continue the playbook without waiting for completion)
       register: result  # Register the result to capture job ID
-    - name: debug
-      debug:
-        msg: "{{ result }}"
-    - name: Wait for the Kubernetes installation to finish. Logs can be checked at /opt/omnia/kubespray/logs/k8s_deployment.log
+
+    - name: Wait for the Kubernetes installation to finish. Logs can be checked at /opt/omnia/log/kubespray/k8s_deployment.log
       ansible.builtin.async_status:
         jid: "{{ result.ansible_job_id }}"  # Job ID from the previous task
       register: job_result
