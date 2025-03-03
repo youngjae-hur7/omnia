@@ -34,11 +34,6 @@
           with_items: "{{ bmc_static_nodes }}"
           when: bmc_static_node_status
 
-        - name: Power on static nodes
-          ansible.builtin.include_tasks: set_provision_image_mtms.yml
-          with_items: "{{ bmc_static_nodes }}"
-          when: bmc_static_node_status
-
     - name: Provision bmc dynamic nodes
       when: discovery_mech_dynamic_bmc
       block:
@@ -51,12 +46,21 @@
           when:
             - dynamic_nodes.stdout_lines != ""
 
-        - name: Wait for 5 mins before power on, since it takes some time for nodes to properly power off.
-          ansible.builtin.wait_for:
-            timeout: "{{ on_timeout }}"
+    - name: Wait for 5 mins before power on, since it takes some time for nodes to properly power off.
+      ansible.builtin.wait_for:
+        timeout: "{{ on_timeout }}"
+      when: discovery_mech_static_bmc or discovery_mech_dynamic_bmc
 
-        - name: Power on dynamic nodes
-          ansible.builtin.include_tasks: set_provision_image_mtms.yml
-          with_items: "{{ dynamic_nodes.stdout_lines }}"
-          when:
-            - dynamic_nodes.stdout_lines != ""
+    - name: Power on static nodes
+      ansible.builtin.include_tasks: power_on_nodes.yml
+      with_items: "{{ bmc_static_nodes }}"
+      when:
+        - discovery_mech_static_bmc
+        - bmc_static_node_status
+
+    - name: Power on dynamic nodes
+      ansible.builtin.include_tasks: power_on_nodes.yml
+      with_items: "{{ dynamic_nodes.stdout_lines }}"
+      when:
+        - discovery_mech_dynamic_bmc
+        - dynamic_nodes.stdout_lines != ""

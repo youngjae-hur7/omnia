@@ -98,7 +98,7 @@ def update_node_obj_nm():
                 if service_os_image != "None" and 'service' in role:
                     chain_os = f"osimage={service_os_image}"
                 command = ["/opt/xcat/bin/chdef", node_name, f"ip={admin_ip}", f"groups={groups_static},{role},{group_name}",
-                           f"chain={chain_setup},{chain_os}", f"arch={architecture}"]
+                           f"chain={chain_os}"]
                 subprocess.run(command)
             if mode == "dynamic":
                 command = ["/opt/xcat/bin/chdef", node_name,
