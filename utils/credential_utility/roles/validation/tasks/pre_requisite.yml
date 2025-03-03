@@ -61,3 +61,7 @@
     - name: Failed to load software_config.json as user_config
       ansible.builtin.fail:
         msg: "{{ software_config_syntax_fail_msg }} Error: {{ include_software_config.message }}"
+
+- name: Generate software JSON file names
+  ansible.builtin.set_fact:
+    software_names: "{{ software_config.softwares | map(attribute='name') | select('defined') | list }}"
