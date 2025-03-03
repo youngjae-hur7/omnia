@@ -154,17 +154,6 @@ if [[ "$OS_ID" == "ubuntu" ]]; then
     fi
 fi
 
-if [ "$unsupported_os" = true ]; then
-	echo "Unsupported OS for Omnia v1.7 software stack. Creating venv for Omnia v1.6.1 software stack."
-	ansible_version="7.7.0"
-    	ansible_core_version="2.14.12"
-	python_version="39" # RHEL-8.8 onwards and ubuntu-20.04 onwards this is '3.9'
-	py_major_version="3"
-	py_minor_version="9"
-	venv_py=python3.9
-	venv_location="/opt/omnia/omnia161_venv" # Do not give a trailing slash
-fi
-
 # Check if the OS version is unsupported and print a warning message
 install_omnia_version=$(grep "omnia_version:" ".metadata/omnia_version" | cut -d ':' -f 2 | tr -d ' ')
 if [[ "$OS_ID" == "rhel" || "$OS_ID" == "rocky" ]]; then
@@ -315,10 +304,6 @@ echo "----------------------------------------------------"
 max_retries=3
 retry_count=0
 venv_collection_req_file="requirements_collections.yml"
-if [ "$unsupported_os" = true ]; then
-    echo "Unsupported OS: Installing collections in omnia v1.6.1 venv"
-    venv_collection_req_file="upgrade/roles/upgrade_oim/files/requirements_venv161.yml"
-fi
 while [ $retry_count -lt $max_retries ]; do
     ansible-galaxy collection install -r $venv_collection_req_file
     if [ $? -eq 0 ]; then

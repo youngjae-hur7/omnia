@@ -166,6 +166,28 @@
   ansible.builtin.set_fact:
     csi_driver_powerscale_precheck_pass: false
 
+- name: Validate nvidia gpu operator variables
+  when: nvidia_gpu_operator_support
+  block:
+    - name: Validate that nvidia_gpu_operator_value_file_path contains a valid path
+      ansible.builtin.assert:
+        that:
+          - nvidia_gpu_operator_value_file_path is defined
+          - nvidia_gpu_operator_value_file_path | length > 0
+          - '".yml" or ".yaml" in nvidia_gpu_operator_value_file_path'
+        success_msg: "{{ nvidia_gpu_operator_value_file_path_success_msg }}"
+        fail_msg: "{{ nvidia_gpu_operator_value_file_path_fail_msg }}"
+
+    - name: Verify the nvidia_gpu_operator_value_file_path
+      ansible.builtin.stat:
+        path: "{{ nvidia_gpu_operator_value_file_path }}"
+      register: result_path_nvidia_gpu_operator_value_file_path
+
+    - name: Assert nvidia_gpu_operator_value_file_path location
+      ansible.builtin.fail:
+        msg: "{{ nvidia_gpu_operator_value_file_path_missing_msg }}"
+      when: not result_path_nvidia_gpu_operator_value_file_path.stat.exists
+
 - name: Validate csi powerscale variables
   when: csi_driver_powerscale_support
   block:

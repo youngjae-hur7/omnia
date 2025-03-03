@@ -168,8 +168,11 @@ def process_tarball_package(package, repo_store_path, status_file_path, version_
 
     if path_support == False and url_support == True:
         try:
-            # Using wget to check if the URL exists (returns 0 for success, non-zero for failure)
-            subprocess.run(['wget', '-q', '--spider', '--tries=1', url], check=True)
+            if "nvidia-gpu-operator" in package_name:
+                pass
+            else:
+                # Using wget to check if the URL exists (returns 0 for success, non-zero for failure)
+                subprocess.run(['wget', '-q', '--spider', '--tries=1', url], check=True)
 
             # Check if the tarball already exists
             if os.path.exists(tarball_path):

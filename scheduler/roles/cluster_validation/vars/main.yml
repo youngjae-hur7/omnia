@@ -40,7 +40,9 @@ intel_gaudi_repo_fail_msg: "Failed, local_repo.yml is not executed for downloadi
 warning_time: 30
 offline_intel_directory: "{{ repo_store_path }}/cluster/apt"
 intelgaudi_version_warning_msg: "Failed, Intel Gaudi version not found."
-
+success_msg_nvidia_gpu_operator_version: "Success. nvidia gpu operator version is mentioned." # noqa: yaml[line-length]
+fail_msg_nvidia_gpu_operator_version: "Failed. nvidia gpu operator version is not provided in software_config.json. Please include nvidia gpu operator version in input/software_config.json and rerun the playbook." # noqa: yaml[line-length]
+fail_msg_k8s_support_false: "Failed. k8s is not present in software_config.json, please add k8s in input/software_config.json and rerun the playbook."  # noqa: yaml[line-length]
 # Usage: fetch_omnia_inputs.yml
 config_filename: "omnia_config.yml"
 config_vaultname: .omnia_vault_key
@@ -81,6 +83,9 @@ slurm_installation_type_empty_failure_msg: "Slurm Installation type cannot be em
 slurm_installation_type_wrong_failure_msg: "Slurm Installation Type should be either nfs_share or configless in omnia_config.yml"
 restart_services_success_msg: "restart_slurm_services successfully validated"
 restart_services_failure_msg: "Failed. restart_slurm_services accepts true or false in omnia_config.yml"
+nvidia_gpu_operator_value_file_path_success_msg: "Success. nvidia_gpu_operator_value_file_path is provided in omnia_config.yml"
+nvidia_gpu_operator_value_file_path_fail_msg: "Failed. nvidia_gpu_operator_value_file_path is not valid in omnia_config.yml. Please verify the path."
+nvidia_gpu_operator_value_file_path_missing_msg: "Incorrect nvidia_gpu_operator_value_file_path provided. Make sure .yml file is present in the provided nvidia_gpu_operator_value_file_path."
 
 # Usage: fetch_storage_config.yml
 storage_config_filename: "storage_config.yml"
