@@ -14,7 +14,7 @@
 ---
 
 - name: Fetch omnia credentials
-  include_tasks: fetch_credentials.yml
+  ansible.builtin.include_tasks: fetch_credentials.yml
   loop: "{{ omnia_credentials | dict2items }}"
   loop_control:
     loop_var: service
@@ -24,4 +24,4 @@
   no_log: true
 
 - name: Encrypt omnia credentials config 
-  include_tasks: encrypt_credentials_file.yml
+  ansible.builtin.include_tasks: encrypt_credentials_file.yml

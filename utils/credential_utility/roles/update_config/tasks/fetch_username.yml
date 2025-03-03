@@ -40,7 +40,7 @@
 
   rescue:
     - name: Invalid Username provided 
-      include_tasks: encrypt_credentials_file.yml
+      ansible.builtin.include_tasks: encrypt_credentials_file.yml
     
     - name: Failed to credentials with entered username
       ansible.builtin.fail:
