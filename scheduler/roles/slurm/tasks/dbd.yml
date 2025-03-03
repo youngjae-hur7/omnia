@@ -1,24 +1,24 @@
 ---
-- name: Is db_host defined
+- name: Is slurm_db_host defined
   ansible.builtin.set_fact:
-    db_host: "{{ groups['slurm_dbd'][0] }}"
-  when: (db_host is not defined) or (not db_host)
+    slurm_db_host: "{{ groups['slurm_dbd'][0] }}"
+  when: (slurm_db_host is not defined) or (not slurm_db_host)
 
-- name: Is db_port defined
+- name: Is slurm_db_port defined
   ansible.builtin.set_fact:
-    db_port: "{{ db_port_default }}"
-  when: (db_port is not defined) or (not db_port)
+    slurm_db_port: "{{ slurm_db_port_default }}"
+  when: (slurm_db_port is not defined) or (not slurm_db_port)
 
-- name: Is db_type defined
+- name: Is slurm_db_type defined
   ansible.builtin.set_fact:
-    db_type: "{{ db_type_default }}"
-  when: (db_type is not defined) or (not db_type)
+    slurm_db_type: "{{ slurm_db_type_default }}"
+  when: (slurm_db_type is not defined) or (not slurm_db_type)
 
 - name: Create DB tasks
   ansible.builtin.include_tasks: db.yml
   args:
     apply:
-        delegate_to: "{{ db_host }}"
+      delegate_to: "{{ slurm_db_host }}"
   run_once: true
 
 - name: Install DBD packages
@@ -46,6 +46,7 @@
     mode: "{{ slurm_dbd_mode }}"
   run_once: true
   notify:
+    - Restart slurmctld
     - Restart slurmdbd
 
 - name: Local copy slurmdbd.conf /etc/slurm/

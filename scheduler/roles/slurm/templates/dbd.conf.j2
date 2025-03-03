@@ -13,9 +13,9 @@ DbdPort={{ slurm_dbd_port }}
 {% endif %}
 
 # DATABASE INFO
-StorageHost={{ db_host }}
-{% if db_port is not none and db_port != omit %}
-StoragePort={{ db_port }}
+StorageHost={{ slurm_db_host }}
+{% if slurm_db_port is not none and slurm_db_port != omit %}
+StoragePort={{ slurm_db_port }}
 {% endif %}
-StorageUser={{ slurm_db_username }}
-StoragePass={{ slurm_db_password }}
+StorageUser={{ slurm_dbd_db_username }}
+StoragePass={{ slurm_dbd_db_password }}

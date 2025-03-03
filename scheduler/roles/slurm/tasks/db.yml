@@ -3,16 +3,27 @@
 # - name: Sync time
 #   ansible.builtin.include_tasks: time_sync.yml
 
+- name: Is slurm_db_username defined
+  ansible.builtin.set_fact:
+    slurm_db_username: "{{ slurm_db_username_default }}"
+    slurm_db_password: "{{ slurm_db_password_default }}"
+  when: (slurm_db_username is not defined) or (not slurm_db_username)
+
+- name: Is slurm_db_password defined
+  ansible.builtin.set_fact:
+    slurm_db_password: "{{ slurm_db_password_default }}"
+  when: (slurm_db_password is not defined)
+
 - name: Install db packages
   ansible.builtin.package:
-    name: "{{ db_packages[ansible_os_family][db_type] }}"
+    name: "{{ db_packages[ansible_os_family][slurm_db_type] }}"
     state: present 
   register: new_install
 
 # Port Config
 - name: Enable db port
   ansible.posix.firewalld:
-    port: "{{ db_port }}/tcp"
+    port: "{{ slurm_db_port }}/tcp"
     permanent: true
     state: enabled
     immediate: true
@@ -23,7 +34,7 @@
     enabled: true
     state: started
   register: ctld_service
-  when: db_type == 'mysql'
+  when: slurm_db_type == 'mysql'
 
 - name: Enable and start the mariadb service
   ansible.builtin.service:
@@ -31,40 +42,46 @@
     enabled: true
     state: started
   register: ctld_service
-  when: db_type == 'mariadb'
+  when: slurm_db_type == 'mariadb'
 
 - name: Add ansible db user
   community.mysql.mysql_user:
-    login_user: "{{ db_username_default }}"
-    login_password: "{{ db_password_default }}"
-    name: "{{ db_username }}"
-    password: "{{ db_password }}"
+    login_user: "{{ slurm_db_username_default }}"
+    login_password: "{{ slurm_db_password_default }}"
+    name: "{{ slurm_db_username }}"
+    password: "{{ slurm_db_password }}"
     host: "localhost"
     priv: '*.*:ALL,GRANT'
-    login_unix_socket: /var/lib/mysql/mysql.sock
+    login_unix_socket: "{{ slurm_db_login_unix_socket }}"
     state: present
   when: new_install.changed
 
 - name: Add db user - shortname
   community.mysql.mysql_user:
-    login_user: "{{ db_username }}"
-    login_password: "{{ db_password }}"
-    name: "{{ slurm_db_username }}"
-    password: "{{ slurm_db_password }}"
+    login_user: "{{ slurm_db_username }}"
+    login_password: "{{ slurm_db_password }}"
+    name: "{{ slurm_dbd_db_username }}"
+    password: "{{ slurm_dbd_db_password }}"
     host: "{{ groups['slurm_dbd'][0] }}"
-    priv: '*.*:ALL,GRANT'
-    login_unix_socket: /var/lib/mysql/mysql.sock
+    priv: "{{ slurm_dbd_conf_dict['StorageLoc'] }}.*:ALL,GRANT"
+    login_unix_socket: "{{ slurm_db_login_unix_socket }}"
     state: present
+  notify:
+    - Restart slurmctld
+    - Restart slurmdbd
 
 - name: Add db user - FQDN
   community.mysql.mysql_user:
-    login_user: "{{ db_username }}"
-    login_password: "{{ db_password }}"
-    name: "{{ slurm_db_username }}"
-    password: "{{ slurm_db_password }}"
+    login_user: "{{ slurm_db_username }}"
+    login_password: "{{ slurm_db_password }}"
+    name: "{{ slurm_dbd_db_username }}"
+    password: "{{ slurm_dbd_db_password }}"
     host: "{{ groups['slurm_dbd'][0] }}.%"
-    priv: '*.*:ALL,GRANT'
-    login_unix_socket: /var/lib/mysql/mysql.sock
+    priv: "{{ slurm_dbd_conf_dict['StorageLoc'] }}.*:ALL,GRANT"
+    login_unix_socket: "{{ slurm_db_login_unix_socket }}"
     state: present
+  notify:
+    - Restart slurmctld
+    - Restart slurmdbd
 
 # TODO: Enable port 3306 in the mysqul.cnf file?
