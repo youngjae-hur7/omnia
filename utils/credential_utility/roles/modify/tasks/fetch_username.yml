@@ -14,7 +14,7 @@
 ---
 
 - name: Fetch "{{ username }}" if empty
-  when: vars[username] is defined and (username | length == 0)
+  when: vars[username] is defined and (vars[username] | length == 0)
   block:
     - name: Prompt user for a username
       pause:
