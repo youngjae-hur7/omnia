@@ -109,8 +109,6 @@ def run_bmc_discover(final_range):
 
 	Parameters:
 		final_range (str): The range of IP addresses to discover.
-		stanza_path (str): The path to the stanza file.
-		bmc_mode (str): The mode of the BMC.
 
 	Returns:
 		None
