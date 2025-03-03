@@ -19,25 +19,24 @@ import warnings
 import correlation_admin_bmc
 import modify_network_details
 
-db_path = sys.argv[11]
+db_path = sys.argv[10]
 sys.path.insert(0, db_path)
 
 import omniadb_connection
 
 bmc_static_range = sys.argv[1]
-bmc_static_subnet = sys.argv[2]
-static_stanza_path = os.path.abspath(sys.argv[3])
-node_name = sys.argv[4] + "node"
-group_name = sys.argv[4]
-domain_name = sys.argv[5]
-admin_static_range = sys.argv[6]
-admin_subnet = sys.argv[7]
-netmask_bits = sys.argv[8]
-correlation_status = sys.argv[9]
-uncorrelated_admin_start_ip = ipaddress.IPv4Address(sys.argv[10])
-location_id = sys.argv[12]
-architecture = sys.argv[13]
-role = sys.argv[14]
+static_stanza_path = os.path.abspath(sys.argv[2])
+node_name = sys.argv[3] + "node"
+group_name = sys.argv[3]
+domain_name = sys.argv[4]
+admin_static_range = sys.argv[5]
+admin_subnet = sys.argv[6]
+netmask_bits = sys.argv[7]
+correlation_status = sys.argv[8]
+uncorrelated_admin_start_ip = ipaddress.IPv4Address(sys.argv[9])
+location_id = sys.argv[11]
+architecture = sys.argv[12]
+role = sys.argv[13]
 discovery_mechanism = "mtms"
 bmc_mode = "static"
 admin_static_start_range = ipaddress.IPv4Address(admin_static_range.split('-')[0])

@@ -30,6 +30,8 @@ stanza_paths:
   - "{{ dynamic_ip_file }}"
 file_perm: "0644"
 bmcdiscover_python: "{{ provision_shared_library_path }}/mtms/bmc_discover_ranges.py"
+static_mode: "static"
+dynamic_mode: "static"
 
 # Usage: update_xcat_network_discovery_range.yml
 update_bmc_network_python: "{{ provision_shared_library_path }}/mtms/update_bmc_network.py"

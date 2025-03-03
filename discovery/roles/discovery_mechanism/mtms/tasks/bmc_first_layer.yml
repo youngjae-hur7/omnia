@@ -14,7 +14,7 @@
 ---
 
 - name: Perform bmc discover on static range
-  ansible.builtin.include_tasks: bmc_discover_ranges.yml
+  ansible.builtin.include_tasks: bmc_static_discovery.yml
 
 - name: Create database for discovery bmc mode
   ansible.builtin.include_tasks: update_db_static.yml
