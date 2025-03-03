@@ -16,7 +16,7 @@
 omnia_credential_file: "{{ input_project_dir }}/omnia_credentials.yml"
 
 omnia_credentials:
-  provision_credentials:
+  provision:
     mandatory:
       password:
         - provision_password
@@ -27,8 +27,7 @@ omnia_credentials:
       password:
         - bmc_password
         - switch_snmp3_password
-
-  prepare_oim_credentials:
+  prepare_oim:
     mandatory:
       password:
         - postgresdb_password
@@ -38,13 +37,11 @@ omnia_credentials:
         - docker_username
       password:
         - docker_password
-
-  slurm_credentials:
+  slurm:
     default:
       password:
         - mariadb_password
-
-  openldap_credentials:
+  openldap:
     mandatory:
       password:
         - openldap_db_password
@@ -54,8 +51,7 @@ omnia_credentials:
       username:
         - openldap_db_username
         - openldap_config_username
-
-  freeipa_credentials:
+  freeipa:
     mandatory:
       password:
         - kerberos_admin_password

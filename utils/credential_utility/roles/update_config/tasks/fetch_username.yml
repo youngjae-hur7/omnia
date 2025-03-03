@@ -14,15 +14,33 @@
 ---
 
 - name: Fetch "{{ username }}" if empty
-  when: vars[username] is defined and (vars[username] | length == 0)
+  when: 
+    - vars[username] is defined
+    - (vars[username] | length == 0) or (type.key == "default")
   block:
     - name: Prompt user for a "{{ username }}"
       pause:
         prompt: "Enter the username:"
       register: username_input
 
+    - name: Validate mandatory username not empty
+      fail:
+        msg: "Username cannot be empty! Please try again."
+      when:
+        - mandatory_credentials_status
+        - password_input.user_input | length == 0
+
     - name: Update vars file with entered username
       lineinfile:
         path: "{{ omnia_credential_file }}"
         regexp: '^{{ username }}:'
         line: "{{ username }}: \"{{ username_input.user_input }}\""
+      when: username_input.user_input | length != 0
+
+  rescue:
+    - name: Invalid Username provided 
+      include_tasks: encrypt_credentials_file.yml
+    
+    - name: Failed to credentials with entered username
+      ansible.builtin.fail:
+        msg: "Failed to update vars file with entered username!"
