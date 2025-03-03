@@ -85,13 +85,9 @@
         - ucx_dir_data.stat.exists
         - ucx_cmd.rc == 0
 
-    - name: Construct the command to compile the openmpi when slurm support is true
-      when: slurm_support
-      ansible.builtin.include_tasks: openmpi_cmd_with_slurm.yml
-
-    - name: Construct the command to compile the openmpi when slurm support is false
-      when: not slurm_support
-      ansible.builtin.include_tasks: openmpi_cmd_without_slurm.yml
+    - name: Construct openmpi compile the command with ucx and slurm
+      ansible.builtin.set_fact:
+        openmpi_compile_cmd: "./configure --prefix={{ omnia_share_path }}/{{ benchmarks_dir_openmpi }} --enable-mpi1-compatibility --enable-prte-prefix-by-default {{ '--with-slurm=yes' if slurm_support else '--with-slurm=no' }}{{ ' --with-ucx='+ucx_dir_data.stat.path+' ' if ucx_installed else ' ' }}CC=clang  CXX=clang++ 2>&1 | tee config.out"
 
     - name: Create a build directory inside openmpi folder
       ansible.builtin.file:
