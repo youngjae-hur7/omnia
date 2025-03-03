@@ -23,6 +23,6 @@
 
     - name: Update vars file with entered username
       lineinfile:
-        path: "/etc/ansible/vars.yml"
+        path: "{{ omnia_credential_file }}"
         regexp: '^{{ username }}:'
         line: "{{ username }}: {{ user_input.user_input }}"
