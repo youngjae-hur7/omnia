@@ -18,3 +18,10 @@
   loop: "{{ omnia_credentials | dict2items }}"
   loop_control:
     loop_var: service
+
+- name: Include updated credentials
+  ansible.builtin.include_vars: "{{ omnia_credential_file }}"
+  no_log: true
+
+- name: Encrypt omnia credentials config 
+  include_tasks: encrypt_credentials_file.yml
