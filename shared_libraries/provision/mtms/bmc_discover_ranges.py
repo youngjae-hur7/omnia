@@ -82,7 +82,7 @@ def cal_ranges(start_ip, end_ip):
     return range_status, final_range
 
 
-def create_ranges(bmc_mode):
+def create_ranges():
     """
     Create ranges dynamically based on the given BMC mode.
 
@@ -99,9 +99,9 @@ def create_ranges(bmc_mode):
     range_status = output[0]
     final_range = output[1]
     if range_status == "true":
-        run_bmc_discover(final_range, stanza_path , bmc_mode)
+        run_bmc_discover(final_range)
 
-def run_bmc_discover(final_range, stanza_path, bmc_mode):
+def run_bmc_discover(final_range):
     """
 	Runs BMC discovery on a range of IP addresses.
     Creates proper stanza file with results of bmcdiscovery, else it gets timed out.
