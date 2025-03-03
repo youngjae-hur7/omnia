@@ -135,7 +135,7 @@ The provision tool, invoked by the ``discovery_provision.yml`` playbook, runs in
         - ``/docker-registry``
         - ``/opt/omnia``
         - ``/var/log/omnia``
-        - ``/opt/omnia17_venv/``
+        - ``/opt/omnia171_venv/``
     * On subsequent runs of ``discovery_provision.yml``, if users are unable to log into the server, refresh the ssh key manually and retry. ::
 
         ssh-keygen -R <node IP>
