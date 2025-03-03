@@ -13,25 +13,25 @@
 # limitations under the License.
 ---
 
-- name: Fetch "{{ username }}" if empty
-  when: 
+- name: Fetch "{{ username }}" if empty # noqa jinja[template]
+  when:
     - vars[username] is defined
     - (vars[username] | length == 0) or (type.key == "default")
   block:
     - name: Prompt user for a "{{ username }}"
-      pause:
+      ansible.builtin.pause:
         prompt: "Enter the username:"
       register: username_input
 
     - name: Validate mandatory username not empty
-      fail:
+      ansible.builtin.fail:
         msg: "{{ mandatory_credentials_msg }}"
       when:
         - mandatory_credentials_status
         - password_input.user_input | length == 0
 
     - name: Update vars file with entered username
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: "{{ omnia_credential_file }}"
         regexp: '^{{ username }}:'
         line: "{{ username }}: \"{{ username_input.user_input }}\""
@@ -39,9 +39,9 @@
       when: username_input.user_input | length != 0
 
   rescue:
-    - name: Invalid Username provided 
+    - name: Invalid Username provided
       ansible.builtin.include_tasks: encrypt_credentials_file.yml
-    
+
     - name: Failed to credentials with entered username
       ansible.builtin.fail:
         msg: "{{ username_fail_msg }}"

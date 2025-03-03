@@ -23,5 +23,5 @@
   ansible.builtin.include_vars: "{{ omnia_credential_file }}"
   no_log: true
 
-- name: Encrypt omnia credentials config 
+- name: Encrypt omnia credentials config
   ansible.builtin.include_tasks: encrypt_credentials_file.yml
