@@ -195,7 +195,7 @@ def parse_repo_urls(local_repo_config_path, version_variables):
             print(f"Warning: Error rendering URL {url} - {str(e)}")
             rendered_url = url  # Fallback to original URL
 
-        # To handle special case when softeare_config.json does not contain these
+        # To handle special case when software_config.json does not contain these
         if name in ["amdgpu", "rocm", "beegfs"] and (version is None or version == "null"):
             continue
 
