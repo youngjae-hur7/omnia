@@ -13,7 +13,7 @@
 # limitations under the License.
 ---
 
-- name: Fetch "{{ username }}" if empty # noqa jinja[template]
+- name: Fetch "{{ username }}" if empty # noqa name[template]
   when:
     - vars[username] is defined
     - (vars[username] | length == 0) or (type.key == "default")
