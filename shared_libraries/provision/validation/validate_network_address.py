@@ -51,7 +51,7 @@ def main():
     for ip in result.stdout.split("inet ")[1:]:
         network_interface_ip.append(ip.split()[0])
 
-    input_network_static_ip_netmask = "{}/{}".format(network_data[network_interface]["static_range"].split("-")[0], network_data[network_interface]["netmask_bits"])
+    input_network_static_ip_netmask = "{}/{}".format(network_data[network_interface]["dynamic_conversion_static_range"].split("-")[0], network_data[network_interface]["netmask_bits"])
     input_network_dynamic_ip_netmask = "{}/{}".format(network_data[network_interface]["dynamic_range"].split("-")[0], network_data[network_interface]["netmask_bits"])
 
     for ip in network_interface_ip:
