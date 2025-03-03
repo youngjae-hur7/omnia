@@ -25,4 +25,4 @@
       lineinfile:
         path: "{{ omnia_credential_file }}"
         regexp: '^{{ username }}:'
-        line: "{{ username }}: {{ user_input.user_input }}"
+        line: "{{ username }}: {{ username_input.user_input }}"
