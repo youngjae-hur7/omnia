@@ -42,6 +42,7 @@
     password: "{{ db_password }}"
     host: "{{ groups['slurm_dbd'][0] }}"
     priv: '*.*:ALL,GRANT'
+    login_unix_socket: /var/lib/mysql/mysql.sock
     state: present
 
 - name: Add db user - FQDN # TODO: Modify to account for slurmdbd HA
@@ -52,6 +53,7 @@
     password: "{{ db_password }}"
     host: "{{ groups['slurm_dbd'][0] }}.%"
     priv: '*.*:ALL,GRANT'
+    login_unix_socket: /var/lib/mysql/mysql.sock
     state: present
 
 # TODO: Enable port 3306 in the mysqul.cnf file?
