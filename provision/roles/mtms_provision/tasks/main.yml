@@ -23,7 +23,7 @@
     - name: Include vars
       ansible.builtin.include_vars: "{{ role_path }}/../../../discovery/roles/discovery_mechanism/mtms/vars/main.yml"
 
-    - name: provision bmc static nodes
+    - name: Provision bmc static nodes
       when: discovery_mech_static_bmc
       block:
         - name: Check static node objects are empty or not
