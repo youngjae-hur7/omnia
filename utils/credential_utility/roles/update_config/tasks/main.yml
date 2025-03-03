@@ -13,7 +13,7 @@
 # limitations under the License.
 ---
 
-- name: Fetch credentials from users
+- name: Fetch omnia credentials
   include_tasks: fetch_credentials.yml
   loop: "{{ omnia_credentials | dict2items }}"
   loop_control:
