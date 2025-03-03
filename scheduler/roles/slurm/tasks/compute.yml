@@ -1,8 +1,4 @@
 ---
-- name: Install Compute Packages
-  ansible.builtin.debug:
-    msg: "Welcome to Compute {{ ansible_hostname }} {{ slurm_compute_packages[ansible_os_family] }}"
-
 - name: Install compute packages
   ansible.builtin.package:
     name: "{{ slurm_compute_packages[ansible_os_family] }}"

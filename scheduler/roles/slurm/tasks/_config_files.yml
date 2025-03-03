@@ -3,17 +3,15 @@
   ansible.builtin.set_fact:
     slurm_share_prefix: "{{ share_path }}/{{ slurm_dir_name }}"
 
-- name: Ensure directories - {{ item }}
+- name: Ensure Slurm conf share dir
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ slurm_share_prefix }}{{ slurm_config_dir }}"
     state: directory
     owner: root
     group: root
     mode: "{{ common_mode }}"
-  loop:
-    - "{{ slurm_share_prefix }}{{ slurm_config_dir }}"
 
-- name: Ensure directories - {{ item }}
+- name: Ensure directories for slurm ops
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
@@ -27,22 +25,12 @@
 - name: Is db_host defined
   ansible.builtin.set_fact:
     db_host: "{{ groups['slurm_dbd'][0] }}"
-  when: db_host is not defined and '"slurm_node" in group_names'
+  when: ((db_host is not defined) or (not db_host)) and ('slurm_dbd' in group_names)
 
 - name: Is db_port defined
   ansible.builtin.set_fact:
     db_port: "{{ db_port_default }}"
-  when: db_port is not defined and '"slurm_node" in group_names'
-
-- name: Set db_host
-  ansible.builtin.set_fact:
-    db_host: "{{ groups['slurm_dbd'][0] }}"
-  when: db_host == None or db_host == "" and '"slurm_node" in group_names'
-
-- name: Set db_port
-  ansible.builtin.set_fact:
-    db_port: "{{ db_port_default }}"
-  when: db_port == None and '"slurm_node" in group_names'
+  when: ((db_port is not defined) or (not db_port)) and ('slurm_dbd' in group_names)
 
 # TODO: Can't use run_once and when condition on same task,
 # maybe should move to seperate file with a when condtion for inlcude task
@@ -56,9 +44,7 @@
   # run_once: true
   when: '"slurm_dbd" in group_names'
   notify:
-    - Restart slurmctld
     - Restart slurmdbd
-    - Restart slurmd
 
 - name: Create slurm.conf
   ansible.builtin.template: # Create dest directory before
@@ -94,17 +80,18 @@
     no_extra_spaces: true
     mode: u=rw,g=r,o=r
 
-- name: Local copy slurmdbd.conf /etc/slurm/conf # parallel writes
+- name: Local copy slurmdbd.conf /etc/slurm/
   ansible.builtin.template: # Local copy #FAILSAFE
     src: "dbd.conf.j2"
     dest: "{{ slurm_config_dir }}/slurmdbd.conf"
     owner: "{{ slurm_user }}"
     group: "{{ slurm_user }}"
     mode: "{{ slurm_dbd_mode }}"
+  when: '"slurm_dbd" in group_names'
   ignore_errors: true
   notify:
-    - Restart slurmctld
     - Restart slurmdbd
+    - Restart slurmctld
 
 - name: All other host configs # TODO: failsafe
   ansible.builtin.template:
@@ -121,7 +108,7 @@
     - Reload slurmctld
     - Reload slurmd
 
-- name: Local copy slurm.conf /etc/slurm/conf # parallel writes
+- name: Local copy slurm.conf /etc/slurm/
   ansible.builtin.template: # Local copy # FAILSAFE
     src: "{{ item }}.conf.j2"
     dest: "{{ slurm_config_dir }}/{{ item }}.conf"

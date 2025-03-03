@@ -1,16 +1,24 @@
 ---
 # tasks file for slurm
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
 - name: Stop Services
   ansible.builtin.systemd_service:
     name: "{{ item }}"
     state: stopped
+  when: item in ansible_facts['services'].keys()
   loop:
-    - slurmctld
-    - slurmdbd
-    - slurmd
-    - munge
-  ignore_errors: true
-  register: ignore_errors_reg
+    - slurmctld.service
+    - slurmdbd.service
+    - slurmd.service
+    - munge.service
+
+- name: Remove share slurm path
+  ansible.builtin.file:
+    path: "{{ share_path }}/{{ slurm_dir_name }}"
+    state: absent
+  run_once: true
 
 - name: Remove files and folders
   ansible.builtin.file:
@@ -18,26 +26,12 @@
     state: absent
   loop:
     - "/var/spool/state"
-    - "{{ share_path }}/{{ slurm_dir_name }}"
     - "{{ slurm_config_dir }}"
     - "/etc/munge/munge.key"
-  ignore_errors: true
-  register: ignore_errors_reg
-
-- name: Ensure directories
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: directory
-    owner: "root"
-    group: "root"
-    mode: u=rw,g=r,o=r
-  loop:
-    - /var/log
 
 - name: Remove packages
-  ansible.builtin.dnf:
+  ansible.builtin.package:
     name: "{{ item }}"
-    autoremove: true
     state: absent
   loop:
     - slurm-slurmctld
@@ -49,15 +43,11 @@
   ansible.builtin.user:
     name: slurm
     state: absent
-  ignore_errors: true
-  register: ignore_errors_reg
 
 - name: Remove slurm group
   ansible.builtin.group:
     name: slurm
     state: absent
-  ignore_errors: true
-  register: ignore_errors_reg
 
 - name: UnSet env variable
   community.general.ini_file:
