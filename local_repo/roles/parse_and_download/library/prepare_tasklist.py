@@ -14,9 +14,10 @@
 
 #!/usr/bin/python
 
+import os
+from datetime import datetime
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.standard_logger import setup_standard_logger
-from datetime import datetime
 from ansible.module_utils.software_utils import (
     validate_repo_mappings,
     get_software_names,
@@ -33,10 +34,6 @@ from ansible.module_utils.software_utils import (
     set_version_variables,
     get_subgroup_dict
 )
-import logging
-import json
-import os
-import re
 
 # Import configuration constants individually (excluding fresh_installation_status)
 from ansible.module_utils.config import (
@@ -57,12 +54,13 @@ def main():
     For new software, the flag is enforced to True. The software is then processed, and the package tasks
     are aggregated and returned.
     """
-    module_args = dict(
-        csv_file_path=dict(type="str", required=False, default=CSV_FILE_PATH_DEFAULT),
-        user_json_file=dict(type="str", required=False, default=USER_JSON_FILE_DEFAULT),
-        local_repo_config_path=dict(type="str", required=False, default=LOCAL_REPO_CONFIG_PATH_DEFAULT),
-        log_dir=dict(type="str", required=False, default=LOG_DIR_DEFAULT),
-    )
+
+    module_args = {
+        "csv_file_path": {"type": "str", "required": False, "default": CSV_FILE_PATH_DEFAULT},
+        "user_json_file": {"type": "str", "required": False, "default": USER_JSON_FILE_DEFAULT},
+        "local_repo_config_path": {"type": "str", "required": False, "default": LOCAL_REPO_CONFIG_PATH_DEFAULT},
+        "log_dir": {"type": "str", "required": False, "default": LOG_DIR_DEFAULT},
+    }
 
     module = AnsibleModule(argument_spec=module_args)
     log_dir = module.params["log_dir"]
@@ -161,4 +159,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
