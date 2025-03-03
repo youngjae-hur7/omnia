@@ -12,64 +12,51 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
+#!/usr/bin/python
+
+from ansible.module_utils.basic import AnsibleModule
 import json
+import sys
 
-db_path = sys.argv[1]
+module_args = dict(
+    db_path=dict(type="str", required=True),
+    node_details=dict(type="list", elements="dict", required=True),
+    domain_name=dict(type="str", required=True),
+    discovery_mechanism=dict(type="str", required=True)
+)
+
+module = AnsibleModule(argument_spec=module_args, supports_check_mode=True)
+
+db_path = module.params["db_path"]
 sys.path.insert(0, db_path)
-
 import omniadb_connection
 
-mapping_details = json.loads(sys.argv[2])
-domain_name = sys.argv[3]
-discovery_mechanism = "mapping"
-admin_mac = []
-hostname = []
-admin_ip = []
-bmc_ip = []
-nan = float('nan')
-
-
-
-def mapping_file_db_update():
+def nodeinfo_db_update(node_details, domain_name, discovery_mechanism):
     """
-    Updates the database with node information from the provided JSON mapping_details.
+    Updates the database with node information from the provided JSON node_details.
 
-    This function processes each node entry in the mapping_details list, checks if the
+    This function processes each node entry in the node_details list, checks if the
     service tag exists in the database, and either inserts a new record or logs that the
     node already exists.
-
-    Parameters:
-        None
-
-    Returns:
-        None
     """
-    existing_mac = []
+    existing_nodes = []
+    new_nodes = []
 
     # Establish database connection
     conn = omniadb_connection.create_connection()
     cursor = conn.cursor()
 
-    for node_data in mapping_details:
+    for node_data in node_details:
         temp_mac = node_data.get("admin_mac")
         temp_service_tag = node_data.get("service_tag")
-        temp_admin_ip = node_data.get("admin_ip")
-        temp_bmc_ip = node_data.get("bmc_ip")
+        temp_admin_ip = node_data.get("admin_ip") or None
+        temp_bmc_ip = node_data.get("bmc_ip") or None
         node = node_data.get("hostname")
         fqdn_hostname = f"{node}.{domain_name}"
         group_name = node_data.get("group_name")
         role = node_data.get("roles")
         location_id = node_data.get("location_id")
         architecture = node_data.get("architecture")
-
-        # Validate BMC IP, set to None if invalid
-        if not temp_bmc_ip:
-            temp_bmc_ip = None
-
-        # Validate admin IP, set to None if invalid
-        if not temp_admin_ip:
-            temp_admin_ip = None
 
         # Check if the service tag already exists in the table
         query = "SELECT EXISTS(SELECT 1 FROM cluster.nodeinfo WHERE service_tag=%s)"
@@ -79,11 +66,21 @@ def mapping_file_db_update():
         if not exists:
             # Insert new node record
             omniadb_connection.insert_node_info(temp_service_tag, node, fqdn_hostname, temp_mac, temp_admin_ip, temp_bmc_ip,
-            group_name, role, location_id, architecture, discovery_mechanism, None, None, None, None)
+                group_name, role, location_id, architecture, discovery_mechanism, None, None, None, None)
+            new_nodes.append({'node': node, 'service_tag': temp_service_tag, 'mac': temp_mac})
         else:
-            existing_mac.append(temp_mac)
-            sys.stdout.write(f"{temp_mac} already present in DB.\n")
+            existing_nodes.append({'node': node, 'service_tag': temp_service_tag, 'mac': temp_mac})
 
     conn.close()
+    return new_nodes, existing_nodes
 
-mapping_file_db_update()
+
+node_details = module.params["node_details"]
+domain_name = module.params["domain_name"]
+discovery_mechanism = module.params['discovery_mechanism']
+
+try:
+    new_nodes, existing_nodes = nodeinfo_db_update(node_details, domain_name, discovery_mechanism)
+    module.exit_json(changed=True, msg="Database updated successfully", existing_nodes=existing_nodes, new_nodes=new_nodes)
+except Exception as e:
+    module.fail_json(msg=str(e))

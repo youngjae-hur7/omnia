@@ -16,10 +16,12 @@
 - name: Include input project directory
   when: not project_dir_status | default(false) | bool
   ansible.builtin.import_playbook: ../utils/include_input_dir.yml
+  tags: first_layer
 
 - name: Create provision container group
   when: not provision_group_status | default(false) | bool
   ansible.builtin.import_playbook: ../utils/create_container_group.yml
+  tags: first_layer
   vars:
     omnia_provision_group: true
     omnia_provision_validation: true
@@ -27,6 +29,7 @@
 - name: Decrypyt provision_credentials_config.yml
   hosts: localhost
   connection: local
+  tags: first_layer
   tasks:
     - name: Decrypt provision_credentials_config.yml
       ansible.builtin.include_role:
@@ -36,6 +39,7 @@
 - name: Validate discovery parameters
   hosts: omnia_provision
   connection: ssh
+  tags: first_layer
   tasks:
     - name: Validate discovery parameters
       ansible.builtin.include_role:
@@ -44,6 +48,7 @@
 - name: Encrypyt provision_credentials_config.yml
   hosts: localhost
   connection: local
+  tags: first_layer
   tasks:
     - name: Encrypyt provision_credentials_config.yml
       ansible.builtin.include_role:
@@ -53,6 +58,7 @@
 - name: Validate discovery parameters
   hosts: omnia_provision
   connection: ssh
+  tags: first_layer
   tasks:
     - name: Discovery roles of Omnia Infrastructure Manager for provisioning
       ansible.builtin.include_role:
@@ -82,6 +88,7 @@
   gather_facts: true
   vars_files:
     - "{{ hostvars['localhost']['input_project_dir'] }}/server_spec.yml"
+  tags: first_layer
   roles:
     - role: os_update           # noqa: role-name[path]
 
@@ -90,6 +97,7 @@
   connection: ssh
   vars_files:
     - "{{ hostvars['localhost']['input_project_dir'] }}/server_spec.yml"
+  tags: first_layer
   tasks:
     - name: Update kernel parameters
       ansible.builtin.include_role:
@@ -99,6 +107,7 @@
 - name: Discovery roles of Omnia Infrastructure Manager for provisioning
   hosts: omnia_provision
   connection: ssh
+  tags: first_layer
   roles:
     - role: postscripts/common             # noqa: role-name[path]
     - role: configure_os_image/common      # noqa: role-name[path]
@@ -107,5 +116,6 @@
 - name: Update metadata
   hosts: localhost
   connection: local
+  tags: first_layer
   roles:
     - role: metadata_update
