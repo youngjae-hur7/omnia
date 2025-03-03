@@ -15,11 +15,17 @@
   ansible.builtin.systemd_service:
     name: mysqld
     state: restarted
+  run_once: true
+  when: restart_slurm_services
+  delegate_to: "{{ slurm_db_host }}"
 
 - name: Restart mariadb
   ansible.builtin.systemd_service:
     name: mariadb
     state: restarted
+  run_once: true
+  when: restart_slurm_services
+  delegate_to: "{{ slurm_db_host }}"
 
 - name: Reload slurmdbd
   ansible.builtin.systemd_service:

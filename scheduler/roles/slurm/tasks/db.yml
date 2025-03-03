@@ -1,8 +1,4 @@
---- #db.yml TODO: Add ansible collection for mysql to omnia core list
-# Needed?
-# - name: Sync time
-#   ansible.builtin.include_tasks: time_sync.yml
-
+--- #db.yml
 - name: Is slurm_db_username defined
   ansible.builtin.set_fact:
     slurm_db_username: "{{ slurm_db_username_default }}"
@@ -20,7 +16,42 @@
     state: present 
   register: new_install
 
-# Port Config
+- name: Create my.cnf.d file
+  ansible.builtin.lineinfile:
+    path: /etc/my.cnf
+    line: "[client-server]"
+    create: yes
+
+- name: Include my.cnf.d directory
+  ansible.builtin.lineinfile:
+    path: /etc/my.cnf
+    insertafter: '^\[client-server\]'
+    line: '!includedir /etc/my.cnf.d'
+
+- name: Set db port
+  ansible.builtin.lineinfile:
+    path: "{{ slurm_mysql_cnf_path }}"
+    regexp: '^port=.*'
+    insertafter: '^[mysqld]'
+    line: "port={{ slurm_db_port }}"
+  when: slurm_db_type == 'mysql'
+  notify:
+    - Restart mysqld
+    - Restart slurmctld
+    - Restart slurmdbd
+
+- name: Set db port
+  ansible.builtin.lineinfile:
+    path: "{{ slurm_mariadb_cnf_path }}"
+    regexp: '^port=.*'
+    insertafter: '^[mysqld]'
+    line: "port={{ slurm_db_port }}"
+  when: slurm_db_type == 'mariadb'
+  notify:
+    - Restart mariadb
+    - Restart slurmctld
+    - Restart slurmdbd
+
 - name: Enable db port
   ansible.posix.firewalld:
     port: "{{ slurm_db_port }}/tcp"
@@ -83,5 +114,3 @@
   notify:
     - Restart slurmctld
     - Restart slurmdbd
-
-# TODO: Enable port 3306 in the mysqul.cnf file?
