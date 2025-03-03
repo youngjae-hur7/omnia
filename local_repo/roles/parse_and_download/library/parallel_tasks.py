@@ -14,6 +14,9 @@
 
 #!/usr/bin/python
 
+import os
+import re
+from datetime import datetime
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.process_parallel import execute_parallel, log_table_output
 from ansible.module_utils.download_common import (
@@ -29,24 +32,9 @@ from ansible.module_utils.download_image import process_image
 from ansible.module_utils.download_rpm import process_rpm
 from ansible.module_utils.standard_logger import setup_standard_logger
 from prettytable import PrettyTable
-from datetime import datetime
-import logging
-import os
-import re
-import time
-import json
 
 from ansible.module_utils.software_utils import (
-    get_software_names,
-    check_csv_existence,
-    get_failed_software,
-    process_software,
     load_json,
-    load_yaml,
-    get_json_file_path,
-    get_csv_file_path,
-    transform_package_dict,
-    parse_repo_urls,
     set_version_variables,
     get_subgroup_dict
 )
@@ -70,7 +58,7 @@ from ansible.module_utils.config import (
 def update_status_csv(csv_dir, software, overall_status):
     """
     Update the status CSV file with the status for given software.
-    
+
     If the software already exists, update its status.
     If 'software' is a list, update each software with the same overall_status.
     """
@@ -125,17 +113,17 @@ def determine_function(task, repo_store_path, csv_file_path, user_data, version_
 
     """
     Determines the appropriate function and its arguments to process a given task.
- 
+
     Args:
         task (dict): A dictionary containing information about the task to be processed.
         repo_store_path (str): The path to the repository store.
         csv_file_path (str): The path to the CSV file.
         user_data (dict): A dictionary containing user data.
         version_variables (dict): A dictionary containing version variables.
- 
+
     Returns:
         tuple: A tuple containing the function to process the task and its arguments.
- 
+
     Raises:
         ValueError: If the task type is unknown.
         RuntimeError: If an error occurs while determining the function.
@@ -155,27 +143,27 @@ def determine_function(task, repo_store_path, csv_file_path, user_data, version_
         task_type = task.get("type")
         if task_type == "manifest":
             return process_manifest, [task, repo_store_path, status_file]
-        elif task_type == "git":
+        if task_type == "git":
             return process_git, [task, repo_store_path, status_file]
-        elif task_type == "tarball":
+        if task_type == "tarball":
             return process_tarball, [task, repo_store_path, status_file, version_variables]
-        elif task_type == "shell":
+        if task_type == "shell":
             return process_shell, [task, repo_store_path, status_file]
-        elif task_type == "ansible_galaxy_collection":
+        if task_type == "ansible_galaxy_collection":
             return process_ansible_galaxy_collection, [task, repo_store_path, status_file]
-        elif task_type == "iso":
+        if task_type == "iso":
             return process_iso, [task, repo_store_path, status_file,
                                  cluster_os_type, cluster_os_version, version_variables]
-        elif task_type == "pip_module":
+        if task_type == "pip_module":
             return process_pip, [task, repo_store_path, status_file]
-        elif task_type == "image":
+        if task_type == "image":
             return process_image, [task, repo_store_path, status_file,
                                    cluster_os_type, cluster_os_version, version_variables]
-        elif task_type == "rpm":
+        if task_type == "rpm":
             return process_rpm, [task, repo_store_path, status_file,
                                  cluster_os_type, cluster_os_version]
-        else:
-            raise ValueError(f"Unknown task type: {task_type}")
+
+        raise ValueError(f"Unknown task type: {task_type}")
     except Exception as e:
         raise RuntimeError(f"Failed to determine function for task: {str(e)}")
 
@@ -183,12 +171,12 @@ def determine_function(task, repo_store_path, csv_file_path, user_data, version_
 def generate_pretty_table(task_results, total_duration, overall_status):
     """
     Generates a pretty table with the task results, total duration, and overall status.
- 
+
     Args:
         task_results (list): A list of dictionaries containing the task results.
         total_duration (str): The total duration of the tasks.
         overall_status (str): The overall status of the tasks.
- 
+
     Returns:
         str: The pretty table as a string.
     """
@@ -203,7 +191,7 @@ def generate_pretty_table(task_results, total_duration, overall_status):
 def main():
     """
     Executes a list of tasks in parallel using multiple worker processes.
- 
+
     Args:
         tasks (list): A list of tasks (dictionaries) that need to be processed in parallel.
         nthreads (int): The number of worker processes to run in parallel.
@@ -215,27 +203,28 @@ def main():
         repo_store_path (str): The path to the repository where task-related files are stored.
         software (list): A list of software names.
         user_json_file (str): The path to the JSON file containing user data.
- 
+
     Returns:
         tuple: A tuple containing:
             - overall_status (str): The overall status of task execution ("SUCCESS", "FAILED", "PARTIAL", "TIMEOUT").
             - task_results_data (list): A list of dictionaries, each containing the result of an individual task.
- 
+
     Raises:
         Exception: If an error occurs during execution.
     """
-    module_args = dict(
-        tasks=dict(type="list", required=True),
-        nthreads=dict(type="int", required=False, default=DEFAULT_NTHREADS),
-        timeout=dict(type="int", required=False, default=DEFAULT_TIMEOUT),
-        log_dir=dict(type="str", required=False, default=LOG_DIR_DEFAULT),
-        log_file=dict(type="str", required=False, default=DEFAULT_LOG_FILE),
-        slog_file=dict(type="str", required=False, default=DEFAULT_SLOG_FILE),
-        csv_file_path=dict(type="str", required=False, default=CSV_FILE_PATH_DEFAULT),
-        repo_store_path=dict(type="str", required=False, default=DEFAULT_REPO_STORE_PATH),
-        software=dict(type="list", elements="str", required=True),
-        user_json_file=dict(type="str", required=False, default=USER_JSON_FILE_DEFAULT)
-    )
+    module_args = {
+        "tasks": {"type": "list", "required": True},
+        "nthreads": {"type": "int", "required": False, "default": DEFAULT_NTHREADS},
+        "timeout": {"type": "int", "required": False, "default": DEFAULT_TIMEOUT},
+        "log_dir": {"type": "str", "required": False, "default": LOG_DIR_DEFAULT},
+        "log_file": {"type": "str", "required": False, "default": DEFAULT_LOG_FILE},
+        "slog_file": {"type": "str", "required": False, "default": DEFAULT_SLOG_FILE},
+        "csv_file_path": {"type": "str", "required": False, "default": CSV_FILE_PATH_DEFAULT},
+        "repo_store_path": {"type": "str", "required": False, "default": DEFAULT_REPO_STORE_PATH},
+        "software": {"type": "list", "elements": "str", "required": True},
+        "user_json_file": {"type": "str", "required": False, "default": USER_JSON_FILE_DEFAULT},
+    }
+
     module = AnsibleModule(argument_spec=module_args, supports_check_mode=True)
 
     tasks = module.params["tasks"]
@@ -251,7 +240,7 @@ def main():
 
     # Initialize standard logger.
     slogger = setup_standard_logger(slog_file)
-    result = dict(changed=False, task_results=[])
+    result = {"changed": False, "task_results": []}
 
     # Record start time.
     start_time = datetime.now()
@@ -314,4 +303,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
