@@ -8,7 +8,7 @@ Networks:
 {% endif %}
 {% if network_type == 'admin_network' %}
     - {{ network_type }}:
-        oim_nic_name: "{{ details.oim_nic_name }}"
+        nic_name: "{{ details.nic_name }}"
         netmask_bits: "{{ details.netmask_bits }}"
         static_range: "{{ details.static_range }}"
         dynamic_range: "{{ details.dynamic_range }}"
@@ -20,7 +20,7 @@ Networks:
 
 {% elif network_type == 'bmc_network' %}
     - {{ network_type }}:
-        oim_nic_name: "{{ details.oim_nic_name }}"
+        nic_name: "{{ details.nic_name }}"
         netmask_bits: "{{ details.netmask_bits }}"
         static_range: "{{ details.static_range }}"
         dynamic_range: "{{ details.dynamic_range }}"
