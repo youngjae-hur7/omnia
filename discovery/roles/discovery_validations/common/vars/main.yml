@@ -142,11 +142,16 @@ fail_cidr_ip_range: "Failed, Cidr overlaps with"
 
 # Usage: validate_discovery_params.yml
 validation_range_file: "{{ provision_shared_library_path }}/validation/validate_input_ranges.py"
-discovery_mechanism_fail_msg: "Failed. Please provide valid details for any discovery mechanism and re-run the playbook.
-For mapping discovery, provide pxe_mapping_file_path in provision_config.yml.
-For bmc discovery, provide bmc_network details in network_spec.yml and set enable_switch_based to false in provision_config.yml.
-For switch_based discovery, set enable_switch_based to true and provide switch_based_details in provision_config.yml along with
-switch_snmp3_username & switch_snmp3_password details in provision_config_credentials.yml."
+first_layer_discovery_mechanism_fail_msg: |
+  "Failed. Please provide valid details either for mapping or bmc discovery mechanism for the first layer of nodes and re-run the playbook.
+  For mapping discovery, please provide the pxe_mapping_file_path in the provision_config.yml file.
+  For bmc discovery, please provide the bmc_details in the roles_config.yml file."
+default_layer_discovery_mechanism_fail_msg: |
+  "Failed. Please provide valid details either for mapping, bmc or switch_based discovery mechanism for the nodes and re-run the playbook.
+  For mapping discovery, please provide the pxe_mapping_file_path in the provision_config.yml file.
+  For bmc static discovery, please provide the bmc_details in the roles_config.yml file.
+  For bmc dynamic discovery, please provide the bmc_network details in the network_spec.yml file.
+  For switch_based discovery, provide bmc_details and switch_details in roles_config.yml"
 
 # Usage: validate_switch_vars.yml
 pxe_switch_ip_valid: "Valid switch ip provided"
@@ -242,6 +247,7 @@ os_package_map:
   rhel: rpm
   rocky: rpm
   ubuntu: deb
+
 # Usage: validate_intelgaudi_repo.yml
 intelgaudi_version_warning_msg: "[WARNING] software_config.json does not have the version for 'intelgaudi'.
 Hence Habana stack will not be installed on the nodes post provisioning."
