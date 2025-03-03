@@ -34,19 +34,20 @@
       register: include_omnia_credentials
       no_log: true
 
-- name: Create ansible vault key
-  ansible.builtin.set_fact:
-    omnia_credentials_vault_key: "{{ lookup('password', '/dev/null chars=ascii_letters') }}"
-  when: ansible_vault_search_key not in omnia_credentials_content.stdout
+- name: Create vault key for omnia_credential_file
+  when: not cred_file_status
+  block:
+    - name: Create ansible vault key
+      ansible.builtin.set_fact:
+        omnia_credentials_vault_key: "{{ lookup('password', '/dev/null chars=ascii_letters') }}"
 
-- name: Save vault key to omnia_credential_vault_path
-  ansible.builtin.lineinfile:
-    path: "{{ omnia_credential_vault_path }}"
-    line: "{{ omnia_credentials_vault_key }}"
-    mode: "{{ conf_file_mode }}"
-    owner: root
-    create: true
-  when: ansible_vault_search_key not in omnia_credentials_content.stdout
+    - name: Save vault key to omnia_credential_vault_path
+      ansible.builtin.lineinfile:
+        path: "{{ omnia_credential_vault_path }}"
+        line: "{{ omnia_credentials_vault_key }}"
+        mode: "{{ conf_file_mode }}"
+        owner: root
+        create: true
 
 - name: Load software_config.json as software_config
   block:
