@@ -5,7 +5,7 @@ Omnia executes within a Python virtual environment. To set up this environment, 
 
 .. caution::
 
-    * To run Omnia, it is crucial to use the Python virtual environment created by the ``prereq.sh`` script. Do not delete the virtual environment directory (/opt/omnia/omnia171_venv/) as it is necessary for the proper functioning of Omnia.
+    * To run Omnia, it is crucial to use the Python virtual environment created by the ``prereq.sh`` script. Do not delete the virtual environment directory (``/opt/omnia/omnia171_venv/``) as it is necessary for the proper functioning of Omnia.
     * If you have a proxy server set up for your OIM, you must configure the proxy environment variables on the OIM before running any Omnia playbooks. For more information, `click here <../Setup_CP_proxy.html>`_.
     * Ensure to execute the Omnia playbooks from inside the git cloned Omnia repository folder. Executing the playbooks outside leads to playbook execution failures.
 
