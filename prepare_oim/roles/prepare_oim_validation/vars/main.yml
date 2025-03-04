@@ -39,6 +39,8 @@ software_config_file: "{{ input_project_dir }}/software_config.json"
 invalid_software_config_fail_msg: "Failed. Please provide valid software_config.json file with cluster_os_type, cluster_os_version, repo_config
 and repo_config values."
 software_config_syntax_fail_msg: "Failed. Syntax errors present in software_config.json. Fix errors and re-run playbook again."
+omnia_credential_file: "{{ hostvars['localhost']['input_project_dir'] }}/omnia_credentials.yml"
+omnia_credential_vault_path: "{{ hostvars['localhost']['input_project_dir'] }}/.omnia_credentials_key"
 
 # Usage: check_k8s_support.yml
 supported_k8s_version:

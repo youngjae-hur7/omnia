@@ -60,9 +60,6 @@
 - name: Create metadata
   ansible.builtin.include_tasks: "{{ role_path }}/../../metadata_creation/tasks/main.yml"
 
-- name: Validate provision credentials
-  ansible.builtin.include_tasks: validate_provision_credentials.yml
-
 - name: Validate provision parameters
   ansible.builtin.include_tasks: validate_provision_vars.yml
 

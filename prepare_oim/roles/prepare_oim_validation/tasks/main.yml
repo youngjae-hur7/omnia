@@ -29,16 +29,16 @@
 
 - name: Encrypt config file once validations are successful
   block:
-    - name: Encrypt provision_config_credentials.yml
+    - name: Encrypt omnia_config_credentials.yml
       ansible.builtin.command: >-
-        ansible-vault encrypt {{ provision_credentials_config_filename }}
-        --vault-password-file {{ provision_credentials_vault_path }}
+        ansible-vault encrypt {{ omnia_credential_file }}
+        --vault-password-file {{ omnia_credential_vault_path }}
       changed_when: false
       tags: init
 
-    - name: Update provision_config_credentials.yml permission
+    - name: Update omnia_config_credentials.yml permission
       ansible.builtin.file:
-        path: "{{ provision_credentials_config_filename }}"
+        path: "{{ omnia_credential_file }}"
         mode: "{{ conf_file_mode }}"
       tags: init
 
