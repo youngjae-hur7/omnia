@@ -1,4 +1,4 @@
-# Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,16 +13,11 @@
 #  limitations under the License.
 ---
 
-- name: Fetch the network interfaces in UP state in the system
-  ansible.builtin.shell: |
-    set -o pipefail
-    /usr/sbin/ip a | awk '/state UP/{print $2}'
-  register: nic_addr_up
-  changed_when: false
-  tags: init
+- name: Perform bmc discover on static range
+  ansible.builtin.include_tasks: bmc_static_discovery.yml
 
-- name: Validation related to admin nic
-  ansible.builtin.include_tasks: validate_admin_nic.yml
+- name: Create database for discovery bmc mode
+  ansible.builtin.include_tasks: update_db_static.yml
 
-- name: Validation related to BMC nic
-  ansible.builtin.include_tasks: validate_bmc_nic.yml
+- name: Update node objects for static bmc mode
+  ansible.builtin.include_tasks: update_node_obj.yml
