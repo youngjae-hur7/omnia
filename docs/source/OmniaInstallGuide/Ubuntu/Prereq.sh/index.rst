@@ -21,7 +21,7 @@ Omnia executes within a Python virtual environment. To set up this environment, 
 
 * To verify that the virtual environment is active, check if the following prompt is displayed: ::
 
-    (omnia) [root@<oim_name> omnia]#
+    (omnia171) [root@<oim_name> omnia]#
 
 .. note::
     * Omnia recommends to disable SELinux before proceeding with the installation. If SELinux is not disabled, it will be disabled by the script and the you will be prompted to reboot the OIM.
