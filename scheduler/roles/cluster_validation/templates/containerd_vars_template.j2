@@ -1,0 +1,10 @@
+containerd_registries_mirrors:
+  - prefix: "{{ hostvars['localhost']['admin_nic_ip'] }}:2225"
+    mirrors:
+      - host: "http://{{ hostvars['localhost']['admin_nic_ip'] }}:2225"
+        capabilities: ["pull", "resolve"]
+        skip_verify: true
+ 
+containerd_registry_auth:
+  - registry: "{{ hostvars['localhost']['admin_nic_ip'] }}:2225"
+    password: "{{ hostvars['localhost']['pulp_password'] }}"
