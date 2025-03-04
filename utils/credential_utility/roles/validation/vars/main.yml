@@ -14,7 +14,7 @@
 ---
 
 # Usage: validate_omnia_credential_file.yml
-omnia_credential_file: "{{ input_project_dir }}/omnia_credentials.yml"
+omnia_credential_file: "{{ input_project_dir }}/omnia_config_credentials.yml"
 
 # Usage: pre_requisite.yml
 ansible_vault_search_key: "$ANSIBLE_VAULT;"
