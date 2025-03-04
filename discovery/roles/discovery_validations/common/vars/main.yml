@@ -79,11 +79,11 @@ repo_config_metadata_fail_msg: "Failed: Cannot change repo_config in subsequent 
 # Usage: assign_network_interface.yml
 network_interface_fail_msg: "Failed. Please provide a valid network interface type."
 warning_msg_bmc_network_details_incomplete: "Warning, BMC network details incomplete. BMC discovery and support will be skipped.
-Note: nic_name, netmask_bits, static_range and dynamic_range are mandatory parameters under bmc_network in network_spec.yml for bmc discover"
+Note: oim_nic_name, netmask_bits, static_range and dynamic_range are mandatory parameters under bmc_network in network_spec.yml for bmc discover"
 
 # Usage: validate_admin_nic.yml
 success_msg_admin_nic_details: "Admin nic details validated"
-fail_msg_admin_nic_details: "Failed. Invalid admin_nic details (nic_name, netmask_bits, static_range or dynamic_range) in network_spec file."
+fail_msg_admin_nic_details: "Failed. Invalid admin_nic details (oim_nic_name, netmask_bits, static_range or dynamic_range) in network_spec file."
 fail_msg_admin_netmask_bits: "Failed. Invalid Admin netmask_bits provided in network_spec file."
 success_subnet: "The subnet provided is validated"
 fail_subnet: "Failed. Please provide proper subnet with netmask {{ omnia_admin_netmask }} in provision_config.yml"
@@ -109,7 +109,7 @@ success_msg_bmc_nic_details: "BMC nic details validated"
 bmc_params_success_msg: "Successfully validated bmc network params"
 bmc_params_failure_msg: "Failed. Please provide proper input parameters for bmc network in network_spec file."
 fail_msg_bmc_netmask_bits: "Failed. Invalid BMC netmask_bits provided in network_spec file."
-fail_msg_bmc_nic_details: "Failed. Invalid bmc_network details (nic_name, netmask_bits, static_range or dynamic_range) in network_spec file."
+fail_msg_bmc_nic_details: "Failed. Invalid bmc_network details (oim_nic_name, netmask_bits, static_range or dynamic_range) in network_spec file."
 bmc_nic_start: "{{ bmc_nic_subnet.split('.')[0] + '.' + bmc_nic_subnet.split('.')[1] + '.'
 + pxe_nic_start_range.split('.')[-2] + '.' + pxe_nic_start_range.split('.')[-1] }}"
 bmc_nic_end: "{{ bmc_nic_subnet.split('.')[0] + '.' + bmc_nic_subnet.split('.')[1] + '.'
