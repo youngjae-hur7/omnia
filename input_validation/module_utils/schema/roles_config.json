@@ -15,10 +15,12 @@
             },
             "resource_mgr_id": {
               "type": "string",
+              "pattern": "^[a-zA-Z0-9,]*$",
               "description": "List of service tag of active head node(s). Set the value only for group of nodes belonging to k8worker and slurmworker roles, and empty for other roles."
             },
             "parent": {
               "type": "string",
+              "pattern": "^[a-zA-Z0-9,]*$",
               "description": "List of service tag of associated active service node(s). This field will be empty for group of nodes which is associated with ‘login’, ‘compiler’, ‘service’, ‘k8head’,’slurmhead’. If ‘service’ role is not defined, then value will be empty for worker and default role."
             },
             "bmc_details": {
