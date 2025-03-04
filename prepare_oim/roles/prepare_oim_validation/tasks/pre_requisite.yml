@@ -51,7 +51,7 @@
 
     - name: Failed to include omnia_config_credentials.yml
       ansible.builtin.fail:
-        msg: "Failed to include omnia_credentials.yml"
+        msg: "{{ omnia_credential_syntax_fail_msg }} Error: {{ include_omnia_cred_config.message }}"
 
 # Include network_spec
 - name: Include network_spec.yml

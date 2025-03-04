@@ -30,5 +30,6 @@ container_status_msg: "Pulp container Status: {{ container_info.containers[0].St
 container_status_fail_msg: "Pulp container is not running. Current Status: {{ container_info.containers[0].State.Status }}"
 
 # read_omnia_credentails.yml
-omnia_credential_file: "{{ hostvars['localhost']['input_project_dir'] }}/omnia_credentials.yml"
-omnia_credential_vault_path: "{{ hostvars['localhost']['input_project_dir'] }}/.omnia_credentials_key"
+omnia_credential_file: "{{ hostvars['localhost']['input_project_dir'] }}/omnia_config_credentials.yml"
+omnia_credential_vault_path: "{{ hostvars['localhost']['input_project_dir'] }}/.omnia_config_credentials_key"
+omnia_credential_syntax_fail_msg: "Failed. Syntax errors present in omnia_config_credentials.yml. Fix errors and re-run playbook again."

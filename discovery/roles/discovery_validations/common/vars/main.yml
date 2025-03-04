@@ -54,9 +54,9 @@ roles_config_path: "{{ hostvars['localhost']['input_project_dir'] }}/roles_confi
 roles_config_syntax_fail_msg: "Failed. Syntax errors present in role_config.yml. Fix errors and re-run playbook again."
 
 # Usage: decrypt_provision_credentials_config.yml, encrypt_provision_credentials_config.yml
-omnia_credential_syntax_fail_msg: "Failed. Syntax errors present in provision_credentials_config.yml. Fix errors and re-run playbook again."
-omnia_credential_file: "{{ hostvars['localhost']['input_project_dir'] }}/omnia_credentials.yml"
-omnia_credential_vault_path: "{{ hostvars['localhost']['input_project_dir'] }}/.omnia_credentials_key"
+omnia_credential_file: "{{ hostvars['localhost']['input_project_dir'] }}/omnia_config_credentials.yml"
+omnia_credential_vault_path: "{{ hostvars['localhost']['input_project_dir'] }}/.omnia_config_credentials_key"
+omnia_credential_syntax_fail_msg: "Failed. Syntax errors present in omnia_config_credentials.yml. Fix errors and re-run playbook again."
 conf_file_mode: "0644"
 
 # Usage: include_local_repo_config.yml
