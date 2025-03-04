@@ -50,6 +50,7 @@ input_file_inventory = {
         files["network_spec"],
         files["server_spec"],
         files["software_config"],
+        files["roles_config"]
     ],
     "security": [
         files["security_config"],
@@ -79,7 +80,7 @@ input_file_inventory = {
         files["k8s_access_config"],
         files["software_config"],
         files["storage_config"],
-        files["site_config"],
+        # files["site_config"],
         files["roles_config"]
     ],
 }
@@ -110,16 +111,16 @@ extensions = {
 }
 
 os_version_ranges = {
-    "rhel": ["8.6", "8.8", "9.4"],
-    "rocky": ["8.6", "8.8", "9.4"],  
-    "ubuntu": ["20.04", "24.04"] 
+    "rhel": ["9.4"],
+    "rocky": ["9.4"],  
+    "ubuntu": ["20.04", "22.04", "24.04"] 
 }
 
 # Dict of the file that can be encrypted and it's ansible vault key
 def get_vault_password(yaml_file):
     vault_passwords = {
         "provision_config_credentials.yml": ".provision_credential_vault_key",
-        "telemetry_config.yml": ".telemetry_vault_key",
+        # "telemetry_config.yml": ".telemetry_vault_key",
         "omnia_config.yml": ".omnia_vault_key",
         "security_config.yml": ".security_vault.key"
     }

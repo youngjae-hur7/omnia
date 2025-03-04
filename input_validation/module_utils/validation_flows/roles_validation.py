@@ -22,19 +22,20 @@ file_names = config.files
 create_error_msg = validation_utils.create_error_msg
 create_file_path = validation_utils.create_file_path
 
-"""
-Validates the L2 logic of the roles_config.yaml file.
-
-Returns:
-    list: A list of errors.
-"""
 def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir, project_name):
+    """
+    Validates the L2 logic of the roles_config.yaml file.
+
+    Returns:
+        list: A list of errors.
+    """
     NAME = "name"
     ROLES = "Roles"
     GROUPS = "Groups"
     ROLE_GROUPS = "groups"
     SLURMWORKER = "slurmworker"
     K8WORKER = "k8worker"
+    DEFAULT = "default"
     SWITCH_DETAILS = "switch_details"
     IP = "ip"
     PORTS = "ports"
@@ -43,6 +44,7 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
     STATIC_RANGE = "static_range"
     RESOURCE_MGR_ID = "resource_mgr_id"
     ROLES_PER_GROUP = 5
+    MAX_ROLES = 100
 
     roles_per_group = {}
     empty_parent_roles = {'login', 'compiler', 'service', 'k8head', 'slurmhead'}
@@ -54,13 +56,13 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
         errors.append(create_error_msg("config_roles.yml,", None, "EMPTY config_roles.yml"))
     else:
         try:
-            roles = data.get(ROLES, [])
-        except Exception as e:
-            errors.append(create_error_msg(ROLES, None, "Outer Role object was probably not defined."))
-        try: 
-            groups = data.get(GROUPS, {})
+            roles = data[ROLES]
         except:
-            errors.append(create_error_msg(GROUPS, None, "Outer Group object was probably not defined."))
+            errors.append(create_error_msg(ROLES, None, en_us_validation_msg.no_roles_msg))
+        try: 
+            groups = data[GROUPS]
+        except:
+            errors.append(create_error_msg(GROUPS, None, en_us_validation_msg.no_groups_msg))
     if errors:
         return errors
     
@@ -70,11 +72,11 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
     # Check for at least 1 group
     # Check for at least 1 role
      # Check to make sure there are not more than 100 roles
-    if not groups or len(groups) == 0:
+    if not groups:
         errors.append(create_error_msg(GROUPS, f'Current number of groups is 0:', en_us_validation_msg.min_number_of_groups_msg))
-    if not roles or len(roles) == 0:
+    if not roles:
         errors.append(create_error_msg(ROLES, f'Current number of roles is 0:', en_us_validation_msg.min_number_of_roles_msg))
-    if roles and len(roles) > 100:
+    if roles and len(roles) > MAX_ROLES:
         errors.append(create_error_msg(ROLES, f'Current number of roles is {str(len(roles))}:', en_us_validation_msg.max_number_of_roles_msg))
     
     if len(errors) <= 0:
@@ -82,6 +84,7 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
         set_resource_mgr_id = set()
 
         switch_ip_mapping = {}
+        switch_ip_port_mapping = {}
         static_range_mapping = {}
         # # Check if the bmc_network is defined
         # bmc_network_defined = check_bmc_network(input_file_path, logger, module, omnia_base_dir, project_name)
@@ -92,7 +95,7 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
 
         for role in roles:
             # Check role-group association, all roles must have a group
-            if role[ROLE_GROUPS] and len(role[ROLE_GROUPS]) == 0:
+            if role[ROLE_GROUPS] and (None in role[ROLE_GROUPS] or not role[ROLE_GROUPS]):
                 errors.append(role[NAME], create_error_msg(None, f'Role {role[NAME]} must be associated with a group:', en_us_validation_msg.min_number_of_groups_msg))
             if role[NAME] == SLURMWORKER or role[NAME] == K8WORKER:
                 for group in role[ROLE_GROUPS]:
@@ -111,7 +114,7 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
                     if role[NAME] in empty_parent_roles and not validation_utils.is_string_empty(groups[group].get(PARENT, None)):
                         # If parent is not empty and group is associated with login, compiler, service, k8head, or slurmhead
                         errors.append(create_error_msg(group, f'Group {group} should not have parent defined.', en_us_validation_msg.parent_service_node_msg))
-                    if not service_role_defined and (role[NAME] == "worker" or role[NAME] == "default"):
+                    if not service_role_defined and (role[NAME] == K8WORKER or role[NAME] == SLURMWORKER or role[NAME] == DEFAULT):
                         # If a service role is not present, the parent is not empty and the group is associated with worker or default roles. 
                         if not validation_utils.is_string_empty(groups[group].get(PARENT, None)):
                             errors.append(create_error_msg(group, f'Group {group} should not have parent defined.', en_us_validation_msg.parent_service_role_msg))
@@ -122,23 +125,27 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
                     errors.append(create_error_msg(group, f'Group {group} does not exist.', en_us_validation_msg.grp_exist_msg))
         
         for group in groups.keys():
+
+            switch_ip_provided = not validation_utils.is_string_empty(groups[group].get(SWITCH_DETAILS, {}).get(IP, None))
+            switch_ports_provided = not validation_utils.is_string_empty(groups[group].get(SWITCH_DETAILS, {}).get(PORTS, None))
+            bmc_static_range_provided = not validation_utils.is_string_empty(groups[group].get(BMC_DETAILS, {}).get(STATIC_RANGE, None))
             if group in groups_used:
                 errors.append(create_error_msg(group, f'Group {group} is not associated with a role.', en_us_validation_msg.grp_role_msg))
-            if not validation_utils.is_string_empty(groups[group].get(SWITCH_DETAILS, {}).get(IP, None)):
+            if switch_ip_provided and switch_ports_provided:
                 switch_ip = groups[group][SWITCH_DETAILS][IP]
                 try: 
                     ipaddress.IPv4Address(switch_ip)
-                    if switch_ip in switch_ip_mapping:
-                        errors.append(create_error_msg(group, f'Group {group} has a duplicate switch IP with {switch_ip_mapping[switch_ip]}:', en_us_validation_msg.duplicate_switch_ip_msg))
-                    else:
-                        switch_ip_mapping[switch_ip] = group
-                except ValueError as e:
+                except Exception as e:
                     errors.append(create_error_msg(group, f'Group {group} switch IP is invalid:', en_us_validation_msg.invalid_switch_ip_msg))
-            if ((not validation_utils.is_string_empty(groups[group].get(SWITCH_DETAILS, {}).get(IP, None)) and validation_utils.is_string_empty(groups[group].get(SWITCH_DETAILS, {}).get(PORTS, None)))
-                or (validation_utils.is_string_empty(groups[group].get(SWITCH_DETAILS, {}).get(IP, None)) and not validation_utils.is_string_empty(groups[group].get(SWITCH_DETAILS, {}).get(PORTS, None)))):
+                if switch_ip in switch_ip_mapping:
+                    # Check for any switch IP port overlap
+                    if validation_utils.check_port_overlap(switch_ip_port_mapping.get(switch_ip, "") + "," + groups[group][SWITCH_DETAILS].get(PORTS, "")):
+                        errors.append(create_error_msg(group, f'Group {group} has duplicate ports for switch IP {switch_ip}, this switch IP is shared with the following groups: {switch_ip_mapping[switch_ip]}.', en_us_validation_msg.duplicate_switch_ip_port_msg))
+                switch_ip_mapping.setdefault(switch_ip, []).append(group)
+                switch_ip_port_mapping[switch_ip] = switch_ip_port_mapping.get(switch_ip, "") + "," + groups[group][SWITCH_DETAILS].get(PORTS, "")
+            if ((switch_ip_provided and not switch_ports_provided) or (not switch_ip_provided and switch_ports_provided)):
                 errors.append(create_error_msg(group, f'Group {group} switch details are incomplete:', en_us_validation_msg.switch_details_incomplete_msg))
-            if ((not validation_utils.is_string_empty(groups[group].get(SWITCH_DETAILS, {}).get(IP, None)) or not validation_utils.is_string_empty(groups[group].get(SWITCH_DETAILS, {}).get(PORTS, None)))
-                and validation_utils.is_string_empty(groups[group].get(BMC_DETAILS, {}).get(STATIC_RANGE, None))):
+            if ((switch_ip_provided and switch_ports_provided) and not bmc_static_range_provided):
                 errors.append(create_error_msg(group, f'Group {group} switch details provided:', en_us_validation_msg.switch_details_no_bmc_details_msg))
             
             # Validate bmc details for each group
@@ -166,13 +173,13 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
 
     return errors
 
-# """
-# Check if the BMC network is defined in the given input file.
-
-# Returns:
-#     bool: True if the BMC network's nic_name and netmask_bits are defined, False otherwise.
-# """
 # def check_bmc_network(input_file_path, logger, module, omnia_base_dir, project_name) -> bool:
+    # """
+    # Check if the BMC network is defined in the given input file.
+
+    # Returns:
+    #     bool: True if the BMC network's nic_name and netmask_bits are defined, False otherwise.
+    # """
 #     admin_bmc_networks = common_validation.get_admin_bmc_networks(input_file_path, logger, module, omnia_base_dir, project_name)
 #     bmc_network_defined = admin_bmc_networks["bmc_network"].get("nic_name", None) != None and admin_bmc_networks["bmc_network"].get("netmask_bits", None) != None
 

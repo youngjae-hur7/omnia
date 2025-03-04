@@ -210,33 +210,33 @@ def check_overlap(ip_list):
 
     return len(overlaps) > 0, overlaps
 
-"""
-Check if a key-value pair exists in a list of dictionaries.
-
-Args:
-    list_of_dicts (List[Dict[Any, Any]]): The list of dictionaries to search.
-    key (Any): The key to search for.
-    value (Any): The value to search for.
-
-Returns:
-    bool: True if the key-value pair exists, False otherwise.
-"""
 def key_value_exists(list_of_dicts, key, value) -> bool:
+    """
+    Check if a key-value pair exists in a list of dictionaries.
+
+    Args:
+        list_of_dicts (List[Dict[Any, Any]]): The list of dictionaries to search.
+        key (Any): The key to search for.
+        value (Any): The value to search for.
+
+    Returns:
+        bool: True if the key-value pair exists, False otherwise.
+    """
     for dictionary in list_of_dicts:
         if dictionary.get(key) == value:
             return True
     return False
 
-"""
-Validates if the given IP range is a valid IPv4 range.
-
-Args:
-    ip_range (str): The IP range to be validated.
-
-Returns:
-    bool: True if the IP range is valid, False otherwise.
-"""
 def validate_ipv4_range(ip_range) -> bool:
+    """
+    Validates if the given IP range is a valid IPv4 range.
+
+    Args:
+        ip_range (str): The IP range to be validated.
+
+    Returns:
+        bool: True if the IP range is valid, False otherwise.
+    """
     try:
         start, end = ip_range.split('-')
         start_ip = ipaddress.IPv4Address(start)
@@ -249,17 +249,17 @@ def validate_ipv4_range(ip_range) -> bool:
     except ValueError:
         return False
 
-"""
-Checks if the given static BMC range overlaps with any of the ranges in other groups.
-
-Args:
-    static_range (str): The static BMC range to check for overlaps.
-    static_range_group_mapping (Dict[str, str]): A dictionary mapping group names to their corresponding bmc static ranges.
-
-Returns:
-    list: A list of group names that have overlapping ranges with the given static_range.
-"""
 def check_bmc_static_range_overlap(static_range, static_range_group_mapping) -> list:
+    """
+    Checks if the given static BMC range overlaps with any of the ranges in other groups.
+
+    Args:
+        static_range (str): The static BMC range to check for overlaps.
+        static_range_group_mapping (Dict[str, str]): A dictionary mapping group names to their corresponding bmc static ranges.
+
+    Returns:
+        list: A list of group names that have overlapping ranges with the given static_range.
+    """
     grp_overlaps = []
     ip_ranges = [static_range]
     for grp, grp_static_range in static_range_group_mapping.items():
@@ -270,3 +270,33 @@ def check_bmc_static_range_overlap(static_range, static_range_group_mapping) -> 
         ip_ranges.pop()
     
     return grp_overlaps
+
+def check_port_overlap(port_ranges):
+    """
+    Check if any of the port ranges in the given string overlap.
+
+    Args:
+        port_ranges (str): A string of port ranges separated by commas.
+
+    Returns:
+        bool: True if any of the port ranges overlap, False otherwise.
+    """
+    ports = set()
+    for port_range in port_ranges.split(','):
+        if '-' in port_range:
+            start, end = map(int, port_range.split('-'))
+            if start > end:
+                start, end = end, start
+            for port in range(start, end + 1):
+                if port in ports:
+                    return True
+                ports.add(port)
+        else:
+            if ':' not in port_range and port_range.isdigit():
+                port = int(port_range)
+            else:
+                port = port_range
+            if port in ports:
+                return True
+            ports.add(port)
+    return False

@@ -15,9 +15,9 @@
 ### All of these messages are used in logical_validation.py
 
 # roles_config.yml
-max_number_of_roles_msg = "a max of 100 roles can be supported."
-min_number_of_groups_msg = "at least 1 group is required."
-min_number_of_roles_msg = "at least 1 role is required."
+max_number_of_roles_msg = "A max of 100 roles can be supported."
+min_number_of_groups_msg = "At least 1 group is required."
+min_number_of_roles_msg = "At least 1 role is required."
 max_number_of_roles_per_group_msg = "Groups can support a maximum of 5 roles."
 resource_mgr_id_msg = "The resource_mgr_id needs to be set if and only if the group belongs to k8worker or slurmworker roles."
 grp_exist_msg = "A valid group must be provided."
@@ -27,10 +27,14 @@ parent_service_node_msg = "Group is associated with login, compiler, service, k8
 parent_service_role_dne_msg = "A service role must be present when the parent is provided."
 parent_service_role_msg = "A service role does not exist, the parent should be empty for any group associated with worker or default roles."
 bmc_static_range_invalid_msg = "Static range should be in the following format: IPv4Start-IPv4End (example: 10.5.0.1-10.5.0.200)."
-overlapping_static_range = "bmc_details static_range is overlapping with other static ranges."
-duplicate_switch_ip_msg = "Duplicate switch IP provided."
+overlapping_static_range = "bmc_detail's static_range is overlapping with other static ranges."
+duplicate_switch_ip_port_msg = "Please remove duplicate ports."
 switch_details_incomplete_msg = "If providing switch details, please provide both the IP and Ports fields."
-switch_details_no_bmc_details_msg = "If switch details are provided then bmc_details' static_range must also be provided."
+switch_details_no_bmc_details_msg = "If switch details are provided then bmc_detail's static_range must also be provided."
+invalid_group_name_msg = "Groups must be defined in the form of grp<n> where n is 0-99."
+invalid_location_id_msg = "location_id must follow the format SU-<n>.RACK-<n> where n is 0-99."
+no_groups_msg = "Outer Group object was probably not defined."
+no_roles_msg = "Outer Role object was probably not defined."
 
 # provision_config.yml 
 default_lease_time_fail_msg = "Please provide a valid default_lease_time."

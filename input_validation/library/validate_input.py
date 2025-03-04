@@ -28,14 +28,19 @@ sys.path.append("module_utils/common")
 import logical_validation
 import validation_utils
 import config
-
-# Global dictionary for custom schema regex error messages
-regex_errors = {
-    "Groups" : "Groups must be defined in the form of grp<n> where n is 0-99.",
-    "location_id" : "location_id must follow the format SU-<n>.RACK-<n> where n is 0-99."
-}
+import en_us_validation_msg
 
 def createLogger(project_name, tag_name=None):
+    """
+    Creates a logger object for the given project name and tag name.
+
+    Args:
+        project_name (str): The name of the project.
+        tag_name (str, optional): The name of the tag. Defaults to None.
+
+    Returns:
+        logging.Logger: The logger object.
+    """
     if tag_name:
         log_filename = f"{tag_name}_validation_omnia_{project_name}.log"
     else:
@@ -50,6 +55,28 @@ def createLogger(project_name, tag_name=None):
     return logger
 
 def main():
+    """
+    The main function that runs the input validation.
+
+    This function initializes the logger, verifies the existence of the specified directory,
+    retrieves the list of JSON and YAML files, and sets up the schema and input data dictionaries.
+
+    It then runs the validation for each file based on the specified tag names.
+    The validation includes schema validation (L1) and logic validation (L2).
+
+    The function also handles exceptions and logs the validation status.
+
+    Parameters:
+        None
+
+    Returns:
+        None
+
+    Raises:
+        FileNotFoundError: If the specified directory or schema file does not exist.
+        ValueError: If there is a value error.
+        Exception: If there is an unexpected error.
+    """
     module_args = dict(
         omnia_base_dir=dict(type="str", required=True),
         project_name=dict(type="str", required=True),
@@ -81,6 +108,16 @@ def main():
 ### Functions related to files, pathing, and verifying if they exist ###
 # Function to get all files of a specific type recursively from a directory
     def get_files_recursively(directory, file_type):
+        """
+        Returns a list of absolute file paths of all files of a specific type recursively from a directory.
+
+        Args:
+            directory (str): The base directory to search for files.
+            file_type (str): The file type to search for.
+
+        Returns:
+            list: A list of absolute file paths.
+        """
         file_list = []
         for file_path in glob.iglob(f"{directory}/**/*" + file_type, recursive=True):
             if os.path.isfile(file_path):
@@ -88,6 +125,15 @@ def main():
         return file_list
 # Function to verify if a file exists at the given path
     def verify_file_exists(file_path):
+        """
+        Verify if a file exists at the given path.
+
+        Args:
+            file_path (str): The path of the file.
+
+        Returns:
+            bool: True if the file exists, False otherwise.
+        """
         if os.path.exists(file_path) and os.path.isfile(file_path):
             message = "The file %s exists" % file_path
             logger.info(message)
@@ -99,9 +145,25 @@ def main():
             return False
 # Function to get the file name from a given file path
     def get_file_name_from_path(file_path):
+        """
+        Get the file name from a given file path.
+        Args:
+            file_path (str): The path of the file.
+        Returns:
+            str: The file name.
+        """
         return os.path.basename(file_path)
 # Function to verify if a directory exists at the given path
     def verify_directory_exists(directory_path):
+        """
+        Verify if a directory exists at the given path.
+
+        Args:
+            directory_path (str): The path of the directory to check.
+
+        Returns:
+            bool: True if the directory exists, False otherwise.
+        """
         if os.path.exists(directory_path) and os.path.isdir(directory_path):
             message = "The directory %s exists." % directory_path
             logger.info(message)
@@ -115,6 +177,17 @@ def main():
 # Below are the functions that will get the line number
 # Function to get the line number of a specific json_path (ex: (switch_details.ip) in a file
     def get_json_line_number(file_path, json_path):
+        """
+        Get the line number of a specific json_path in a file.
+
+        Args:
+            file_path (str): The path to the file.
+            json_path (str): The json_path to search for.
+
+        Returns:
+            tuple: A tuple containing the line number and a boolean indicating if the line number is valid.
+                If the line number is not found, returns None.
+        """
         is_line_num = True
         if '.' in json_path:
             json_path = json_path.split('.')[0] + "\":"
@@ -129,8 +202,19 @@ def main():
                 if json_path in line:
                     return lineno, is_line_num
         return None
-# Function to get the line number of a specific yaml_path (switch_details.ip) in a file
+    # Function to get the line number of a specific yaml_path in a file
     def get_yml_line_number(file_path, yml_path):
+        """
+        Get the line number of a specific YAML path in a file.
+
+        Args:
+            file_path (str): The path to the file.
+            yml_path (str): The YAML path to search for.
+
+        Returns:
+            tuple: A tuple containing the line number and a boolean indicating if the line number is valid.
+                    Returns None if the line number is not found.
+        """
         is_line_num = True
         # Check if the YAML path contains a dot and adjust the path accordingly
         if '.' in yml_path:
@@ -157,6 +241,18 @@ def main():
     
     # Function to load input data from a file based on its extension
     def get_input_data(input_file_path):
+        """
+        Loads input data from a file based on its extension.
+
+        Args:
+            input_file_path (str): The path to the input file.
+
+        Returns:
+            Tuple[Any, str]: A tuple containing the loaded data and the file extension.
+
+        Raises:
+            ValueError: If the file extension is unsupported.
+        """
         _, extension = os.path.splitext(input_file_path)
         if "json" in extension:
             return json.load(open(input_file_path, "r")), extension
@@ -168,6 +264,16 @@ def main():
         
     # Main L1 Validation code. Get the JSON schema and input file to validate
     def validate_schema(input_file_path, schema_file_path):
+        """
+        Validates the input file against a JSON schema.
+
+        Args:
+            input_file_path (str): The path to the input file.
+            schema_file_path (str): The path to the schema file.
+
+        Returns:
+            bool: True if the validation is successful, False otherwise.
+        """
         try:
             input_data, extension = get_input_data(input_file_path)
             schema = json.load(open(schema_file_path, "r"))
@@ -186,9 +292,9 @@ def main():
 
                     # Custom error messages for regex pattern failures
                     if 'Groups' == error_path:
-                        error.message = regex_errors.get('Groups')
+                        error.message = en_us_validation_msg.invalid_group_name_msg
                     elif 'location_id' in error_path:
-                        error.message = regex_errors.get('location_id')
+                        error.message = en_us_validation_msg.invalid_location_id_msg
                     error_msg = f"Validation Error at {error_path}: {error.message}"
 
                     # For passwords, mask the value so that no password values are logged
@@ -229,6 +335,23 @@ def main():
             
     # Code to run the L2 validation validate_input_logic function.
     def validate_logic(input_file_path, logger, module, omnia_base_dir, project_name):
+        """
+        Validates the logic of the input file.
+
+        Args:
+            input_file_path (str): The path to the input file.
+            logger (logging.Logger): The logger object.
+            module (AnsibleModule): The Ansible module.
+            omnia_base_dir (str): The base directory of Omnia.
+            project_name (str): The name of the project.
+
+        Returns:
+            bool: True if the logic validation is successful, False otherwise.
+
+        Raises:
+            ValueError: If a value error occurs.
+            Exception: If an unexpected error occurs.
+        """ 
         try:
             input_data, extension = get_input_data(input_file_path)
             
@@ -312,13 +435,13 @@ def main():
         raise FileNotFoundError(error_message)
 
     # For each file from the tag names, run schema validation (L1) and logic validation (L2)
-    s = {project_name: {"status": [], "tag": tag_names}}
+    project_data = {project_name: {"status": [], "tag": tag_names}}
 
     if (len(single_files) > 0):
         for name in single_files:
             if not (name):
                 continue
-            validation_status.update(s)
+            validation_status.update(project_data)
             fname = os.path.splitext(name)[0]
             schema_file_path = schema_base_file_path + fname + extensions['json']
             input_file_path = None
@@ -351,7 +474,7 @@ def main():
     if (len(tag_names) > 0 and "all" not in tag_names and len(single_files) > 0) or (len(tag_names) > 0 and len(single_files) == 0):
         for tag_name in tag_names:
             for name in input_file_inventory[tag_name]:
-                validation_status.update(s)
+                validation_status.update(project_data)
                 fname, _ = os.path.splitext(name)
                 schema_file_path = schema_base_file_path + fname + extensions['json']
                 input_file_path = None

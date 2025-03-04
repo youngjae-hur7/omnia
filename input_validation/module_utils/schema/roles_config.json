@@ -91,15 +91,17 @@
               "pattern": "^grp\\d{1,2}$"
             },
             "minItems": 1,
-            "uniqueItems": true,
-            "maxItems": 100
+            "uniqueItems": true
           }
         },
         "required": [
           "name",
           "groups"
         ]
-      }
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "maxItems": 100
     }
   },
   "required": [
