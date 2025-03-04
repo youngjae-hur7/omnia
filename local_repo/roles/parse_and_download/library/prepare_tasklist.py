@@ -146,11 +146,13 @@ def main():
             logger.info(f"failed_packages: {failed_packages}")
 
             software_dict[software] = tasks
-
-        software_dict = transform_package_dict(software_dict)
-        local_config = parse_repo_urls(local_repo_config_path, version_variables)
-
-        module.exit_json(changed=False, software_dict=software_dict, local_config=local_config)
+ 
+        software_dict=transform_package_dict(software_dict)
+        local_config, url_result = parse_repo_urls(local_repo_config_path , version_variables)
+        if not url_result:
+            module.fail_json(f"{local_config} is not reachable or invalid, please check and provide correct URL")
+ 
+        module.exit_json(changed=False, software_dict=software_dict  , local_config=local_config)
         logger.info(f"Package processing completed: {software_dict}")
 
     except Exception as e:
