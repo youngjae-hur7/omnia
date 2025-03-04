@@ -25,6 +25,6 @@
   ansible.builtin.systemd_service:
     name: slurmd
     state: restarted
-  when: restart_slurm_services and ('slurm_control_node' in group_names)
+  when: restart_slurm_services and ('slurm_control_node' in group_names) and (node_check.changed or partition_check.changed) and all_nodes is defined
   delegate_to: "{{ item }}"
   loop: "{{ all_nodes }}"

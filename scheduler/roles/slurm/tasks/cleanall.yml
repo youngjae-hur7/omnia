@@ -8,6 +8,7 @@
     name: "{{ item }}"
     state: stopped
   when: item in ansible_facts['services'].keys()
+  ignore_errors: true
   loop:
     - slurmctld.service
     - slurmdbd.service

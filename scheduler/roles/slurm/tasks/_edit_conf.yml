@@ -13,10 +13,6 @@
   check_mode: true
   loop: "{{ groups['slurm_node'] }}"
 
-- name: debug
-  ansible.builtin.debug:
-    var: node_check
-
 - name: Insert Node
   ansible.builtin.lineinfile:
     path: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
@@ -41,4 +37,5 @@
     state: present
     line: "PartitionName={{ slurm_partition_name }} Nodes={{ all_nodes | join(',') }} MaxTime=INFINITE State=UP"
     regexp: "^PartitionName={{ slurm_partition_name }} "
+  register: partition_check
 

@@ -11,10 +11,6 @@
   register: node_check
   loop: "{{ groups['slurm_node'] }}"
 
-- name: debug
-  ansible.builtin.debug:
-    var: node_check
-
 - name: Get slurm info output if slurm is installed
   ansible.builtin.shell: scontrol show node | awk '/NodeName/ {print $1}' | cut -d= -f2
   register: slurm_nodes
@@ -29,3 +25,4 @@
     state: present
     line: "PartitionName={{ slurm_partition_name }} Nodes={{ rem_nodes | join(',') }} MaxTime=INFINITE State=UP"
     regexp: "^PartitionName={{ slurm_partition_name }} "
+  register: partition_check
