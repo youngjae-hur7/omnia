@@ -13,6 +13,18 @@
 # limitations under the License.
 ---
 
+- name: Set_fact for fetch omnia config credentials
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Set dynamic run tags including 'provision'
+      ansible.builtin.set_fact:
+        omnia_run_tags: "{{ (ansible_run_tags | default([]) + ['provision']) | unique }}"
+        cacheable: yes
+
+- name: Invoke get_config_credentials.yml
+  ansible.builtin.import_playbook: utils/credential_utility/credential_utility.yml
+
 - name: Include input project directory
   tags: first_layer
   ansible.builtin.import_playbook: utils/include_input_dir.yml
