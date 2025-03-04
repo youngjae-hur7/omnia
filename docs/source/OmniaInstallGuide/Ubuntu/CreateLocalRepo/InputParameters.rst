@@ -102,7 +102,8 @@ For a list of repositories (and their types) configured for AMD GPUs, view the `
       },
       "rocm": {
         "cluster": [
-          {"package": "rocm-hip-sdk{{ rocm_version }}*", "type": "deb", "repo_name": "rocm"}
+          {"package": "rocm", "type": "deb", "repo_name": "rocm"},
+          {"package": "rocm-validation-suite", "type": "deb", "repo_name": "rocm"}
         ]
       }
     }
