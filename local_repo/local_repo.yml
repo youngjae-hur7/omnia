@@ -45,11 +45,6 @@
         name: pulp_validation
         tasks_from: read_network_spec.yml
 
-    - name: Read omnia_credentials
-      ansible.builtin.include_role:
-        name: pulp_validation
-        tasks_from: read_omnia_credentials.yml
-
 - name: Validate Pulp Container and Endpoint
   hosts: oim
   connection: ssh
