@@ -19,6 +19,7 @@ import warnings
 
 FIRST_LAYER_ROLES = {"service", "login", "compiler", "k8setcd", "k8shead", "slurmhead", "slurmdbd"}
 SECOND_LAYER_ROLES = {"default", "k8sworker", "slurmworker"}
+NON_SERVICE_ROLES = {"default", "login", "compiler", "k8setcd", "k8shead", "k8sworker", "slurmworker", "slurmhead", "slurmdbd"}
 
 def validate_roles(roles, layer, module, first_layer_roles=FIRST_LAYER_ROLES, second_layer_roles=SECOND_LAYER_ROLES):
     """
@@ -52,8 +53,12 @@ def validate_roles(roles, layer, module, first_layer_roles=FIRST_LAYER_ROLES, se
         if not defined_roles.intersection(first_layer_roles):
             raise Exception("At least one role must be from the first-layer roles.")
     else:
-        if not defined_roles.intersection(second_layer_roles):
-            raise Exception("At least one role must be from the compute-layer roles.")
+        if 'service' in defined_roles:
+            if not defined_roles.intersection(second_layer_roles):
+                raise Exception("At least one role must be from the compute-layer roles.")
+        else:
+            if not defined_roles.intersection(NON_SERVICE_ROLES):
+                raise Exception("At least one role must be defined other than service roles.")
 
     # Collect all groups used by first-layer and compute-layer roles
     first_layer_groups = {group for role in first_layer_roles for group in role_groups.get(role, [])}
@@ -101,7 +106,10 @@ def filter_roles(groups_data, roles_data, layer):
     if layer == "first":
         valid_roles = set(roles_data.keys()).intersection(FIRST_LAYER_ROLES)
     else:
-        valid_roles = set(roles_data.keys()).intersection(SECOND_LAYER_ROLES)
+        if 'service' in roles_data:
+            valid_roles = set(roles_data.keys()).intersection(SECOND_LAYER_ROLES)
+        else:
+            valid_roles = set(roles_data.keys()).intersection(NON_SERVICE_ROLES)
     return valid_roles
 
 
