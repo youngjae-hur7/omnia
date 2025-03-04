@@ -57,7 +57,7 @@ def validate_roles(roles, layer, module, first_layer_roles=FIRST_LAYER_ROLES, se
             if not defined_roles.intersection(second_layer_roles):
                 raise Exception(f"At least one role must be defined from - {second_layer_roles} in roles_config.yml")
         else:
-            if not defined_roles.intersection(NON_SERVICE_ROLES):
+            if not defined_roles.intersection(non_service_roles):
                 raise Exception(f"At least one role must be defined from - {non_service_roles} roles_config.yml")
 
     # Collect all groups used by first-layer and compute-layer roles
