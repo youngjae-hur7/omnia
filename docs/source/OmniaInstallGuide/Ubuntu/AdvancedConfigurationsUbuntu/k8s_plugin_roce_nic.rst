@@ -81,9 +81,9 @@ Here is an example of the ``input/roce_plugin_config.yml``: ::
               gateway:
               route:
 
-**To run the playbook**
+**To install the plugin, run the** ``deploy_roce_plugin.yml`` **playbook**
 
-Run the playbook using the following commands: ::
+Run the playbook using the following command: ::
 
     cd omnia/scheduler
     ansible-playbook deploy_roce_plugin.yml -i inventory
@@ -112,9 +112,7 @@ Where the inventory should be the same as the one used to setup Kubernetes on th
 Delete the plugin
 ------------------
 
-**To run the playbook**
-
-Run the playbook using the following commands: ::
+To delete the plugin, run the ``delete_roce_plugin.yml`` playbook using the following command: ::
 
     cd omnia/scheduler
     ansible-playbook delete_roce_plugin.yml -i inventory
