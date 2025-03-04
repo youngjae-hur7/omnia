@@ -271,7 +271,7 @@ def check_bmc_static_range_overlap(static_range, static_range_group_mapping) -> 
     
     return grp_overlaps
 
-def check_port_overlap(port_ranges):
+def check_port_overlap(port_ranges) -> bool:
     """
     Check if any of the port ranges in the given string overlap.
 
@@ -285,8 +285,6 @@ def check_port_overlap(port_ranges):
     for port_range in port_ranges.split(','):
         if '-' in port_range:
             start, end = map(int, port_range.split('-'))
-            if start > end:
-                start, end = end, start
             for port in range(start, end + 1):
                 if port in ports:
                     return True
@@ -300,3 +298,21 @@ def check_port_overlap(port_ranges):
                 return True
             ports.add(port)
     return False
+
+def check_port_ranges(port_ranges) -> bool:
+    """
+    Check if any of the port ranges are invalid.
+
+    Args:
+        port_ranges (str): A string of port ranges separated by commas.
+
+    Returns:
+        bool: False if any of the port ranges are invalid, True otherwise.
+    """
+    for port_range in port_ranges.split(','):
+        if '-' in port_range:
+            start, end = map(int, port_range.split('-'))
+            if start > end:
+                return False
+    
+    return True

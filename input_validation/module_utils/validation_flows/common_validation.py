@@ -38,6 +38,10 @@ def validate_software_config(input_file_path, data, logger, module, omnia_base_d
             if cluster_os_version not in version_range:
                 errors.append(create_error_msg("cluster_os_version", cluster_os_version, en_us_validation_msg.os_version_fail_msg(cluster_os_type, version_range[0], version_range[1])))
 
+    iso_file_path = data["iso_file_path"]
+    not_valid_iso_msg = validation_utils.verify_iso_file(iso_file_path, cluster_os_type, cluster_os_version)
+    if not_valid_iso_msg:
+        errors.append(create_error_msg("iso_file_path", iso_file_path, not_valid_iso_msg))
     softwares = data["softwares"]
     need_additional_software_info = ["bcm_roce", "amdgpu", "vllm", "pytorch", "tensorflow", "intelgaudi"]
     filtered_softwares = [item for item in softwares if item.get("name") in need_additional_software_info]

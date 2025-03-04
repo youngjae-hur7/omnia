@@ -60,7 +60,7 @@ input_file_inventory = {
     ],
     "monitoring": [files["telemetry_config"]],
     "local_repo": [files["local_repo_config"], files["software_config"]],
-    "k8": [files["k8s_access_config"]],
+    "k8s": [files["k8s_access_config"]],
     "roce": [files["roce_plugin_config"]],
     "storage": [files["storage_config"]],
     "proxy": [files["site_config"]],

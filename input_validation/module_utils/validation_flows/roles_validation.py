@@ -53,7 +53,7 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
     
     # Catch any empty config files or malformed config files
     if not data:
-        errors.append(create_error_msg("config_roles.yml,", None, "EMPTY config_roles.yml"))
+        errors.append(create_error_msg("config_roles.yml,", None, "EMPTY roles_config.yml"))
     else:
         try:
             roles = data[ROLES]
@@ -141,6 +141,8 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
                     # Check for any switch IP port overlap
                     if validation_utils.check_port_overlap(switch_ip_port_mapping.get(switch_ip, "") + "," + groups[group][SWITCH_DETAILS].get(PORTS, "")):
                         errors.append(create_error_msg(group, f'Group {group} has duplicate ports for switch IP {switch_ip}, this switch IP is shared with the following groups: {switch_ip_mapping[switch_ip]}.', en_us_validation_msg.duplicate_switch_ip_port_msg))
+                if not validation_utils.check_port_ranges(groups[group][SWITCH_DETAILS].get(PORTS, "")):
+                    errors.append(create_error_msg(group, f'Group {group} switch port range(s) are invalid, start > end:', en_us_validation_msg.invalid_switch_ports_msg))
                 switch_ip_mapping.setdefault(switch_ip, []).append(group)
                 switch_ip_port_mapping[switch_ip] = switch_ip_port_mapping.get(switch_ip, "") + "," + groups[group][SWITCH_DETAILS].get(PORTS, "")
             if ((switch_ip_provided and not switch_ports_provided) or (not switch_ip_provided and switch_ports_provided)):

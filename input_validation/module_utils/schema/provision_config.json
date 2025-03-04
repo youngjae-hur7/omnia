@@ -2,10 +2,6 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
-    "iso_file_path": {
-      "type": "string",
-      "description": "Path of the ISO file to be used for provisioning the clusters"
-    },
     "node_name": {
       "type": "string",
       "description": "Name of the node.",
@@ -67,7 +63,6 @@
     }
   },
   "required": [
-    "iso_file_path",
     "node_name",
     "domain_name",
     "pxe_mapping_file_path",

@@ -278,8 +278,7 @@ def main():
             input_data, extension = get_input_data(input_file_path)
             schema = json.load(open(schema_file_path, "r"))
 
-            message = f"{'#' * 10} Validation Initiated for {input_file_path} {'#' * 10}"
-            logger.debug(message)
+            logger.debug(en_us_validation_msg.get_validation_initiated(input_file_path))
             
             # Validate the input file with the schema and output the errors
             validator = jsonschema.Draft7Validator(schema)
@@ -316,12 +315,10 @@ def main():
                     if line_number:
                         message = f"Error occurs on line {line_number}" if is_line_num else f"Error occurs on object or list entry on line {line_number}"
                         logger.error(message)
-                message = f"{'#' * 10} Schema Validation failed for {input_file_path} {'#' * 10}"
-                logger.error(message)
+                logger.error(en_us_validation_msg.get_schema_failed(input_file_path))
                 return False
             else:
-                message = f"{'#' * 10} Schema Validation successful for {input_file_path} {'#' * 10}"
-                logger.info(message)
+                logger.info(en_us_validation_msg.get_schema_success(input_file_path))
                 return True
         except jsonschema.exceptions.SchemaError as se:
             message = f"Internal schema validation error: {se.message}"
@@ -391,12 +388,10 @@ def main():
                             message = f"Error occurs on line {line_number}" if is_line_num else f"Error occurs on object or list entry on line {line_number}"
                             logger.error(message)
 
-                message = f"{'#' * 10} Logic Validation failed for {input_file_path} {'#' * 10}"
-                logger.error(message)
+                logger.error(en_us_validation_msg.get_logic_failed(input_file_path))
                 return False
             else:
-                message = f"{'#' * 10} Logic Validation successful for {input_file_path} {'#' * 10}"
-                logger.info(message)
+                logger.info(en_us_validation_msg.get_logic_success(input_file_path))
                 return True
         except ValueError as ve:
             message = f"Value error: {ve}"
@@ -408,8 +403,7 @@ def main():
             return False
             
     # Start validation execution        
-    message = f"{'#' * 30} START EXECUTION {'#' * 30}"
-    logger.info(message)
+    logger.info(en_us_validation_msg.get_header())
     
     # Check if the specified directory exists
     if not verify_directory_exists(directory_path):
@@ -513,8 +507,7 @@ def main():
         module.fail_json(msg=message)
     validation_status[project_name]["status"].sort(key=lambda x: list(x.values())[0])
     
-    message = f"{'#' * 30} END EXECUTION {'#' * 30}"
-    logger.error(message)
+    logger.error(en_us_validation_msg.get_footer())
     
     # Ansible success/failure message
     if False in vstatus:

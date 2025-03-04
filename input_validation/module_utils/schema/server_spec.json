@@ -22,7 +22,8 @@
                                               "properties": {
                                                   "nicnetwork": { "type": "string" },
                                                   "nictypes": { "type": "string" },
-                                                  "nicdevices": { "type": "string" }
+                                                  "nicdevices": { "type": "string" },
+                                                  "metric": { "type": "string" }
                                               },
                                               "required": ["nicnetwork", "nictypes"],
                                               "additionalProperties": false

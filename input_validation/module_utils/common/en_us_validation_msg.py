@@ -35,15 +35,12 @@ invalid_group_name_msg = "Groups must be defined in the form of grp<n> where n i
 invalid_location_id_msg = "location_id must follow the format SU-<n>.RACK-<n> where n is 0-99."
 no_groups_msg = "Outer Group object was probably not defined."
 no_roles_msg = "Outer Role object was probably not defined."
+invalid_switch_ports_msg = "Please provide any port ranges as start-end (example: 0-15,4:4,51-53)."
 
 # provision_config.yml 
 default_lease_time_fail_msg = "Please provide a valid default_lease_time."
 timezone_fail_msg = "Unsupported Timezone. Please check the timezone.txt file for a list of valid timezones."
 enable_switch_based_fail_msg = "enable_switch_based must be set to either true or false."
-iso_file_path_fail_msg = "The provided ISO file path is invalid. Please ensure that the ISO file exists at the specified iso_file_path."
-iso_file_path_not_contain_iso_msg = "The provided ISO file path must have the .iso extension."
-def iso_file_path_not_contain_os_msg(iso_file_path, provision_os, provision_os_version):
-    return f'Make sure iso_file_path variable in provision_config.yml contains value mentioned in the variables cluster_type: {provision_os} and cluster_os_version: {provision_os_version} mentioned in software_config.json'
 language_fail_msg = "Only en-US language supported"
 nodename_chars_fail_msg = "node_name is empty or invalid in provision_config.yml. node_name should not contain _ or . or space or node- as it might result in issues with provisioning/authentication tools like FreeIPA."
 public_nic_fail_msg = "public_nic is empty. Please provide a public_nic value."
@@ -98,6 +95,10 @@ openldap_organization_fail_msg = "openldap_organization is empty. Please provide
 openldap_organizational_unit_fail_msg = "openldap_organizational_unit is empty. Please provide a openldap_organizational_unit value."
 
 #software_config.json
+iso_file_path_fail_msg = "The provided ISO file path is invalid. Please ensure that the ISO file exists at the specified iso_file_path."
+iso_file_path_not_contain_iso_msg = "The provided ISO file path must have the .iso extension."
+def iso_file_path_not_contain_os_msg(iso_file_path, provision_os, provision_os_version):
+    return f'Make sure iso_file_path variable in provision_config.yml contains value mentioned in the variables cluster_type: {provision_os} and cluster_os_version: {provision_os_version} mentioned in software_config.json'
 def os_version_fail_msg(cluster_os_type, min_version, max_version):
     if (cluster_os_type == "ubuntu"):
         return f"For OS type '{cluster_os_type}', the version must be either {min_version} or {max_version}."
@@ -130,11 +131,30 @@ def server_spec_network_key_fail_msg(nic_device):
 ip_overlap_fail_msg = "admin network, bmc network and k8 network and IP ranges should not have any IP overlap. Check omnia_config.yml and network_spec.yml"
 telemetry_ip_overlap_fail_msg = "admin network, telemetry network and IP ranges should not have any IP overlap. Check telemetry_config.yml and network_spec.yml"
 
-
 def user_name_duplicate(duplicate_usernames):
     return f'duplicate username detected {duplicate_usernames}. Check that usernames are unique in k8s_access_config.yml and passwordless_ssh_config.yml'
-
 
 # login_node_security
 def restrict_softwares_fail_msg(software):
     return f"Invalid software '{software}'. Can only disable these services: telnet,lpd,bluetooth,rlogin,rexec."
+
+def get_header():
+    return f"{'#' * 30} START EXECUTION {'#' * 30}"
+
+def get_footer():
+    return f"{'#' * 30} END EXECUTION {'#' * 30}"
+
+def get_validation_initiated(input_file_path):
+    return f"{'#' * 10} Validation Initiated for {input_file_path} {'#' * 10}"
+
+def get_schema_failed(input_file_path):
+    return f"{'#' * 10} Schema validation failed for {input_file_path} {'#' * 10}"
+
+def get_schema_success(input_file_path):
+    return f"{'#' * 10} Schema validation successful for {input_file_path} {'#' * 10}"
+
+def get_logic_failed(input_file_path):
+    return f"{'#' * 10} Logic validation failed for {input_file_path} {'#' * 10}"
+
+def get_logic_success(input_file_path):
+    return f"{'#' * 10} Logic validation successful for {input_file_path} {'#' * 10}"

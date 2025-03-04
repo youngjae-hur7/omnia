@@ -52,11 +52,6 @@ def validate_provision_config(input_file_path, data, logger, module, omnia_base_
     if not (validation_utils.verify_path(pxe_mapping_file_path)):
         errors.append(create_error_msg("pxe_mapping_file_path", pxe_mapping_file_path, en_us_validation_msg.pxe_mapping_file_path_fail_msg))
 
-    iso_file_path = data["iso_file_path"]
-    not_valid_iso_msg = validation_utils.verify_iso_file(iso_file_path, cluster_os_type, cluster_os_version)
-    if not_valid_iso_msg:
-        errors.append(create_error_msg("iso_file_path", iso_file_path, not_valid_iso_msg))
-
     timezone = data["timezone"]
     if not (validation_utils.validate_timezone(timezone, "module_utils/common/timezone.txt")):
         errors.append(create_error_msg("timezone", timezone, en_us_validation_msg.timezone_fail_msg))
