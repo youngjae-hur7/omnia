@@ -14,6 +14,15 @@
 ---
 
 - name: Integrate mapping file with DB
-  ansible.builtin.command: |
-    {{ python_version }} {{ mapping_file_db_path }} {{ db_path }} {{ temp_pxe_file_path }} {{ domain_name }}
+  nodeinfo_db_update:
+    db_path: "{{ db_path }}"
+    node_details: "{{ mapping_details }}"
+    domain_name: "{{ domain_name }}"
+    discovery_mechanism: "{{ mapping_node_group }}"
   changed_when: true
+  register: db_update_output
+
+- name: Show DB update output
+  ansible.builtin.debug:
+    msg: "{{ db_update_output }}"
+    verbosity: 2

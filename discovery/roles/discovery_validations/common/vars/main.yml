@@ -49,6 +49,10 @@ provision_config_syntax_fail_msg: "Failed. Syntax errors present in provision_co
 spec_syntax_fail_msg: "Failed. Syntax errors present in either network_spec.yml or server_spec.yml. Fix the errors and re-run."
 provision_config_cred_syntax_fail_msg: "Failed. Syntax errors present in provision_credentials_config.yml. Fix errors and re-run playbook again."
 
+# Usage: fetch_composable_roles_config.yml
+roles_config_path: "{{ hostvars['localhost']['input_project_dir'] }}/roles_config.yml"
+roles_config_syntax_fail_msg: "Failed. Syntax errors present in role_config.yml. Fix errors and re-run playbook again."
+
 # Usage: decrypt_provision_credentials_config.yml, encrypt_provision_credentials_config.yml
 provision_credentials_config_filename: "{{ hostvars['localhost']['input_project_dir'] }}/provision_config_credentials.yml"
 provision_credentials_vault_path: "{{ hostvars['localhost']['input_project_dir'] }}/.provision_credential_vault_key"
@@ -57,10 +61,15 @@ conf_file_mode: "0644"
 # Usage: include_local_repo_config.yml
 local_repo_config_file: "{{ hostvars['localhost']['input_project_dir'] }}/local_repo_config.yml"
 software_config_file: "{{ hostvars['localhost']['input_project_dir'] }}/software_config.json"
-invalid_software_config_fail_msg: "Failed. Please provide valid software_config.json file with cluster_os_type, cluster_os_version, repo_config
-and repo_config values."
+invalid_software_config_fail_msg: |
+  Failed. Please provide valid software_config.json file with cluster_os_type, cluster_os_version,
+  iso_file_path and repo_config values.
 local_repo_config_syntax_fail_msg: "Failed. Syntax errors present in local_repo_config.yml. Fix errors and re-run playbook again."
 software_config_syntax_fail_msg: "Failed. Syntax errors present in software_config.json. Fix errors and re-run playbook again."
+iso_file_path_missing_msg: "Incorrect iso_file_path provided. Make sure ISO file is present in the provided iso_file_path."
+iso_file_path_success_msg: "iso_file_path validated"
+iso_file_path_fail_msg: "Failed. Invalid iso_file_path: {{ iso_file_path }} provided. Make sure iso_file_path variable in software_config.json contains value
+ mentioned in the variables cluster_type: {{ provision_os }} and cluster_os_version: {{ provision_os_version }} mentioned in software_config.json"
 
 # Usage: validate_local_repo.yml
 metadata_file_path: "/opt/omnia/offline/.data/metadata.yml"
@@ -72,11 +81,11 @@ repo_config_metadata_fail_msg: "Failed: Cannot change repo_config in subsequent 
 # Usage: assign_network_interface.yml
 network_interface_fail_msg: "Failed. Please provide a valid network interface type."
 warning_msg_bmc_network_details_incomplete: "Warning, BMC network details incomplete. BMC discovery and support will be skipped.
-Note: nic_name, netmask_bits, static_range and dynamic_range are mandatory parameters under bmc_network in network_spec.yml for bmc discover"
+Note: oim_nic_name, netmask_bits, static_range and dynamic_range are mandatory parameters under bmc_network in network_spec.yml for bmc discover"
 
 # Usage: validate_admin_nic.yml
 success_msg_admin_nic_details: "Admin nic details validated"
-fail_msg_admin_nic_details: "Failed. Invalid admin_nic details (nic_name, netmask_bits, static_range or dynamic_range) in network_spec file."
+fail_msg_admin_nic_details: "Failed. Invalid admin_nic details (oim_nic_name, netmask_bits, static_range or dynamic_range) in network_spec file."
 fail_msg_admin_netmask_bits: "Failed. Invalid Admin netmask_bits provided in network_spec file."
 success_subnet: "The subnet provided is validated"
 fail_subnet: "Failed. Please provide proper subnet with netmask {{ omnia_admin_netmask }} in provision_config.yml"
@@ -102,7 +111,7 @@ success_msg_bmc_nic_details: "BMC nic details validated"
 bmc_params_success_msg: "Successfully validated bmc network params"
 bmc_params_failure_msg: "Failed. Please provide proper input parameters for bmc network in network_spec file."
 fail_msg_bmc_netmask_bits: "Failed. Invalid BMC netmask_bits provided in network_spec file."
-fail_msg_bmc_nic_details: "Failed. Invalid bmc_network details (nic_name, netmask_bits, static_range or dynamic_range) in network_spec file."
+fail_msg_bmc_nic_details: "Failed. Invalid bmc_network details (oim_nic_name, netmask_bits, static_range or dynamic_range) in network_spec file."
 bmc_nic_start: "{{ bmc_nic_subnet.split('.')[0] + '.' + bmc_nic_subnet.split('.')[1] + '.'
 + pxe_nic_start_range.split('.')[-2] + '.' + pxe_nic_start_range.split('.')[-1] }}"
 bmc_nic_end: "{{ bmc_nic_subnet.split('.')[0] + '.' + bmc_nic_subnet.split('.')[1] + '.'
@@ -165,10 +174,6 @@ provision_os_success_msg: "cluster_os_type validated"
 provision_os_fail_msg: |
   "Failed. Incorrect cluster_os_type selected.
   If Omnia Infrastructure Manager OS RHEL, only cluster_os_type {{ os_supported_rhel }} is supported."
-iso_file_path_missing_msg: "Incorrect iso_file_path provided. Make sure ISO file is present in the provided iso_file_path."
-iso_file_path_success_msg: "iso_file_path validated"
-iso_file_path_fail_msg: "Failed. Invalid iso_file_path: {{ iso_file_path }} provided. Make sure iso_file_path variable in provision_config.yml contains value
-mentioned in the variables cluster_type: {{ provision_os }} and cluster_os_version: {{ provision_os_version }} mentioned in software_config.json"
 ping_search_key: "100% packet loss"
 min_length: 8
 max_length: 30
@@ -200,7 +205,7 @@ server_hostname_fail_msg: "Failed. Hostname set is not valid"
 server_domain_name_blank_msg: "Failed. domain_name is not set in hostname. It should have hostname.domain_name format"
 server_domain_name_success_msg: "domain_name in server hostname validated"
 server_domain_name_fail_msg: "Failed. domain_name set is not same as domain_name in provision_config.yml"
-hosts_file_path: /etc/hosts
+hosts_file_path: /opt/omnia/hosts
 hosts_file_mode: "0644"
 hostname_success_msg: "Hostname length successfully validated."
 hostname_fail_msg: "Failed. Hostname comprises of domain name, node name and 6 characters (00001 and .) that is used by omnia.
@@ -215,9 +220,10 @@ cuda_version_warning_msg: "[WARNING] software_config.json does not have the vers
 Hence CUDA will not be installed on the nodes post provisioning."
 cuda_repo_warning_msg: "[WARNING] local_repo.yml is not executed for downloading CUDA packages.
 CUDA will not be installed on the nodes post provisioning."
-offline_iso_directory: "{{ repo_store_path }}/cluster/{{ provision_os }}/{{ provision_os_version }}/iso"
+offline_iso_directory: "/opt/omnia/offline_repo/cluster/{{ provision_os }}/{{ provision_os_version }}/iso"
 
 # Usage: validate_amdgpu_rocm_repo.yml
+pulp_bin_path: /usr/local/bin/pulp
 amdgpu_input_warning_msg: "[WARNING] software_config.json does not have the amdgpu software stack.
 Hence ROCm will not be installed on the nodes post provisioning."
 amdgpu_version_warning_msg: "[WARNING] software_config.json does not have the version for AMDGPU.
@@ -228,7 +234,10 @@ rocm_version_warning_msg: "[WARNING] software_config.json does not have the vers
 Hence ROCm will not be installed on the nodes post provisioning."
 rocm_repo_warning_msg: "[WARNING] local_repo.yml is not executed for downloading ROCM packages.
 ROCm will not be installed on the nodes post provisioning."
-
+os_package_map:
+  rhel: rpm
+  rocky: rpm
+  ubuntu: deb
 # Usage: validate_intelgaudi_repo.yml
 intelgaudi_version_warning_msg: "[WARNING] software_config.json does not have the version for 'intelgaudi'.
 Hence Habana stack will not be installed on the nodes post provisioning."

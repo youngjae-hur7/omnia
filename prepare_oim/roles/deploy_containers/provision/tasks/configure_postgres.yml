@@ -14,7 +14,7 @@
 
 ---
 
-- name: Wait till xcat-init.bash execution is completed
+- name: Wait till xcat-init.bash execution is completed (This task may take 10 mins)
   ansible.builtin.wait_for:
     path: "{{ xcat_init_finished }}"
     state: present
@@ -29,7 +29,7 @@
   environment:
     XCATPGPW: "{{ hostvars['localhost']['postgresdb_password'] }}"
 
-- name: Start and enable xcat services in rhel/rocky
+- name: Start and enable xcat services
   ansible.builtin.service:
     name: "{{ item }}"
     state: started
