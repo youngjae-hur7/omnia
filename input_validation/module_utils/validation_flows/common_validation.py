@@ -395,4 +395,3 @@ def validate_telemetry_config(input_file_path, data, logger, module, omnia_base_
         errors.append(create_error_msg("IP overlap -", None, en_us_validation_msg.telemetry_ip_overlap_fail_msg))
 
     return errors
-s
