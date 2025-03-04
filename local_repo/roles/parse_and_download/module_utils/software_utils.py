@@ -19,6 +19,7 @@ import yaml
 from collections import defaultdict
 import re
 from jinja2 import Template
+import requests
 
 # Import default variables from config.py
 from ansible.module_utils.config import (
@@ -123,6 +124,27 @@ def get_csv_file_path(software_name, user_csv_dir):
     """
     status_csv_file_path = os.path.join(user_csv_dir, software_name, DEFAULT_STATUS_FILENAME)
     return status_csv_file_path
+ 
+def is_remote_url_reachable(remote_url, timeout=10):
+    """
+    Check if a remote URL is reachable.
+
+    This function sends an HTTP GET request to the specified remote URL with a given timeout.
+    If the response status code is 200, the URL is considered reachable and the function returns True.
+    In case of any exception (e.g., connection issues or timeouts), the function returns False.
+
+    Args:
+        remote_url (str): The URL to check for reachability.
+        timeout (int, optional): The maximum number of seconds to wait for a response. Defaults to 10.
+
+    Returns:
+        bool: True if the URL is reachable (HTTP status 200), False otherwise.
+    """
+    try:
+        response = requests.get(remote_url, timeout=timeout)
+        return response.status_code == 200
+    except Exception:
+        return False
 
 def transform_package_dict(data):
     """
@@ -169,6 +191,9 @@ def parse_repo_urls(local_repo_config_path, version_variables):
         local_repo_config_path (str): The path to the local repository configuration file.
         version_variables (dict): A dictionary of version variables.
     Returns:
+        tuple: A tuple where the first element is either the parsed repository URLs as a JSON string 
+               (on success) or the rendered URL (if unreachable), and the second element is a boolean 
+               indicating success (True) or failure (False).
         str: The parsed repository URLs as a JSON string.
     """
     local_yaml = load_yaml(local_repo_config_path)
@@ -184,16 +209,25 @@ def parse_repo_urls(local_repo_config_path, version_variables):
             rendered_url = Template(url).render(version_variables)
         except Exception as e:
             print(f"Warning: Error rendering URL {url} - {str(e)}")
-            rendered_url = url
+            rendered_url = url  # Fallback to original URL
+
+        # To handle special case when software_config.json does not contain these
+        if name in ["amdgpu", "rocm", "beegfs"] and (version is None or version == "null"):
+            continue
+
+        # Edge case for oneapi, snoopy
+        elif not is_remote_url_reachable(rendered_url) and name not in ["oneapi","snoopy"]:
+            return rendered_url, False
+
         parsed_repos.append({
             "package": name,
             "url": rendered_url,
             "gpgkey": gpgkey if gpgkey else "null",
             "version": version if version else "null"
         })
-
-    return json.dumps(parsed_repos)
-
+ 
+    return json.dumps(parsed_repos), True
+    
 def set_version_variables(user_data, software_names, cluster_os_version):
     """
     Generates a dictionary of version variables from the user data.
