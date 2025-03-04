@@ -66,7 +66,7 @@ To upgrade the Omnia OIM, do the following:
 
     If ``upgrade_oim.yml`` execution fails, you can rollback to Kubernetes version 1.29.5 and restore the old backed-up data using the ``restore_oim.yml`` playbook. To restore, do the following:
 
-        1. Activate the Omnia virtual environment using the ``source /opt/omnia/omnia17_venv/bin/activate`` command.
+        1. Activate the Omnia virtual environment using the ``source /opt/omnia/omnia171_venv/bin/activate`` command.
 
         2. Execute the ``restore_oim.yml`` playbook using the following command: ::
 

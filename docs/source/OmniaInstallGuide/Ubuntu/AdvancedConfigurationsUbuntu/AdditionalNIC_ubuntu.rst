@@ -34,7 +34,7 @@ The ``server_spec_update.yml`` playbook can be used to do the following tasks:
       .. note:: You can either use ``CIDR`` or ``static_range``. Simultaneous use of both parameters will result in an error message being displayed.
 
     * ``MTU``: Maximum transmission unit (MTU) is a measurement in bytes of the largest data packets that an Internet-connected device can accept. Default value of ``MTU`` is 1500. You can enter your desired value.
-    * ``VLAN``: A 12-bit field that identifies a virtual LAN (VLAN) and specifies the VLAN that an ethernet frame belongs to. This property is not supported on clusters running Ubuntu.
+    * ``VLAN``: A 12-bit field that identifies a virtual LAN (VLAN) and specifies the VLAN that an ethernet frame belongs to.
 
 * Modify the ``input/server_spec.yml`` file with the additional NIC information and/or OS command-line kernel parameters that you want to add or alter for the target nodes. Ensure the following:
 
@@ -48,7 +48,7 @@ The ``server_spec_update.yml`` playbook can be used to do the following tasks:
 
     * If a ``static_range`` value is provided in ``input/network_spec.yml``, additional networks are not correlated.
     * If a ``CIDR`` value is provided in ``input/network_spec.yml``, the complete subnet is used for Omnia to assign IPs and where possible, the IPs will be correlated with the assignment on the admin network. Omnia performs correlation for additional networks if the subnet prefix for the admin network is a superset, and the additional network is a subset. For example, if the subnet prefix for the admin network is */16* and for the additional network it's */24*, Omnia attempts to correlate the IPs if the value for the ``correlate_to_admin`` field is set to true in ``input/network_spec.yml``.
-    * If a VLAN is required, ensure that a VLAN ID is provided in the ``vlan`` field in ``input/server_spec.yml`` and ensure that it's provided in the ``NIC.vlan_id`` format. For example, consider "eth1.101" where ``eth1`` is the NIC name configured with a VLAN is and ``101`` is the ``vlan_id``. This field is not supported on admin or bmc networks.
+    * If a VLAN is required, ensure that a VLAN ID is provided in the ``vlan`` field in ``input/server_spec.yml`` and ensure that it's provided in ``NIC.vlan_id`` (Example: ``eth1.101``) or ``vlan.<vlanid>`` (Example: ``vlan.101``) format. This field is not supported on admin or bmc networks.
     * While new networks can be added to the ``network_spec.yml`` file on subsequent runs of the ``server_spec_update.yml`` playbook, existing networks cannot be edited or deleted. If the user modifies or removes existing networks from ``input/network_spec.yml``, the playbook execution might fail. In that case, the user needs to `reprovision the node <../OmniaInstallGuide/Maintenance/reprovision.html>`_.
 
 **Usage Instructions**
@@ -81,7 +81,7 @@ The ``server_spec_update.yml`` playbook can be used to do the following tasks:
                       nicnetwork: "nic_network1"
                       nictypes: "ethernet"
                       metric: 100
-                  - ensp0.5:
+                  - vlan.1:
                       nicnetwork: "nic_network2"
                       nictypes: "vlan"
                       nicdevices: "ensp0"
@@ -130,7 +130,7 @@ The ``server_spec_update.yml`` playbook can be used to do the following tasks:
                       nicnetwork: "nic_network1"
                       nictypes: "ethernet"
                       metric: 100
-                  - ensp0.5:
+                  - vlan.1:
                       nicnetwork: "nic_network2"
                       nictypes: "vlan"
                       nicdevices: "ensp0"
@@ -191,7 +191,7 @@ In the above sample inventory file, ``[cluster1]`` and ``[cluster2]`` are user-d
 
 .. caution:: Omnia does not support modifying the category definitions (for example, ``nic_name``, ``nicnetwork``, or ``nictype``) in ``input/server_spec.yml`` or changing the category details in the inventory file provided, during consecutive runs of the ``server_spec_update.yml`` playbook.
 
-Based on the provided sample files, server 10.5.0.1 has been mapped to ``[cluster1]`` which corresponds to **category-1**. Therefore, the NICs ensp0 and ensp0.5 will be configured in an ethernet VLAN group with ensp0 as the primary device.
+Based on the provided sample files, server 10.5.0.1 has been mapped to ``[cluster1]`` which corresponds to **category-1**. Therefore, the NICs ensp0 and vlan.1 will be configured in an ethernet VLAN group with ensp0 as the primary device.
 
 
 
