@@ -1,4 +1,4 @@
-# Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -79,7 +79,7 @@ def process_rpm_package(package, repo_store_path, status_file_path, cluster_os_t
                 # Step 2: Query dependencies of the main package
                 dependencies_cmd = ['repoquery', '--requires', '--resolve', '--recursive', '--arch=x86_64,noarch', package_name]
                 if package_name =='rocm':
-                    dependencies_cmd = ['repoquery', '--disablerepo=*', '--enablerepo=omnia_repo_rocm', '--requires', '--resolve', '--recursive',
+                    dependencies_cmd = ['repoquery', '--disablerepo=*', '--enablerepo=omnia_repo_rocm', '--enablerepo=omnia_repo_amdgpu', '--requires', '--resolve', '--recursive',
                             '--arch=x86_64,noarch', package_name]
                 dependencies = subprocess.check_output(dependencies_cmd, text=True).splitlines()
                 dependencies = [dep for dep in dependencies if any(arch in dep for arch in ['x86_64', 'noarch'])]
@@ -124,7 +124,7 @@ def process_rpm_package(package, repo_store_path, status_file_path, cluster_os_t
                 # Step 2: Query dependencies of the main package
                 dependencies_cmd = ['repoquery', '--requires', '--resolve', '--recursive', '--arch=x86_64,noarch', package_name]
                 if package_name =='rocm':
-                    dependencies_cmd = ['repoquery', '--disablerepo=*', '--enablerepo=omnia_repo_rocm', '--requires', '--resolve', '--recursive', '--arch=x86_64,noarch', package_name]
+                    dependencies_cmd = ['repoquery', '--disablerepo=*', '--enablerepo=omnia_repo_rocm', '--enablerepo=omnia_repo_amdgpu', '--requires', '--resolve', '--recursive', '--arch=x86_64,noarch', package_name]
                 dependencies = subprocess.check_output(dependencies_cmd, text=True).splitlines()
                 dependencies = [dep for dep in dependencies if any(arch in dep for arch in ['x86_64', 'noarch'])]
 
