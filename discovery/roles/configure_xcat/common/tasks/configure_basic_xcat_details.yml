@@ -12,13 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- name: Set_fact for omnia_config_credentials.yml variables 
-  ansible.builitin.set_fact:
-    provision_password: "hostvars['localhost']['provision_password']"
-    bmc_username: "hostvars['localhost']['bmc_username']"
-    switch_snmp3_username: "hostvars['localhost']['switch_snmp3_username']"
-    bmc_password: "hostvars['localhost']['bmc_password']"
-    switch_snmp3_password: "hostvars['localhost']['switch_snmp3_password']"
 
 - name: Fetch default networks table entries
   block:
