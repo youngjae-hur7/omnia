@@ -1,6 +1,0 @@
----
-- name: Test the slurm role
-  hosts: localhost
-  remote_user: root
-  roles:
-    - slurm

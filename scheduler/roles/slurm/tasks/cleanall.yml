@@ -56,3 +56,9 @@
     option: SLURM_CONF
     state: absent
     mode: u=rw,g=r,o=r
+
+- name: Umounts
+  ansible.builtin.command: "umount /home"
+
+- name: Refresh mounts
+  ansible.builtin.command: "mount -a"
