@@ -18,7 +18,7 @@ omnia_credential_file: "{{ input_project_dir }}/omnia_credentials.yml"
 
 # Usage: pre_requisite.yml
 ansible_vault_search_key: "$ANSIBLE_VAULT;"
-omnia_credential_vault_path: "{{ input_project_dir }}/.omnia_credentials_key"
+omnia_credential_vault_path: "{{ input_project_dir }}/.omnia_config_credentials_key"
 conf_file_mode: "0600"
 software_config_file: "{{ input_project_dir }}/software_config.json"
 invalid_software_config_fail_msg: "Failed. Please provide valid software_config.json file with cluster_os_type, cluster_os_version, repo_config

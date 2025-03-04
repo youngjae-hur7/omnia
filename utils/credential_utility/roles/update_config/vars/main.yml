@@ -13,7 +13,7 @@
 # limitations under the License.
 ---
 
-omnia_credential_file: "{{ input_project_dir }}/omnia_credentials.yml"
+omnia_credential_file: "{{ input_project_dir }}/omnia_config_credentials.yml"
 omnia_credential_vault_path: "{{ input_project_dir }}/.omnia_credentials_key"
 
 # Usage: fetch_default_credentials.yml
