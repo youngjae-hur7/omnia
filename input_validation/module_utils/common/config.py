@@ -64,7 +64,6 @@ input_file_inventory = {
     "roce": [files["roce_plugin_config"]],
     "storage": [files["storage_config"]],
     "proxy": [files["site_config"]],
-    "roles": [files["roles_config"]],
     "all": [
         files["passwordless_ssh_config"],
         files["local_repo_config"],

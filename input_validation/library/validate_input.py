@@ -123,6 +123,7 @@ def main():
             if os.path.isfile(file_path):
                 file_list.append(os.path.abspath(file_path))
         return file_list
+    
 # Function to verify if a file exists at the given path
     def verify_file_exists(file_path):
         """
@@ -143,6 +144,7 @@ def main():
             logger.error(message)
             module.fail_json(msg=message)
             return False
+        
 # Function to get the file name from a given file path
     def get_file_name_from_path(file_path):
         """
@@ -153,6 +155,7 @@ def main():
             str: The file name.
         """
         return os.path.basename(file_path)
+    
 # Function to verify if a directory exists at the given path
     def verify_directory_exists(directory_path):
         """
@@ -202,6 +205,7 @@ def main():
                 if json_path in line:
                     return lineno, is_line_num
         return None
+    
     # Function to get the line number of a specific yaml_path in a file
     def get_yml_line_number(file_path, yml_path):
         """

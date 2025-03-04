@@ -32,13 +32,13 @@ def validate_software_config(input_file_path, data, logger, module, omnia_base_d
     if cluster_os_type.lower() in os_version_ranges:
         version_range = os_version_ranges[cluster_os_type.lower()]
         if cluster_os_type.lower() in ["rhel", "rocky"]:
-            if not (float(cluster_os_version) >= float(version_range[0]) and float(cluster_os_version) <= float(version_range[1])):
-                errors.append(create_error_msg("cluster_os_version", cluster_os_version, en_us_validation_msg.os_version_fail_msg(cluster_os_type, version_range[0], version_range[1])))
+            if float(cluster_os_version) != float(version_range[0]):
+                errors.append(create_error_msg("cluster_os_version", cluster_os_version, en_us_validation_msg.os_version_fail_msg(cluster_os_type, version_range[0], None)))
         elif cluster_os_type.lower() == "ubuntu":
             if cluster_os_version not in version_range:
                 errors.append(create_error_msg("cluster_os_version", cluster_os_version, en_us_validation_msg.os_version_fail_msg(cluster_os_type, version_range[0], version_range[1])))
 
-    iso_file_path = data["iso_file_path"]
+    iso_file_path = data.get("iso_file_path", "")
     not_valid_iso_msg = validation_utils.verify_iso_file(iso_file_path, cluster_os_type, cluster_os_version)
     if not_valid_iso_msg:
         errors.append(create_error_msg("iso_file_path", iso_file_path, not_valid_iso_msg))

@@ -102,7 +102,7 @@ def iso_file_path_not_contain_os_msg(iso_file_path, provision_os, provision_os_v
 def os_version_fail_msg(cluster_os_type, min_version, max_version):
     if (cluster_os_type == "ubuntu"):
         return f"For OS type '{cluster_os_type}', the version must be either {min_version} or {max_version}."
-    return f"For OS type '{cluster_os_type}', the version must be between {min_version} and {max_version}."
+    return f"For OS type '{cluster_os_type}', the version must be {min_version}."
 def software_mandatory_fail_msg(software_name):
     return f"in software_config.json. Please add the corresponding field '{software_name}' to the JSON. Look at /examples/template_ubuntu_software_config.json for an example"
 
