@@ -20,7 +20,7 @@
   block:
     - name: Prompt user for Username
       ansible.builtin.pause:
-        prompt: "Enter the {{ type.key }} - {{ username }}:"
+        prompt: "Enter the [{{ type.key }}] - {{ username }}:"
       register: username_input
 
     - name: Validate mandatory username not empty
