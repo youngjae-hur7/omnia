@@ -29,7 +29,7 @@ BeeGFS is a hardware-independent POSIX parallel file system (a.k.a. Software-def
         | 8006 | Helper service (beegfs-helperd)   |
         +------+-----------------------------------+
 
- If you have ``firewalld`` set up on your RHEL/Rocky Linux cluster, then use the below set of commands to manually open up the required TCP and UDP ports:
+ If you have ``firewalld`` set up on your RHEL/Rocky Linux cluster, then use the below set of commands to open up the required TCP and UDP ports:
 
     1. Command 1: ``firewall-cmd --permanent --zone=public --add-port=<port number>/tcp``
 
