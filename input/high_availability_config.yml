@@ -31,8 +31,7 @@ oim_ha:
     virtual_ip_address: ""
     active_node_service_tag: ""
     passive_nodes: 
-      - node_service_tags:  
-        [] # List of service tags, separated by commas. e.g. ["ABC","DEF"]
+      - node_service_tags: [] # List of service tags, separated by commas. e.g. ["ABC","DEF"]
 
 # ***********************************************************************
 # High Availability (HA) Configuration for Service Nodes
@@ -50,14 +49,12 @@ service_node_ha:
       - virtual_ip_address: ""
         active_node_service_tag: ""
         passive_nodes: 
-          - node_service_tags: 
-            [] # List of service tags, separated by commas. e.g. ["ABC","DEF"]
+          - node_service_tags: [] # List of service tags, separated by commas. e.g. ["ABC","DEF"]
 
       - virtual_ip_address: ""
         active_node_service_tag: ""
         passive_nodes: 
-          - node_service_tags: 
-            [] # List of service tags, separated by commas. e.g. ["ABC","DEF"]
+          - node_service_tags: [] # List of service tags, separated by commas. e.g. ["ABC","DEF"]
 
 # ***********************************************************************
 # High Availability (HA) Configuration for SLURM Head Node
@@ -73,8 +70,7 @@ slurm_head_node_ha:
     virtual_ip_address: ""
     active_node_service_tags: ""
     passive_nodes: 
-      - node_service_tags: 
-        [] # List of service tags, separated by commas. e.g. ["ABC","DEF"]
+      - node_service_tags: [] # List of service tags, separated by commas. e.g. ["ABC","DEF"]
 
 # ***********************************************************************
 # High Availability (HA) Configuration for Kubernetes (K8s) Head Node
@@ -86,5 +82,4 @@ slurm_head_node_ha:
 k8s_head_node_ha: 
     enable_k8s_ha: false
     virtual_ip_address: ""
-    active_node_service_tags: 
-      [] # List of service tags, separated by commas. e.g. ["ABC","DEF"]
+    active_node_service_tags: [] # List of service tags, separated by commas. e.g. ["ABC","DEF"]

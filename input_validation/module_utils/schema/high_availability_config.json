@@ -18,7 +18,8 @@
                     "active_node_service_tags": {
                         "type": "array",
                         "items": {
-                            "type": "string"
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9]+$"
                         }
                     },
                     "passive_nodes": {
@@ -29,19 +30,25 @@
                                 "node_service_tags": {
                                     "type": "array",
                                     "items": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "pattern": "^[a-zA-Z0-9]+$"
                                     }
                                 }
                             }
                         }
                     }
                 },
-                "required": [
-                    "enable_k8s_ha",
-                    "virtual_ip_address",
-                    "active_node_service_tags",
-                    "passive_nodes"
-                ]
+                "required": ["enable_k8s_ha"],
+                "if": {
+                    "properties": {
+                        "enable_k8s_ha": {
+                            "const": true
+                        }
+                    }
+                },
+                "then": {
+                    "required": ["virtual_ip_address","active_node_service_tags", "passive_nodes"]
+                }
             }
         },
         "oim_ha": {
@@ -57,7 +64,8 @@
                         "format": "ipv4"
                     },
                     "active_node_service_tag": {
-                        "type": "string"
+                        "type": "string",
+                        "pattern": "^[a-zA-Z0-9]+$"
                     },
                     "passive_nodes": {
                         "type": "array",
@@ -67,19 +75,25 @@
                                 "node_service_tags": {
                                     "type": "array",
                                     "items": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "pattern": "^[a-zA-Z0-9]+$"
                                     }
                                 }
                             }
                         }
                     }
                 },
-                "required": [
-                    "enable_oim_ha",
-                    "virtual_ip_address",
-                    "active_node_service_tag",
-                    "passive_nodes"
-                ]
+                "required": ["enable_oim_ha"],
+                "if": {
+                    "properties": {
+                        "enable_oim_ha": {
+                            "const": true
+                        }
+                    }
+                },
+                "then": {
+                    "required": ["virtual_ip_address","active_node_service_tag", "passive_nodes"]
+                }
             }
         },
         "service_node_ha": {
@@ -100,7 +114,8 @@
                                     "format": "ipv4"
                                 },
                                 "active_node_service_tag": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "pattern": "^[a-zA-Z0-9]+$"
                                 },
                                 "passive_nodes": {
                                     "type": "array",
@@ -110,25 +125,28 @@
                                             "node_service_tags": {
                                                 "type": "array",
                                                 "items": {
-                                                    "type": "string"
+                                                    "type": "string",
+                                                    "pattern": "^[a-zA-Z0-9]+$"
                                                 }
                                             }
                                         }
                                     }
                                 }
-                            },
-                            "required": [
-                                "virtual_ip_address",
-                                "active_node_service_tag",
-                                "passive_nodes"
-                            ]
+                            }
                         }
                     }
                 },
-                "required": [
-                    "enable_service_ha",
-                    "service_nodes"
-                ]
+                "required": ["enable_service_ha"],
+                "if": {
+                    "properties": {
+                        "enable_service_ha": {
+                            "const": true
+                        }
+                    }
+                },
+                "then": {
+                    "required": ["service_nodes"]
+                }
             }
         },
         "slurm_head_node_ha": {
@@ -146,7 +164,8 @@
                     "active_node_service_tags": {
                         "type": "array",
                         "items": {
-                            "type": "string"
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9]+$"
                         }
                     },
                     "passive_nodes": {
@@ -157,19 +176,25 @@
                                 "node_service_tags": {
                                     "type": "array",
                                     "items": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "pattern": "^[a-zA-Z0-9]+$"
                                     }
                                 }
                             }
                         }
                     }
                 },
-                "required": [
-                    "enable_slurm_ha",
-                    "virtual_ip_address",
-                    "active_node_service_tags",
-                    "passive_nodes"
-                ]
+                "required": ["enable_slurm_ha"],
+                "if": {
+                    "properties": {
+                        "enable_slurm_ha": {
+                            "const": true
+                        }
+                    }
+                },
+                "then": {
+                    "required": ["virtual_ip_address", "active_node_service_tags", "passive_nodes"]
+                }
             }
         }
     },
