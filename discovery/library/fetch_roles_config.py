@@ -19,9 +19,9 @@ import warnings
 
 FIRST_LAYER_ROLES = {"service", "login", "compiler", "k8setcd", "k8shead", "slurmhead", "slurmdbd"}
 SECOND_LAYER_ROLES = {"default", "k8sworker", "slurmworker"}
-NON_SERVICE_ROLES = {"default", "login", "compiler", "k8setcd", "k8shead", "k8sworker", "slurmworker", "slurmhead", "slurmdbd"}
+NON_SERVICE_ROLES = (FIRST_LAYER_ROLES | SECOND_LAYER_ROLES) - {"service"}
 
-def validate_roles(roles, layer, module, first_layer_roles=FIRST_LAYER_ROLES, second_layer_roles=SECOND_LAYER_ROLES):
+def validate_roles(roles, layer, module, first_layer_roles=FIRST_LAYER_ROLES, second_layer_roles=SECOND_LAYER_ROLES, non_service_roles=NON_SERVICE_ROLES):
     """
     Validates roles based on multiple conditions:
     1. Roles should only belong to either first-layer or compute-layer roles.
@@ -55,10 +55,10 @@ def validate_roles(roles, layer, module, first_layer_roles=FIRST_LAYER_ROLES, se
     else:
         if 'service' in defined_roles:
             if not defined_roles.intersection(second_layer_roles):
-                raise Exception("At least one role must be from the compute-layer roles.")
+                raise Exception(f"At least one role must be defined from - {second_layer_roles} in roles_config.yml")
         else:
             if not defined_roles.intersection(NON_SERVICE_ROLES):
-                raise Exception("At least one role must be defined other than service roles.")
+                raise Exception(f"At least one role must be defined from - {non_service_roles} roles_config.yml")
 
     # Collect all groups used by first-layer and compute-layer roles
     first_layer_groups = {group for role in first_layer_roles for group in role_groups.get(role, [])}
