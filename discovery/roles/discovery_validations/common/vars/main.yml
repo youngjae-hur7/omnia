@@ -118,7 +118,7 @@ network_address_script: "{{ provision_shared_library_path }}/validation/validate
 reassignment_to_static_failure_msg: "Failed. Invalid details provided, reassignment_to_static should true or false."
 fail_msg_bmc_static_netmask_bits: "Failed, BMC static range is not within the BMC netmask range."
 bmc_range_ip_check_fail_msg: "Failed. : BMC network - static/dynamic ranges should be valid IP address (Eg. 192.168.1.1-198.168.1.254)."
-bmc_static_ranges_overlap_failure_msg: 
+bmc_static_ranges_overlap_failure_msg: |
   "Range is invalid. Start range should not be equal to end range for bmc_conversion_static_start_range, bmc_conversion_static_end_range
   in network_spec.yml"
 bmc_nic_subnet_sucess_msg: "Successfully validated bmc_nic_subnet"

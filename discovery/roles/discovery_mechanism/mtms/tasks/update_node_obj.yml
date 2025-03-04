@@ -29,7 +29,7 @@
        cat {{ dynamic_ip_file }} | {{ xcat_path }}/mkdef -z
   failed_when: false
   changed_when: false
-  when: 
+  when:
     - '"first_layer" not in ansible_run_tags'
     - discovery_mech_dynamic_bmc
 

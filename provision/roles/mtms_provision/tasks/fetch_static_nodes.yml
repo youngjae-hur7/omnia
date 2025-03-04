@@ -40,4 +40,3 @@
   ansible.builtin.set_fact:
     bmc_static_nodes: "{{ check_static_status.stdout.split(' ') }}"
   when: bmc_static_node_status
-
