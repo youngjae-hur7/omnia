@@ -56,6 +56,12 @@ omnia_credentials:
         - docker_username
       password:
         - docker_password
+  local_repo:
+    optional:
+      username:
+        - docker_username
+      password:
+        - docker_password
   slurm:
     default:
       password:
