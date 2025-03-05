@@ -13,6 +13,8 @@ Ensure that the ``input/software_config.json`` file contains the following line 
 
     {"name": "nvidia_gpu_operator", "version":"24.9.2"}
 
+A sample version of the ``input/software_config.json`` is located `here <../../../samplefiles.html>`_.
+
 .. note:: Currently, Omnia only supports the ``24.9.2`` version of the NVIDIA GPU operator.
 
 Configurations
