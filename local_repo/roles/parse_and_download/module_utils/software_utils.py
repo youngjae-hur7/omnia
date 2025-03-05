@@ -213,7 +213,7 @@ def parse_repo_urls(local_repo_config_path, version_variables):
             "package": name,
             "url": url,
             "gpgkey": gpgkey if gpgkey else "null",
-            "version": version if version else "null"
+            "version": "null"
         })
 
     for repo in repo_entries:
