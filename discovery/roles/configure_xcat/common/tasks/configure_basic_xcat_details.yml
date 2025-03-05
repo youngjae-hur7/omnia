@@ -81,6 +81,7 @@
 
 - name: Configure service role related details
   ansible.builtin.include_tasks: configure_service_role_xcat_details.yml
+  when: service_role_required | default(false)
 
 - name: Configure system password
   ansible.builtin.shell: >
