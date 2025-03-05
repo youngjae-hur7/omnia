@@ -205,7 +205,7 @@ def parse_repo_urls(local_repo_config_path, version_variables):
     for url_ in rhel_repo_entry:
         name = url_.get("name","unkown")
         url = url_.get("url","")
-        gpgkey = repo.get("gpgkey")
+        gpgkey = url_.get("gpgkey")
         if not is_remote_url_reachable(url):
             return url, False
 
