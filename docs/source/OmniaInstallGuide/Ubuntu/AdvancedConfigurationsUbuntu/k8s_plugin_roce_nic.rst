@@ -90,7 +90,7 @@ Run the playbook using the following command: ::
 
 Where the inventory should be the same as the one used to setup Kubernetes on the cluster.
 
-.. note:: A config file named ``roce_plugin.json`` is located in ``omnia\input\config\ubuntu\22.04\``. This config file contains all the details about the Kubernetes plugin for the RoCE NIC. Here is an example of the config file:
+.. note:: A config file named ``roce_plugin.json`` is located in ``omnia\input\config\ubuntu\<os version>\``. This config file contains all the details about the Kubernetes plugin for the RoCE NIC. Here is an example of the config file:
     ::
 
         {
