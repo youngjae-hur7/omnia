@@ -90,40 +90,41 @@ Run the playbook using the following command: ::
 
 Where the inventory should be the same as the one used to setup Kubernetes on the cluster.
 
-.. note:: A config file named ``roce_plugin.json`` is located in ``omnia\input\config\ubuntu\22.04\``. This config file contains all the details about the Kubernetes plugin for the RoCE NIC. Here is an example of the config file: ::
+.. note:: A config file named ``roce_plugin.json`` is located in ``omnia\input\config\ubuntu\22.04\``. This config file contains all the details about the Kubernetes plugin for the RoCE NIC. Here is an example of the config file:
+    ::
 
-    {
-        "roce_plugin": {
-          "cluster": [
-          {
-            "package": "k8s-rdma-shared-dev-plugin",
-            "url": "https://github.com/Mellanox/k8s-rdma-shared-dev-plugin.git",
-            "type": "git",
-            "version": "v1.5.2"
-          },
-          {
-            "package": "ghcr.io/k8snetworkplumbingwg/multus-cni",
-            "tag": "v4.1.4-thick",
-            "type": "image"
-          },
-          {
-            "package": "ghcr.io/k8snetworkplumbingwg/whereabouts",
-            "tag": "v0.8.0",
-            "type": "image"
-          },
-          {
-            "package": "ghcr.io/mellanox/k8s-rdma-shared-dev-plugin",
-            "tag": "v1.5.2",
-            "type": "image"
-          },
-          {
-            "package": "docker.io/roman8rcm/roce-test",
-            "tag": "229.2.32.0",
-            "type": "image"
-          }
-          ]
+        {
+            "roce_plugin": {
+              "cluster": [
+              {
+                "package": "k8s-rdma-shared-dev-plugin",
+                "url": "https://github.com/Mellanox/k8s-rdma-shared-dev-plugin.git",
+                "type": "git",
+                "version": "v1.5.2"
+              },
+              {
+                "package": "ghcr.io/k8snetworkplumbingwg/multus-cni",
+                "tag": "v4.1.4-thick",
+                "type": "image"
+              },
+              {
+                "package": "ghcr.io/k8snetworkplumbingwg/whereabouts",
+                "tag": "v0.8.0",
+                "type": "image"
+              },
+              {
+                "package": "ghcr.io/mellanox/k8s-rdma-shared-dev-plugin",
+                "tag": "v1.5.2",
+                "type": "image"
+              },
+              {
+                "package": "docker.io/roman8rcm/roce-test",
+                "tag": "229.2.32.0",
+                "type": "image"
+              }
+              ]
+            }
         }
-    }
 
 .. caution:: After running the ``deploy_roce_plugin.yml`` playbook, the RDMA pods will be in ``CrashLoopBackOff`` state and the RoCE pods will be in ``pending`` state. This is a known issue and the resolution can be found `here <../../../Troubleshooting/KnownIssues/Ubuntu/Kubernetes.html>`_.
 
