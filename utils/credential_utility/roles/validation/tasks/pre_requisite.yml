@@ -32,6 +32,13 @@
     - name: Include omnia_credentials.yml
       ansible.builtin.include_vars: "{{ omnia_credential_file }}"
       no_log: true
+  resuce:
+    - name: Encrypt omnia_config_credentials.yml
+      ansible.builtin.import_tasks: "{{ role_path }}/../update_config/tasks/encrypt_credentials_file.yml"
+      when: ansible_vault_search_key in omnia_credentials_content.stdout
+
+    - name: Fail to include omnia_config_credentials.yml
+      ansible.builtin.fail: "{{ password_fail_msg }}"
 
 - name: Create vault key for omnia_credential_file
   when: not cred_file_status

@@ -19,7 +19,15 @@
     dest: "{{ omnia_credential_file }}"
     mode: "{{ omnia_credential_file_mode }}"
 
-- name: Include omnia_credentials.yml
-  ansible.builtin.include_vars: "{{ omnia_credential_file }}"
-  register: include_omnia_credentials
-  no_log: true
+- name: Include vars for omnia_config_credentials.yml 
+  block:
+    - name: Include omnia_credentials.yml
+      ansible.builtin.include_vars: "{{ omnia_credential_file }}"
+      register: include_omnia_credentials
+      no_log: true
+  resuce:
+    - name: Encrypt omnia_config_credentials.yml
+      ansible.builtin.import_tasks: "{{ role_path }}/../update_config/tasks/encrypt_credentials_file.yml"
+
+    - name: Fail to include omnia_config_credentials.yml
+      ansible.builtin.fail: "{{ password_fail_msg }}"
