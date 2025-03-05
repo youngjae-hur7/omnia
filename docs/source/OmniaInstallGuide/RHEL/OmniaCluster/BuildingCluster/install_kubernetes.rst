@@ -114,14 +114,6 @@ Omnia installs the following packages on top of the Kubernetes stack:
 
     Click `here <https://github.com/NVIDIA/k8s-device-plugin>`_ for more information.
 
-6. *nvidia-gpu-operator*
-
-    The NVIDIA GPU Operator uses the operator framework within Kubernetes to automate the management of all software components needed to provision NVIDIA GPUs.
-    These components include the NVIDIA drivers (to enable CUDA), Kubernetes device plugin for GPUs, the NVIDIA Container Toolkit, automatic node labelling using GFD, DCGM based monitoring and others.
-    Omnia installs the NVIDIA GPU operator as part of ``omnia.yml`` playbook execution.
-
-    For more information on how to configure the NVIDIA GPU operator with Omnia, `click here <nvidia_gpu_operator.html>`_.
-
 **Optional installation**
 
 * `PowerScale CSI drivers <../../AdvancedConfigurationsRHEL/PowerScale_CSI.html>`_
