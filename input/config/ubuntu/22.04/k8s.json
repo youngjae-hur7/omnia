@@ -2,6 +2,11 @@
   "k8s": {
     "cluster": [
     {
+      "package": "multus-daemonset",
+       "type": "manifest",
+       "url": "https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset.yml"
+    },
+    {
        "package": "whereabouts",
        "url": "https://github.com/k8snetworkplumbingwg/whereabouts.git",
        "type": "git",
