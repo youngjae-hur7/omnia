@@ -216,7 +216,7 @@ def parse_repo_urls(local_repo_config_path, version_variables):
             continue
 
         # Edge case for oneapi, snoopy
-        elif not is_remote_url_reachable(rendered_url) and name not in ["oneapi","snoopy"]:
+        elif not is_remote_url_reachable(rendered_url) and name not in ["oneapi","snoopy","nvidia-repo"]:
             return rendered_url, False
 
         parsed_repos.append({
