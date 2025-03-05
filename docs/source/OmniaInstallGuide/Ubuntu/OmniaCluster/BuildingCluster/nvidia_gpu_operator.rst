@@ -48,3 +48,10 @@ Once the above mentioned configurations are done, execute the ``omnia.yml`` or `
 
         cd scheduler
         ansible-playbook scheduler.yml
+
+Remove the NVIDIA GPU operator
+---------------------------------
+
+If you want to uninstall the NVIDIA GPU operator, run the following command: ::
+
+    helm delete gpu-operator -n gpu-operator
