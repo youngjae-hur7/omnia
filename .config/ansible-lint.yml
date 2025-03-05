@@ -1,9 +1,8 @@
 ---
 exclude:
-  - "$VIRTUAL_ENV/ansible_collections/*"
-  - "venv/"
-  - ".venv/"
-
+  - $VIRTUAL_ENV/ansible_collections/
+  - /home/runner/.ansible/collections
+  - ~/.ansible/collections
 exclude_paths:
   - .git/
   - .github/
