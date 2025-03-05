@@ -25,7 +25,7 @@
       ansible.builtin.include_vars: "{{ omnia_credential_file }}"
       register: include_omnia_credentials
       no_log: true
-  resuce:
+  rescue:
     - name: Encrypt omnia_config_credentials.yml
       ansible.builtin.include_tasks: "{{ role_path }}/../update_config/tasks/encrypt_credentials_file.yml"
 
