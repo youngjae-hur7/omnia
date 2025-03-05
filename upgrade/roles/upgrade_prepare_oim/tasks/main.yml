@@ -17,11 +17,6 @@
   ansible.builtin.set_fact:
     oim_os: "{{ ansible_distribution | lower }}"
 
-- name: Create telemetry binary with upgrad version
-  ansible.builtin.include_role:
-    name: omnia_telemetry
-    tasks_from: create_binary.yml
-
 - name: Update omnia_appliance required pip packages
   ansible.builtin.include_role:
     name: omnia_appliance_oim
@@ -49,3 +44,8 @@
     name: jinja2==3.1.5
   when:
     - jinja2_version is not defined or (jinja2_version < '3.1.5')
+  
+- name: Create telemetry binary with upgrad version
+  ansible.builtin.include_role:
+    name: omnia_telemetry
+    tasks_from: create_binary.yml
