@@ -11,7 +11,7 @@ Intel Gaudi accelerators
 
 ⦾ **Missing Intel Gaudi Infiniband device files after cluster provisioning**
 
-**Potential Cause**: The missing hb_devices (such as hbl_0, hbl_1, hbl_2, hbl_3, hbl_4, hbl_5, hbl_6, hbl_7) in the ``/sys/class/infiniband`` directory issue is caused due to the presence of both BCM RoCE and Intel Gaudi in the ``input/software_config.json`` file. This configuration likely leads to a conflict, preventing the hb_devices from being properly recognized, while devices like ibp155s0 are displayed instead.
+**Potential Cause**: The missing hb_devices (such as hbl_0, hbl_1, hbl_2, hbl_3, hbl_4, hbl_5, hbl_6, hbl_7) in the ``/sys/class/infiniband`` directory issue is caused due to the presence of both ``bcm_roce`` and ``intelgaudi`` in the ``input/software_config.json`` file. This configuration likely leads to a conflict, preventing the hb_devices from being properly recognized, while devices like ibp155s0 are displayed instead.
 
 **Resolution**: To resolve this issue, perform the following steps:
 
