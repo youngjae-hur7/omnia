@@ -27,6 +27,7 @@
     switch_snmp3_username: "hostvars['localhost']['switch_snmp3_username']"
     bmc_password: "hostvars['localhost']['bmc_password']"
     switch_snmp3_password: "hostvars['localhost']['switch_snmp3_password']"
+    postgresdb_password: "hostvars['localhost']['postgresdb_password']"
   no_log: true
 
 - name: Validate provision container services status
