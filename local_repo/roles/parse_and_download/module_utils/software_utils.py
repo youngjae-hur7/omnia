@@ -215,8 +215,8 @@ def parse_repo_urls(local_repo_config_path, version_variables):
         if name in ["amdgpu", "rocm", "beegfs"] and (version is None or version == "null"):
             continue
 
-        # Edge case for oneapi, snoopy
-        elif not is_remote_url_reachable(rendered_url) and name not in ["oneapi","snoopy"]:
+        # Edge case for oneapi, snoopy, nvidia-repo
+        elif not is_remote_url_reachable(rendered_url) and name not in ["oneapi","snoopy", "nvidia-repo"]:
             return rendered_url, False
 
         parsed_repos.append({
