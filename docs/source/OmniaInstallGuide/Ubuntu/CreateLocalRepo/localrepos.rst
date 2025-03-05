@@ -9,14 +9,14 @@ Configure specific local repositories
 
             ::
 
-                {"name": "amdgpu", "version": "6.2.2"},
+                {"name": "amdgpu", "version": "6.3.1"},
 
         * Add the following line below the ``softwares`` section:
 
             ::
 
                 "amdgpu": [
-                                {"name": "rocm", "version": "6.2.2"}
+                                {"name": "rocm", "version": "6.3.1"}
                           ]
 
         * A sample format is available `here. <InputParameters.html>`_
@@ -42,8 +42,6 @@ Configure specific local repositories
                               ]
 
         * A sample format is available `here. <InputParameters.html>`_
-
-.. note:: If ``intelgaudi`` group and ``intel`` subgroup is provided, the Intel Gaudi drivers are installed during the cluster provisioning process and the Intel software stack is installed during ``omnia.yml`` playbook execution.
 
 **CUDA**
 
@@ -101,12 +99,12 @@ Configure specific local repositories
 
         * Include the following line under ``softwares`` in ``input/software_config.json``: ::
 
-            {"name": "bcm_roce", "version": "230.2.54.0"}
+            {"name": "bcm_roce", "version": "232.1.133.2"}
 
         * Add the following line below the ``softwares`` section: ::
 
             "bcm_roce": [
-                        {"name": "bcm_roce_libraries", "version": "230.2.54.0"}
+                        {"name": "bcm_roce_libraries", "version": "232.1.133.2"}
                         ],
 
         * A sample format is available `here <InputParameters.html>`_.
