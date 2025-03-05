@@ -42,6 +42,6 @@ jobs:
           ansible-galaxy collection install -r .config/requirements.yml
 
       - name: Run ansible-lint
-        uses: ansible/ansible-lint@v6.22.0
+        uses: ansible/ansible-lint@main
         with:
-          args: --config=.config/ansible-lint.yml
+          args: --config=.config/ansible-lint.yml -r .config/requirements.yml
