@@ -3,7 +3,7 @@
 
 ``string``
 
-Required",Path where user has placed the iso image that needs to be provisioned on target nodes. Accepted files are Rocky8-DVD or RHEL-8.x-DVD (full OS).  ``iso_file_path``  should contain the  ``provision_os``  and  ``provision_os_version``  values in the  filename.
+Required",Path where user has placed the iso image that needs to be provisioned on target nodes. Accepted files are Ubuntu 22.04 or 24.04 (full OS).  ``iso_file_path``  should contain the  ``provision_os``  and  ``provision_os_version``  values in the  filename.
 "**node_name**
 
 ``string``

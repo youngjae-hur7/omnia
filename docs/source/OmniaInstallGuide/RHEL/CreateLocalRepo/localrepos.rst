@@ -9,14 +9,14 @@ Configuring specific local repositories
 
             ::
 
-                {"name": "amdgpu", "version": "6.2.2"},
+                {"name": "amdgpu", "version": "6.3.1"},
 
         * Add the following line below the ``softwares`` section:
 
             ::
 
                 "amdgpu": [
-                                {"name": "rocm", "version": "6.2.2" }
+                                {"name": "rocm", "version": "6.3.1" }
                           ]
 
         * A sample format is available `here. <InputParameters.html>`_
