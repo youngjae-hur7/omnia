@@ -29,6 +29,7 @@ from ansible.module_utils.config import (
     DEFAULT_STATUS_FILENAME,
     RPM_LABEL_TEMPLATE,
     OMNIA_REPO_KEY,
+    RHEL_OS_URL,
     SOFTWARES_KEY
 )
 
@@ -198,7 +199,22 @@ def parse_repo_urls(local_repo_config_path, version_variables):
     """
     local_yaml = load_yaml(local_repo_config_path)
     repo_entries = local_yaml.get(OMNIA_REPO_KEY, [])
+    rhel_repo_entry = local_yaml.get(RHEL_OS_URL,[])
     parsed_repos = []
+
+    for url_ in rhel_repo_entry:
+        name = url_.get("name","unkown")
+        url = url_.get("url","")
+        gpgkey = repo.get("gpgkey")
+        if not is_remote_url_reachable(url):
+            return url, False
+
+        parsed_repos.append({
+            "package": name,
+            "url": rendered_url,
+            "gpgkey": gpgkey if gpgkey else "null",
+            "version": version if version else "null"
+        })
 
     for repo in repo_entries:
         name = repo.get("name", "unknown")
@@ -225,9 +241,9 @@ def parse_repo_urls(local_repo_config_path, version_variables):
             "gpgkey": gpgkey if gpgkey else "null",
             "version": version if version else "null"
         })
- 
+
     return json.dumps(parsed_repos), True
-    
+
 def set_version_variables(user_data, software_names, cluster_os_version):
     """
     Generates a dictionary of version variables from the user data.

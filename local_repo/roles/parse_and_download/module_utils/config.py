@@ -48,5 +48,5 @@ CSV_COLUMNS = {"column1": "name", "column2": "status"}
 SOFTWARE_CONFIG_SUBDIR = "config"
 RPM_LABEL_TEMPLATE = "RPMs for {key}"
 OMNIA_REPO_KEY = "omnia_repo_url_rhel"
+RHEL_OS_URL = "rhel_os_url"
 SOFTWARES_KEY = "softwares"
-
