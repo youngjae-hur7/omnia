@@ -39,8 +39,7 @@ warn_list:
 skip_list:
   - var-naming[no-role-prefix]
   - unresolved-module
-  - fqcn-builtins
-  - missing-parameter-documentation
+  - syntax-check[missing-file]
 
 
 verbosity: 1
