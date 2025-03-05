@@ -18,7 +18,8 @@ cluster_name: cluster
 slurm_uid: 6001
 slurm_user: slurm
 slurm_user_group: slurm
-share_path: "{{ share_mounted_path }}"
+# share_path: "{{ share_mounted_path }}"
+share_path: "{{ nfs_client_params | selectattr('slurm_share', 'equalto', true) | map(attribute='client_share_path') | first }}"
 slurm_share_prefix: ""
 slurm_config_dir: /etc/slurm
 slurm_dir_name: slurm
