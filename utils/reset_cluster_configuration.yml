@@ -27,7 +27,7 @@
   gather_facts: false
   roles:
     - { role: remove_cluster/user_confirmation } # noqa: role-name[path]
-#    - { role: servicetag_host_mapping }
+    - { role: servicetag_host_mapping }
     - { role: common }
   tags: always
 
