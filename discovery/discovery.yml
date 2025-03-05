@@ -22,7 +22,7 @@
       when: not config_file_status | default(false) | bool
       ansible.builtin.set_fact:
         omnia_run_tags: "{{ (ansible_run_tags | default([]) + ['provision']) | unique }}"
-        cacheable: yes
+        cacheable: true
 
 - name: Invoke get_config_credentials.yml
   when: not config_file_status | default(false) | bool
