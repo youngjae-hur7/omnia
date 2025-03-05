@@ -13,14 +13,15 @@
 # limitations under the License.
 ---
 
-- name: Validate passwordless ssh host
-  ansible.builtin.include_tasks: validate_passwordless_ssh_oim.yml
-
-- name: Include provision_validation_vars role vars
-  ansible.builtin.include_tasks: pre_requisite.yml
-
-- name: Validate network spec
-  ansible.builtin.include_tasks: validate_network_spec.yml
-
-- name: Check k8s support
-  ansible.builtin.include_tasks: check_k8s_support.yml
+- name: Include input project directory
+  when: not project_dir_status | default(false) | bool
+  ansible.builtin.import_playbook: ../utils/include_input_dir.yml
+  tags: ["scheduler", "provision", "security", "local_repo", "k8s", "roce", "storage", "proxy"]
+  
+- name: Validate omnia input config
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - role: validate_input
+      tags: ["scheduler", "provision", "security", "local_repo", "k8s", "roce", "storage", "proxy"]

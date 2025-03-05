@@ -13,14 +13,8 @@
 # limitations under the License.
 ---
 
-- name: Validate passwordless ssh host
-  ansible.builtin.include_tasks: validate_passwordless_ssh_oim.yml
+input_dir: "{{ hostvars['localhost']['input_project_dir'] }}"
+project_name: "{{ hostvars['localhost']['project_name'] }}"
 
-- name: Include provision_validation_vars role vars
-  ansible.builtin.include_tasks: pre_requisite.yml
-
-- name: Validate network spec
-  ansible.builtin.include_tasks: validate_network_spec.yml
-
-- name: Check k8s support
-  ansible.builtin.include_tasks: check_k8s_support.yml
+messages:
+  validation_success: "Successfully validated Omnia input config file(s)"

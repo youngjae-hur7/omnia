@@ -13,14 +13,14 @@
 # limitations under the License.
 ---
 
-- name: Validate passwordless ssh host
-  ansible.builtin.include_tasks: validate_passwordless_ssh_oim.yml
+- name: Validate omnia input config
+  validate_input:
+    omnia_base_dir: "{{ input_dir }}/../"
+    project_name: "{{ project_name }}"
+    tag_names: "{{ ansible_run_tags }}"
+    files: "{{ files | default([]) }}"
+  register: validation_status
 
-- name: Include provision_validation_vars role vars
-  ansible.builtin.include_tasks: pre_requisite.yml
-
-- name: Validate network spec
-  ansible.builtin.include_tasks: validate_network_spec.yml
-
-- name: Check k8s support
-  ansible.builtin.include_tasks: check_k8s_support.yml
+- name: Debug validation status
+  ansible.builtin.debug:
+    msg: "{{ messages.validation_success }}"
