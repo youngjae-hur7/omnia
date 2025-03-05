@@ -27,7 +27,9 @@
       no_log: true
   resuce:
     - name: Encrypt omnia_config_credentials.yml
-      ansible.builtin.import_tasks: "{{ role_path }}/../update_config/tasks/encrypt_credentials_file.yml"
+      ansible.builtin.include_tasks: "{{ role_path }}/../update_config/tasks/encrypt_credentials_file.yml"
 
     - name: Fail to include omnia_config_credentials.yml
-      ansible.builtin.fail: "{{ password_fail_msg }}"
+      ansible.builtin.fail:
+        msg: "{{ password_fail_msg }}"
+
