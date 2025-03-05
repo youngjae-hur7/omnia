@@ -1,26 +1,26 @@
 {
     "roce_plugin": {
-      "cluster": [ 
+      "cluster": [
       {
         "package": "k8s-rdma-shared-dev-plugin",
         "url": "https://github.com/Mellanox/k8s-rdma-shared-dev-plugin.git",
         "type": "git",
         "version": "master",
-        "commit": "c94b2cef"
+        "commit": "be484a8f356b563a7d76ad431b1a07c3c95412a9"
       },
       {
         "package": "ghcr.io/k8snetworkplumbingwg/multus-cni",
-        "tag": "snapshot",
+        "tag": "v4.1.4-thick",
         "type": "image"
       },
       {
         "package": "ghcr.io/k8snetworkplumbingwg/whereabouts",
-        "tag": "latest",
+        "tag": "v0.8.0",
         "type": "image"
       },
       {
         "package": "ghcr.io/mellanox/k8s-rdma-shared-dev-plugin",
-        "tag": "latest",
+        "tag": "v1.5.2",
         "type": "image"
       },
       {
