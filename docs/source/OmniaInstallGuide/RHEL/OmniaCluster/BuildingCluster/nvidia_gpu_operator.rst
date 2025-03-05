@@ -37,10 +37,12 @@ Playbook execution
 
 Once the above mentioned configurations are done, execute the ``omnia.yml`` or ``scheduler.yml`` playbook to install the NVIDIA GPU operator:
 
-::
-    cd omnia
-    ansible-playbook omnia.yml
+    ::
 
-::
-    cd scheduler
-    ansible-playbook scheduler.yml
+        cd omnia
+        ansible-playbook omnia.yml
+
+    ::
+
+        cd scheduler
+        ansible-playbook scheduler.yml
