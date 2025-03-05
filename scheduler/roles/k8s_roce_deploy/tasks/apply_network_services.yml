@@ -37,23 +37,6 @@
     mode: "{{ git_permissions }}"
     remote_src: true
 
-- name: Check if commit id is mentioned for rdma plugin
-  ansible.builtin.set_fact:
-    rdma_plugin_commit: true
-    rdma_commit_id: "{{ item.commit }}"
-  loop: "{{ hostvars['localhost']['roce_plugin_packages_json']['roce_plugin']['cluster'] }}"
-  when:
-    - item.type == 'git'
-    - "'rdma-shared-dev-plugin' in item.package"
-    - "item.commit is defined"
-
-- name: Checkout specific commit for rdma plugin
-  ansible.builtin.command: "git checkout -f {{ rdma_commit_id }}"  # noqa: command-instead-of-module
-  changed_when: false
-  when: rdma_plugin_commit
-  args:
-    chdir: "{{ rdma_plugin_folder }}"
-
 - name: Apply rdma-plugin.patch
   ansible.posix.patch:
     src: "{{ rdma_patch_file_dest }}"

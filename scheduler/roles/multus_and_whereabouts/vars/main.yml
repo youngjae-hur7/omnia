@@ -14,7 +14,7 @@
 
 multus_config: "true"
 multus_deployment_template: "{{ role_path }}/templates/multus-daemonset.j2"
-multus_deployment_manifest: "{{ hostvars['localhost']['offline_manifest_path'] }}/multus-daemonset.yaml"
+multus_deployment_manifest: "{{ hostvars['localhost']['offline_manifest_path'] }}/multus-daemonset.yml"
 multus_deployment_manifest_mode: "0644"
 multus_version: "v4.1.4-thick"
 memory_limit_kube_multus: "1Gi"
