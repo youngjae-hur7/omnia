@@ -211,7 +211,7 @@ def parse_repo_urls(local_repo_config_path, version_variables):
 
         parsed_repos.append({
             "package": name,
-            "url": rendered_url,
+            "url": url,
             "gpgkey": gpgkey if gpgkey else "null",
             "version": version if version else "null"
         })
