@@ -125,7 +125,7 @@ Where the inventory should be the same as the one used to setup Kubernetes on th
            }
        }
 
-.. caution:: After running the ``deploy_roce_plugin.yml`` playbook, the RDMA pods will be in ``CrashLoopBackOff`` state and the RoCE pods will be in ``pending`` state. This is a known issue and the resolution can be found `here <>`_.
+.. caution:: After running the ``deploy_roce_plugin.yml`` playbook, the RDMA pods will be in ``CrashLoopBackOff`` state and the RoCE pods will be in ``pending`` state. This is a known issue and the resolution can be found `here <../../../Troubleshooting/KnownIssues/Ubuntu/Kubernetes.html>`_.
 
 Delete the plugin
 ------------------
