@@ -2,14 +2,16 @@
 exclude_paths:
   - .git/
   - .github/
-  - accelerator/tests/
+  - accelerator/
   - network/
-  - provision/tests/
+  # - provision/
   - scheduler/
-  - security/tests/
-  - storage/tests/
+  - security/
+  - storage/
   - test/
-  - utils/test/
+  - telemetry/
+  - upgrade/
+  - utils/
   - utils/obsolete/
   - utils/cluster/
   - utils/k8s-upgrade/
