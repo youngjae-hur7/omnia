@@ -44,4 +44,4 @@ jobs:
       - name: Run ansible-lint
         uses: ansible/ansible-lint@v25.1.3
         with:
-          args: --config=.config/ansible-lint.yml -r .config/requirements.yml
+          args: --config=.config/ansible-lint.yml
