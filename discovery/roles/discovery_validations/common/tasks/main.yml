@@ -21,7 +21,7 @@
     provision_shared_library_path: "{{ provision_shared_library_path }}"
 
 - name: Set_fact for omnia_config_credentials.yml variables 
-  ansible.builitin.set_fact:
+  ansible.builtin.set_fact:
     provision_password: "hostvars['localhost']['provision_password']"
     bmc_username: "hostvars['localhost']['bmc_username']"
     switch_snmp3_username: "hostvars['localhost']['switch_snmp3_username']"
