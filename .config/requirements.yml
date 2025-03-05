@@ -20,5 +20,6 @@ collections:
     version: 9.6.0
   - name: kubernetes.core
     version: 5.0.0
-  - name: kubernetes_sigs.kubespray
-    source: https://galaxy.ansible.com
+  - name: https://github.com/kubernetes-sigs/kubespray
+    type: git
+    version: master
