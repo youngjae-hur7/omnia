@@ -1,4 +1,9 @@
 ---
+exclude:
+  - "$VIRTUAL_ENV/ansible_collections/*"
+  - "venv/"
+  - ".venv/"
+
 exclude_paths:
   - .git/
   - .github/
