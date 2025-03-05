@@ -17,7 +17,7 @@ Install the plugin
 
 **Prerequisites**
 
-* Ensure Kubernetes is set up on the cluster with ``flannel`` as the input for the ``k8s_cni`` parameter. For the complete list of parameters, `click here <../OmniaCluster/schedulerinputparams.html#id12>`_.
+* Ensure Kubernetes is set up on the cluster with ``flannel`` or ``calico`` as the input for the ``k8s_cni`` parameter. For the complete list of parameters, `click here <../OmniaCluster/schedulerinputparams.html#id12>`_.
 * Ensure that the Broadcom RoCE drivers are installed on the nodes.
 * Ensure that additional NICs have been configured using the ``server_spec_update.yml`` playbook. For more information on how to configure additional NICs, `click here <../../../Utils/AdditionalNIC.html>`_.
 * Ensure that the ``{"name": "roce_plugin"}`` entry is present in the ``software_config.json`` and the same config has been used while executing the ``local_repo.yml`` playbook.
@@ -81,9 +81,9 @@ Here is an example of the ``input/roce_plugin_config.yml``: ::
               gateway:
               route:
 
-**To run the playbook**
+**To install the plugin, run the** ``deploy_roce_plugin.yml`` **playbook**
 
-Run the playbook using the following commands: ::
+Run the playbook using the following command: ::
 
     cd omnia/scheduler
     ansible-playbook deploy_roce_plugin.yml -i inventory
@@ -112,9 +112,7 @@ Where the inventory should be the same as the one used to setup Kubernetes on th
 Delete the plugin
 ------------------
 
-**To run the playbook**
-
-Run the playbook using the following commands: ::
+To delete the plugin, run the ``delete_roce_plugin.yml`` playbook using the following command: ::
 
     cd omnia/scheduler
     ansible-playbook delete_roce_plugin.yml -i inventory
