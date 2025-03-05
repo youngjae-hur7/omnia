@@ -26,7 +26,7 @@
 
 - name: Invoke get_config_credentials.yml
   when: not config_file_status | default(false) | bool
-  ansible.builtin.import_playbook: ../utils/credential_utility/credential_utility.yml
+  ansible.builtin.import_playbook: ../utils/credential_utility/get_config_credentials.yml
   tags: first_layer
 
 - name: Include input project directory

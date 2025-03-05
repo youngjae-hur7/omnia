@@ -23,7 +23,7 @@
         cacheable: yes
 
 - name: Invoke get_config_credentials.yml
-  ansible.builtin.import_playbook: utils/credential_utility/credential_utility.yml
+  ansible.builtin.import_playbook: utils/credential_utility/get_config_credentials.yml
 
 - name: Include input project directory
   tags: first_layer
