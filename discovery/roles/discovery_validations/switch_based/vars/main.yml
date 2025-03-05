@@ -25,7 +25,7 @@ switch_details_fail_msg: |
 ping_switch_py: "{{ provision_shared_library_path }}/validation/switch_v3_ping.py"
 
 # Usage: validate_switch_snmp_params.yml
-switch_snmp3_password_fail_msg: "Failed. Incorrect switch_snmp3_username or switch_snmp3_password format in provision_config_credentials.yml"
+switch_snmp3_password_fail_msg: "Failed. Incorrect switch_snmp3_username or switch_snmp3_password format in omnia_config_credentials.yml"
 
 # Usage: validate_bmc_details_status.yml
 bmc_network_details_fail_msg: "Failed. bmc_network details should be provided in network_spec.yml when enable_switch_based is set true.
