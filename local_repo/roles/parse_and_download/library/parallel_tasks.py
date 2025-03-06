@@ -258,11 +258,11 @@ def main():
         subgroup_dict, software_names = get_subgroup_dict(user_data)
         version_variables = set_version_variables(user_data, software_names, cluster_os_version)
         slogger.info(f"Cluster OS: {cluster_os_type}")
-        first_entry_dict = dict([list(version_variables.items())[0]])
+        slogger.info(f"Version Variables: {version_variables}")
 
         overall_status, task_results = execute_parallel(
             tasks, determine_function, nthreads, repo_store_path, csv_file_path,
-            log_dir, user_data, first_entry_dict, slogger, timeout
+            log_dir, user_data, version_variables, slogger, timeout
         )
 
         end_time = datetime.now()
