@@ -26,7 +26,7 @@
     - name: Unmanage omnia_core resource inside PCS container
       containers.podman.podman_container_exec:
         name: "{{ pcs_container_name }}"
-        exec_command: "pcs resource unmanage omnia_core"
+        command: "pcs resource unmanage {{ omnia_container_name }}"
       register: pcs_unmanage_result
       failed_when: false
 
