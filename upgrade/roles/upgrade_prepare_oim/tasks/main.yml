@@ -73,7 +73,7 @@
   when:
     - older_os
     - cryptography_info.stdout is defined
-    - cryptography_info.stdout is search('Version: (\\d+\\.\\d+\\.\\d+)') | bool
+    - cryptography_info.stdout | regex_search('Version: (\\d+\\.\\d+\\.\\d+)')
 
 - name: Install cryptography version 44.0.0 if needed
   ansible.builtin.pip:
