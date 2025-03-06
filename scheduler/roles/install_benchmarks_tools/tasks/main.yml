@@ -37,17 +37,16 @@
     msg: "{{ installation_warning }}"
   when: not share_exists
 
-
-- name: Add the OpenMPI libraries path ldconfig
+- name: Add the OpenMPI libraries path into ldconfig config
   when:
     - openmpi_software_status
   block:
-    - name: Check Openmpi directory on the nfs share exist
+    - name: Check Openmpi ldconf path file exists 
       ansible.builtin.stat:
         path: "{{ openmpi_ldconf_path }}"
       register: openmpi_ldconfig_file
 
-    - name: Create ld.so.conf.d file
+    - name: Create 30-openmpi.conf and copy mpirun path
       ansible.builtin.copy:
         dest: "{{ openmpi_ldconf_path }}"
         content: "{{ omnia_share_path }}/{{ benchmarks_dir_openmpi }}/lib"
