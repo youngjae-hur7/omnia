@@ -79,27 +79,33 @@
   when:
     - omnia_config.slurm_installation_type | default("", true) not in ["nfs_share", "configless"]
 
-- name: Assert mariadb_password
-  ansible.builtin.assert:
-    that:
-      - omnia_config.mariadb_password | default("", true) | length > 1
-      - omnia_config.mariadb_password | length > min_length | int - 1
-      - omnia_config.mariadb_password | length < max_length | int + 1
-      - '"-" not in omnia_config.mariadb_password '
-      - '"\\" not in omnia_config.mariadb_password '
-      - '"\"" not in omnia_config.mariadb_password '
-      - " \"'\" not in omnia_config.mariadb_password "
-    success_msg: "{{ success_msg_mariadb_password }}"
-    fail_msg: "{{ fail_msg_mariadb_password }}"
+- name: Validate slurm_support variable
   when: slurm_support
+  block:
+    - name: Assert mariadb_password
+      ansible.builtin.assert:
+        that:
+          - omnia_config.mariadb_password | default("", true) | length > 1
+          - omnia_config.mariadb_password | length > min_length | int - 1
+          - omnia_config.mariadb_password | length < max_length | int + 1
+          - '"-" not in omnia_config.mariadb_password '
+          - '"\\" not in omnia_config.mariadb_password '
+          - '"\"" not in omnia_config.mariadb_password '
+          - " \"'\" not in omnia_config.mariadb_password "
+        success_msg: "{{ success_msg_mariadb_password }}"
+        fail_msg: "{{ fail_msg_mariadb_password }}"
 
-- name: Verify the value of restart_slurm_services
-  ansible.builtin.assert:
-    that:
-      - omnia_config.restart_slurm_services == true or omnia_config.restart_slurm_services == false
-    success_msg: "{{ restart_services_success_msg }}"
-    fail_msg: "{{ restart_services_failure_msg }}"
-  when: slurm_support
+    - name: Verify the value of restart_slurm_services
+      ansible.builtin.assert:
+        that:
+          - omnia_config.restart_slurm_services == true or omnia_config.restart_slurm_services == false
+        success_msg: "{{ restart_services_success_msg }}"
+        fail_msg: "{{ restart_services_failure_msg }}"
+
+    - name: Set fact for slurm_support variables
+      ansible.builtin.set_fact:
+        mariadb_password: "{{ omnia_config.mariadb_password }}"
+        restart_slurm_services: "{{ omnia_config.restart_slurm_services }}"
 
 - name: Check virtual ENV
   ansible.builtin.set_fact:
@@ -164,6 +170,11 @@
         success_msg: "{{ success_msg_k8s_toplogy_manager_scope }}"
         fail_msg: "{{ fail_msg_k8s_toplogy_manager_scope }}"
 
+    - name: Set facts for k8s_support variables
+      ansible.builtin.set_fact:
+        topology_manager_scope: "{{ omnia_config.topology_manager_scope }}"
+        topology_manager_policy: "{{ omnia_config.topology_manager_policy }}"
+
 - name: Initialize flag for csi powerscale driver installation
   ansible.builtin.set_fact:
     csi_driver_powerscale_precheck_pass: false
@@ -190,6 +201,10 @@
         msg: "{{ nvidia_gpu_operator_value_file_path_missing_msg }}"
       when: not result_path_nvidia_gpu_operator_value_file_path.stat.exists
 
+    - name: Set facts for nvidia gpu operator variables
+      ansible.builtin.set_fact:
+        nvidia_gpu_operator_value_file_path: "{{ omnia_config.nvidia_gpu_operator_value_file_path }}"
+
 - name: Validate csi powerscale variables
   when: csi_driver_powerscale_support
   block:
@@ -209,6 +224,11 @@
         success_msg: "{{ csi_driver_values_file_path_success_msg }}"
         fail_msg: "{{ csi_driver_values_file_path_fail_msg }}"
 
+    - name: Set facts for csi powerscale variables
+      ansible.builtin.set_fact:
+        csi_powerscale_driver_values_file_path: "{{ omnia_config.csi_powerscale_driver_values_file_path }}"
+        csi_powerscale_driver_secret_file_path: "{{ omnia_config.csi_powerscale_driver_secret_file_path }}"
+
     - name: Validate user input for csi powerscale driver
       ansible.builtin.include_tasks: csi_powerscale_driver_input_validation.yml
 
@@ -219,14 +239,8 @@
 - name: Set facts for non common variables with telemetry config
   ansible.builtin.set_fact:
     ansible_config_file_path: "{{ omnia_config.ansible_config_file_path }}"
-    mariadb_password: "{{ omnia_config.mariadb_password }}"
     slurm_installation_type: "{{ omnia_config.slurm_installation_type }}"
-    restart_slurm_services: "{{ omnia_config.restart_slurm_services }}"
-    topology_manager_policy: "{{ omnia_config.topology_manager_policy }}"
-    topology_manager_scope: "{{ omnia_config.topology_manager_scope }}"
     run_intel_gaudi_tests: "{{ omnia_config.run_intel_gaudi_tests | default(false) }}"
-    csi_powerscale_driver_secret_file_path: "{{ omnia_config.csi_powerscale_driver_secret_file_path }}"
-    csi_powerscale_driver_values_file_path: "{{ omnia_config.csi_powerscale_driver_values_file_path }}"
 
 - name: Encrypt input config file
   ansible.builtin.command: >-
