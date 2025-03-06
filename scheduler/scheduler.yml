@@ -136,7 +136,7 @@
     - slurm_pam
 
 - name: Compile and install the ucx and openmpi on the nfs share of compute nodes
-  hosts: slurm_control_node, kube_control_plane
+  hosts: slurm_control_node, kube_control_plane, slurm_node, kube_node, login
   gather_facts: true
   roles:
     - install_benchmarks_tools
