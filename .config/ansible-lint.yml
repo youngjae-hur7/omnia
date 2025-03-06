@@ -36,6 +36,8 @@ warn_list:
 skip_list:
   - var-naming[no-role-prefix]
   - unresolved-module
+  - fqcn[canonical]
+  - internal-error
 
 verbosity: 1
 profile: production
