@@ -131,18 +131,35 @@ def validate_storage_config(input_file_path, data, logger, module, omnia_base_di
 def validate_high_availability_config(input_file_path, data, logger, module, omnia_base_dir, project_name):
     errors = []
     
-    def validate_ha_config(ha_data, mandatory_fields, errors):
+    def validate_ha_config(ha_data, mandatory_fields, errors, config_type=None):
         try:
             check_mandatory_fields(mandatory_fields, ha_data, errors)
-            if 'passive_nodes' in ha_data:
+            
+            # Special handling for OIM HA
+            if config_type == "oim_ha":
+                # Validate NFS share
+                if 'nfs_share' in ha_data:
+                    nfs_data = ha_data['nfs_share'][0] if isinstance(ha_data['nfs_share'], list) else ha_data['nfs_share']
+                    check_mandatory_fields(["server_ip", "server_share_path"], nfs_data, errors)
+                
+                # Validate passive nodes with detailed node information
+                if 'passive_nodes' in ha_data:
+                    node_details_fields = ["SERVICE_TAG", "HOSTNAME", "ADMIN_MAC", "ADMIN_IP", "BMC_IP"]
+                    for node in ha_data['passive_nodes']:
+                        if 'node_details' in node:
+                            for detail in node['node_details']:
+                                check_mandatory_fields(node_details_fields, detail, errors)
+            # Standard passive nodes validation for other HA types
+            elif 'passive_nodes' in ha_data:
                 for passive_node in ha_data['passive_nodes']:
                     check_mandatory_fields(["node_service_tags"], passive_node, errors)
+                    
         except KeyError as e:
             logger.error(f"Missing key in HA data: {e}")
             errors.append(f"Missing key in HA data: {e}")
     
     ha_configs = [
-        ("oim_ha", ["virtual_ip_address", "active_node_service_tag", "passive_nodes"]),
+        ("oim_ha", ["virtual_ip_address", "active_node_service_tag", "passive_nodes", "nfs_share"]),
         ("service_node_ha", ["service_nodes"]),
         ("slurm_head_node_ha", ["virtual_ip_address", "active_node_service_tags", "passive_nodes"]),
         ("k8s_head_node_ha", ["virtual_ip_address", "active_node_service_tags"])
@@ -158,7 +175,7 @@ def validate_high_availability_config(input_file_path, data, logger, module, omn
                     for service_node in ha_data['service_nodes']:
                         validate_ha_config(service_node, ["virtual_ip_address", "active_node_service_tag", "passive_nodes"], errors)
                 else:
-                    validate_ha_config(ha_data, mandatory_fields, errors)
+                    validate_ha_config(ha_data, mandatory_fields, errors, config_type=config_name)
         else:
             logger.warning(f"Configuration for {config_name} not found.")
     
