@@ -83,7 +83,7 @@ topology_manager_scope: "container"
 # Default value assigned is the relative file path of nvidia_gpu_operator_config.yml file
 # User can update below parameter with absolute file path, if any changes are made in input/nvidia_gpu_operator_config.yml
 # User needs to provide http_proxy and https_proxy values in nvidia_gpu_operator_config.yml file
-nvidia_gpu_operator_value_file_path: "../../../../../input/nvidia_gpu_operator_config.yml"
+nvidia_gpu_operator_value_file_path: "{{ role_path }}/../../../input/nvidia_gpu_operator_config.yml"
 
 # ----------------------------VERIFY INTEL GAUDI INSTALLATION------------------------------------------------------
 
