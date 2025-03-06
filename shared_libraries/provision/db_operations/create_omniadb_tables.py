@@ -103,8 +103,8 @@ def create_db_schema(conn):
 def create_db_table(conn):
     """
     Creates a table named 'nodeinfo' in the 'cluster' schema if it doesn't already exist.
-    The table has columns for 'ID', 'service_tag', 'node', 'hostname', 'admin_mac',
-    'admin_ip', 'bmc_ip', 'status', 'discovery_mechanism', 'bmc_mode', 'switch_ip',
+    The table has columns for 'ID', 'service_tag', 'node', 'hostname', 'group_name', 'role', 'admin_mac',
+    'admin_ip', 'bmc_ip', 'status', 'architecture', 'location_id', 'discovery_mechanism', 'bmc_mode', 'switch_ip',
     'switch_name', 'switch_port', 'cpu', 'gpu', 'cpu_count', and 'gpu_count'.
     The 'ID' column is a serial number, primary key, and unique.
     The function executes the SQL query to create the table and prints a message.
@@ -120,6 +120,10 @@ def create_db_table(conn):
         admin_mac MACADDR,
         admin_ip INET,
         bmc_ip INET,
+        group_name VARCHAR(10),
+        role VARCHAR(75),
+        location_id VARCHAR(30),
+        architecture VARCHAR(5),
         status VARCHAR(65),
         discovery_mechanism VARCHAR(65),
         bmc_mode VARCHAR(30),

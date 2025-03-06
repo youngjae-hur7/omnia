@@ -16,7 +16,7 @@
             {"package": "slurm-slurmd", "type": "rpm", "repo_name": "epel"}
         ]
     },
-    "slurmdbd":{
+    "slurm_dbd":{
         "cluster": [
             {"package": "slurm-slurmdbd", "type": "rpm", "repo_name": "epel"},
             {"package": "python3-PyMySQL", "type": "rpm", "repo_name": "appstream"},

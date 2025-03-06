@@ -79,8 +79,8 @@ reset_password_cmd: bash -c "pulpcore-manager reset-admin-password --password {{
 # http_port: "80"
 
 # create_pulp_config.yml
-pulp_config_cmd: "pulp config create --username {{ pulp_username }}  --base-url http://{{ pulp_server_ip }}:{{ pulp_container_port }} --password {{ pulp_password }} --location {{ pulp_ha_dir }}/cli.toml" # noqa: yaml[line-length]
-pulp_config_cmd_overwrite: "pulp config create --username {{ pulp_username }}  --base-url http://{{ pulp_server_ip }}:{{ pulp_container_port }} --password {{ pulp_password }} --location {{ pulp_ha_dir }}/cli.toml --overwrite" # noqa: yaml[line-length]
+pulp_config_cmd: "pulp config create --username admin  --base-url http://{{ pulp_server_ip }}:{{ pulp_container_port }} --password {{ pulp_password }} --location {{ pulp_ha_dir }}/cli.toml" # noqa: yaml[line-length]
+pulp_config_cmd_overwrite: "pulp config create --username admin  --base-url http://{{ pulp_server_ip }}:{{ pulp_container_port }} --password {{ pulp_password }} --location {{ pulp_ha_dir }}/cli.toml --overwrite" # noqa: yaml[line-length]
 pulp_config_filepath: "{{ pulp_ha_dir }}/cli.toml"
 config_default_dir: "/root/.config/pulp/"
 config_default_loc: "{{ config_default_dir }}/cli.toml"
@@ -91,11 +91,16 @@ endpoint_timeout: 60
 # verify_ssl_regex: '^verify_ssl = .*'
 # line_to_replace: 'verify_ssl = false'
 # cert_san: "subjectAltName=IP:0.0.0.0,DNS:pulp,DNS:{{ oim_hostname }},DNS:localhost"
-# generate_cert_cmd: "openssl req -x509 -nodes -newkey rsa:2048 -keyout {{ certs_dir }}/pulp_webserver.key -out {{ certs_dir }}/pulp_webserver.crt -days 365 -subj \"/CN={{ oim_hostname }}\" -addext {{ cert_san }}" # noqa: yaml[line-length]
+# generate_cert_cmd: >
+#   openssl req -x509 -nodes -newkey rsa:2048
+#   -keyout {{ certs_dir }}/pulp_webserver.key
+#   -out {{ certs_dir }}/pulp_webserver.crt
+#   -days 365
+#   -subj "/CN={{ oim_hostname }}"
+#   -addext {{ cert_san }}
 # cert_items:
 #  - "{{ certs_dir }}/pulp_webserver.crt"
 #  - "{{ certs_dir }}/pulp_webserver.key"
-
 
 # reload_pulp_nginx.yml
 # pulp_cert_src: "{{ oim_shared_path }}/omnia/pulp/settings/certs/pulp_webserver.crt"

@@ -13,45 +13,48 @@
 # limitations under the License.
 ---
 
+- name: Set_fact for fetch omnia config credentials
+  hosts: localhost
+  tags: first_layer
+  connection: local
+  tasks:
+    - name: Set dynamic run tags including 'provision'
+      when: not config_file_status | default(false) | bool
+      ansible.builtin.set_fact:
+        omnia_run_tags: "{{ (ansible_run_tags | default([]) + ['provision']) | unique }}"
+        cacheable: true
+
+- name: Invoke get_config_credentials.yml
+  when: not config_file_status | default(false) | bool
+  ansible.builtin.import_playbook: ../utils/credential_utility/get_config_credentials.yml
+  tags: first_layer
+
 - name: Include input project directory
   when: not project_dir_status | default(false) | bool
   ansible.builtin.import_playbook: ../utils/include_input_dir.yml
+  tags: first_layer
 
 - name: Create provision container group
   when: not provision_group_status | default(false) | bool
   ansible.builtin.import_playbook: ../utils/create_container_group.yml
+  tags: first_layer
   vars:
     omnia_provision_group: true
-
-- name: Decrypyt provision_credentials_config.yml
-  hosts: localhost
-  connection: local
-  tasks:
-    - name: Decrypt provision_credentials_config.yml
-      ansible.builtin.include_role:
-        name: discovery_validations/common                    # noqa: role-name[path]
-        tasks_from: decrypt_provision_credentials_config.yml
+    omnia_provision_validation: true
 
 - name: Validate discovery parameters
   hosts: omnia_provision
   connection: ssh
+  tags: first_layer
   tasks:
     - name: Validate discovery parameters
       ansible.builtin.include_role:
         name: discovery_validations/common                    # noqa: role-name[path]
 
-- name: Encrypyt provision_credentials_config.yml
-  hosts: localhost
-  connection: local
-  tasks:
-    - name: Encrypyt provision_credentials_config.yml
-      ansible.builtin.include_role:
-        name: discovery_validations/common                    # noqa: role-name[path]
-        tasks_from: encrypt_provision_credentials_config.yml
-
 - name: Validate discovery parameters
   hosts: omnia_provision
   connection: ssh
+  tags: first_layer
   tasks:
     - name: Discovery roles of Omnia Infrastructure Manager for provisioning
       ansible.builtin.include_role:
@@ -67,22 +70,40 @@
       ansible.builtin.include_role:
         name: configure_xcat/common         # noqa: role-name[path]
 
+    - name: Configure synclist
+      ansible.builtin.include_role:
+        name: configure_synclist     # noqa: role-name[path]
+
     - name: Discover all nodes
       ansible.builtin.include_role:
         name: discovery_mechanism/common     # noqa: role-name[path]
 
-# - name: Update kernel parameters
-#   hosts: "all:!localhost,!omnia_provision"
-#   connection: local
-#   gather_facts: true
-#   vars_files:
-#     - "{{ hostvars['localhost']['input_project_dir'] }}/server_spec.yml"
-#   roles:
-#     - role: os_update
+- name: Set facts for kernel parameters update
+  hosts: all:!localhost:!omnia_provision
+  connection: local
+  gather_facts: true
+  vars_files:
+    - "{{ hostvars['localhost']['input_project_dir'] }}/server_spec.yml"
+  tags: first_layer
+  roles:
+    - role: os_update           # noqa: role-name[path]
+
+- name: Update kernel parameters
+  hosts: omnia_provision
+  connection: ssh
+  vars_files:
+    - "{{ hostvars['localhost']['input_project_dir'] }}/server_spec.yml"
+  tags: first_layer
+  tasks:
+    - name: Update kernel parameters
+      ansible.builtin.include_role:
+        name: os_update                   # noqa: role-name[path]
+        tasks_from: update_kernel_parameters.yml
 
 - name: Discovery roles of Omnia Infrastructure Manager for provisioning
   hosts: omnia_provision
   connection: ssh
+  tags: first_layer
   roles:
     - role: postscripts/common             # noqa: role-name[path]
     - role: configure_os_image/common      # noqa: role-name[path]
@@ -91,5 +112,6 @@
 - name: Update metadata
   hosts: localhost
   connection: local
+  tags: first_layer
   roles:
     - role: metadata_update

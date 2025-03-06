@@ -1,4 +1,4 @@
-# Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,15 @@
   when: not ( hostvars['127.0.0.1']['update_inventory_executed'] | default(false) | bool )
 
 - name: Gather facts from all the nodes
-  hosts: kube_control_plane, kube_node, etcd
+  hosts: slurm_control_node, kube_control_plane, slurm_node, kube_node, login, etcd
+
+- name: Include input project directory
+  ansible.builtin.import_playbook: ../utils/include_input_dir.yml
+
+- name: Create kubespray container group
+  ansible.builtin.import_playbook: ../utils/create_container_group.yml
+  vars:
+    omnia_kubespray_group: true
 
 - name: Validate scheduler input parameters
   hosts: localhost
@@ -29,9 +37,9 @@
         name: cluster_validation
         tasks_from: validation_status_check.yml
 
-- name: Update Repositories/Registries on nodes
-  ansible.builtin.import_playbook: ../utils/update_user_repo.yml
-  when: not ( hostvars['127.0.0.1']['update_user_repo_executed'] | default(false) | bool )
+# - name: Update Repositories/Registries on nodes
+#   ansible.builtin.import_playbook: ../utils/update_user_repo.yml
+#   when: not ( hostvars['127.0.0.1']['update_user_repo_executed'] | default(false) | bool )
 
 - name: Prepare kube control plane for kubernetes installations
   hosts: kube_control_plane
@@ -47,7 +55,37 @@
     - k8s_prepare_nodes
 
 - name: Start Kubernetes Installations
-  ansible.builtin.import_playbook: "{{ playbook_dir }}/playbooks/k8s_start_setup.yml"
+  hosts: omnia_kubespray
+  vars:
+    k8s_nfs_share: "/opt/omnia/kubespray"
+    k8s_logs_dir: "/opt/omnia/log/kubespray"
+    dir_mode: '0755'
+  tasks:
+    - name: Copy k8s_start_setup to kubespray nfs share
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/playbooks/k8s_start_setup.yml"
+        dest: "{{ k8s_nfs_share }}/k8s_start_setup.yml"
+    
+    - name: Ensure /log/kubespray directory exists
+      ansible.builtin.file:
+        path: "{{ k8s_logs_dir }}"
+        state: directory
+        mode: "{{ dir_mode }}"
+
+    - name: Execute ansible-playbook for Kubernetes setup asynchronously
+      ansible.builtin.shell:
+        cmd: ansible-playbook {{ k8s_nfs_share }}/k8s_start_setup.yml -i {{ k8s_nfs_share }}/inv_k8s --extra-vars "@{{ k8s_nfs_share }}/k8s_all_vars.yml" -vvv | /usr/bin/tee {{ k8s_logs_dir }}//k8s_deployment.log
+      async: 3600  # Set async timeout (e.g., 1 hour)
+      poll: 0  # Non-blocking (continue the playbook without waiting for completion)
+      register: result  # Register the result to capture job ID
+
+    - name: Wait for the Kubernetes installation to finish. Logs can be checked at /opt/omnia/log/kubespray/k8s_deployment.log
+      ansible.builtin.async_status:
+        jid: "{{ result.ansible_job_id }}"  # Job ID from the previous task
+      register: job_result
+      until: job_result.finished
+      retries: 60  # Retry the task 60 times (1 hour total)
+      delay: 10  # Wait 10 seconds between retries
 
 - name: Add nodes to kubernetes cluster
   ansible.builtin.import_playbook: "{{ playbook_dir }}/playbooks/k8s_add_node.yml"
@@ -98,11 +136,8 @@
     - k8s_csi_powerscale_plugin
 
 - name: Install Slurm
-  hosts: slurm_control_node, slurm_node, login, slurm_dbd
+  hosts: slurm_control_node, slurm_node, slurm_dbd, login
   any_errors_fatal: true
-  vars:
-    share_mounted_path: "{{ hostvars['localhost']['share_path'] | default('/home') }}" # from storage.yml
-    #TODO: nfs_client role here, slurm depends on a mandatory share path
   pre_tasks:
     - name: Include input project directory
       ansible.builtin.import_role:
@@ -114,8 +149,19 @@
         file: "{{ input_project_dir }}/omnia_config.yml"
       run_once: true
       delegate_to: localhost
+    - name: Include vars storage_config.yml
+      ansible.builtin.include_vars:
+        file: "{{ input_project_dir }}/storage_config.yml"
+      run_once: true
+      delegate_to: localhost
   roles:
     - role: slurm
+
+- name: Setup slurm pam authentication
+  hosts: slurm_control_node, slurm_node, login
+  gather_facts: true
+  roles:
+    - slurm_pam
 
 - name: Compile and install the ucx and openmpi on the nfs share of compute nodes
   hosts: slurm_control_node, kube_control_plane

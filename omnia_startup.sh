@@ -68,7 +68,7 @@ cleanup_omnia_core() {
         echo -e "${GREEN}Aborting.${NC}"
         exit 0
     elif [ "$confirm" = "y" ] || [ "$confirm" = "Y" ]; then
-        
+
         # Fetch the configuration from the Omnia core container.
         fetch_config
 
@@ -399,7 +399,7 @@ post_setup_config() {
     chmod 757 "$omnia_path/omnia/tmp/.ansible/tmp"
     # Create the input directory if it does not exist.
     echo -e "${GREEN} Creating the input directory if it does not exist.${NC}"
-    mkdir -p "$omnia_path/omnia/input/project_default/"
+    mkdir -p "$omnia_path/omnia/input/"
 
     # Create the default.yml file if it does not exist.
     # This file contains the name of the project.
@@ -412,12 +412,15 @@ post_setup_config() {
         } >> "$omnia_path/omnia/input/default.yml"
     fi
 
-    # Copy input files from pod to /opt/omnia/project_default/
-    echo -e "${BLUE} Copying input files from container to project_default folder.${NC}"
-    podman exec -u root omnia_core sh -c 'for file in /omnia/input/*; do mv "$file" /opt/omnia/input/project_default/; done'
+    # Copy input files from /omnia to /opt/omnia/project_default/ inside omnia_core container
+    echo -e "${BLUE} Moving input files from /omnia dir to project_default folder.${NC}"
+    podman exec -u root omnia_core bash -c "
+    mkdir -p /opt/omnia/input/project_default
+    cp -r /omnia/input/* /opt/omnia/input/project_default
+    rm -rf /omnia/input"
 
-    # Copy shard libraries from pod to /opt/omnia/shard_libraries/
-    echo -e "${BLUE} Copying shard libraries from container to shard_libraries folder.${NC}"
+    # Copy shared libraries from /omnia to /opt/omnia/shard_libraries/ inside omnia_core container
+    echo -e "${BLUE} Copying shared libraries from container to shared_libraries folder.${NC}"
     podman exec -u root omnia_core cp -r /omnia/shared_libraries/ /opt/omnia/
 
     # Create the .data directory if it does not exist.
@@ -510,18 +513,15 @@ main() {
         if [ -n "$(echo "$running_containers" | grep -E 'running')" ]; then
             echo -e "${GREEN} Omnia core container is already running.${NC}"
             echo -e "${GREEN} Do you want to:${NC}"
-            echo -e "${GREEN} 1. Cleanup the container.${NC}"
-            echo -e "${GREEN} 2. Reinstall the container.${NC}"
+            echo -e "${GREEN} 1. Reinstall the container.${NC}"
+            echo -e "${GREEN} 2. Delete the container and configurations.${NC}"
             echo -e "${GREEN} 3. Exit. ${NC}"
 
             # Get user input
             read -p " Enter your choice (1 or 2): " choice
 
-            # If the user wants to cleanup, call the cleanup function
-            if [ "$choice" = "1" ]; then
-                cleanup_omnia_core
             # If the user wants to reinstall, call the remove_container function, and then call the setup_omnia_core function
-            elif [ "$choice" = "2" ]; then
+            if [ "$choice" = "1" ]; then
                 echo -e "${GREEN} What configuration do you want to use for reinstallation:${NC}"
                 echo -e "${GREEN} 1. Retain Existing configuration.${NC}"
                 echo -e "${GREEN} 2. Overwrite and create new configuration.${NC}"
@@ -542,6 +542,9 @@ main() {
                 elif [ "$choice" = "3" ]; then
                     exit
                 fi
+            # If the user wants to cleanup, call the cleanup function
+            elif [ "$choice" = "2" ]; then
+                cleanup_omnia_core
             # If the user wants to exit, exit
             elif [ "$choice" = "3" ]; then
                 exit
@@ -562,7 +565,7 @@ main() {
                 exit
             fi
         fi
-            
+
     # If core container is not present
     else
 

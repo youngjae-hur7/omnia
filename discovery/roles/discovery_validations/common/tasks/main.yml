@@ -20,6 +20,15 @@
     reassignment_status: false
     provision_shared_library_path: "{{ provision_shared_library_path }}"
 
+- name: Set_fact for omnia_config_credentials.yml variables 
+  ansible.builtin.set_fact:
+    provision_password: "hostvars['localhost']['provision_password']"
+    bmc_username: "hostvars['localhost']['bmc_username']"
+    switch_snmp3_username: "hostvars['localhost']['switch_snmp3_username']"
+    bmc_password: "hostvars['localhost']['bmc_password']"
+    switch_snmp3_password: "hostvars['localhost']['switch_snmp3_password']"
+  no_log: true
+
 - name: Validate provision container services status
   ansible.builtin.include_tasks: validate_provision_container.yml
 
@@ -29,6 +38,9 @@
 
 - name: Include vars for {{ oim_os }}
   ansible.builtin.include_vars: "{{ role_path }}/vars/{{ oim_os }}.yml"
+
+- name: Include composable role data
+  ansible.builtin.include_tasks: include_composable_roles_config.yml
 
 - name: Include provision configuration variables
   ansible.builtin.include_tasks: include_provision_config.yml
@@ -57,9 +69,6 @@
 - name: Create metadata
   ansible.builtin.include_tasks: "{{ role_path }}/../../metadata_creation/tasks/main.yml"
 
-- name: Validate provision credentials
-  ansible.builtin.include_tasks: validate_provision_credentials.yml
-
 - name: Validate provision parameters
   ansible.builtin.include_tasks: validate_provision_vars.yml
 
@@ -70,15 +79,14 @@
 - name: Validate domain name
   ansible.builtin.include_tasks: validate_domain_name.yml
 
-# Need to modify after local repo changes
 # - name: Validate site_config.yml
 #   ansible.builtin.include_tasks: validate_site_config.yml
 
-# - name: Validate OFED and CUDA repo
-#   ansible.builtin.include_tasks: validate_ofed_cuda_repo.yml
+- name: Validate OFED and CUDA repo
+  ansible.builtin.include_tasks: validate_ofed_cuda_repo.yml
 
-# - name: Validate AMDGPU and ROCm repo
-#   ansible.builtin.include_tasks: validate_amdgpu_rocm_repo.yml
+- name: Validate AMDGPU and ROCm repo
+  ansible.builtin.include_tasks: validate_amdgpu_rocm_repo.yml
 
 # - name: Validate Broadcom repo
 #   ansible.builtin.include_tasks: validate_broadcom_repo.yml
