@@ -1,4 +1,4 @@
-# Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@
     - share_exists
     - ("slurm_control_node" in group_names) or ("kube_control_plane" in group_names)
   block:
-    - name: Run Prerequistics for openmpi
+    - name: Run Prerequisites for openmpi
       ansible.builtin.include_tasks: prerequisite_openmpi.yml
 
     - name: Compile and install openmpi
