@@ -1,4 +1,4 @@
-# Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,27 +28,32 @@
 
 - name: Install the prerequisites for installing the ucx
   when:
-    - ucx_software_status
-    - share_exists
-  block:
-    - name: Run Prerequistics for ucx
-      ansible.builtin.include_tasks: prerequisite_ucx.yml
-
-    - name: Compile and install ucx
-      ansible.builtin.include_tasks: compile_install_ucx.yml
-
-- name: Install the prerequisites for installing the openmpi
-  when:
-    - openmpi_software_status
-    - share_exists
-  block:
-    - name: Run Prerequistics for openmpi
-      ansible.builtin.include_tasks: prerequisite_openmpi.yml
-
-    - name: Compile and install openmpi
-      ansible.builtin.include_tasks: compile_install_openmpi.yml
+    - ucx_software_status or openmpi_software_status
+  ansible.builtin.include_tasks: install_benchmarks.yml
+  run_once: true
 
 - name: Display warning message when share path not exists
   ansible.builtin.debug:
     msg: "{{ installation_warning }}"
   when: not share_exists
+
+- name: Add the OpenMPI libraries path into ldconfig config
+  when:
+    - openmpi_software_status
+  block:
+    - name: Check Openmpi ldconf path file exists
+      ansible.builtin.stat:
+        path: "{{ openmpi_ldconf_path }}"
+      register: openmpi_ldconfig_file
+
+    - name: Create 30-openmpi.conf and copy mpirun library path
+      ansible.builtin.copy:
+        dest: "{{ openmpi_ldconf_path }}"
+        content: "{{ omnia_share_path }}/{{ benchmarks_dir_openmpi }}/lib"
+        mode: '0644'
+      when: not openmpi_ldconfig_file.stat.exists
+
+    - name: Run ldconfig
+      ansible.builtin.command: ldconfig
+      when: not openmpi_ldconfig_file.stat.exists
+      changed_when: false
