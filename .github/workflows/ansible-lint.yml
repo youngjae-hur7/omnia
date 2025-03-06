@@ -46,4 +46,4 @@ jobs:
         with:
           args: --config=.config/ansible-lint.yml
         env:
-          ANSIBLE_CONFIG: .config/ansible.cfg
+          ANSIBLE_LINT_CONFIG: /dev/null
