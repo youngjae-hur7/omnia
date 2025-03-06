@@ -33,7 +33,7 @@
     name: mysqld
     enabled: true
     state: started
-  register: new_install
+  register: new_install_mysql
   when: slurm_db_type == 'mysql'
 
 - name: Enable and start the mariadb service
@@ -41,7 +41,7 @@
     name: mariadb
     enabled: true
     state: started
-  register: new_install
+  register: new_install_mariadb
   when: slurm_db_type == 'mariadb'
 
 - name: Create my.cnf.d file
@@ -49,14 +49,14 @@
     path: /etc/my.cnf
     line: "[client-server]"
     create: yes
-  when: new_install.changed
+  when: new_install_mysql.changed or new_install_mariadb.changed
 
 - name: Include my.cnf.d directory
   ansible.builtin.lineinfile:
     path: /etc/my.cnf
     insertafter: '^\[client-server\]'
     line: '!includedir /etc/my.cnf.d'
-  when: new_install.changed
+  when: new_install_mysql.changed or new_install_mariadb.changed
 
 - name: Set db port
   ansible.builtin.lineinfile:
@@ -64,7 +64,7 @@
     regexp: '^port=.*'
     insertafter: '^[mysqld]'
     line: "port={{ slurm_db_port }}"
-  when: (slurm_db_type == 'mysql') and (new_install.changed)
+  when: (slurm_db_type == 'mysql') and (new_install_mysql.changed)
   notify:
     - Restart mysqld
     - Restart slurmctld
@@ -76,7 +76,7 @@
     regexp: '^port=.*'
     insertafter: '^[mysqld]'
     line: "port={{ slurm_db_port }}"
-  when: (slurm_db_type == 'mariadb') and (new_install.changed)
+  when: (slurm_db_type == 'mariadb') and (new_install_mariadb.changed)
   notify:
     - Restart mariadb
     - Restart slurmctld
@@ -99,7 +99,7 @@
     priv: '*.*:ALL,GRANT'
     login_unix_socket: "{{ slurm_db_login_unix_socket }}"
     state: present
-  when: new_install.changed
+  when: new_install_mysql.changed or new_install_mariadb.changed
 
 - name: Add db user - shortname
   community.mysql.mysql_user:
