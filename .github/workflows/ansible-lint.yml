@@ -45,3 +45,5 @@ jobs:
         uses: ansible/ansible-lint@v25.1.3
         with:
           args: --config=.config/ansible-lint.yml
+        env:
+          ANSIBLE_CONFIG: .config/ansible.cfg
