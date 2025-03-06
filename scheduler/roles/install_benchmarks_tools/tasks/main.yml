@@ -28,27 +28,31 @@
 
 - name: Install the prerequisites for installing the ucx
   when:
-    - ucx_software_status
-    - share_exists
-  block:
-    - name: Run Prerequistics for ucx
-      ansible.builtin.include_tasks: prerequisite_ucx.yml
-
-    - name: Compile and install ucx
-      ansible.builtin.include_tasks: compile_install_ucx.yml
-
-- name: Install the prerequisites for installing the openmpi
-  when:
-    - openmpi_software_status
-    - share_exists
-  block:
-    - name: Run Prerequistics for openmpi
-      ansible.builtin.include_tasks: prerequisite_openmpi.yml
-
-    - name: Compile and install openmpi
-      ansible.builtin.include_tasks: compile_install_openmpi.yml
+    - ucx_software_status or openmpi_software_status
+  ansible.builtin.include_tasks: install_benchmarks.yml
+  run_once: true
 
 - name: Display warning message when share path not exists
   ansible.builtin.debug:
     msg: "{{ installation_warning }}"
   when: not share_exists
+
+
+- name: Add the OpenMPI libraries path ldconfig
+  when:
+    - openmpi_software_status
+  block:
+    - name: Check Openmpi directory on the nfs share exist
+      ansible.builtin.stat:
+        path: "{{ openmpi_ldconf_path }}"
+      register: openmpi_ldconfig_file
+
+    - name: Create ld.so.conf.d file
+      ansible.builtin.copy:
+        dest: "{{ openmpi_ldconf_path }}"
+        content: "{{ omnia_share_path }}/{{ benchmarks_dir_openmpi }}/lib"
+      when: not openmpi_ldconfig_file.stat.exists
+
+    - name: Run ldconfig
+      ansible.builtin.command: ldconfig
+      when: not openmpi_ldconfig_file.stat.exists
