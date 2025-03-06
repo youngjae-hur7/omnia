@@ -46,4 +46,4 @@ jobs:
         with:
           args: --config=.config/ansible-lint.yml
         env:
-          ANSIBLE_LINT_CONFIG: /dev/null
+          ANSIBLE_COLLECTIONS_PATH: "/home/runner/work/omnia/omnia/.ansible/collections:/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages"
