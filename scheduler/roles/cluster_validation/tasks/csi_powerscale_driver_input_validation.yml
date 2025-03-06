@@ -34,26 +34,26 @@
   when: not vault_key_result.stat.exists
 
 - name: Check if secret file is encrypted
-  ansible.builtin.command: cat "{{ hostvars['localhost']['omnia_config']['csi_powerscale_driver_secret_file_path'] }}"
+  ansible.builtin.command: cat "{{ hostvars['localhost']['csi_powerscale_driver_secret_file_path'] }}"
   changed_when: false
   register: config_content
 
 - name: Decrpyt secret file
   ansible.builtin.command: >-
-    ansible-vault decrypt {{ hostvars['localhost']['omnia_config']['csi_powerscale_driver_secret_file_path'] }}
+    ansible-vault decrypt {{ hostvars['localhost']['csi_powerscale_driver_secret_file_path'] }}
     --vault-password-file {{ role_path }}/../k8s_csi_powerscale_plugin/files/{{ csi_powerscale_secret_vaultname }}
   when: "'$ANSIBLE_VAULT;' in config_content.stdout"
   changed_when: false
 
 - name: Load secret file for input validation
   ansible.builtin.include_vars:
-    file: "{{ hostvars['localhost']['omnia_config']['csi_powerscale_driver_secret_file_path'] }}"
+    file: "{{ hostvars['localhost']['csi_powerscale_driver_secret_file_path'] }}"
     name: clusters
   no_log: true
 
 - name: Encrypt secret file
   ansible.builtin.command: >-
-    ansible-vault encrypt {{ hostvars['localhost']['omnia_config']['csi_powerscale_driver_secret_file_path'] }}
+    ansible-vault encrypt {{ hostvars['localhost']['csi_powerscale_driver_secret_file_path'] }}
     --vault-password-file {{ role_path }}/../k8s_csi_powerscale_plugin/files/{{ csi_powerscale_secret_vaultname }}
   changed_when: false
 
@@ -201,7 +201,7 @@
 # Validate mandate user input in values file for csi driver
 - name: Load values.yaml file
   ansible.builtin.include_vars:
-    file: "{{ hostvars['localhost']['omnia_config']['csi_powerscale_driver_values_file_path'] }}"
+    file: "{{ hostvars['localhost']['csi_powerscale_driver_values_file_path'] }}"
     name: csi_powerscale_values_file
 
 - name: Validate controller count
