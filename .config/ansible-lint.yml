@@ -36,5 +36,5 @@ skip_list:
   - var-naming[no-role-prefix]
   - unresolved-module
 
-verbosity: 3
+verbosity: 1
 profile: production
