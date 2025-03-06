@@ -19,9 +19,10 @@
     dest: "{{ multus_deployment_manifest }}"
     mode: "{{ multus_deployment_manifest_mode }}"
   when: multus_config
+  delegate_to: localhost
 
 - name: Apply multus pod network
-  ansible.builtin.command: "kubectl apply -f {{ multus_deployment_manifest }}"
+  ansible.builtin.command: "kubectl apply -f {{ multus_deployment_manifest_path }}"
   changed_when: true
 
 # -------------------------WHEREABOUTS PLUGIN----------------------------
