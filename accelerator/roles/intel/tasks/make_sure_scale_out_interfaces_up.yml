@@ -45,7 +45,7 @@
     mode: "{{ file_permissions }}"
     block: |
       #!/bin/bash
-      /opt/habanalabs/qual/{{ gaudi_ver }}/bin/manage_network_ifs.sh --up
+      /opt/habanalabs/qual/{{gaudi_ver}}/bin/manage_network_ifs.sh --up
       RET_CODE=$?
       if [ "${RET_CODE}" -eq "1" ]; then
         echo "One or more Gaudi ports are down." >> /dev/stderr
