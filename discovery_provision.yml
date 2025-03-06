@@ -65,6 +65,7 @@
       ansible.builtin.set_fact:
         provision_group_status: true
         project_dir_status: true
+        config_file_status: true
 
 - name: Discover the nodes
   ansible.builtin.import_playbook: discovery/discovery.yml       # noqa:role-name[path]
