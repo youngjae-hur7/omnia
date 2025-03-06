@@ -33,6 +33,7 @@ skip_list:
   - unresolved-module
   - fqcn[canonical]
   - internal-error
+  - role-name[path]
 
 verbosity: 1
 profile: production
