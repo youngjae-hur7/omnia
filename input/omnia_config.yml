@@ -82,7 +82,7 @@ topology_manager_scope: "container"
 # Mandatory when nvidia_gpu_operator entry is present in software_config.json
 # Absolute file path for the NVIDIA gpu-operator config value file.
 # Sample config file is present in examples/nvidia_gpu_operator_config_value.yml
-# User needs to provide http_proxy and http_proxy value in config values file
+# User needs to provide http_proxy and https_proxy value in config values file
 nvidia_gpu_operator_value_file_path: ""
 
 # ----------------------------VERIFY INTEL GAUDI INSTALLATION------------------------------------------------------
