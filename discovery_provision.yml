@@ -15,6 +15,7 @@
 
 - name: Set_fact for fetch omnia config credentials
   hosts: localhost
+  tags: first_layer
   connection: local
   tasks:
     - name: Set dynamic run tags including 'provision'
