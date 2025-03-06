@@ -21,11 +21,6 @@
     log_dir: "{{ base_path }}"
   register: result
 
-- name: Display software packages tasklist
-  ansible.builtin.debug:
-    msg: "Group: {{ item.key }} , {{ item.value }}"
-  loop: "{{ result.software_dict | dict2items }}"
-
 - name: Process URL mirrors from local_repo_config
   process_rpm_config:
     local_config: "{{ result.local_config }}"
