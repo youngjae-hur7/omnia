@@ -35,15 +35,15 @@
 # ***********************************************************************
 
 oim_ha: 
-  - enable_oim_ha: true
-    virtual_ip_address: "192.10.1.1"
-    active_node_service_tag: "asdf124"
+  - enable_oim_ha: false
+    virtual_ip_address: ""
+    active_node_service_tag: ""
     nfs_share:
-    - { server_ip: "192.10.1.1", server_share_path: "/test/mnt/share" }
+    - { server_ip: "", server_share_path: "" }
     passive_nodes: 
       - node_details:
-        - {SERVICE_TAG: "xxx10", HOSTNAME: "omnia_mn1.omnia.test", ADMIN_MAC: "a3:b3:c3:d3:e3:f3", ADMIN_IP: "10.5.1.2", BMC_IP: "10.5.1.3"}
-        - {SERVICE_TAG: "xxx11", HOSTNAME: "omnia_mn2.omnia.test", ADMIN_MAC: "a3:b3:c3:d3:e3:f3", ADMIN_IP: "10.5.1.2", BMC_IP: "10.5.1.3"}
+        - {SERVICE_TAG: "", HOSTNAME: "", ADMIN_MAC: "", ADMIN_IP: "", BMC_IP: ""}
+        - {SERVICE_TAG: "", HOSTNAME: "", ADMIN_MAC: "", ADMIN_IP: "", BMC_IP: ""}
 
 # ***********************************************************************
 # High Availability (HA) Configuration for Service Nodes
