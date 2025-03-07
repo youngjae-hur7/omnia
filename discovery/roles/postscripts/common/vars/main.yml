@@ -44,3 +44,6 @@ setup_ntp_warning_msg: |
 warning_time: 30
 async_time: 300
 poll_time: 15
+
+# omnia_oim high availability
+pcs_vars: "{{ role_path }}/../../prepare_oim/roles/deploy_containers/pcs/vars/main.yml"

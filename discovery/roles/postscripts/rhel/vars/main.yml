@@ -26,8 +26,7 @@ ofed_permission: "0644"
 # Usage: configure_cuda.yml
 cuda_tmp_path: /tmp/cuda
 cuda_core_path: /install/cuda/x86_64/cuda-core
-invalid_cuda_rpm_fail_msg: "Failed. Invalid cuda_toolkit_path: {{ cuda_toolkit_path }} provided in provision_config.yml.
-Make sure cuda rpm file is downloaded completely."
+invalid_cuda_rpm_fail_msg: "Failed. Invalid cuda_toolkit_path: {{ cuda_toolkit_path }} provided in provision_config.yml. Make sure cuda rpm file is downloaded completely."
 cuda_postscripts_path:
   - { src: "{{ role_path }}/../common/templates/omnia_cuda.j2", dest: "/install/postscripts/omnia_cuda", mode: "755" }
 xcat_path: /opt/xcat/bin
@@ -40,3 +39,7 @@ rocm_postscripts_path:
 # Usage: configure_postscripts.yml
 omnia_disable_repo_postscripts_path:
   - { src: "{{ role_path }}/../rhel/files/omnia_disable_repo", dest: "/install/postscripts/omnia_disable_repo", mode: "755" }
+
+# Usage: configure_postbootscripts.yml
+pcs_postbootscript_path:
+  - { src: "{{ role_path }}/templates/omnia_pcs_setup.j2", dest: "/install/postscripts/omnia_pcs_setup", mode: "755" }
