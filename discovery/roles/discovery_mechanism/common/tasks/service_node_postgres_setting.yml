@@ -17,7 +17,7 @@
   community.postgresql.postgresql_query:
     db: omniadb
     login_user: postgres
-    query: "SELECT admin_ip, node FROM cluster.nodeinfo WHERE roles LIKE '%service%';"
+    query: "SELECT admin_ip, node FROM cluster.nodeinfo WHERE role LIKE '%service%';"
     login_password: "{{ postgresdb_password }}"
   become: true
   become_user: postgres
@@ -44,7 +44,6 @@
       loop: "{{ service_nodes.query_result }}"
       loop_control:
         label: "{{ item.admin_ip }}"
-      notify: Restart PostgreSQL
 
     - name: Restart PostgreSQL
       ansible.builtin.service:
