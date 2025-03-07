@@ -15,7 +15,7 @@ echo "Starting service node required packages installation" >> "$LOGFILE"
 PACKAGES=(
     "initscripts"
     "xCATsn"
-    "conserver-xcat"
+    "goconserver"
     "perl-Net-Telnet"
     "perl-Expect"
 )
@@ -27,8 +27,7 @@ for pkg in "${PACKAGES[@]}"; do
     if [[ $? -eq 0 ]]; then
         echo "$pkg installed successfully." >> "$LOGFILE"
     else
-        echo "Error installing $pkg. Check logs for details." >> "$LOGFILE"
-        exit 0  # Exit script if installation fails
+        echo "**** Error installing $pkg. Check logs for details." >> "$LOGFILE"
     fi
 done
 

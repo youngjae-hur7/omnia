@@ -18,7 +18,7 @@
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     mode: "{{ item.mode }}"
-  with_items: "{{ cpu_gpu_info_postscripts_path }}"
+  with_items: "{{ servive_node_postscripts_path }}"
 
 - name: Configure postscripts to get cpu info
   ansible.builtin.command: "{{ xcat_path }}/chdef -t group -o service -p postscripts=omnia_service_node"
