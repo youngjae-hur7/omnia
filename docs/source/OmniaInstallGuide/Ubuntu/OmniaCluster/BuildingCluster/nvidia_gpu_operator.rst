@@ -23,16 +23,14 @@ Configurations
 Omnia installs the NVIDIA GPU operator as part of ``omnia.yml`` or ``scheduler.yml`` playbook execution, based on if the ``input/omnia_config.yml`` file contains the required inputs.
 Follow the below provided steps to set up the NVIDIA GPU operator for your cluster:
 
-1. For the NVIDIA GPU operator to be installed, you must have a ``nvidia_gpu_operator_config_value.yml`` file that contains all the required details. An pre-filled example of this can be found in the ``omnia/examples/`` folder.
-
-2. You can either edit the ``nvidia_gpu_operator_config_value.yml`` file present in the ``omnia/examples`` folder or create a new one with the same name and save it to the Omnia shared directory. Provide inputs to the following mandatory parameters in that file:
+1. Edit the ``nvidia_gpu_operator_config.yml`` file present in the ``omnia/input/`` folder. Provide inputs to the following mandatory parameters in that file:
 
         * ``http_proxy``: This value can be found in the ``/opt/omnia/offline/local_repo_access.yml`` file.
         * ``https_proxy``: This value can be found in the ``/opt/omnia/offline/local_repo_access.yml`` file.
 
-.. note:: All other parameters in the ``examples/nvidia_gpu_operator_config_value.yml`` comes pre-filled for a basic configuration, but can be edited for a more customised installation.
+.. note:: All other parameters in the ``input/nvidia_gpu_operator_config.yml`` comes pre-filled for a basic configuration, but can be edited for a more customised installation.
 
-3. Once the ``nvidia_gpu_operator_config_value.yml`` file is ready, provide the filepath of it to the ``nvidia_gpu_operator_value_file_path`` parameter in ``input/omnia_config.yml`` file.
+2. Once the ``nvidia_gpu_operator_config.yml`` file is ready, by default the filepath is added to the ``nvidia_gpu_operator_value_file_path`` parameter in ``input/omnia_config.yml`` file.
 
 Playbook execution
 --------------------
