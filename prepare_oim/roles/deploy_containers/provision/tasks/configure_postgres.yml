@@ -23,7 +23,7 @@
   register: wait_result
 
 - name: Setup postgres database (This task may take 10 mins)
-  ansible.builtin.command: "{{ pgsqlsetup_path }} -i -I {{ hostvars['localhost']['admin_nic_ip'] }} -V"
+  ansible.builtin.command: "{{ pgsqlsetup_path }} -i -l {{ hostvars['localhost']['admin_nic_ip'] }} -V"
   changed_when: true
   no_log: true
   environment:
