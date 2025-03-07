@@ -40,12 +40,14 @@ Once the above mentioned configurations are done, execute the ``omnia.yml`` or `
     ::
 
         cd omnia
-        ansible-playbook omnia.yml
+        ansible-playbook omnia.yml -i <inventory filepath>
 
     ::
 
         cd scheduler
-        ansible-playbook scheduler.yml
+        ansible-playbook scheduler.yml -i <inventory filepath>
+
+Here, the ``<inventory filepath>`` refers to the Kubernetes inventory.
 
 Remove the NVIDIA GPU operator
 ----------------------------------
