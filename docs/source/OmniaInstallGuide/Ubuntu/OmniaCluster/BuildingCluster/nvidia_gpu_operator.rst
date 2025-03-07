@@ -50,7 +50,7 @@ Once the above mentioned configurations are done, execute the ``omnia.yml`` or `
 Here, the ``<inventory filepath>`` refers to the Kubernetes inventory.
 
 Remove the NVIDIA GPU operator
-----------------------------------
+-----------------------------------
 
 If you want to uninstall the NVIDIA GPU operator, run the following command: ::
 
