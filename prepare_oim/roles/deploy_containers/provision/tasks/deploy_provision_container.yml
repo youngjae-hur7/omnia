@@ -46,7 +46,7 @@
 
 - name: Pull Podman image from localhost
   containers.podman.podman_image:
-    name: "localhost/{{ provision_image_name }}"
+    name: "{{ provision_image_name }}"
     tag: "{{ provision_image_tag }}"
     state: present
   register: image_pull_result

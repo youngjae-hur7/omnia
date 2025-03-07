@@ -36,7 +36,7 @@
 
 - name: Pull PCS image
   containers.podman.podman_image:
-    name: "localhost/{{ pcs_image_name }}"
+    name: "{{ pcs_image_name }}"
     tag: "{{ pcs_image_tag }}"
     state: present
   register: image_pull_result
