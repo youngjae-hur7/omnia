@@ -13,20 +13,17 @@
 # limitations under the License.
 ---
 
-- name: Add some common service node attributes to the service nodegroup
-  ansible.builtin.command: >
-    {{ xcat_path }}/chdef -t group -o service
-    'setupnfs=1' 'setuptftp=1' 'setupnameserver=1' 'setupconserver=2'
+- name: Copy service node script to postscripts
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  with_items: "{{ cpu_gpu_info_postscripts_path }}"
+
+- name: Configure postscripts to get cpu info
+  ansible.builtin.command: "{{ xcat_path }}/chdef -t group -o service -p postscripts=omnia_service_node"
   changed_when: true
 
-- name: Set hierarchicalattrs
-  ansible.builtin.command: "{{ xcat_path }}/chdef -t site hierarchicalattrs=\"postscripts\""
-  changed_when: true
-
-- name: Set sharedtftp in clustersite
-  ansible.builtin.command: "{{ xcat_path }}/chdef -t site clustersite 'sharedtftp=1'"
-  changed_when: true
-
-- name: Set install location in clustersite
-  ansible.builtin.command: "{{ xcat_path }}/chdef -t site clustersite 'installloc=/install'"
+- name: Remove NTP postscript from service group
+  ansible.builtin.command: "{{ xcat_path }}/chdef service -m postscripts=setupntp"
   changed_when: true

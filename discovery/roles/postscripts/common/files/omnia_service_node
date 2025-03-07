@@ -1,0 +1,40 @@
+#!/bin/bash
+################################################################################################################
+#  omnia_servie_role:
+#      Install packages required for service node
+#
+#################################################################################################################
+
+# Define log file
+LOGFILE="/var/log/xcat/xcat.log"
+
+echo "--------------------------" >> "$LOGFILE"
+echo "Starting service node required packages installation" >> "$LOGFILE"
+
+# List of required packages
+PACKAGES=(
+    "initscripts"
+    "xCATsn"
+    "conserver-xcat"
+    "perl-Net-Telnet"
+    "perl-Expect"
+)
+
+# Update package repositories
+echo "Updating package repositories..." >> "$LOGFILE"
+dnf makecache fast
+
+# Install each package and log a simple message
+for pkg in "${PACKAGES[@]}"; do
+    echo "Installing $pkg..." >> "$LOGFILE"
+    dnf install -y "$pkg"
+    if [[ $? -eq 0 ]]; then
+        echo "$pkg installed successfully." >> "$LOGFILE"
+    else
+        echo "Error installing $pkg. Check logs for details." >> "$LOGFILE"
+        exit 0  # Exit script if installation fails
+    fi
+done
+
+echo "--------------------------" >> "$LOGFILE"
+echo "All service node packages installed successfully." >> "$LOGFILE"
