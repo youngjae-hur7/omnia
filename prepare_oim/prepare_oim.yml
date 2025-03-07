@@ -13,19 +13,6 @@
 # limitations under the License.
 ---
 
-- name: Set_fact for fetch omnia config credentials
-  hosts: localhost
-  connection: local
-  tasks:
-    - name: Set dynamic run tags including 'prepare_oim'
-      when: not config_file_status | default(false) | bool
-      ansible.builtin.set_fact:
-        omnia_run_tags: "{{ (ansible_run_tags | default([]) + ['prepare_oim']) | unique }}"
-        cacheable: true
-
-- name: Invoke get_config_credentials.yml
-  ansible.builtin.import_playbook: ../utils/credential_utility/get_config_credentials.yml
-
 - name: Include input project directory
   when: not project_dir_status | default(false) | bool
   ansible.builtin.import_playbook: ../utils/include_input_dir.yml
@@ -84,14 +71,6 @@
       vars:
         target_port: "{{ kubespray_ssh_port }}"
 
-- name: Configure Pulp container
-  hosts: localhost
-  tasks:
-    - name: Configure Pulp container tasks # noqa:role-name[path]
-      ansible.builtin.include_role:
-        name: deploy_containers/pulp
-        tasks_from: create_pulp_config.yml
-
 - name: Configure provision container
   hosts: omnia_provision
   connection: ssh
@@ -100,6 +79,14 @@
       ansible.builtin.include_role:
         name: deploy_containers/provision
         tasks_from: configure_provision_container.yml
+
+- name: Configure Pulp container
+  hosts: localhost
+  tasks:
+    - name: Configure Pulp container tasks # noqa:role-name[path]
+      ansible.builtin.include_role:
+        name: deploy_containers/pulp
+        tasks_from: create_pulp_config.yml
 
 # PCS container has to be deployed after all containers are deployed and configured
 - name: Deploy pcs container
