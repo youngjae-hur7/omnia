@@ -15,18 +15,14 @@ echo "Starting service node required packages installation" >> "$LOGFILE"
 PACKAGES=(
     "initscripts"
     "xCATsn"
-    "conserver-xcat"
+    "gonserver-xcat"
     "perl-Net-Telnet"
     "perl-Expect"
 )
 
-# Update package repositories
-echo "Updating package repositories..." >> "$LOGFILE"
-dnf makecache fast
-
 # Install each package and log a simple message
 for pkg in "${PACKAGES[@]}"; do
-    echo "Installing $pkg..." >> "$LOGFILE"
+    echo "**** Installing Package - $pkg..." >> "$LOGFILE"
     dnf install -y "$pkg"
     if [[ $? -eq 0 ]]; then
         echo "$pkg installed successfully." >> "$LOGFILE"
