@@ -126,8 +126,16 @@ then
         find /usr/lib64/ /usr/lib -name "libbnxt_re-rdmav*.so" -exec mv {} {}.inbox \;
         sudo sh -c "echo bnxt_en >> /etc/initramfs-tools/modules"
         sudo sh -c "echo bnxt_re >> /etc/initramfs-tools/modules"
+        sudo sh -c "echo ib_peer_mem >> /etc/initramfs-tools/modules"
+        sudo sh -c "echo br_netfilter >> /etc/initramfs-tools/modules"
+        sudo sh -c "echo ib_umad >> /etc/initramfs-tools/modules"
+        echo "Executing dkms autoinstall for all in /lib/modules"
         ls /lib/modules | xargs -n1 dkms autoinstall -k
-        update-initramfs -u
+        echo "Executing depmod -a"
+        sudo depmod -a
+        echo "Executing update-initramfs"
+        sudo update-initramfs -u -k `uname -r`
+
     fi
     echo "RoCE Installation completed" >> $LOG_FILE
 else
