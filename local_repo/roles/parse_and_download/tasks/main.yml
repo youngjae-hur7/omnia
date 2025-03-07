@@ -29,7 +29,7 @@
 
 - name: Clear the rpm downloaded files
   ansible.builtin.file:
-    path: "{{ repo_store_path }}/cluster/{{ cluster_os_type }}/{{ cluster_os_version }}/rpm }}"
+    path: "{{ repo_store_path }}/cluster/{{ cluster_os_type }}/{{ cluster_os_version }}/rpm"
     state: absent
   when: clean_rpms
 
