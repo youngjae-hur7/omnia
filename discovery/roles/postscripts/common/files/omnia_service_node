@@ -15,7 +15,7 @@ echo "Starting service node required packages installation" >> "$LOGFILE"
 PACKAGES=(
     "initscripts"
     "xCATsn"
-    "gonserver-xcat"
+    "conserver-xcat"
     "perl-Net-Telnet"
     "perl-Expect"
 )
