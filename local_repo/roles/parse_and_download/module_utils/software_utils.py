@@ -203,7 +203,7 @@ def parse_repo_urls(local_repo_config_path, version_variables):
     parsed_repos = []
 
     for url_ in rhel_repo_entry:
-        name = url_.get("name","unkown")
+        name = url_.get("name","unknown")
         url = url_.get("url","")
         gpgkey = url_.get("gpgkey")
         if not is_remote_url_reachable(url):
@@ -231,7 +231,7 @@ def parse_repo_urls(local_repo_config_path, version_variables):
         if name in ["amdgpu", "rocm", "beegfs"] and (version is None or version == "null"):
             continue
 
-        # Edge case for oneapi, snoopy
+        # Edge case for oneapi, snoopy, nvidia-repo
         elif not is_remote_url_reachable(rendered_url) and name not in ["oneapi","snoopy","nvidia-repo"]:
             return rendered_url, False
 
