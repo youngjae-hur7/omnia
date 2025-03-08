@@ -12,19 +12,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 ---
-
-- name: Check if virtual environment is active
-  ansible.builtin.import_playbook: check_venv.yml
-  when: not ( check_venv_executed | default(false) | bool )
-
 - name: Warning and User confirmation for removing slurm and kube node
   hosts: localhost
   connection: local
-  gather_facts: false
+  gather_facts: true
   roles:
+    - { role: include_input_dir }
     - { role: remove_node/user_confirmation } # noqa: role-name[path]
-    - { role: servicetag_host_mapping }
-    - { role: common }
+    # - { role: servicetag_host_mapping }
+    - { role: common } # includes omnia_config, provision_credentials, and strorage_config yamls  
   tags: always
 
 - name: Proceeding to remove slurm login node
@@ -43,21 +39,24 @@
   roles:
     - { role: remove_node/remove_slurm_node } # noqa: role-name[path]
 
-- name: Proceeding to remove slurm node
-  tags: slurm_node
-  hosts: localhost
-  connection: ssh
-  gather_facts: false
-  roles:
-    - { role: remove_node/validate_slurm_node } # noqa: role-name[path]
-
 - name: Remove slurm node
   tags: slurm_node
-  hosts: remove_slurm_node
+  hosts: slurm_control_node, slurm_node
   connection: ssh
   gather_facts: true
-  roles:
-    - { role: remove_node/remove_slurm_node } # noqa: role-name[path]
+  # roles:
+    # - { role: remove_node/remove_slurm_node } # noqa: role-name[path]
+  pre_tasks:
+    - name: Include input project directory
+      ansible.builtin.import_role:
+        name: ../utils/roles/include_input_vars
+      run_once: true
+      delegate_to: localhost
+  tasks:
+    - name: Remove slurm node
+      ansible.builtin.import_role:
+        name: scheduler/roles/slurm
+        tasks_from: rm_node
 
 - name: Proceeding to remove kube node
   tags: kube_node
@@ -87,14 +86,6 @@
   connection: ssh
   roles:
     - { role: remove_node/post_kube_node_removal } # noqa: role-name[path]
-
-- name: Confirm slurm_node removal
-  hosts: remove_slurm_node
-  connection: ssh
-  gather_facts: false
-  tags: slurm_node
-  roles:
-    - { role: remove_node/verify_slurm_node_removal } # noqa: role-name[path]
 
 - name: Confirm kube_node removal
   hosts: remove_kube_node
