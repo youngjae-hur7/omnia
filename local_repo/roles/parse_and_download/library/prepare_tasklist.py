@@ -127,6 +127,8 @@ def main():
             # If the software is new, enforce fresh installation
             if software in new_software:
                 fresh_installation = True
+            else:
+                fresh_installation = False
 
             logger.info(f"{software}: JSON Path: {json_path}, CSV Path: {csv_path}, Fresh Install: {fresh_installation}")
             logger.info(f"Subgroup Data: {subgroup_dict.get(software, None)}")
