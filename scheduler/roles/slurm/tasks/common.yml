@@ -15,6 +15,13 @@
 - name: Sync time
   ansible.builtin.include_tasks: time_sync.yml
 
+- name: Refresh mounts - sometimes the mounts fail
+  ansible.builtin.shell: |
+    umount {{ share_path }}
+    mount -a
+  register: refresh_mounts
+  ignore_errors: true
+
 - name: Install common packages
   ansible.builtin.package:
     name: "{{ common_packages[ansible_os_family] }}"
