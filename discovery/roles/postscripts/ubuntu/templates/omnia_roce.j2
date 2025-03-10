@@ -23,9 +23,11 @@ install_deb_files() {
     fi
 }
 
+echo "Checking for Intel Gaudi cards" >> /var/log/xcat/xcat.log
+gaudi_check_processing_xlr8r=`lspci | grep "Processing accelerators: Habana Labs Ltd"`
 echo "Checking for Broadcom NetXtreme-E cards" >> $LOG_FILE
 thor_check=$(lspci -vvv 2>/dev/null | grep -i -E "BCM5750|BCM5760")
-if [[ -n $thor_check ]]
+if [[ -n $thor_check ]] && [[ $gaudi_check_processing_xlr8r != *"Habana Labs Ltd"* ]]
 then
     echo "starting RoCE Installation" >> $LOG_FILE
     # Download the roce_src tar file
