@@ -49,6 +49,10 @@
 - name: Include local_repo variables
   ansible.builtin.include_tasks: include_local_repo_config.yml
 
+- name: Validate service_node repo
+  ansible.builtin.include_tasks: validate_service_node_repo.yml
+  when: service_role_required | default(false)
+
 # - name: Validate local repo
 #   ansible.builtin.include_tasks: validate_local_repo.yml
 
