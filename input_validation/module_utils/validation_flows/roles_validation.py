@@ -47,7 +47,7 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
     MAX_ROLES = 100
 
     roles_per_group = {}
-    empty_parent_roles = {'login', 'compiler', 'service', 'kube_control_plane', 'slurm_control_plane'}
+    empty_parent_roles = {'login', 'compiler', 'service', 'kube_control_plane', 'etcd', 'slurm_control_plane', 'slurm_dbd', 'auth_server'}
 
     errors = []
 
