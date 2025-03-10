@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
       - main
-      - release-1.7
       - staging
       - release-1.7.1
       - pub/new_architecture
@@ -16,10 +15,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      # - name: Modify ansible.cfg for linting
-      #   run: |
-      #     sed -i '/collections_path/d' ansible.cfg
 
       - name: Set up Python
         uses: actions/setup-python@v4
