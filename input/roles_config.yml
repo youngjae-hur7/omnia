@@ -27,11 +27,11 @@
 #   grpN:                 - <Mandatory> "grpN" -  User defined name of the group. Range for N is 0-99
 #     location_id:        - <Mandatory> su-<n>.rack-<n> Scalable unit and rack number range is 0-99.
 #     resource_mgr_id:    - <Conditional Mandatory> list of service tag of active head node(s).
-#                         - Set the value only for group of nodes belonging to k8sworker and slurmworker roles,
+#                         - Set the value only for group of nodes belonging to kube_node and slurm_node roles,
 #                         - And empty for other roles.
 #     parent:             - <Conditional Mandatory> list of service tag of associated active service node(s).
 #                         - This field will be empty for group of nodes which is associated with ‘login’, ‘compiler’, ‘service’,
-#                         - ‘k8shead’, ‘k8setcd’, 'slurmhead’, ‘slurmdbd’.
+#                         - ‘kube_control_plane’, ‘kube_control_plane’, 'slurm_control_node’, ‘slurm_dbd’.
 #                         - If ‘service’ role is not defined, then value will be empty for worker and default role.
 #     bmc_details:        - <Conditional Mandatory> BMC IP static range in the format 10.5.0.1-10.5.0.200
 #        static_range:    - <Mandatory> This field mandatory in case of BMC discovery of subset of nodes
@@ -80,13 +80,13 @@ Groups:
 # +-------------+----------------+    +-------------+----------------+
 # | Role Name   | Layer          |    | Role Name   | Layer          |
 # +-------------+----------------+    +-------------+----------------+
-# | service     | front end      |    | k8sworker   | compute        |
-# | login       | front end      |    | slurmworker | compute        |
+# | service     | front end      |    | kube_node   | compute        |
+# | login       | front end      |    | slurm_node | compute        |
 # | compiler    | front end      |    | default     | compute        |
-# | k8shead     | front end      |    |             |                |
-# | k8setcd     | front end      |    |             |                |
-# | slurmhead   | front end      |    |             |                |
-# | slurmdbd    | front end      |    |             |                |
+# | kube_control_plane     | front end      |    |             |                |
+# | kube_control_plane     | front end      |    |             |                |
+# | slurm_control_node   | front end      |    |             |                |
+# | slurm_dbd    | front end      |    |             |                |
 # +-------------+----------------+    +-------------+----------------+
 
 # Default Role:
@@ -123,7 +123,7 @@ Roles:
 
 
 #
-# k8s head Role: Kubernetes master node groups to add into k8shead role can be provided in this role
+# k8s head Role: Kubernetes master node groups to add into kube_control_plane role can be provided in this role
 # ---------------------------------------------------------------------------------------
 #
 # This role is used to configure the nodes for Kubernetes master. It belongs to the front end layer.
@@ -133,8 +133,8 @@ Roles:
 #
 # The nodes in this role can be used to run Kubernetes master.
 #
-# k8s head Role: Kubernetes master groups to add into k8shead role can be provided in this role
-# - name: "k8shead"
+# k8s head Role: Kubernetes master groups to add into kube_control_plane role can be provided in this role
+# - name: "kube_control_plane"
 #   groups:
 #     - grp0
 #     - grp1
@@ -151,7 +151,7 @@ Roles:
 # The nodes in this role can be used to run Kubernetes etcd.
 #
 # K8s etcd Role: Kubernetes etcd groups to add into k8s etcd role can be provided in this role
-# - name: "k8setcd"
+# - name: "kube_control_plane"
 #   groups:
 #     - grp0
 #     - grp1
@@ -168,7 +168,7 @@ Roles:
 # The nodes in this role can be used to run Kubernetes worker.
 #
 # K8s Worker Role: Kubernetes worker groups to add into k8s worker role can be provided in this role
-# - name: "k8sworker"
+# - name: "kube_node"
 #   groups:
 #     - grp0
 #     - grp1
@@ -185,8 +185,8 @@ Roles:
 # The nodes in this role can be used to run Slurm head.
 # This role belongs to the compute layer.
 #
-# Slurm Head Role: Slurm head groups to add into Slurmhead role can be provided in this role
-# - name: "slurmhead"
+# Slurm Head Role: Slurm head groups to add into slurm_control_node role can be provided in this role
+# - name: "slurm_control_node"
 #   groups:
 #     - grp0
 #     - grp1
@@ -203,7 +203,7 @@ Roles:
 # The nodes in this role can be used to run Slurm DB Daemon.
 #
 # Slurm DB Daemon Role: Slurm DB Daemon groups to add into Slurm role can be provided in this role
-# - name: "slurmdbd"
+# - name: "slurm_dbd"
 #   groups:
 #     - grp0
 #     - grp1
@@ -220,7 +220,7 @@ Roles:
 # The nodes in this role can be used to run Slurm worker.
 #
 # Slurm Worker Role: Slurm worker groups to add into Slurm role can be provided in this role
-# - name: "slurmworker"
+# - name: "slurm_node"
 #   groups:
 #     - grp0
 #     - grp1
