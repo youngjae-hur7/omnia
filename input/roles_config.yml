@@ -77,17 +77,18 @@ Groups:
 
 # This table lists the roles and the layers they belong to in the cluster.
 
-# +-------------+----------------+    +-------------+----------------+
-# | Role Name   | Layer          |    | Role Name   | Layer          |
-# +-------------+----------------+    +-------------+----------------+
-# | service     | front end      |    | kube_node   | compute        |
-# | login       | front end      |    | slurm_node | compute        |
-# | compiler    | front end      |    | default     | compute        |
-# | kube_control_plane     | front end      |    |             |                |
-# | etcd     | front end      |    |             |                |
-# | slurm_control_node   | front end      |    |             |                |
-# | slurm_dbd    | front end      |    |             |                |
-# +-------------+----------------+    +-------------+----------------+
+# +---------------------+----------------+    +-------------+----------------+
+# | Role Name          | Layer          |    | Role Name   | Layer          |
+# +---------------------+----------------+    +-------------+----------------+
+# | service            | front end      |    | kube_node   | compute        |
+# | login              | front end      |    | slurm_node  | compute        |
+# | auth_server        | front end      |    | default     | compute        |
+# | compiler           | front end      |    |             |                |
+# | kube_control_plane | front end      |    |             |                |
+# | etcd               | front end      |    |             |                |
+# | slurm_control_node | front end      |    |             |                |
+# | slurm_dbd          | front end      |    |             |                |
+# +---------------------+----------------+    +-------------+----------------+
 
 # Default Role:
 # -------------
@@ -237,6 +238,22 @@ Roles:
 # The user is not allowed to change the name of this role.
 #
 # - name: "login"
+#   groups:
+#     - grp0
+#     - grp1
+
+#
+# Auth Server Role:
+# -----------------
+#
+# This role is used to configure the nodes for authentication. It belongs to the front end layer.
+#
+# The nodes included in this role will have the necessary tools and configurations
+# to support authentication activities.
+#
+# The user is not allowed to change the name of this role.
+#
+# - name: "auth_server"
 #   groups:
 #     - grp0
 #     - grp1
