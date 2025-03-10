@@ -34,6 +34,7 @@ if [[ -n $thor_check ]] then
         echo "IntelGaudi cards found. Skipping RoCE installation." >> $LOG_FILE
         echo "***************************************************" >> $LOG_FILE
         exit 0
+    fi
     echo "starting RoCE Installation" >> $LOG_FILE
     # Download the roce_src tar file
     wget --quiet --show-progress "http://{{ admin_nic_ip }}:80/install{{ repo_store_path }}/cluster/tarball/{{ roce_package_name }}"
