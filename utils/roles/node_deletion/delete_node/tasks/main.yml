@@ -133,8 +133,8 @@
 - name: Check SSH reachability for valid nodes
   ansible.builtin.wait_for:
     host: "{{ item.value.admin_ip }}"
-    port: 22
-    timeout: 5
+    port: "{{ ssh_port }}"
+    timeout: "{{ ssh_timeout }}"
   delegate_to: localhost
   ignore_errors: true
   register: ssh_check_results
