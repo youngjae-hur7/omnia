@@ -29,7 +29,7 @@ exclude_paths:
   - upgrade/roles/upgrade_prepare_oim/tasks/main.yml
 
 skip_list:
-  - var-naming[no-role-prefix]
+  - var-naming
   - unresolved-module
   - fqcn[canonical]
   - internal-error
