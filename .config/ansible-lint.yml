@@ -24,7 +24,7 @@ exclude_paths:
   - utils/roles/oim_cleanup/vars/rocky.yml
 
 skip_list:
-  - var-naming[no-role-prefix]
+  - var-naming
   - unresolved-module
   - fqcn[canonical]
   - internal-error
