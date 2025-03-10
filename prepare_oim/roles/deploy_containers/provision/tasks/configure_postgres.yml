@@ -112,7 +112,7 @@
     pg_hba_conf_admin_update: "{{ pg_hba_conf_content.content | b64decode | regex_search('^host\\s+all\\s+all\\s+{{ admin_nic_ip }}/32\\s+md5', multiline=True) is not none }}"
 
 - name: Check pg_hba_conf_update status
-  when: not ( pg_hba_conf_update and pg_hba_conf_admin_update )
+  when: not pg_hba_conf_update
   block:
     # Set PostgreSQL password for postgres user
     - name: Set PostgreSQL password for postgres user
@@ -131,16 +131,7 @@
         regexp: "^local(.*)all(.*)all(.*)"
         replace: "local   all             all                                     md5"
       register: pg_hba_conf_update
-
-    - name: Ensure host entry exists in pg_hba.conf
-      ansible.builtin.lineinfile:
-        path: "{{ pg_hba_conf_path }}"
-        line: "host    all          all        {{ admin_nic_ip }}/32      md5"
-        state: present
-        insertafter: "^# IPv4 local connections:"
-        regexp: "^host\\s+all\\s+all\\s+{{ admin_nic_ip }}/32\\s+md5"
-      register: pg_hba_conf_admin_update
-      when: not pg_hba_conf_admin_update
+      when: not pg_hba_conf_update
 
   rescue:
     - name: Failed to set PostgreSQL password for postgres user
@@ -149,6 +140,16 @@
         - postgresdb_config.module_error | length > 0
       ansible.builtin.fail:
         msg: "{{ postgres_set_password_fail_msg }} Error: {{ postgresdb_config.module_error }}"
+
+- name: Ensure host entry exists in pg_hba.conf
+  ansible.builtin.lineinfile:
+    path: "{{ pg_hba_conf_path }}"
+    line: "host    all          all        {{ admin_nic_ip }}/32      md5"
+    state: present
+    insertafter: "^# IPv4 local connections:"
+    regexp: "^host\\s+all\\s+all\\s+{{ admin_nic_ip }}/32\\s+md5"
+  register: pg_hba_conf_admin_update
+  when: not pg_hba_conf_admin_update
 
 - name: Restart PostgreSQL service
   ansible.builtin.systemd:
