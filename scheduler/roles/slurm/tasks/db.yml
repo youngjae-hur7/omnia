@@ -23,85 +23,32 @@
     slurm_db_password: "{{ slurm_db_password_default }}"
   when: (slurm_db_password is not defined)
 
-- name: Install db packages
-  ansible.builtin.package:
-    name: "{{ db_packages[ansible_os_family][slurm_db_type] }}"
-    state: present
+- name: Set new_install fact to false
+  ansible.builtin.set_fact:
+    new_install: false
 
-- name: Enable and start the mysql service
-  ansible.builtin.service:
-    name: mysqld
-    enabled: true
-    state: started
-  register: new_install_mysql
-  when: slurm_db_type == 'mysql'
+- name: Populate service facts
+  ansible.builtin.service_facts:
 
-- name: Enable and start the mariadb service
-  ansible.builtin.service:
-    name: mariadb
-    enabled: true
-    state: started
-  register: new_install_mariadb
-  when: slurm_db_type == 'mariadb'
+- name: Is mariadb installed # Currently can show up even if mysql/mariadb are uninstalled if the facts were not refreshed
+  ansible.builtin.set_fact:
+    new_install: true
+  when: 
+    - slurm_db_type == "mariadb"
+    - ("mariadb.service" not in ansible_facts['services'])
 
-- name: Create my.cnf.d file
-  ansible.builtin.lineinfile:
-    path: /etc/my.cnf
-    line: "[client-server]"
-    create: yes
-  when: new_install_mysql.changed or new_install_mariadb.changed
+- name: Is mysql installed # Currently can show up even if mysql/mariadb are uninstalled if the facts were not refreshed
+  ansible.builtin.set_fact:
+    new_install: true
+  when: 
+    - slurm_db_type == "mysql"
+    - ("mysqld.service" not in ansible_facts['services'])
 
-- name: Include my.cnf.d directory
-  ansible.builtin.lineinfile:
-    path: /etc/my.cnf
-    insertafter: '^\[client-server\]'
-    line: '!includedir /etc/my.cnf.d'
-  when: new_install_mysql.changed or new_install_mariadb.changed
+- name: Create new database #TODO: Decide on a method to determine when to create new db
+  ansible.builtin.include_tasks: _create_db.yml
+  when: new_install
 
-- name: Set db port
-  ansible.builtin.lineinfile:
-    path: "{{ slurm_mysql_cnf_path }}"
-    regexp: '^port=.*'
-    insertafter: '^[mysqld]'
-    line: "port={{ slurm_db_port }}"
-  when: (slurm_db_type == 'mysql') and (new_install_mysql.changed)
-  notify:
-    - Restart mysqld
-    - Restart slurmctld
-    - Restart slurmdbd
-
-- name: Set db port
-  ansible.builtin.lineinfile:
-    path: "{{ slurm_mariadb_cnf_path }}"
-    regexp: '^port=.*'
-    insertafter: '^[mysqld]'
-    line: "port={{ slurm_db_port }}"
-  when: (slurm_db_type == 'mariadb') and (new_install_mariadb.changed)
-  notify:
-    - Restart mariadb
-    - Restart slurmctld
-    - Restart slurmdbd
-
-- name: Enable db port
-  ansible.posix.firewalld:
-    port: "{{ slurm_db_port }}/tcp"
-    permanent: true
-    state: enabled
-    immediate: true
-
-- name: Add ansible db user
-  community.mysql.mysql_user:
-    login_user: "{{ slurm_db_username_default }}"
-    login_password: "{{ slurm_db_password_default }}"
-    name: "{{ slurm_db_username }}"
-    password: "{{ slurm_db_password }}"
-    host: "localhost"
-    priv: '*.*:ALL,GRANT'
-    login_unix_socket: "{{ slurm_db_login_unix_socket }}"
-    state: present
-  when: new_install_mysql.changed or new_install_mariadb.changed
-
-- name: Add db user - shortname
+- name: Add db user - shortname # Needed when db is on same node as slurmdbd
   community.mysql.mysql_user:
     login_user: "{{ slurm_db_username }}"
     login_password: "{{ slurm_db_password }}"
@@ -115,7 +62,7 @@
     - Restart slurmctld
     - Restart slurmdbd
 
-- name: Add db user - FQDN
+- name: Add db user - FQDN # Needed when db is on same node as slurmdbd
   community.mysql.mysql_user:
     login_user: "{{ slurm_db_username }}"
     login_password: "{{ slurm_db_password }}"
