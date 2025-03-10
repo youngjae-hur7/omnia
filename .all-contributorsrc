@@ -830,7 +830,8 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/153504816?v=4",
       "profile": "https://github.com/VenkateswaraVatam",
       "contributions": [
-        "projectManagement"
+        "projectManagement",
+        "talk"
       ]
     },
     {
@@ -973,6 +974,43 @@
       "profile": "https://github.com/Cypher-Miller",
       "contributions": [
         "code"
+      ]
+    },
+    {
+      "login": "vvittal100",
+      "name": "vvittal100",
+      "avatar_url": "https://avatars.githubusercontent.com/u/202238575?v=4",
+      "profile": "https://github.com/vvittal100",
+      "contributions": [
+        "projectManagement",
+        "talk"
+      ]
+    },
+    {
+      "login": "kksenthilkumar",
+      "name": "kksenthilkumar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/202253529?v=4",
+      "profile": "https://github.com/kksenthilkumar",
+      "contributions": [
+        "test"
+      ]
+    },
+    {
+      "login": "pullan1",
+      "name": "pullan1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/173048662?v=4",
+      "profile": "https://github.com/pullan1",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "harshal2799",
+      "name": "harshal2799",
+      "avatar_url": "https://avatars.githubusercontent.com/u/202241497?v=4",
+      "profile": "https://github.com/harshal2799",
+      "contributions": [
+        "test"
       ]
     }
   ],
