@@ -85,7 +85,9 @@ restart_services_success_msg: "restart_slurm_services successfully validated"
 restart_services_failure_msg: "Failed. restart_slurm_services accepts true or false in omnia_config.yml"
 nvidia_gpu_operator_value_file_path_success_msg: "Success. nvidia_gpu_operator_value_file_path is provided in omnia_config.yml"
 nvidia_gpu_operator_value_file_path_fail_msg: "Failed. nvidia_gpu_operator_value_file_path is not valid in omnia_config.yml. Please verify the path."
-nvidia_gpu_operator_value_file_path_missing_msg: "Incorrect nvidia_gpu_operator_value_file_path provided. Make sure .yml file is present in the provided nvidia_gpu_operator_value_file_path."
+nvidia_gpu_operator_value_file_path_missing_msg: |
+  "Incorrect nvidia_gpu_operator_value_file_path provided. Make sure .yml
+   file is present in the provided nvidia_gpu_operator_value_file_path."
 
 # Usage: fetch_storage_config.yml
 storage_config_filename: "storage_config.yml"
