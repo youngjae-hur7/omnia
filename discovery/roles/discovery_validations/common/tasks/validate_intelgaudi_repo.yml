@@ -58,7 +58,7 @@
       ansible.builtin.pause:
         seconds: "{{ warning_wait_time }}"
         prompt: "{{ intelgaudi_bcm_warning_msg }}"
-      when: intelgaudi_config_status and roce_config_status | default(false)
+      when: intelgaudi_config_status and roce_config_status
 
   rescue:
     - name: Warning - Please wait, This task will take few seconds
