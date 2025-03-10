@@ -23,12 +23,17 @@ install_deb_files() {
     fi
 }
 
-echo "Checking for Intel Gaudi cards" >> /var/log/xcat/xcat.log
+echo "Checking for Intel Gaudi cards" >> $LOG_FILE
 gaudi_check_processing_xlr8r=`lspci | grep "Processing accelerators: Habana Labs Ltd"`
 echo "Checking for Broadcom NetXtreme-E cards" >> $LOG_FILE
 thor_check=$(lspci -vvv 2>/dev/null | grep -i -E "BCM5750|BCM5760")
-if [[ -n $thor_check ]] && [[ $gaudi_check_processing_xlr8r != *"Habana Labs Ltd"* ]]
-then
+if [[ -n $thor_check ]] then
+    if [[ $gaudi_check_processing_xlr8r == *"Habana Labs Ltd"* ]]
+    then
+        echo "***************************************************" >> $LOG_FILE
+        echo "IntelGaudi cards found. Skipping BCM ROCE installation." >> $LOG_FILE
+        echo "***************************************************" >> $LOG_FILE
+        exit 0
     echo "starting RoCE Installation" >> $LOG_FILE
     # Download the roce_src tar file
     wget --quiet --show-progress "http://{{ admin_nic_ip }}:80/install{{ repo_store_path }}/cluster/tarball/{{ roce_package_name }}"
