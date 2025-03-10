@@ -109,7 +109,10 @@
 - name: Set pg_hba_conf_update status
   ansible.builtin.set_fact:
     pg_hba_conf_update: "{{ pg_hba_conf_content.content | b64decode | regex_search('^local\\s+all\\s+all\\s+md5', multiline=True) is not none }}"
-    pg_hba_conf_admin_update: "{{ pg_hba_conf_content.content | b64decode | regex_search('^host\\s+all\\s+all\\s+{{ admin_nic_ip }}/32\\s+md5', multiline=True) is not none }}"
+    pg_hba_conf_admin_update: >-
+      {{ pg_hba_conf_content.content | b64decode |
+      regex_search('^host\s+all\s+all\s+' ~ admin_nic_ip ~ '/32\s+md5',
+      multiline=True) is not none }}
 
 - name: Check pg_hba_conf_update status
   when: not pg_hba_conf_update
@@ -155,11 +158,11 @@
   ansible.builtin.systemd:
     name: postgresql
     state: restarted
-  when:
+  when: # noqa: no-handler
     - pg_hba_conf_update.changed or pg_hba_conf_admin_update.changed or postgresql_conf_updated.changed
 
 - name: Restart xcatd service
   ansible.builtin.systemd:
     name: xcatd
     state: restarted
-  when: cfgloc_updated.changed
+  when: cfgloc_updated.changed # noqa: no-handler
