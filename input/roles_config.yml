@@ -31,7 +31,7 @@
 #                         - And empty for other roles.
 #     parent:             - <Conditional Mandatory> list of service tag of associated active service node(s).
 #                         - This field will be empty for group of nodes which is associated with ‘login’, ‘compiler’, ‘service’,
-#                         - ‘kube_control_plane’, ‘kube_control_plane’, 'slurm_control_node’, ‘slurm_dbd’.
+#                         - ‘kube_control_plane’, ‘etcd’, 'slurm_control_node’, ‘slurm_dbd’.
 #                         - If ‘service’ role is not defined, then value will be empty for worker and default role.
 #     bmc_details:        - <Conditional Mandatory> BMC IP static range in the format 10.5.0.1-10.5.0.200
 #        static_range:    - <Mandatory> This field mandatory in case of BMC discovery of subset of nodes
@@ -84,7 +84,7 @@ Groups:
 # | login       | front end      |    | slurm_node | compute        |
 # | compiler    | front end      |    | default     | compute        |
 # | kube_control_plane     | front end      |    |             |                |
-# | kube_control_plane     | front end      |    |             |                |
+# | etcd     | front end      |    |             |                |
 # | slurm_control_node   | front end      |    |             |                |
 # | slurm_dbd    | front end      |    |             |                |
 # +-------------+----------------+    +-------------+----------------+
@@ -133,7 +133,7 @@ Roles:
 #
 # The nodes in this role can be used to run Kubernetes master.
 #
-# k8s head Role: Kubernetes master groups to add into kube_control_plane role can be provided in this role
+# k8s head Role: Kubernetes master groups to add into etcd role can be provided in this role
 # - name: "kube_control_plane"
 #   groups:
 #     - grp0
@@ -151,7 +151,7 @@ Roles:
 # The nodes in this role can be used to run Kubernetes etcd.
 #
 # K8s etcd Role: Kubernetes etcd groups to add into k8s etcd role can be provided in this role
-# - name: "kube_control_plane"
+# - name: "etcd"
 #   groups:
 #     - grp0
 #     - grp1
