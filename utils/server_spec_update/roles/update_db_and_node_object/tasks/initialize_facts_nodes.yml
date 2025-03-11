@@ -41,7 +41,7 @@
 # unmatched_hosts define a list of hosts that are not present in the host_details dictionary
 - name: Register hosts entries not present in host_details
   ansible.builtin.set_fact:
-    unmatched_hosts: "{{ unmatched_hosts | default([]) + [item] if item not in host_details }}"         
+    unmatched_hosts: "{{ unmatched_hosts | default([]) + [item] if item not in host_details }}"
   loop: "{{ all_hosts }}"
   when: item not in host_details
 
