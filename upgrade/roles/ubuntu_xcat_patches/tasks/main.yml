@@ -26,5 +26,10 @@
     state: absent  # Reverts the patch
   register: patch_result
 
+- name: Validate patch revert status
+  ansible.builtin.fail:
+    msg: "Reverting xCAT patch failed!"
+  when: patch_result.failed is defined and patch_result.failed
+
 - name: Apply xcat patch
   ansible.builtin.include_tasks: apply_xcat_patch.yml
