@@ -18,7 +18,7 @@
     - name: Include include_high_availability_config vars
       ansible.builtin.include_vars: "{{ ha_config_file }}"
       register: include_ha_config
-      #no_log: true
+      no_log: true
   rescue:
     - name: Failed to include_high_availability_config.yml
       ansible.builtin.fail:

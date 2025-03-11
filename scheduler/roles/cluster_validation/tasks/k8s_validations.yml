@@ -28,12 +28,6 @@
           - "groups['kube_control_plane'] | length | int == 1"
         success_msg: "{{ kube_one_node_validation_success_msg }}"
         fail_msg: "{{ kube_one_node_validation_fail_msg }}"
-
-    # - name: Kube node group to contain at least 1 kube node
-    #   ansible.builtin.assert:
-    #     that: "groups['kube_node'] | length | int >= 1"
-    #     success_msg: "{{ kube_node_validation_success_msg }}"
-    #     fail_msg: "{{ kube_node_validation_fail_msg }}"
   when: k8s_head_node_ha[0].enable_k8s_ha == false
 
 - name: Ensure correct Kubernetes in HA setup
