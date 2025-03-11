@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Omnia: Everything at once!
-----------------------------------
+-----------------------------
 
 |Omnia version| |Downloads| |Last Commit| |Contributors| |Forks| |License|
 
