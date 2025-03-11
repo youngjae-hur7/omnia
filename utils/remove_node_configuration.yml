@@ -42,8 +42,6 @@
 - name: Remove slurm node
   tags: slurm_node
   hosts: slurm_control_node, slurm_node
-  connection: ssh
-  gather_facts: true
   # roles:
     # - { role: remove_node/remove_slurm_node } # noqa: role-name[path]
   pre_tasks:
@@ -86,6 +84,14 @@
   connection: ssh
   roles:
     - { role: remove_node/post_kube_node_removal } # noqa: role-name[path]
+
+- name: Confirm slurm_node removal
+  hosts: slurm_control_node
+  connection: ssh
+  gather_facts: false
+  tags: slurm_node
+  roles:
+    - { role: remove_node/verify_slurm_node_removal }
 
 - name: Confirm kube_node removal
   hosts: remove_kube_node
