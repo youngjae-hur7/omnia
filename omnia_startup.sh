@@ -137,6 +137,18 @@ cleanup_config(){
         else
             echo -e "${RED} Failed to unmount NFS shared path.${NC}"
         fi
+        # Remove the entry from /etc/fstab
+        fstab_file="/etc/fstab"
+        if [ -f "$fstab_file" ]; then
+            # Create a backup of the fstab file.
+            cp "$fstab_file" "$fstab_file.bak"
+
+            # Remove the line from the fstab file.
+            sed -i "\|^${omnia_path} .*|d" "$fstab_file"
+            if [ $? -ne 0 ]; then
+                echo -e "${RED} Failed to remove the entry from /etc/fstab.${NC}"
+            fi
+        fi
     fi
     
     echo -e "${GREEN} Omnia core configuration has been cleaned up.${NC}"
@@ -468,19 +480,24 @@ setup_container() {
     # Run the Omnia core container.
     echo -e "${GREEN} Running the Omnia core container.${NC}"
 
+    selinux_option=":z"
+
+    if [ "$share_option" = "NFS" ]; then
+        selinux_option=""
+    fi
+
     # Define the container options.
     OPTIONS="-d --restart=always"
     OPTIONS+=" --hostname omnia_core"
-    OPTIONS+=" -v $omnia_path/omnia:/opt/omnia"
-    OPTIONS+=" -v $omnia_path/omnia/ssh_config/.ssh:/root/.ssh"
-    OPTIONS+=" -v $omnia_path/omnia/log/core/container:/var/log"
-    OPTIONS+=" -v $omnia_path/omnia/hosts:/etc/hosts"
-    OPTIONS+=" -v $omnia_path/omnia/pulp/pulp_ha:/root/.config/pulp"
+    OPTIONS+=" -v $omnia_path/omnia:/opt/omnia$selinux_option"
+    OPTIONS+=" -v $omnia_path/omnia/ssh_config/.ssh:/root/.ssh$selinux_option"
+    OPTIONS+=" -v $omnia_path/omnia/log/core/container:/var/log$selinux_option"
+    OPTIONS+=" -v $omnia_path/omnia/hosts:/etc/hosts$selinux_option"
+    OPTIONS+=" -v $omnia_path/omnia/pulp/pulp_ha:/root/.config/pulp$selinux_option"
     OPTIONS+=" -e ROOT_PASSWORD_HASH=$hashed_passwd"
     OPTIONS+=" --net=host"
     OPTIONS+=" --name omnia_core"
     OPTIONS+=" --cap-add=CAP_AUDIT_WRITE"
-    OPTIONS+=" --security-opt label=disable"
 
     # Run the container.
     if podman run $OPTIONS omnia_core:latest; then
