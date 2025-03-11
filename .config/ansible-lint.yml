@@ -16,6 +16,7 @@ exclude_paths:
   - docs/
   - platforms/
   - examples/
+  - input/
   - .ansible-lint.yml
   - .readthedocs.yaml
   - prepare_oim/roles/configure_proxy/tasks/configure_proxy_rocky.yml
