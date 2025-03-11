@@ -144,8 +144,7 @@ cleanup_config(){
             cp "$fstab_file" "$fstab_file.bak"
 
             # Remove the line from the fstab file.
-            sed -i "\|^${omnia_path} .*|d" "$fstab_file"
-            if [ $? -ne 0 ]; then
+             sed -i "$omnia_path/d" "$fstab_file"
                 echo -e "${RED} Failed to remove the entry from /etc/fstab.${NC}"
             fi
         fi
