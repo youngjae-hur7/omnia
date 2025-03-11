@@ -292,7 +292,7 @@ init_container_config() {
 
         # Mount NFS server share path in Omnia share path
         echo -e "${BLUE} Mounting NFS server share path in Omnia share path.${NC}"
-        mount -t nfs -o timeo=30,retrans=3 $nfs_server_ip:$nfs_server_share_path $omnia_path
+        mount -t nfs -o nosuid,rw,sync,hard,intr,timeo=30 $nfs_server_ip:$nfs_server_share_path $omnia_path
 
         # Validate if NFS server share path is mounted
         echo -e "${BLUE} Validating if NFS server share path is mounted.${NC}"
