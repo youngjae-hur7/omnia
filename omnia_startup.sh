@@ -191,17 +191,17 @@ init_container_config() {
 
     # Display the choices for the user
     echo -e "${BLUE} Choose the type of Omnia shared path:${NC}"
-    options=( "1 - NFS (recommended)" "2 - Local"  )
+    options=( "NFS (recommended)" "Local"  )
 
     PS3="Select the option number: "
 
     select opt in "${options[@]}"; do
         case $opt in
-            "1 - NFS (recommended)")
+            "NFS (recommended)")
                 share_option="NFS"
                 break
                 ;;
-            "2 - Local")
+            "Local")
                 share_option="Local"
                 break
                 ;;
