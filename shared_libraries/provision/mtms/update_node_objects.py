@@ -66,7 +66,7 @@ def update_node_obj_nm(chain_os=chain_os):
     - Finally, it closes the cursor and the database connection.
 
     Parameters:
-        None
+        chain_os (str): osimage name string
 
     Returns:
         None
