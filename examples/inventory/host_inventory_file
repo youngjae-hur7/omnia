@@ -10,12 +10,7 @@ node4
 [login]
 node5
 
-#General Cluster Storage
-#NFS node
-
-[nfs]
-node10
-
+#General Cluster authentication server
 [auth_server]
 node12
 

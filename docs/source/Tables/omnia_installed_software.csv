@@ -51,7 +51,7 @@ Lmod,MIT License,"An Environment Module System based on Lua, Reads TCL Modules, 
 Lua,MIT License,"Lua is a lightweight, high-level, multi-paradigm programming language designed primarily for embedded use in applications.",5.3.4
 ansible posix,GNU General Public License,An Ansible Collection of modules and plugins that target POSIX UNIX/Linux and derivative Operating Systems.,1.4.0
 xCAT,Eclipse Public License 1.0,"xCAT is an open-source tool for automating deployment, scaling, and management of bare metal servers and virtual machines",2.16.5
-CUDA Toolkit,NVIDIA License,CUDA (or Compute Unified Device Architecture) is a parallel computing platform and application programming interface (API) that allows software to use certain types of graphics processing units (GPUs) for general purpose processing,12.3.2
+CUDA Toolkit,NVIDIA License,CUDA (or Compute Unified Device Architecture) is a parallel computing platform and application programming interface (API) that allows software to use certain types of graphics processing units (GPUs) for general purpose processing,12.8.0
 MLNX_OFED,BSD License,"MLNX_OFED is based on the OpenFabrics Enterprise Distribution (OFED™), an open-source software for RDMA and kernel bypass applications provided by Open Fabric Alliance",24.01-0.3.3.1
 ansible pylibssh,LGPL 2.1,Python bindings specific to Ansible use case for libssh,1.2.2
 perl-DBD-Pg,GNU-General Public License v3.0,Perl module that works with the DBI module to provide access to PostgreSQL databases.,3.15.1
@@ -84,7 +84,7 @@ ruamel.yaml,MIT License,It is a YAML 1.2 loader/dumper package for Python.,0.18.
 ruamel.yaml.clib,MIT License,It is the C based reader/scanner and emitter for ruamel.yaml,0.2.8
 Kserve,Apache 2.0,"Deploys Kserve as inference platform on K8s cluster. Kserve installation installs dependencies istio1.17.0, certificate manager (1.13.0) and  Knative(1.11.0) ",0.13.0
 pyarrow,Apache 2.0,Apache Arrow is a multi-language toolbox for accelerated data interchange and in-memory processing,19.0.1
-vLLM NVIDIA,Apache 2.0,A high-throughput and memory-efficient inference and serving engine for LLMs,0.4.0
+vLLM NVIDIA,Apache 2.0,A high-throughput and memory-efficient inference and serving engine for LLMs,0.7.2
 vLLM AMD,Apache 2.0,vLLM is a toolkit and library for large language model (LLM) inference and serving.,0.2.4
 vLLM Intel,Apache 2.0,vLLM is a toolkit and library for large language model (LLM) inference and serving.,v0.6.4.post2+Gaudi-1.19.2
 ucx,BSD 3 Clause License,Unified Communication X,1.15.0
