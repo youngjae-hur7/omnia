@@ -19,7 +19,7 @@ Input parameters for Local Repositories
         "repo_config": "partial",
         "softwares": [
             {"name": "amdgpu", "version": "6.3.1"},
-            {"name": "cuda", "version": "12.3.2"},
+            {"name": "cuda", "version": "12.8.0"},
             {"name": "bcm_roce", "version": "232.1.133.2"},
             {"name": "ofed", "version": "24.01-0.3.3.1"},
             {"name": "openldap"},
