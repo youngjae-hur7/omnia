@@ -17,8 +17,8 @@
 from ansible.module_utils.basic import AnsibleModule
 import warnings
 
-FIRST_LAYER_ROLES = {"service", "login", "compiler", "k8setcd", "k8shead", "slurmhead", "slurmdbd"}
-SECOND_LAYER_ROLES = {"default", "k8sworker", "slurmworker"}
+FIRST_LAYER_ROLES = {"service", "login", "compiler", "kube_control_plane", "etcd", "slurm_control_node", "slurm_dbd", "auth_server"}
+SECOND_LAYER_ROLES = {"default", "kube_node", "slurm_node"}
 NON_SERVICE_ROLES = (FIRST_LAYER_ROLES | SECOND_LAYER_ROLES) - {"service"}
 
 def validate_roles(roles, layer, module, first_layer_roles=FIRST_LAYER_ROLES, second_layer_roles=SECOND_LAYER_ROLES, non_service_roles=NON_SERVICE_ROLES):
