@@ -27,8 +27,10 @@
     slurm_db_type: "{{ slurm_db_type_default }}"
   when: (slurm_db_type is not defined) or (not slurm_db_type)
 
-- name: Create DB tasks
+- name: Setup DB tasks
   ansible.builtin.include_tasks: db.yml
+  vars: 
+    delegated_hostname: "{{ slurm_db_host }}"
   args:
     apply:
       delegate_to: "{{ slurm_db_host }}"

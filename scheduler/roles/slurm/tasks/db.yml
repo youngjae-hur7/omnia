@@ -25,6 +25,10 @@
   ansible.builtin.set_fact:
     new_install: false
 
+- name: Reload services
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+
 - name: Populate service facts
   ansible.builtin.service_facts:
 
@@ -56,6 +60,7 @@
     priv: "{{ slurm_dbd_conf_dict['StorageLoc'] }}.*:ALL,GRANT"
     login_unix_socket: "{{ slurm_db_login_unix_socket }}"
     state: present
+  when: delegated_hostname != groups['slurm_dbd'][0]
   notify:
     - Restart slurmctld
     - Restart slurmdbd
@@ -70,6 +75,7 @@
     priv: "{{ slurm_dbd_conf_dict['StorageLoc'] }}.*:ALL,GRANT"
     login_unix_socket: "{{ slurm_db_login_unix_socket }}"
     state: present
+  when: delegated_hostname == groups['slurm_dbd'][0]
   notify:
     - Restart slurmctld
     - Restart slurmdbd
