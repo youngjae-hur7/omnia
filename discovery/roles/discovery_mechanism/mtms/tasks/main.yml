@@ -30,7 +30,7 @@
     - discovery_mech_dynamic_bmc
   block:
     - name: Configure dhcp
-      ansible.builtin.include_tasks: "{{ role_path }}/../common/tasks/configure_dhcp.yml"
+      ansible.builtin.include_tasks: "{{ role_path }}/../oim/tasks/configure_dhcp.yml"
 
     - name: Before starting dynamic discovery wait for "{{ dhcp_timeout }}"
       ansible.builtin.pause:
@@ -55,7 +55,7 @@
   when: bmc_static_status or discovery_mech_dynamic_bmc
   block:
     - name: Configure dhcp
-      ansible.builtin.include_tasks: "{{ role_path }}/../common/tasks/configure_dhcp.yml"
+      ansible.builtin.include_tasks: "{{ role_path }}/../oim/tasks/configure_dhcp.yml"
 
     - name: Delete the stanzas file
       ansible.builtin.include_tasks: delete_stanzas.yml
