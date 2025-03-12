@@ -1,0 +1,71 @@
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+---
+
+- name: Set default racadm_input_status and racadm_input_status
+  ansible.builtin.set_fact:
+    racadm_input_status: false
+    racadm_config_status: false
+
+- name: Check if racadm_input_status is true
+  ansible.builtin.set_fact:
+    racadm_input_status: "{{ user_config.softwares | selectattr('name', 'equalto', 'racadm') | list | length > 0 }}"
+
+- name: Set racadm_config_status
+  when: racadm_input_status
+  block:
+    - name: Check racadm_directory exists or not
+      ansible.builtin.stat:
+        path: "{{ racadm_directory }}"
+      register: check_racadm_dir
+
+    - name: Find racadm file
+      when: check_racadm_dir.stat.exists
+      block:
+        - name: Find files inside mlnx_ofed_directory
+          ansible.builtin.find:
+            paths: "{{ mlnx_ofed_directory }}"
+            patterns: "*.iso"
+          register: find_ofed_file
+
+        - name: Set mlnx_ofed_path
+          ansible.builtin.set_fact:
+            mlnx_ofed_path: "{{ find_ofed_file.files[0].path }}"
+
+        - name: Check mlnx_ofed_path exists or not
+          ansible.builtin.stat:
+            path: "{{ mlnx_ofed_path }}"
+          register: check_mlnx_ofed
+
+        - name: Warning - Please wait, This task will take few seconds
+          ansible.builtin.pause:
+            seconds: "{{ warning_wait_time }}"
+            prompt: "{{ ofed_repo_warning_msg }}"
+          when: not check_mlnx_ofed.stat.exists
+
+        - name: Set racadm_config_status to true
+          ansible.builtin.set_fact:
+            racadm_config_status: true
+          when: check_mlnx_ofed.stat.exists
+
+    - name: Warning - Please wait, This task will take few seconds
+      ansible.builtin.pause:
+        seconds: "{{ warning_wait_time }}"
+        prompt: "{{ ofed_repo_warning_msg }}"
+      when: not check_mlnx_ofed_dir.stat.exists
+  rescue:
+    - name: Warning - Please wait, This task will take few seconds
+      ansible.builtin.pause:
+        seconds: "{{ warning_wait_time }}"
+        prompt: "{{ racadm_version_warning_msg }}"
