@@ -12,15 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- name: Sync time
-  ansible.builtin.include_tasks: time_sync.yml
-
 - name: Refresh mounts - sometimes the mounts fail
   ansible.builtin.shell: |
     umount {{ share_path }}
     mount -a
   register: refresh_mounts
   ignore_errors: true
+
+- name: Update hosts file for all slurm groups
+  block:
+    - name: Update hosts file for all slurm groups
+      ansible.builtin.lineinfile:
+        dest: "{{ hosts_file_dest }}"
+        line: "{{ hostvars[item].ansible_host }} {{ hostvars[item].inventory_hostname_short }} {{ hostvars[item]['ansible_facts']['nodename'] }}"
+        state: present
+        create: true
+        mode: "{{ hosts_file_mode }}"
+      with_items: "{{ ansible_play_hosts_all }}"
+  rescue:
+    - name: Updating hosts file failed
+      ansible.builtin.fail:
+        msg: "{{ hosts_update_fail_msg }}"
 
 - name: Install common packages
   ansible.builtin.package:
