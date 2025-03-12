@@ -12,16 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
+- name: Get slurm_db_password from hostvars
+  ansible.builtin.set_fact:
+    slurm_db_password: "{{ hostvars['localhost']['slurm_db_password'] }}"
+
 - name: Is slurm_db_username defined
   ansible.builtin.set_fact:
     slurm_db_username: "{{ slurm_db_username_default }}"
-    slurm_db_password: "{{ slurm_db_password_default }}"
   when: (slurm_db_username is not defined) or (not slurm_db_username)
-
-- name: Is slurm_db_password defined
-  ansible.builtin.set_fact:
-    slurm_db_password: "{{ slurm_db_password_default }}"
-  when: (slurm_db_password is not defined)
 
 - name: Set new_install fact to false
   ansible.builtin.set_fact:
@@ -48,7 +46,7 @@
   ansible.builtin.include_tasks: _create_db.yml
   when: new_install
 
-- name: Add db user - shortname # Needed when db is on same node as slurmdbd
+- name: Add db user - shortname
   community.mysql.mysql_user:
     login_user: "{{ slurm_db_username }}"
     login_password: "{{ slurm_db_password }}"

@@ -26,8 +26,6 @@ slurm_dir_name: slurm
 slurm_dbd_port: 6819
 slurm_db_port_default: 3306
 slurm_db_type_default: mariadb
-slurm_db_username_default: root
-slurm_db_password_default: ""
 slurm_dbd_db_username: "{{ slurm_user }}"
 slurm_dbd_db_password: slurmPassword123!
 slurm_db_login_unix_socket: /var/lib/mysql/mysql.sock
