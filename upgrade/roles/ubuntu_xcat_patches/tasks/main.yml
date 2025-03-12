@@ -20,7 +20,7 @@
   #  msg: "{{ installed_omnia_path }}"
 
 - name: Revert xCAT patch
-  ansible.builtin.patch:
+  ansible.posix.patch:
     src: "{{ role_path }}/../../../prepare_oim/roles/install_xcat/common/files/confignetwork.patch"
     dest: "/install/postscripts/confignetwork"
     state: absent  # Reverts the patch
@@ -28,7 +28,7 @@
 
 - name: Validate patch revert status
   ansible.builtin.fail:
-    msg: "Reverting xCAT patch failed!"
+    msg: "{{ revert_xcat_patch_failed }}"
   when: patch_result.failed is defined and patch_result.failed
 
 - name: Apply xcat patch
