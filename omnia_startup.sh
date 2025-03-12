@@ -29,6 +29,7 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
+YELLOW='\033[0;33m'
 omnia_release=2.0.0.0
 
 core_container_status=false
