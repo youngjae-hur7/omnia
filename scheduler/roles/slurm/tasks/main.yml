@@ -16,6 +16,12 @@
   ansible.builtin.include_tasks: validation.yml
   run_once: true
 
+- name: Set slurmdbd host to slurmctld if not specified
+  ansible.builtin.add_host:
+    name: "{{ groups['slurm_control_node'][0] }}"
+    groups: slurm_dbd
+  when: '"slurm_dbd" not in groups'
+
 - name: Include common tasks
   ansible.builtin.include_tasks: common.yml
 
