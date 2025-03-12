@@ -243,6 +243,12 @@ os_package_map:
   rocky: rpm
   ubuntu: deb
 
+# Usage: validate_service_nodes.yml
+service_node_repo_failed_msg: "[Failed] It seems you have not executed local_repo.yml with service_node in software_config.yml.
+service_node package is required for service role provisioning."
+pulp_repo_fail_msg: "Failed. It seems pulp is not configured properly.
+Run local_repo/local_repo.yml with required packages in software_config.yml."
+
 # Usage: validate_intelgaudi_repo.yml
 intelgaudi_version_warning_msg: "[WARNING] software_config.json does not have the version for 'intelgaudi'.
 Hence Habana stack will not be installed on the nodes post provisioning."
