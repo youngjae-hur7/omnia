@@ -50,7 +50,7 @@
   ansible.builtin.include_tasks: include_local_repo_config.yml
 
 - name: Include high_availabiliity variables
-  ansible.builtin.include_tasks: high_availability_config.yml
+  ansible.builtin.include_tasks: include_high_availability_config.yml
 
 # - name: Validate local repo
 #   ansible.builtin.include_tasks: validate_local_repo.yml

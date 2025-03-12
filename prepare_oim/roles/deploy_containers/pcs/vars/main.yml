@@ -130,3 +130,7 @@ pcs_failed_resource_msg: |
   please run the utility/oim_cleanup.yml playbook to clean up any existing OIM resources.
   After the cleanup, you can re-run the original playbook to deploy the {{ pcs_container_name }} container
   and its resources.
+
+# Usage: include_high_availability_config.yml
+high_availability_config_path: "{{ hostvars['localhost']['input_project_dir'] }}/high_availability_config.yml"
+high_availability_config_syntax_fail_msg: "Failed. Syntax errors present in high_availability_config.yml. Fix errors and re-run playbook again."
