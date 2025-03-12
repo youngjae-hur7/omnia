@@ -54,6 +54,7 @@ if [[ $nvidia_check == *"NVIDIA"* ]]; then
 
       echo "# Installing CUDA..." >> "$LOG_FILE"
       apt install -y cuda >> "$LOG_FILE" 2>&1
+      systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target >> "$LOG_FILE"
       echo "PATH=$PATH:/usr/local/cuda/bin" >> /root/.bashrc
       apt clean >> "$LOG_FILE"
       apt update >> "$LOG_FILE"
