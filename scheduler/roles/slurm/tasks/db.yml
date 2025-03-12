@@ -60,7 +60,9 @@
     priv: "{{ slurm_dbd_conf_dict['StorageLoc'] }}.*:ALL,GRANT"
     login_unix_socket: "{{ slurm_db_login_unix_socket }}"
     state: present
-  when: (delegated_hostname != groups['slurm_dbd'][0]) or (delegated_hostname == groups['slurm_control_node'][0])
+  when: (delegated_hostname != groups['slurm_dbd'][0]) or 
+        (delegated_hostname == groups['slurm_control_node'][0]) or
+        (delegated_hostname in groups['slurm_node'])
   notify:
     - Restart slurmctld
     - Restart slurmdbd
