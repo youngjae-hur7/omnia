@@ -14,15 +14,16 @@
 ---
 
 - name: Verify if slurm is removed
-  ansible.builtin.shell: scontrol show node | awk '/NodeName/ {print $1}' | cut -d= -f2
+  ansible.builtin.command: sinfo -h --format="%N"
   register: sinfo_output
+  delegate_to: "{{  groups['slurm_control_node'] | first }}"
   failed_when: false
   changed_when: false
   run_once: true
 
 - name: Confirm if slurm node removed
   ansible.builtin.debug:
-    msg: "{{ slurm_node_removed if (not (slurm_nodes['stdout_lines'] | intersect(groups['slurm_node'])) ) else slurm_node_fail_to_remove }}"
+    msg: "{{ slurm_node_removed if (node_hostname not in sinfo_output.stdout_lines) else slurm_node_fail_to_remove }}"
   when: sinfo_output.rc == 0
 
 - name: Confirm if slurm_cluster does not have any slurm_node
