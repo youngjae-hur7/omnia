@@ -39,8 +39,6 @@
   loop:
     - "{{ slurm_share_prefix }}{{ slurm_config_dir }}"
     - "{{ slurm_conf_dict['SlurmdSpoolDir'] }}"
-    # - "{{ slurm_conf_dict['SlurmdLogFile'] | ansible.builtin.dirname }}"
-    # - "{{ slurm_conf_dict['SlurmdPidFile'] | ansible.builtin.dirname}}"
 
 - name: Create files - {{ item }}
   ansible.builtin.file:

@@ -52,7 +52,7 @@
 
 - name: UnSet env variable
   community.general.ini_file:
-    path: "/etc/environment"
+    path: "{{ sys_env_path }}"
     option: SLURM_CONF
     state: absent
     mode: u=rw,g=r,o=r

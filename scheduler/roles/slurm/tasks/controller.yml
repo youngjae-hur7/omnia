@@ -45,7 +45,7 @@
 
 - name: Edit the service
   community.general.ini_file:
-    path: "{{ ctld_service['status']['FragmentPath'] | default('/usr/lib/systemd/system/slurmctld.service') }}"
+    path: "{{ ctld_service['status']['FragmentPath'] | default(slurm_ctld_service_default_path) }}"
     section: Unit
     option: ConditionPathExists
     value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
@@ -56,7 +56,7 @@
 
 - name: Edit the service to fetch specific conf 
   community.general.ini_file:
-    path: "{{ ctld_service['status']['FragmentPath'] | default('/usr/lib/systemd/system/slurmctld.service') }}"
+    path: "{{ ctld_service['status']['FragmentPath'] | default(slurm_ctld_service_default_path) }}"
     section: Service
     option: ExecStart
     value: "/usr/sbin/slurmctld -D -f {{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf -s $SLURMCTLD_OPTIONS"

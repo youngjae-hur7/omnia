@@ -44,12 +44,6 @@
 - name: Install Slurm
   hosts: slurm_control_node, slurm_node, slurm_dbd, login
   any_errors_fatal: true
-  pre_tasks:
-    - name: Include input project directory
-      ansible.builtin.import_role:
-        name: ../utils/roles/include_input_vars
-      run_once: true
-      delegate_to: localhost
   roles:
     - role: slurm
 

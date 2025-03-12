@@ -12,22 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-chrony_servers:
-  - 2.centos.pool.ntp.org
-cluster_name: cluster
+cluster_name: cluster #TODO: direct load vars omnia_config.yml
 slurm_uid: 6001
 slurm_user: slurm
 slurm_user_group: slurm
-# share_path: "{{ share_mounted_path }}"
-share_path: "{{ nfs_client_params | selectattr('slurm_share', 'equalto', true) | map(attribute='client_share_path') | first }}"
+slurm_installation_type: "{{ hostvars['localhost']['slurm_installation_type'] }}" #TODO direct load vars omnia_config.yml
+share_path: "{{ hostvars['localhost']['share_path'] }}" #TODO: direct load vars omnia_config.yml
 slurm_share_prefix: ""
 slurm_config_dir: /etc/slurm
 slurm_dir_name: slurm
 slurm_dbd_port: 6819
-slurm_db_port_default: 3306
-slurm_db_type_default: mariadb
-slurm_db_username_default: root
-slurm_db_password_default: ""
 slurm_dbd_db_username: "{{ slurm_user }}"
 slurm_dbd_db_password: slurmPassword123!
 slurm_db_login_unix_socket: /var/lib/mysql/mysql.sock

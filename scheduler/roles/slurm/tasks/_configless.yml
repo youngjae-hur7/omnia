@@ -20,7 +20,7 @@
 
 - name: Get service path
   ansible.builtin.set_fact:
-    slurmd_service_path: "{{ d_service['status']['FragmentPath'] | default('/usr/lib/systemd/system/slurmd.service') }}"
+    slurmd_service_path: "{{ d_service['status']['FragmentPath'] | default(slurmd_service_default_path) }}"
 
 - name: Edit the service !ConditionPathExists
   community.general.ini_file:
@@ -84,7 +84,7 @@
 
 - name: Set env variable
   community.general.ini_file:
-    path: "/etc/environment"
+    path: "{{ sys_env_path }}"
     option: SLURM_CONF
     value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
     no_extra_spaces: true
