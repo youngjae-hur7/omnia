@@ -12,12 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- name: Restart chrony
-  ansible.builtin.systemd_service:
-    name: "{{ 'chronyd' if ansible_os_family == 'RedHat' else 'chrony' }}"
-    state: restarted
-    enabled: true
-
 - name: Restart munge
   ansible.builtin.systemd_service:
     name: munge
