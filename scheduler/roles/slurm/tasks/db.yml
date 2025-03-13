@@ -60,25 +60,6 @@
     priv: "{{ slurm_dbd_conf_dict['StorageLoc'] }}.*:ALL,GRANT"
     login_unix_socket: "{{ slurm_db_login_unix_socket }}"
     state: present
-  when: (delegated_hostname != groups['slurm_dbd'][0]) or 
-        (delegated_hostname == groups['slurm_control_node'][0]) or
-        (delegated_hostname in groups['slurm_node']) or
-        (delegated_hostname in groups['login'])
-  notify:
-    - Restart slurmctld
-    - Restart slurmdbd
-
-- name: Add db user - FQDN # Needed when db is on same node as slurmdbd
-  community.mysql.mysql_user:
-    login_user: "{{ slurm_db_username }}"
-    login_password: "{{ slurm_db_password }}"
-    name: "{{ slurm_dbd_db_username }}"
-    password: "{{ slurm_dbd_db_password }}"
-    host: "{{ groups['slurm_dbd'][0] }}.%"
-    priv: "{{ slurm_dbd_conf_dict['StorageLoc'] }}.*:ALL,GRANT"
-    login_unix_socket: "{{ slurm_db_login_unix_socket }}"
-    state: present
-  when: delegated_hostname == groups['slurm_dbd'][0]
   notify:
     - Restart slurmctld
     - Restart slurmdbd
