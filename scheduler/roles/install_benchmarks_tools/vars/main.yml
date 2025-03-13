@@ -23,7 +23,7 @@ benchmarks_dir_openmpi: "/benchmarks/openmpi-{{ openmpi_software_version }}/open
 dir_mode: '0755'
 cplus_compiler_error: "Warning: the gcc-c++ packages are not installed"
 clang_compiler_error: "Warning: the clang compiler packages are not installed"
-software_config_file: "{{ input_project_dir }}/software_config.json"
+software_config_file: "{{ hostvars['localhost']['input_project_dir'] }}/software_config.json"
 local_repo_access_config_file: "/opt/omnia/provision/local_repo_access.yml"
 copy_mode: '0644'
 ucx_info_cmd: "ucx_info"

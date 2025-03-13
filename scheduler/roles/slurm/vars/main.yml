@@ -18,6 +18,7 @@ slurm_user: slurm
 slurm_user_group: slurm
 slurm_installation_type: "{{ hostvars['localhost']['slurm_installation_type'] }}" #TODO direct load vars omnia_config.yml
 restart_slurm_services: "{{ hostvars['localhost']['restart_slurm_services'] }}"
+slurm_db_password: "{{ hostvars['localhost']['slurm_db_password'] }}"
 share_path: "{{ hostvars['localhost']['share_path'] }}" #TODO: direct load vars omnia_config.yml
 slurm_share_prefix: ""
 slurm_config_dir: /etc/slurm

@@ -14,7 +14,7 @@
 ---
 - name: Include vars storage_config.yml
   ansible.builtin.include_vars:
-    file: "{{ input_project_dir }}/storage_config.yml"
+    file: "{{ hostvars['localhost']['input_project_dir'] }}/storage_config.yml"
 
 - name: Get slurm share path
   ansible.builtin.set_fact:
