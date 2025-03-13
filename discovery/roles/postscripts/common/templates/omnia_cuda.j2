@@ -44,9 +44,10 @@ if [[ $nvidia_check == *"NVIDIA"* ]]; then
       echo 'Dir::Etc "/etc/apt/omnia_sources/";' >> /etc/apt/apt.conf
 
       apt update >> "$LOG_FILE" 2>&1
-      echo "# Installing nvidia-driver-*-open nvidia-fabricmanager..." >> "$LOG_FILE"
-      apt install -y nvidia-driver-*-open nvidia-fabricmanager >> "$LOG_FILE" 2>&1
-
+      echo "# Installing nvidia-driver-*-open " >> "$LOG_FILE"
+      apt install -y nvidia-driver-*-open  >> "$LOG_FILE" 2>&1
+      echo "# Installing nvidia-fabricmanager " >> "$LOG_FILE"
+      apt install -y nvidia-fabricmanager >> "$LOG_FILE" 2>&1
       echo "# Restoring default APT sources ..." >> "$LOG_FILE"
       sudo sed -i '/Dir::Etc "\/etc\/apt\/omnia_sources\/";/d' /etc/apt/apt.conf
       rm -rf "$OMNIA_DIR"
