@@ -38,7 +38,7 @@
   ansible.builtin.lineinfile:
     path: /etc/my.cnf
     line: "[client-server]"
-    create: yes
+    create: true
 
 - name: Include my.cnf.d directory
   ansible.builtin.lineinfile:

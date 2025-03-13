@@ -54,7 +54,7 @@
   notify:
     - Reload slurmctld
 
-- name: Edit the service to fetch specific conf 
+- name: Edit the service to fetch specific conf
   community.general.ini_file:
     path: "{{ ctld_service['status']['FragmentPath'] | default(slurm_ctld_service_default_path) }}"
     section: Service

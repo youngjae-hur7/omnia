@@ -18,6 +18,7 @@
     mount -a
   register: refresh_mounts
   ignore_errors: true
+  changed_when: refresh_mounts == 0
 
 - name: Update hosts file for all slurm groups
   block:

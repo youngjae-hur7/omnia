@@ -35,18 +35,18 @@
 - name: Is mariadb installed # Currently can show up even if mysql/mariadb are uninstalled if the facts were not refreshed
   ansible.builtin.set_fact:
     new_install: true
-  when: 
+  when:
     - slurm_db_type == "mariadb"
     - ("mariadb.service" not in ansible_facts['services'])
 
 - name: Is mysql installed # Currently can show up even if mysql/mariadb are uninstalled if the facts were not refreshed
   ansible.builtin.set_fact:
     new_install: true
-  when: 
+  when:
     - slurm_db_type == "mysql"
     - ("mysqld.service" not in ansible_facts['services'])
 
-- name: Create new database #TODO: Decide on a method to determine when to create new db
+- name: Create new database # TODO: Decide on a method to determine when to create new db
   ansible.builtin.include_tasks: _create_db.yml
   when: new_install
 

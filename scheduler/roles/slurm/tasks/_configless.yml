@@ -70,7 +70,7 @@
   notify:
     - Reload slurmd
 
-- name: Edit the service to fetch specific conf 
+- name: Edit the service to fetch specific conf
   community.general.ini_file:
     path: "{{ slurmd_service_path }}"
     section: Service

@@ -29,7 +29,7 @@
 
 - name: Setup DB tasks
   ansible.builtin.include_tasks: db.yml
-  vars: 
+  vars:
     delegated_hostname: "{{ slurm_db_host }}"
   args:
     apply:
@@ -72,7 +72,7 @@
     group: "{{ slurm_user }}"
     mode: "{{ slurm_dbd_mode }}"
   when: '"slurm_dbd" in group_names'
-  ignore_errors: true
+  # ignore_errors: true
   notify:
     - Restart slurmdbd
     - Restart slurmctld

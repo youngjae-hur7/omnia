@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-cluster_name: cluster #TODO: direct load vars omnia_config.yml
+cluster_name: cluster # TODO: direct load vars omnia_config.yml
 slurm_uid: 6001
 slurm_user: slurm
 slurm_user_group: slurm
-slurm_installation_type: "{{ hostvars['localhost']['slurm_installation_type'] }}" #TODO direct load vars omnia_config.yml
+slurm_installation_type: "{{ hostvars['localhost']['slurm_installation_type'] }}" # TODO direct load vars omnia_config.yml
 restart_slurm_services: "{{ hostvars['localhost']['restart_slurm_services'] }}"
 slurm_db_password: "{{ hostvars['localhost']['slurm_db_password'] }}"
-share_path: "{{ hostvars['localhost']['share_path'] }}" #TODO: direct load vars omnia_config.yml
+share_path: "{{ hostvars['localhost']['share_path'] }}" # TODO: direct load vars omnia_config.yml
 slurm_share_prefix: ""
 slurm_config_dir: /etc/slurm
 slurm_dir_name: slurm
@@ -70,6 +70,7 @@ db_packages:
 hosts_file_dest: "/etc/hosts"
 hosts_file_mode: "0644"
 # messages
-hosts_update_fail_msg: "Failed to update hosts file with node details. Remove unreachable IP addresses from slurm_node or login group of inventory and re-run the playbook."
+hosts_update_fail_msg: "Failed to update hosts file with node details.
+ Remove unreachable IP addresses from slurm_node or login group of inventory and re-run the playbook."
 inv_validation_fail_msg: "Failed. slurm_control_node and slurm_node groups should be defined in inventory and should have at least one node provided."
 intersect_validation_fail_msg: "Failed. Node mentioned in slurm_control_node group should not be part of slurm_node or login group"

@@ -25,8 +25,11 @@
   loop: "{{ groups['slurm_node'] }}"
 
 - name: Get slurm info output if slurm is installed
-  ansible.builtin.shell: scontrol show node | awk '/NodeName/ {print $1}' | cut -d= -f2
+  ansible.builtin.shell: >
+    set -o pipefail && \
+    scontrol show node | awk '/NodeName/ {print $1}' | cut -d= -f2
   register: slurm_nodes
+  changed_when: slurm_nodes.rc == 0
 
 - name: Assemble all slurm_nodes
   ansible.builtin.set_fact:
