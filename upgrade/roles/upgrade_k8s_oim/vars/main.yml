@@ -1,4 +1,4 @@
-# Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -48,6 +48,11 @@ metallb_crd_path: "/etc/kubernetes/metallb.yaml"
 ctr_pkg_src: "/usr/bin/ctr"
 ctr_pkg_dest: "/usr/local/bin"
 copy_permission: "0755"
+
+# grafana_deployment.yml
+grafan_pod_status_msg: "The Grafana pod status is {{ grafana_pod_status.stdout }}. Image version will be updated only if pod is in Running state."
+grafana_pod_failure_msg: "Pod '{{ grafana_pod_name.stdout }}' is not running. Current status: {{ grafana_pod_status.stdout }}."
+grafana_timeout: 300
 
 # upgrade_k8s.yml
 access_file_path: "/opt/omnia/offline/local_repo_access.yml"
