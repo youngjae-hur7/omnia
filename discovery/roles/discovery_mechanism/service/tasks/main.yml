@@ -14,3 +14,6 @@
 ---
 
 # serice node tasks will be added here
+- name: Service node serial
+  ansible.builtin.debug:
+    msg: "{{ hostsvars[inventory_hostname]['service_tag'] }}"
