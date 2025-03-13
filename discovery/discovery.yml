@@ -37,7 +37,9 @@
 - name: Create provision container group
   when: not provision_group_status | default(false) | bool
   ansible.builtin.import_playbook: ../utils/create_container_group.yml
-  tags: first_layer
+  tags:
+    - always
+    - first_layer
   vars:
     omnia_provision_group: true
     omnia_provision_validation: true
