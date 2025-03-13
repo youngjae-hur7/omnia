@@ -62,7 +62,8 @@
     state: present
   when: (delegated_hostname != groups['slurm_dbd'][0]) or 
         (delegated_hostname == groups['slurm_control_node'][0]) or
-        (delegated_hostname in groups['slurm_node'])
+        (delegated_hostname in groups['slurm_node']) or
+        (delegated_hostname in groups['login'])
   notify:
     - Restart slurmctld
     - Restart slurmdbd
