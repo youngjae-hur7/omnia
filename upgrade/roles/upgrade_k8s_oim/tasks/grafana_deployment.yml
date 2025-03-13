@@ -42,6 +42,9 @@
 - name: Update the Grafana image version
   when: grafana_pod_status.stdout == 'Running'
   block:
+    - name: Include vars from telemetry grafana
+      ansible.builtin.include_vars: "{{ role_path }}/../../../telemetry/vars/main.yml"
+
     - name: Apply the deployment.yml from telemetry
       ansible.builtin.include_tasks: "{{ role_path }}/../../../telemetry/roles/grafana/tasks/deployment.yml"
 
