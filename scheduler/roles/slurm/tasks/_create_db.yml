@@ -12,8 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
+- name: Gather facts
+  ansible.builtin.setup:
+
 - name: Install db packages
-  ansible.builtin.package:
+  ansible.builtin.dnf:
     name: "{{ db_packages[ansible_os_family][slurm_db_type] }}"
     state: present
 

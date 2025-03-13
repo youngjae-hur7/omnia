@@ -63,7 +63,7 @@ omnia_credentials:
       password:
         - docker_password
   slurm:
-    default:
+    mandatory:
       password:
         - slurm_db_password
   openldap:

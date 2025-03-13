@@ -24,7 +24,7 @@
     - name: Update hosts file for all slurm groups
       ansible.builtin.lineinfile:
         dest: "{{ hosts_file_dest }}"
-        line: "{{ hostvars[item].ansible_host }} {{ hostvars[item].inventory_hostname_short }} {{ hostvars[item]['ansible_facts']['nodename'] }}"
+        line: "{{ hostvars[item]['ansible_default_ipv4']['address'] }} {{ hostvars[item].inventory_hostname_short }} {{ hostvars[item]['ansible_fqdn'] }}"
         state: present
         create: true
         mode: "{{ hosts_file_mode }}"
