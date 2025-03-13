@@ -18,62 +18,42 @@ nvidia_check=$(lspci | grep -i nvidia)
 
 if [[ $nvidia_check == *"NVIDIA"* ]]; then
   if [ "$str_os_type" = "debian" ]; then
-    CUDA_REPO_ENTRY="deb [trusted=yes] http://{{ admin_nic_ip }}:80{{ cuda_core_path }}/var/{{ cuda_debs_folder }} /"
+    CUDA_REPO_URL="http://{{ admin_nic_ip }}:80{{ cuda_core_path }}/var/{{ cuda_debs_folder }}"
     DEFAULT_SOURCE_LIST="/etc/apt/sources.list.d"
     if [[ "{{ cuda_version }}" > "12.8.0" ]] || [[ "{{ cuda_version }}" == "12.8.0" ]]; then
-      OMNIA_DIR="/etc/apt/omnia_sources"
-      OMNIA_LIST="$OMNIA_DIR/sources.list.d"
-
-      echo "Starting CUDA installation in Debian" >> "$LOG_FILE"
+      echo "Starting CUDA {{ cuda_version }} installation in Debian" >> "$LOG_FILE"
       echo "Running apt clean and update..." >> "$LOG_FILE"
+      echo "deb [trusted=yes] $CUDA_REPO_URL /" >> "$DEFAULT_SOURCE_LIST/cuda.list"
       apt clean >> "$LOG_FILE" 2>&1
       apt update >> "$LOG_FILE" 2>&1
       echo "# Installing dkms ..." >> "$LOG_FILE"
       apt install -y dkms >> "$LOG_FILE" 2>&1
 
-      mkdir -p "$OMNIA_LIST"
-      echo "$CUDA_REPO_ENTRY" >> "$DEFAULT_SOURCE_LIST/cuda.list"
-      echo "$CUDA_REPO_ENTRY" >> "$OMNIA_LIST/cuda.list"
+      wget -O Packages "$CUDA_REPO_URL/Packages" >> "$LOG_FILE"
+      NVIDIA_DRIVER_PKG=$(grep -E "Package: nvidia-driver-[0-9]+-open" Packages | cut -d ' ' -f2 | sort -V | tail -n 1)
+      NVIDIA_FABRICMANAGER_PKG=$(grep -E "Package: nvidia-fabricmanager-[0-9]+" Packages | cut -d ' ' -f2 | sort -V | tail -n 1)
 
-      echo "# Switching APT to use only omnia_sources and disabling Ubuntu repos..." >> "$LOG_FILE"
-
-      if [ ! -f /etc/apt/apt.conf ]; then
-          touch /etc/apt/apt.conf
-      fi
-
-      echo 'Dir::Etc "/etc/apt/omnia_sources/";' >> /etc/apt/apt.conf
-
-      apt update >> "$LOG_FILE" 2>&1
-      echo "# Installing nvidia-driver-*-open " >> "$LOG_FILE"
-      apt install -y nvidia-driver-*-open  >> "$LOG_FILE" 2>&1
-      echo "# Installing nvidia-fabricmanager " >> "$LOG_FILE"
-      apt install -y nvidia-fabricmanager >> "$LOG_FILE" 2>&1
-      echo "# Restoring default APT sources ..." >> "$LOG_FILE"
-      sudo sed -i '/Dir::Etc "\/etc\/apt\/omnia_sources\/";/d' /etc/apt/apt.conf
-      rm -rf "$OMNIA_DIR"
-      apt update >> "$LOG_FILE" 2>&1
+      echo "# Installing nvidia driver : $NVIDIA_DRIVER_PKG \n nvidia fabric manager: $NVIDIA_FABRICMANAGER_PKG" >> "$LOG_FILE"
+      apt install -y  $NVIDIA_DRIVER_PKG $NVIDIA_FABRICMANAGER_PKG >> "$LOG_FILE" 2>&1
 
       echo "# Installing CUDA..." >> "$LOG_FILE"
       apt install -y cuda >> "$LOG_FILE" 2>&1
-      systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target >> "$LOG_FILE"
-      echo "PATH=$PATH:/usr/local/cuda/bin" >> /root/.bashrc
-      apt clean >> "$LOG_FILE"
-      apt update >> "$LOG_FILE"
-      echo "# CUDA installation completed successfully!" >> "$LOG_FILE"
     else
       echo "Starting CUDA installation in Debian" >> "$LOG_FILE"
       echo "$CUDA_REPO_ENTRY" >> "$DEFAULT_SOURCE_LIST/cuda.list"
       apt clean >> "$LOG_FILE"
       apt update >> "$LOG_FILE"
       apt install cuda cuda-drivers-fabricmanager -y >> "$LOG_FILE"
-      systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target >> "$LOG_FILE"
-      echo "PATH=$PATH:/usr/local/cuda/bin" >> /root/.bashrc
-      rm -rf "$DEFAULT_SOURCE_LIST/cuda.list"
-      apt clean >> "$LOG_FILE"
-      apt update >> "$LOG_FILE"
-      echo "CUDA installation completed in Debian" >> "$LOG_FILE"
     fi
+    systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target >> "$LOG_FILE"
+    echo "PATH=$PATH:/usr/local/cuda/bin" >> /root/.bashrc
+    rm -rf "$DEFAULT_SOURCE_LIST/cuda.list"
+    apt clean >> "$LOG_FILE"
+    apt update >> "$LOG_FILE"
+    echo "# CUDA {{ cuda_version }}installation completed successfully in Debian" >> "$LOG_FILE"
+
   elif [ "$str_os_type" = "redhat" ]; then
+
     if [[ "{{ cuda_version }}" > "12.8.0" ]] || [[ "{{ cuda_version }}" == "12.8.0" ]]; then
       echo "Starting CUDA installation in RHEL/Rocky" >> "$LOG_FILE"
       echo "# Executing groupinstall 'Development Tools'" >> "$LOG_FILE"
