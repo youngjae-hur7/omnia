@@ -31,9 +31,6 @@ jobs:
           ansible-galaxy collection install -r .config/requirements.yml --force
           ansible-galaxy collection list
 
-      - name: Set ANSIBLE_COLLECTIONS_PATH
-        run: echo "ANSIBLE_COLLECTIONS_PATHS=${{ github.workspace }}/.ansible/collections:/usr/share/ansible/collections" >> $GITHUB_ENV
-
       - name: Run ansible-lint
         uses: ansible/ansible-lint@main
         with:
