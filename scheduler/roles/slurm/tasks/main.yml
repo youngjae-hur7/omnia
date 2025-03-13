@@ -43,10 +43,6 @@
   ansible.builtin.set_fact:
     slurmctld_status: "{{ hostvars[groups['slurm_control_node'][0]]['controller_running'] }}" # HA
 
-- debug:
-    var: slurmctld_status
-- pause:
-
 - name: Existing cluster
   ansible.builtin.include_tasks: add_node.yml
   when: slurmctld_status
