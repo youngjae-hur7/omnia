@@ -1,7 +1,5 @@
 ---
 exclude_paths:
-  - /home/runner/.ansible/collections
-  - ~/.ansible/collections
   - .git/
   - .github/
   - accelerator/tests/
