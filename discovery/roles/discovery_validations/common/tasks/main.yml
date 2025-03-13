@@ -33,9 +33,8 @@
 - name: Check if only first_layer tag is present
   ansible.builtin.assert:
     that:
-      - ansible_run_tags | default([]) | intersect(['first_layer']) | length == 1
+      - ansible_run_tags | default(['all']) | intersect(['first_layer']) | length == 1
     fail_msg: "{{ ansible_tag_fail_msg }}"
-  when: ansible_run_tags | default([]) | length > 0
 
 - name: Validate provision container services status
   ansible.builtin.include_tasks: validate_provision_container.yml
