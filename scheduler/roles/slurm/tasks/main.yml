@@ -18,28 +18,39 @@
 
 - name: Set slurmdbd host to slurmctld if not specified
   ansible.builtin.add_host:
-    name: "{{ groups['slurm_control_node'][0] }}"
+    name: "{{ groups['slurm_control_node'][0] }}" # HA
     groups: slurm_dbd
   when: ('slurm_dbd' not in groups) or (('slurm_dbd' in groups) and (groups['slurm_dbd']|length == 0))
 
-- name: Include common tasks
-  ansible.builtin.include_tasks: common.yml
+- name: Initialize controller_running status
+  ansible.builtin.set_fact:
+    controller_running: false
 
-- name: Install configs on all
-  ansible.builtin.include_tasks: _config_files.yml
+- name: Check existing cluster
+  when: ('slurm_control_node' in group_names)
+  block:
+    - name: Populate service facts
+      ansible.builtin.service_facts:
 
-- name: Include controller installation tasks
-  ansible.builtin.include_tasks: controller.yml
-  when: '"slurm_control_node" in group_names'
+    - name: Check the status of slurmctld
+      ansible.builtin.set_fact:
+        controller_running: true
+      when:
+        - "'slurmctld.service' in ansible_facts.services"
+        - "ansible_facts.services['slurmctld.service'].state == 'running'"
 
-- name: Include compute installation tasks
-  ansible.builtin.include_tasks: compute.yml
-  when: '"slurm_node" in group_names'
+- name: Check if the controller was running
+  ansible.builtin.set_fact:
+    slurmctld_status: "{{ hostvars[groups['slurm_control_node'][0]]['controller_running'] }}" # HA
 
-- name: Include slurm DBD installation tasks
-  ansible.builtin.include_tasks: dbd.yml
-  when: '"slurm_dbd" in group_names'
+- debug:
+    var: slurmctld_status
+- pause:
 
-- name: Include login node installation tasks
-  ansible.builtin.include_tasks: login.yml
-  when: '"login" in group_names'
+- name: Existing cluster
+  ansible.builtin.include_tasks: add_node.yml
+  when: slurmctld_status
+
+- name: Fresh cluster install
+  ansible.builtin.include_tasks: new_install.yml
+  when: not slurmctld_status
