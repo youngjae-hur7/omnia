@@ -79,8 +79,9 @@
 
     - name: Delete existing release
       ansible.builtin.command: helm delete '{{ gpu_operators_namespace }}' -n '{{ gpu_operators_namespace }}'
+      register: delete_output
       changed_when: false
-    
+
     - name: GPU Operators deploy
       ansible.builtin.command: >
         helm upgrade --cleanup-on-fail \
@@ -89,4 +90,5 @@
         --create-namespace \
         --values {{ nvidia_gpu_operator_config_file_path }} \
         --timeout {{ timeout_min_sec }}
+      register: deployment_output
       changed_when: false

@@ -227,7 +227,7 @@ intelgaudi_version_warning_msg: "[WARNING] software_config.json does not have th
 Hence Habana stack will not be installed on the nodes post provisioning."
 intelgaudi_repo_warning_msg: "[WARNING] local_repo.yml is not executed for downloading 'intelgaudi' packages.
 Habana stack will not be installed on the nodes post provisioning."
-intelgaudi_bcm_warning_msg: "[WARNING] Both 'intelgaudi' and 'bcm_roce' found in software_config.json 
+intelgaudi_bcm_warning_msg: "[WARNING] Both 'intelgaudi' and 'bcm_roce' found in software_config.json
 BCM RoCE will be skipped for nodes having Intel Gaudi GPU."
 
 # Usage: validate_broadcom_repo.yml
