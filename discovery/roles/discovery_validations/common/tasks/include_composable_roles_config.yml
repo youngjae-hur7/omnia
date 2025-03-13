@@ -42,6 +42,7 @@
     roles_groups_data: "{{ composable_roles_output.roles_groups_data }}"
     bmc_static_status: "{{ composable_roles_output.bmc_static_status }}"
     switch_status: "{{ composable_roles_output.switch_status }}"
+    hierarchical_provision_status: "{{ composable_roles_output.hierarchical_provision_status }}"
     groups_roles_info: "{{ composable_roles_output.groups_roles_info }}"
 
 - name: Set fact for service role required
