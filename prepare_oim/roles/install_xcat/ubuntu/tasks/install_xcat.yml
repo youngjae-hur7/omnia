@@ -20,7 +20,7 @@
       ansible.builtin.package:
         name: "{{ common_packages_provision }}"
         state: present
-      
+
     - name: Install packages for Ubuntu 24
       ansible.builtin.package:
         name: "{{ ubuntu24_packages_provision }}"
