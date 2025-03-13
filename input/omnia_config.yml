@@ -48,7 +48,7 @@ slurm_db_username: root
 # If no database is intalled on the given node, one will be created.
 # Defaults to the slurmdbd host if no host is given.
 # Defaults to 3306 if no port is given.
-slurm_db_host: 
+# slurm_db_host: 
 slurm_db_port: 3306
 
 # ----------------------------K8S------------------------------------------------------
