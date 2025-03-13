@@ -30,6 +30,12 @@
     postgresdb_password: "{{ hostvars['localhost']['postgresdb_password'] }}"
   no_log: true
 
+- name: Check if only first_layer tag is present
+  ansible.builtin.assert:
+    that:
+      - ansible_run_tags | default([]) | intersect(['first_layer']) | length == 1
+    fail_msg: "{{ ansible_tag_fail_msg }}"
+
 - name: Validate provision container services status
   ansible.builtin.include_tasks: validate_provision_container.yml
 
