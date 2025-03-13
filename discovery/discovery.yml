@@ -45,7 +45,9 @@
 - name: Validate discovery parameters
   hosts: omnia_provision
   connection: ssh
-  tags: first_layer
+  tags:
+    - always
+    - first_layer
   tasks:
     - name: Validate discovery parameters
       ansible.builtin.include_role:
