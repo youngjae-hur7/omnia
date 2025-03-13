@@ -1,34 +1,27 @@
 {
-    "cluster_os_type": "ubuntu",
-    "cluster_os_version": "24.04",
+    "cluster_os_type": "rhel",
+    "cluster_os_version": "9.4",
     "repo_config": "partial",
     "softwares": [
         {"name": "amdgpu", "version": "6.3.1"},
-        {"name": "bcm_roce", "version": "232.1.133.2"},
+        {"name": "cuda", "version": "12.8.0"},
+        {"name": "ofed", "version": "24.01-0.3.3.1"},
         {"name": "openldap"},
         {"name": "nfs"},
+        {"name": "slurm"},
         {"name": "k8s", "version":"1.31.4"},
-        {"name": "roce_plugin"},
         {"name": "jupyter"},
         {"name": "pytorch"},
-        {"name": "tensorflow"},
-        {"name": "intelgaudi", "version": "1.19.2-32"}
+        {"name": "tensorflow"}
     ],
 
-    "bcm_roce": [
-        {"name": "bcm_roce_libraries", "version": "232.1.133.2"}
-    ],
-   "amdgpu": [
+    "amdgpu": [
         {"name": "rocm", "version": "6.3.1" }
-    ],
-   "intelgaudi": [
-        {"name": "intel"}
     ],
     "pytorch": [
         {"name": "pytorch_cpu"},
         {"name": "pytorch_amd"},
-        {"name": "pytorch_nvidia"},
-        {"name": "pytorch_gaudi"}
+        {"name": "pytorch_nvidia"}
     ],
     "tensorflow": [
         {"name": "tensorflow_cpu"},
