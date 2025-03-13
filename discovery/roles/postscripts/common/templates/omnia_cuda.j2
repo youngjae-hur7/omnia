@@ -47,7 +47,6 @@ if [[ $nvidia_check == *"NVIDIA"* ]]; then
     fi
     systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target >> "$LOG_FILE"
     echo "PATH=$PATH:/usr/local/cuda/bin" >> /root/.bashrc
-    rm -rf "$DEFAULT_SOURCE_LIST/cuda.list"
     apt clean >> "$LOG_FILE"
     apt update >> "$LOG_FILE"
     echo "# CUDA {{ cuda_version }}installation completed successfully in Debian" >> "$LOG_FILE"
