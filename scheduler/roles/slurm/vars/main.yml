@@ -18,7 +18,11 @@ slurm_user: slurm
 slurm_user_group: slurm
 slurm_installation_type: "{{ hostvars['localhost']['slurm_installation_type'] }}" # TODO direct load vars omnia_config.yml
 restart_slurm_services: "{{ hostvars['localhost']['restart_slurm_services'] }}"
+slurm_db_username: "{{ hostvars['localhost']['slurm_db_username'] }}"
 slurm_db_password: "{{ hostvars['localhost']['slurm_db_password'] }}"
+slurm_db_host: "{{ hostvars['localhost']['slurm_db_host'] }}"
+slurm_db_port: "{{ hostvars['localhost']['slurm_db_port'] }}"
+slurm_db_type: "{{ hostvars['localhost']['slurm_db_type'] }}"
 share_path: "{{ hostvars['localhost']['share_path'] }}" # TODO: direct load vars omnia_config.yml
 slurm_share_prefix: ""
 slurm_config_dir: /etc/slurm
@@ -38,8 +42,10 @@ _force_install_nfs: true
 conf_file_mode: "0644"
 slurm_mode: "0644"
 munge_mode: "0400"
+munge_dir_mode: "0700"
 common_mode: "0755"
 slurm_dbd_mode: "0600"
+slurm_db_cnf_mode: "0600"
 common_packages:
   RedHat:
     - firewalld
