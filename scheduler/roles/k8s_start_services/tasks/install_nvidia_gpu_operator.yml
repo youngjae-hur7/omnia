@@ -56,12 +56,12 @@
     src: "{{ nvidia_gpu_operator_helm_chart_path }}"
     dest: "{{ nvidia_gpu_operator_path }}"
     mode: "{{ permission_644 }}"
-    remote_src: yes
+    remote_src: true
 
 - name: NVIDIA GPU Operators deploy
   block:
     - name: GPU Operators deploy
-      command: >
+      ansible.builtin.command: >
         helm upgrade --cleanup-on-fail \
         --install {{ gpu_operators_namespace }} {{ nvidia_gpu_operator_path }}/gpu-operator \
         --values {{ nvidia_gpu_operator_config_file_path }} \
@@ -69,22 +69,26 @@
         --create-namespace \
         --timeout {{ timeout_min_sec }}
       register: deployment_output
+      changed_when: false
 
   rescue:
     - name: NVIDIA GPU Operators deployment error
-      debug:
+      ansible.builtin.debug:
         msg: "Previous NVIDIA GPU Operators deployment is in progress"
       when: "'another operation (install/upgrade/rollback) is in progress' in deployment_output.stderr"
 
     - name: Delete existing release
-      command: helm delete '{{ gpu_operators_namespace }}' -n '{{ gpu_operators_namespace }}'
-    
+      ansible.builtin.command: helm delete '{{ gpu_operators_namespace }}' -n '{{ gpu_operators_namespace }}'
+      register: delete_output
+      changed_when: false
+
     - name: GPU Operators deploy
-      command: >
+      ansible.builtin.command: >
         helm upgrade --cleanup-on-fail \
         --install {{ gpu_operators_namespace }} {{ nvidia_gpu_operator_path }}/gpu-operator \
         --namespace {{ gpu_operators_namespace }} \
         --create-namespace \
         --values {{ nvidia_gpu_operator_config_file_path }} \
         --timeout {{ timeout_min_sec }}
-
+      register: deployment_output
+      changed_when: false

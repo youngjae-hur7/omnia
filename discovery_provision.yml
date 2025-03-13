@@ -32,7 +32,7 @@
     - name: Set flag to indicate check_package_lock.yml has been executed
       ansible.builtin.set_fact:
         apt_lock_status: true
-    
+
     - name: Set inventory_status
       ansible.builtin.set_fact:
         inventory_status: true
@@ -42,7 +42,7 @@
         - groups['all'] | length > 0
 
     - name: Validate inventory file
-      include_role:
+      ansible.builtin.include_role:
         name: utils/server_spec_update/roles/server_spec_validation
       when: inventory_status | default(false) | bool
 

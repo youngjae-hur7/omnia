@@ -199,7 +199,7 @@
   failed_when: false
 
 - name: Remove Squid package - RHEL/Rocky
-  ansible.builtin.yum:
+  ansible.builtin.dnf:
     name: squid
     state: absent
   when: oim_os in oim_os_redhat or

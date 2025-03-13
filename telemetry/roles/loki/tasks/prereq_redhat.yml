@@ -39,7 +39,8 @@
 
 - name: Extract docker-buildx-plugin package information
   ansible.builtin.set_fact:
-    docker_buildx_plugin_package: "{{ (telemetry.telemetry.cluster | selectattr('package', 'match', '^docker-buildx-plugin-') | map(attribute='package') | first) }}"
+    docker_buildx_plugin_package: |
+      "{{ (telemetry.telemetry.cluster | selectattr('package', 'match', '^docker-buildx-plugin-') | map(attribute='package') | first) }}"
 
 - name: Install docker_buildx_plugin_package
   ansible.builtin.package:

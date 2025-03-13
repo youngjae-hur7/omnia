@@ -1,4 +1,4 @@
-NVIDIA GPU Operator
+GPU Operator
 =====================
 
 Kubernetes provides access to special hardware resources such as NVIDIA GPUs, NICs, Infiniband adapters and other devices through the device plugin framework.
@@ -15,7 +15,6 @@ Ensure that the ``input/software_config.json`` file contains the following line 
 
 A sample version of the ``input/software_config.json`` is located `here <../../../samplefiles.html>`_.
 
-.. note:: Currently, Omnia only supports the ``24.9.2`` version of the NVIDIA GPU operator.
 
 Configurations
 ----------------

@@ -54,8 +54,6 @@ fail_msg_nvidia_gpu_operator_helm_chart_download: "Failed to get nvidia gpu oper
 permission_644: "0644"
 owner_value: "root"
 group_value: "root"
-helm_install_fail_msg: "Failed to fetch helm path. Please verify helm installation and ensure the environment variable PATH is correctly set in the node.
-Re-run the playbook after verification."
 gpu_operators_namespace: "gpu-operator"
 timeout_min_sec: 600s
 directory_permissions: "0755"
