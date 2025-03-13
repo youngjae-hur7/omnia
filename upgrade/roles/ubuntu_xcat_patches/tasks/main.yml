@@ -15,10 +15,6 @@
 - name: Get Upgrade config variables
   ansible.builtin.include_vars: "{{ upgrade_config_path }}"
 
-# - name: upgrade config variables
- # ansible.builtin.debug:
-  #  msg: "{{ installed_omnia_path }}"
-
 - name: Revert xCAT patch
   ansible.posix.patch:
     src: "{{ role_path }}/../../../prepare_oim/roles/install_xcat/common/files/confignetwork.patch"
