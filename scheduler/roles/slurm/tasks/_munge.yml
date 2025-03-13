@@ -45,6 +45,9 @@
   ansible.builtin.file:
     path: /etc/munge
     state: directory
+    owner: munge
+    group: munge
+    mode: "{{ munge_dir_mode }}"
 
 - name: Copy munge key
   ansible.builtin.copy:

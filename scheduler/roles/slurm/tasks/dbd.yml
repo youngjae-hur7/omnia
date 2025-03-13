@@ -99,6 +99,7 @@
     option: ConditionPathExists
     value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurmdbd.conf"
     no_extra_spaces: true
+    mode: "{{ slurm_mode }}"
   notify:
     - Reload slurmdbd
     - Restart slurmdbd

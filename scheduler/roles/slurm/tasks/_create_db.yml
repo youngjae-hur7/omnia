@@ -39,6 +39,7 @@
     path: /etc/my.cnf
     line: "[client-server]"
     create: true
+    mode: "{{ slurm_db_cnf_mode }}"
 
 - name: Include my.cnf.d directory
   ansible.builtin.lineinfile:
