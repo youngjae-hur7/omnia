@@ -140,25 +140,6 @@ def insert_switch_info(cursor, switch_name, switch_ip):
 
     print(f"Inserted switch_ip: {switch_ip} with switch_name: {switch_name} into cluster.switchinfo table")
 
-
-def execute_query(query):
-    """
-    Executes the provided query and returns the result.
-
-    Parameters:
-        query (str): The SQL query to be executed.
-
-    Returns:
-        list: The result of the query.
-    """
-    conn = create_connection()
-    cursor = conn.cursor()
-    cursor.execute(query)
-    result = cursor.fetchall()
-    conn.close()
-    return result
-
-
 def get_data_from_db(db='omniadb', table_name='cluster.nodeinfo', filter_dict={}):
     """
     Retrieves data from the database based on the provided filter.
