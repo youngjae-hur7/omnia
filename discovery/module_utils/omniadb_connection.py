@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import psycopg2 as pg
+from psycopg2.extras import DictCursor
 from cryptography.fernet import Fernet
 
 key_file_path = '/opt/omnia/.postgres/.postgres_pass.key'
@@ -111,7 +112,7 @@ def insert_node_info(service_tag, node, hostname, admin_mac, admin_ip, bmc_ip, g
 
     params = (
         service_tag, node, hostname, admin_mac, str(admin_ip) if admin_ip else None,
-        str(bmc_ip) if bmc_ip else None, group_name, role, location_id, architecture,
+        str(bmc_ip) if bmc_ip else None, group_name, role, parent, location_id, architecture,
         discovery_mechanism, bmc_mode, str(switch_ip) if switch_ip else None, switch_name,
         switch_port
     )
@@ -175,7 +176,7 @@ def get_data_from_db(db='omniadb', table_name='cluster.nodeinfo', filter_dict={}
         Exception: If the database query fails.
     """
     conn = get_db_connection(db)
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=DictCursor)
 
     filter_query, params = create_filter_query(filter_dict)
 
@@ -213,7 +214,6 @@ def create_filter_query(filter_dict):
             params.append(val)
 
     return filter_query, params
-
 
 def get_db_connection(db):
     """

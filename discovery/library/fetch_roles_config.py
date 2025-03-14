@@ -100,10 +100,11 @@ def check_bmc_required(group_data):
     else:
         return False
 
-def check_hierarchical_provision(group_data, layer):
+def check_hierarchical_provision(group, groups_data, roles_data, layer):
     """Check if hierarchical provisioning is required."""
     if layer == 'first':
         return False
+    group_data = groups_data[group]
     parent = group_data.get("parent", '')
     if parent == '':
         return False
@@ -111,11 +112,18 @@ def check_hierarchical_provision(group_data, layer):
         table_name='cluster.nodeinfo',
         filter_dict={'service_tag': parent, 'status': 'booted', 'role': "service"},
     )
+    service_node_grp = query_result[0]['group_name']
+    service_node_role = query_result[0]['role']
+
     if query_result:
-        return True
+        data = {
+            query_result[0]['node']: { 'admin_ip': query_result[0]['admin_ip'],
+                                        'service_tag': query_result[0]['service_tag'] }
+            }
+        return data
     else:
-        raise Exception(f"Parent node - (service tag: {parent}) is not a service node or not in booted state.
-        Provision the parent nodes first.")
+        raise Exception(f'''Parent node - (service tag: {parent}) is not a service node or not in booted state.
+        Provision the parent nodes first.''')
 
 def filter_roles(groups_data, roles_data, layer):
     """Filter the roles based on the layer and the roles data."""
@@ -154,9 +162,10 @@ def roles_groups_mapping(groups_data, roles_data, layer):
 
     bmc_check = False
     switch_check = False
-    provision_from_service = False
+    hierarchical_provision_status = False
     roles_groups_data = {}
     groups_roles_info = {}
+    hierarchical_service_data = {}
 
     for role in valid_roles:
         for group in roles_data[role]["groups"]:
@@ -168,16 +177,24 @@ def roles_groups_mapping(groups_data, roles_data, layer):
                 bmc_check = bmc_check or grp_bmc_check
                 grp_switch_check = grp_bmc_check and check_switch_required(groups_data[group], layer)
                 switch_check = switch_check or grp_switch_check
-                provision_from_service = provision_from_service or check_hierarchical_provision(groups_data[group], layer)
+                service_node = check_hierarchical_provision(group, groups_data, roles_data, layer)
+                if service_node:
+                    snode_name = list(service_node.keys())[0]
+                    parent_data = hierarchical_service_data.get(snode_name, {})
+                    parent_data.setdefault('admin_ip', service_node[snode_name]['admin_ip'])
+                    parent_data.setdefault('service_tag', service_node[snode_name]['service_tag'])
+                    parent_data.setdefault('child_groups', []).append(group)
+                    hierarchical_service_data[snode_name] = parent_data
+                hierarchical_provision_status = hierarchical_provision_status or bool(service_node)
                 roles_groups_data[role] = {}
                 roles_groups_data[role][group] = groups_data[group]
                 groups_roles_info[group]['switch_status'] = grp_switch_check
                 groups_roles_info[group]['bmc_static_status'] = grp_bmc_check
-                groups_roles_info[group]['hierarchical_provision_status'] = provision_from_service
+                groups_roles_info[group]['hierarchical_provision_status'] = hierarchical_provision_status
             else:
                 raise Exception("Group `{}` doesn't exist in roles_config.yml Groups dict".format(group))
 
-    return bmc_check, switch_check, provision_from_service, roles_groups_data, groups_roles_info
+    return bmc_check, switch_check, hierarchical_provision_status, roles_groups_data, groups_roles_info, hierarchical_service_data
 
 def main():
     module_args = dict(
@@ -194,7 +211,7 @@ def main():
         layer = module.params["layer"]
         roles = {role.pop('name'): role for role in roles_list}
         validate_roles(roles, layer, module)
-        need_bmc, need_switch, provision_from_service, roles_groups_data, groups_roles_info = roles_groups_mapping(groups, roles, layer)
+        need_bmc, need_switch, hierarchical_provision_status, roles_groups_data, groups_roles_info, hierarchical_service_data = roles_groups_mapping(groups, roles, layer)
         module.exit_json(
             changed=False,
             roles_data=roles,
@@ -203,7 +220,8 @@ def main():
             roles_groups_data=roles_groups_data,
             bmc_static_status=need_bmc,
             switch_status=need_switch,
-            hierarchical_provision_status=provision_from_service
+            hierarchical_provision_status = hierarchical_provision_status,
+            hierarchical_service_node_data = hierarchical_service_data
         )
     except Exception as e:
         module.fail_json(msg=str(e))
