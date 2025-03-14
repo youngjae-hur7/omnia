@@ -1,0 +1,41 @@
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+---
+
+- name: Configure child groups with xcatmaster and servicenode
+  ansible.builtin.command: >
+    /opt/xcat/bin/chdef -t group -o {{ item_group }}
+    servicenode={{ item_service.value.admin_ip }}
+    xcatmaster={{ item_service.value.admin_ip }}
+    conserver={{ item_service.value.admin_ip }}
+    monserver={{ item_service.value.admin_ip }}
+  loop: "{{ hostvars['localhost']['hierarchical_service_node_data'] | dict2items | subelements('value.child_groups') }}"
+  loop_control:
+    loop_var: item_pair
+  vars:
+    item_service: "{{ item_pair.0 }}"
+    item_group: "{{ item_pair.1 }}"
+  when: item_service.value.service_tag == hostvars[inventory_hostname]['service_tag']
+
+- name: Make hosts on service nodes
+  ansible.builtin.command: /opt/xcat/sbin/makehosts all
+  changed_when: true
+
+- name: Make dns on service nodes
+  ansible.builtin.command: /opt/xcat/sbin/makedns -n
+  changed_when: true
+
+- name: Make dhcp on service nodegroup
+  ansible.builtin.command: /opt/xcat/sbin/makedhcp -a
+  changed_when: true
