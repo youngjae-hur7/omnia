@@ -28,14 +28,6 @@
     mode: "{{ item.mode }}"
   loop: "{{ pcs_startup_file }}"
 
-- name: Create symlinks for PCS files
-  ansible.builtin.file:
-    src: "{{ item.dest }}"
-    dest: "{{ oim_shared_path }}/omnia/provision/syncfiles/pcs/{{ item.dest | basename }}"
-    state: link
-  loop: "{{ pcs_startup_file }}"
-  when: high_availability_config.ansible_facts.oim_ha.enable_oim_ha | default(false)
-
 - name: Check if {{ pcs_container_name }} container is running # noqa: name[template]
   containers.podman.podman_container_info:
     name: "{{ pcs_container_name }}"

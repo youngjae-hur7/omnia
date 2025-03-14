@@ -47,3 +47,7 @@ dnf_conf_dest: "{{ syncfiles_share_path }}/conf/dnf.conf"
 # Usage: configure_synclist.yml
 xcat_path: /opt/xcat/bin
 synclists_dir: "{{ provision_shared_path }}/install/synclists"
+
+pcs_files:
+  - {src: "{{ hostvars['localhost']['oim_shared_path'] }}/omnia/pcs/corosync.conf"}
+  - {src: "/etc/containers/systemd/omnia_pcs.container"}
