@@ -28,10 +28,6 @@
 
     - name: Check all node group status
       ansible.builtin.include_tasks: check_nodes_all.yml
-       
-    - name: Include vars from the pcs container
-      ansible.builtin.include_vars: "{{ pcs_vars }}"
-      when: enable_oim_ha | default(false)
 
     - name: Check omnia_oim group status
       ansible.builtin.include_tasks: check_nodes_oim_ha.yml

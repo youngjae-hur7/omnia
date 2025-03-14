@@ -1,11 +1,9 @@
 #!/bin/bash
-
 ################################################################################################################
 #  omnia_pcs_setup:
 #      Configure Omnia's pcs container on HA OIM nodes
 #
 #################################################################################################################
-
 echo "---------------------------"
 if [ -f "/etc/debian_version" ];then
   str_os_type="debian"
@@ -17,15 +15,16 @@ fi
 if [ "$str_os_type" = "redhat" ]; then
     sudo dnf install -y podman
 fi
-sudo systemctl enable --now podman.socket
-sudo systemctl start --now podman.socket
+sudo systemctl enable podman.socket
+sudo systemctl start podman.socket
 
 # Mount NFS
-# sudo mount {{ }}:/path/to/nfs /mnt/nfs
+# sudo mount {{ admin_nic_ip }}:/path/to/nfs /mnt/nfs
 
 # Pull or build container images
 podman pull {{ admin_nic_ip }}:5000/{{ pcs_container_name }}:{{ pcs_image_tag }}
 
 # Enable and start the pcs container
-sudo systemctl enable --now omnia_pcs
-sudo systemctl start --now omnia_pcs
+sudo systemctl enable omnia_pcs
+sudo systemctl start omnia_pcs
+echo "---------------------------"

@@ -37,6 +37,9 @@ def nodeinfo_db_update(node_details, domain_name, discovery_mechanism, db_path):
     cursor = conn.cursor()
 
     for node_data in node_details:
+        # Convert all keys in node_data to lowercase
+        node_data = {k.lower(): v for k, v in node_data.items()}
+
         temp_mac = node_data.get("admin_mac")
         temp_service_tag = node_data.get("service_tag")
         temp_admin_ip = node_data.get("admin_ip") or None

@@ -50,9 +50,6 @@ warning_time: 30
 async_time: 300
 poll_time: 15
 
-# omnia_oim high availability
-pcs_vars: "{{ role_path }}/../../prepare_oim/roles/deploy_containers/pcs/vars/main.yml"
-
 # Usage: configure_service_node.yml
 servive_node_postscripts_path:
   - { src: "{{ role_path }}/files/omnia_service_node", dest: "/install/postscripts/omnia_service_node", mode: "755" }
