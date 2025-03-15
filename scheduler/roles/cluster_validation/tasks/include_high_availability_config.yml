@@ -13,15 +13,13 @@
 # limitations under the License.
 ---
 
-- name: Include input project directory
-  when: not project_dir_status | default(false) | bool
-  ansible.builtin.import_playbook: ../utils/include_input_dir.yml
-  tags: ["scheduler", "provision", "security", "local_repo", "k8s", "roce", "storage", "proxy", "high_availability"]
-  
-- name: Validate omnia input config
-  hosts: localhost
-  connection: local
-  gather_facts: false
-  roles:
-    - role: validate_input
-      tags: ["scheduler", "provision", "security", "local_repo", "k8s", "roce", "storage", "proxy", high_availability]
+- name: Include include_high_availability_config.yml vars
+  block:
+    - name: Include include_high_availability_config vars
+      ansible.builtin.include_vars: "{{ ha_config_file }}"
+      register: include_ha_config
+      no_log: true
+  rescue:
+    - name: Failed to include_high_availability_config.yml
+      ansible.builtin.fail:
+        msg: "{{ ha_config_syntax_fail_msg }} Error: {{ include_ha_config.message }}"
