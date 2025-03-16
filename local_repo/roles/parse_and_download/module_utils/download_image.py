@@ -16,14 +16,18 @@ import re
 from jinja2 import Template
 from ansible.module_utils.standard_logger import setup_standard_logger
 from ansible.module_utils.parse_and_download import execute_command,write_status_to_file
- 
+import json
+import multiprocessing
+# Global lock for synchronizing `create_container_remote`
+remote_creation_lock = multiprocessing.Lock()
+
 pulp_container_commands = {
     "create_container_repo": "pulp container repository create --name %s",
     "show_container_repo": "pulp container repository show --name %s",
     "create_container_remote": "pulp container remote create --name %s --url %s --upstream-name %s --policy %s --include-tags '[\"%s\"]'",
     "create_container_remote_for_digest": "pulp container remote create --name %s --url %s --upstream-name %s --policy %s",
     "update_remote_for_digest": "pulp container remote update --name %s --url %s --upstream-name %s --policy %s",
-    "update_container_remote": "pulp container remote update --name %s --url %s --upstream-name %s --policy %s --include-tags '[\"%s\"]'",
+    "update_container_remote": "pulp container remote update --name %s --url %s --upstream-name %s --policy %s --include-tags '%s'",
     "show_container_remote": "pulp container remote show --name %s",
     "show_container_distribution": "pulp container distribution show --name %s",
     "sync_container_repository": "pulp container repository sync --name %s --remote %s",
@@ -31,14 +35,14 @@ pulp_container_commands = {
     "update_container_distribution": "pulp container distribution update --name %s --repository %s --base-path %s",
     "list_container_remote_tags": "pulp container remote list --name %s --field include_tags"
 }
- 
+
 def create_container_repository(repo_name,logger):
     """
     Creates a container repository.
- 
+
     Args:
         repo_name (str): The name of the repository.
- 
+
     Returns:
         bool: True if the repository was created successfully or already exists, False if there was an error.
     """
@@ -59,41 +63,37 @@ def extract_existing_tags(remote_name, logger):
     """
     Extracts existing include_tags from a container remote.
 
-    This function retrieves the list of tags currently associated with a specified 
-    container remote. If no tags exist, or if an error occurs, it returns an empty list.
-
     Args:
-        remote_name (str): The name of the container remote.
-        logger (Logger): Logger instance for logging messages.
+        remote_name (str): The name of the remote.
 
     Returns:
-        list: A list of existing tags. If the remote does not exist or an error occurs, 
-              an empty list is returned.
+        list: A list of existing tags, or an empty list if an error occurs.
     """
     try:
         command = pulp_container_commands["list_container_remote_tags"] % remote_name
-        # Use type_json=True to get parsed JSON output
         result = execute_command(command, logger, type_json=True)
+
         if not result or not isinstance(result, dict) or "stdout" not in result:
             logger.error("Failed to fetch remote tags.")
-            return None
-        # stdout is already parsed as JSON (list/dict)
+            return []
+
         remotes = result["stdout"]
         if not isinstance(remotes, list) or len(remotes) == 0:
             logger.error("Unexpected data format for remote tags.")
-            return None
-        existing_tags = remotes[0].get("include_tags", [])
-        return existing_tags
+            return []
+
+        return remotes[0].get("include_tags", [])
+
     except Exception as e:
         logger.error(f"Error extracting tags: {e}")
-        return None
+        return []
 
 def create_container_remote(remote_name, remote_url, package, policy_type, tag, logger):
     """
     Creates or updates a container remote with the specified tag.
 
-    If the remote does not exist, it is created with the provided tag. If the remote 
-    already exists, the function retrieves the current tags, checks if the new tag is 
+    If the remote does not exist, it is created with the provided tag. If the remote
+    already exists, the function retrieves the current tags, checks if the new tag is
     already included, and updates the remote if necessary.
 
     Args:
@@ -214,7 +214,7 @@ def get_repo_url_and_content(package):
 
     Returns:
         tuple: A tuple containing the repository URL and content.
- 
+
     Raises:
         ValueError: If the package prefix is not supported.
     """
@@ -227,32 +227,32 @@ def get_repo_url_and_content(package):
          r"^(public\.ecr\.aws)(/.+)": "https://public.ecr.aws",
          r"^(gcr\.io)(/.+)": "https://gcr.io"
     }
- 
+
     for pattern, repo_url in patterns.items():
         match = re.match(pattern, package)
         if match:
             base_url = repo_url
             package_content = match.group(2).lstrip("/")  # Remove leading slash
             return base_url, package_content
- 
+
     raise ValueError(f"Unsupported package prefix for package: {package}")
- 
+
 def create_container_distribution(repo_name,package_content,logger):
     """
     Create or update a distribution for a repository.
- 
+
     Args:
         repo_name (str): The name of the repository.
         package_content (str): The content of the package.
         logger (logging.Logger): The logger instance.
- 
+
     Returns:
         bool: True if the distribution is created or updated successfully, False otherwise.
- 
+
     Raises:
         Exception: If there is an error creating or updating the distribution.
     """
-   
+
     try:
         if not execute_command(pulp_container_commands["show_container_distribution"] % (repo_name), logger):
             command = pulp_container_commands["distribute_container_repository"] % (repo_name, repo_name, package_content)
@@ -280,6 +280,7 @@ def process_image(package, repo_store_path, status_file_path, cluster_os_type, c
     """
     logger.info("#" * 30 + f" {process_image.__name__} start " + "#" * 30)
     status = "Success"
+
     try:
         policy_type = "immediate"
         base_url, package_content = get_repo_url_and_content(package['package'])
@@ -287,33 +288,35 @@ def process_image(package, repo_store_path, status_file_path, cluster_os_type, c
         repository_name = f"{repo_name_prefix}{package['package'].replace('/', '_').replace(':', '_')}"
         remote_name = f"remote_{package['package'].replace('/', '_')}"
 
-        # Create repository and validate output
+        # Create container repository
         result = create_container_repository(repository_name, logger)
-        if not result or result is False or result.get("returncode", 1) != 0:
+        if result is False or (isinstance(result, dict) and result.get("returncode", 1) != 0):
             raise Exception(f"Failed to create repository: {repository_name}")
 
         # Process digest or tag
         if "digest" in package:
             result = create_container_remote_digest(remote_name, base_url, package_content, policy_type, logger)
-            if not result or result is False or result.get("returncode", 1) != 0:
+            if result is False or (isinstance(result, dict) and result.get("returncode", 1) != 0):
                 raise Exception(f"Failed to create remote digest: {remote_name}")
 
         elif "tag" in package:
             tag_template = Template(package.get('tag', None))  # Use Jinja2 Template for URL
             tag_val = tag_template.render(**version_variables)
 
-            result = create_container_remote(remote_name, base_url, package_content, policy_type, tag_val, logger)
-            if not result or result is False or result.get("returncode", 1) != 0:
+            with remote_creation_lock:  # Locking for single execution
+                result = create_container_remote(remote_name, base_url, package_content, policy_type, tag_val, logger)
+
+            if result is False or (isinstance(result, dict) and result.get("returncode", 1) != 0):
                 raise Exception(f"Failed to create remote: {remote_name}")
 
-        # Sync repository
+        # Sync container repository
         result = sync_container_repository(repository_name, remote_name, logger)
-        if not result or result is False or result.get("returncode", 1) != 0:
+        if result is False or (isinstance(result, dict) and result.get("returncode", 1) != 0):
             raise Exception(f"Failed to sync repository: {repository_name}")
 
-        # Create distribution
+        # Create container distribution
         result = create_container_distribution(repository_name, package_content, logger)
-        if not result or result is False or result.get("returncode", 1) != 0:
+        if result is False or (isinstance(result, dict) and result.get("returncode", 1) != 0):
             raise Exception(f"Failed to create distribution: {repository_name}")
 
     except Exception as e:
@@ -326,4 +329,3 @@ def process_image(package, repo_store_path, status_file_path, cluster_os_type, c
 
         logger.info("#" * 30 + f" {process_image.__name__} end " + "#" * 30)
         return status
-
