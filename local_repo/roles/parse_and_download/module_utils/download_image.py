@@ -20,6 +20,7 @@ import json
 import multiprocessing
 # Global lock for synchronizing `create_container_remote`
 remote_creation_lock = multiprocessing.Lock()
+repository_creation_lock = multiprocessing.Lock()
 
 pulp_container_commands = {
     "create_container_repo": "pulp container repository create --name %s",
@@ -294,7 +295,8 @@ def process_image(package, repo_store_path, status_file_path, cluster_os_type, c
         remote_name = f"remote_{package['package'].replace('/', '_')}"
 
         # Create container repository
-        result = create_container_repository(repository_name, logger)
+        with repository_creation_lock:
+            result = create_container_repository(repository_name, logger)
         if result is False or (isinstance(result, dict) and result.get("returncode", 1) != 0):
             raise Exception(f"Failed to create repository: {repository_name}")
 
