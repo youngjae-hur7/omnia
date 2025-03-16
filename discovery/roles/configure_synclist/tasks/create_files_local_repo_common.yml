@@ -57,6 +57,14 @@
     mode: "{{ dir_permission }}"
   when: enable_oim_ha | default(false)
 
+- name: Create symlinks for PCS files
+  ansible.builtin.file:
+    src: "{{ item.src }}"
+    dest: "{{ syncfiles_share_path }}/pcs/{{ item.src | basename }}"
+    state: link
+  loop: "{{ pcs_files }}"
+  when: enable_oim_ha | default(false)
+
 - name: Render pip.conf template
   ansible.builtin.template:
     src: "{{ pip_conf_src }}"
