@@ -186,13 +186,14 @@ def create_container_remote_digest(remote_name, remote_url, package, policy_type
         logger.error(f"Failed to create remote {remote_name}. Error: {e}")
         return False
 
-def sync_container_repository(repo_name, remote_name, logger):
+def sync_container_repository(repo_name, remote_name, package_content, logger):
     """
-    Synchronizes a container repository with a remote.
+    Synchronizes and distribute container repository with a remote.
 
     Args:
         repo_name (str): The name of the repository.
         remote_name (str): The name of the remote.
+        package_content (str): Upstream name.
 
     Returns:
         bool: True if the synchronization is successful, False otherwise.
@@ -200,7 +201,11 @@ def sync_container_repository(repo_name, remote_name, logger):
     try:
         command = pulp_container_commands["sync_container_repository"] % (repo_name, remote_name)
         result = execute_command(command,logger)
-        return result
+        if result is False or (isinstance(result, dict) and result.get("returncode", 1) != 0):
+            return False
+        else:
+            result = create_container_distribution(repo_name,package_content,logger)
+            return result
     except Exception as e:
         logger.error(f"Failed to synchronize repository {repo_name} with remote {remote_name}. Error: {e}")
         return False
@@ -309,15 +314,10 @@ def process_image(package, repo_store_path, status_file_path, cluster_os_type, c
             if result is False or (isinstance(result, dict) and result.get("returncode", 1) != 0):
                 raise Exception(f"Failed to create remote: {remote_name}")
 
-        # Sync container repository
-        result = sync_container_repository(repository_name, remote_name, logger)
+        # Sync and distribute container repository
+        result = sync_container_repository(repository_name, remote_name, package_content,logger)
         if result is False or (isinstance(result, dict) and result.get("returncode", 1) != 0):
             raise Exception(f"Failed to sync repository: {repository_name}")
-
-        # Create container distribution
-        result = create_container_distribution(repository_name, package_content, logger)
-        if result is False or (isinstance(result, dict) and result.get("returncode", 1) != 0):
-            raise Exception(f"Failed to create distribution: {repository_name}")
 
     except Exception as e:
         status = "Failed"
