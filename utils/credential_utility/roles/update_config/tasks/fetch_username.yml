@@ -21,7 +21,7 @@
     - name: Prompt user for Username
       ansible.builtin.pause:
         prompt: "Enter the [{{ type.key }}] - {{ username }}:"
-        seconds: "{{ credential_timeout }}"
+        timeout: "{{ credential_timeout }}"
       register: username_input
 
     - name: Validate mandatory username not empty
