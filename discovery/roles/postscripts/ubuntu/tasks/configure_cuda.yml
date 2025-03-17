@@ -57,13 +57,9 @@
     cuda_gpg_key: "{{ cuda_gpg_file.files[0].path.split('/')[-1] }}"
     cuda_debs_folder: "{{ cuda_gpg_file.files[0].path.split('/')[-2] }}"
 
-- name: Access CUDA version from host variables
+- name: Set CUDA version
   ansible.builtin.set_fact:
     cuda_version: "{{ hostvars[inventory_hostname]['cuda_version'] | default('unknown') }}"
-
-- name: Debug CUDA version
-  ansible.builtin.debug:
-    msg: "CUDA version is {{ cuda_version }}"
 
 - name: Check if libnccl2 package exists (only for CUDA 12.8.0)
   ansible.builtin.stat:
