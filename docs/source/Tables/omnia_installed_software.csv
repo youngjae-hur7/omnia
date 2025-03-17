@@ -14,8 +14,7 @@ coreDNS,Apache-2.0,DNS server that chains plugins,1.11.3
 cni,Apache-2.0,Networking for Linux containers,3.29.1
 cri,Apache-2.0,CLI and validation tools for Kubelet Container Runtime Interface (CRI),1.31.1
 calico,Apache-2.0,Cloud native networking and network,3.29.1
-flannel,Apache-2.0,"About
-flannel is a network fabric for containers, designed for Kubernetes",0.22.0
+flannel,Apache-2.0,"Flannel is a network fabric for containers, designed for Kubernetes",0.22.0
 multus,Apache-2.0,A CNI meta-plugin for multi-homed pods in Kubernetes,4.1.4
 whearabouts,Apache-2.0,A CNI IPAM plugin that assigns IP addresses cluster-wide,0.8.0
 runc,Apache-2.0,CLI tool for spawning and running containers according to the OCI specification,1.2.3
@@ -144,7 +143,7 @@ Kustomize (ubuntu 22.04/24.04),Apache License 2.0,Customization of kubernetes YA
 nfs-subdir-external-provisioner,Apache License 2.0,Dynamic sub-dir volume provisioner on a remote NFS server.,4.0.18
 habana-container-runtime,Apache License 2.0,Habana container runtime,1.19.2
 nvidia-container-toolkit,Apache License 2.0,NVIDIA container runtime library,1.17.5
-helm-charts, Apache-2.0 license,The source for Dell Helm charts.,csi-isilon-2.13.0
+helm-charts,Apache-2.0 license,The source for Dell Helm charts.,csi-isilon-2.13.0
 csi-powerscale,Apache-2.0 license,CSI Driver for Dell PowerScale,2.13.0
 external-snapshotter,Apache-2.0 license,Sidecar container that watches Kubernetes Snapshot CRD objects and triggers CreateSnapshot/DeleteSnapshot against a CSI endpoint.,8.0.1
 NVIDIA GPU operator,NVIDIA Agreements | Enterprise Software | Product Specific Terms for AI Product,The NVIDIA GPU Operator uses the operator framework within Kubernetes to automate the management of all NVIDIA software components needed to provision GPU,24.9.2
