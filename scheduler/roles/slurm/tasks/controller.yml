@@ -12,10 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- name: Install controller packages
-  ansible.builtin.package:
+# - name: Install controller packages
+#   ansible.builtin.package:
+#     name: "{{ slurm_controller_packages[ansible_os_family] }}"
+#     state: present
+
+- name: Install dnf controller packages on installroot #common
+  ansible.builtin.dnf:
+    # name: "{{ slurm_controller_packages[ansible_os_family] }}"
+    name:
+      - slurm
+    state: present
+    installroot: "{{ installroot }}"
+  when: ansible_os_family == 'RedHat'
+  # Raising error first time though installed success 
+
+- name: Install dnf controller service packages locally
+  ansible.builtin.dnf:
     name: "{{ slurm_controller_packages[ansible_os_family] }}"
     state: present
+    # installroot: "{{ installroot }}"
+  when: ansible_os_family == 'RedHat'
 
 - name: Create files - {{ item }} # TODO: file required?
   ansible.builtin.file:
@@ -35,6 +52,14 @@
     permanent: true
     state: enabled
     immediate: true
+
+ # if service installed locally - this following copy not required
+# - name: Copy the slurctld service local for both configless and nfs
+#   ansible.builtin.copy:
+#     src: "{{ installroot }}{{ slurmctld_service_default_path }}"
+#     dest: "{{ slurmctld_service_default_path }}"
+#     remote_src: true
+#     mode: preserve
 
 # Edit service
 - name: Enable the service
@@ -64,3 +89,27 @@
     mode: u=rw,g=r,o=r
   notify:
     - Reload slurmctld
+
+- name: Add environment for nfs case
+  community.general.ini_file:
+    path: "{{ ctld_service['status']['FragmentPath'] | default(slurm_ctld_service_default_path) }}"
+    section: Service
+    option: Environment
+    value: '"LD_LIBRARY_PATH={{ slurm_share_prefix }}/usr/lib64/"'
+    no_extra_spaces: true
+    mode: u=rw,g=r,o=r
+  when: (slurm_installation_type == 'nfs_share') and _force_install_nfs
+  notify:
+    - Reload slurmctld
+
+- name: Remove environment for configless case
+  community.general.ini_file:
+    path: "{{ ctld_service['status']['FragmentPath'] | default(slurm_ctld_service_default_path) }}"
+    section: Service
+    option: Environment
+    state: absent
+  when: (slurm_installation_type == 'configless') or not _force_install_nfs
+  notify:
+    - Reload slurmctld
+
+# - pause:

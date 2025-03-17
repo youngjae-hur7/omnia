@@ -90,11 +90,11 @@
   ansible.builtin.service:
     name: slurmdbd
     enabled: true
-  register: ctld_service
+  register: dbd_service
 
 - name: Edit the service
   community.general.ini_file:
-    path: "{{ ctld_service['status']['FragmentPath'] | default(slurmdbd_service_default_path) }}"
+    path: "{{ dbd_service['status']['FragmentPath'] | default(slurmdbd_service_default_path) }}"
     section: Unit
     option: ConditionPathExists
     value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurmdbd.conf"
@@ -103,3 +103,25 @@
   notify:
     - Reload slurmdbd
     - Restart slurmdbd
+
+- name: Add environment for nfs case
+  community.general.ini_file:
+    path: "{{ dbd_service['status']['FragmentPath'] | default(slurmdbd_service_default_path) }}"
+    section: Service
+    option: Environment
+    value: '"LD_LIBRARY_PATH={{ slurm_share_prefix }}/usr/lib64/"'
+    no_extra_spaces: true
+    mode: u=rw,g=r,o=r
+  when: (slurm_installation_type == 'nfs_share') and _force_install_nfs
+  notify:
+    - Reload slurmdbd
+
+- name: Remove environment for configless case
+  community.general.ini_file:
+    path: "{{ dbd_service['status']['FragmentPath'] | default(slurmdbd_service_default_path) }}"
+    section: Service
+    option: Environment
+    state: absent
+  when: (slurm_installation_type == 'configless') or not _force_install_nfs
+  notify:
+    - Reload slurmdbd
