@@ -14,7 +14,7 @@
 ---
 
 - name: Integrate mapping file with DB
-  nodeinfo_db_update:
+  mapping_nodeinfo_db_update:
     db_path: "{{ db_path }}"
     node_details: "{{ mapping_details }}"
     domain_name: "{{ domain_name }}"
