@@ -25,8 +25,12 @@ Software Installed by Omnia
 
        <details>
        <summary>Click to view details for Ubuntu 22.04</summary>
-       - Software A: 1.0, 1.3
-       - Software C: 3.0, 3.1, 3.2
+
+       .. csv-table:: Softwares installed by Omnia
+          :file: ../../Tables/omnia_installed_software.csv
+          :header-rows: 1
+          :keepspace:
+
        </details>
 
    .. raw:: html
