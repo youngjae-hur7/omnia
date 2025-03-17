@@ -1,4 +1,4 @@
-# Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,30 +20,14 @@
     mode: "{{ file_permission }}"
     remote_src: true
 
-
 - name: Update kernel parameters on Ubuntu systems
   when: cmdline_value != ""
   block:
-    - name: Reading existing kernel parameters
-      ansible.builtin.shell: >
-        set -o pipefail && grep '^GRUB_CMDLINE_LINUX=' "{{ grub_path }}" | cut -d'"' -f2
-      register: existing_grub_cmdline
-      changed_when: false
-
-    - name: Set updated kernel parameters
-      ansible.builtin.set_fact:
-        new_kernel_cmdline: "{{ cmdline_value }}"
-
-    - name: Merge existing parameters if not empty
-      ansible.builtin.set_fact:
-        new_kernel_cmdline: "{{ cmdline_value }} {{ existing_grub_cmdline.stdout | trim }}"
-      when: existing_grub_cmdline.stdout | trim | length > 0
-
     - name: Ensure GRUB_CMDLINE_LINUX is correctly formatted
       ansible.builtin.lineinfile:
         path: "{{ grub_path }}"
         regexp: '^GRUB_CMDLINE_LINUX='
-        line: 'GRUB_CMDLINE_LINUX="{{ new_kernel_cmdline | trim }}"'
+        line: 'GRUB_CMDLINE_LINUX="{{ cmdline_value | trim }}"'
         backrefs: false
 
     - name: Update Grub configuration
