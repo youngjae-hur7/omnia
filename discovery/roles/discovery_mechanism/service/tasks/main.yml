@@ -25,4 +25,4 @@
   ansible.builtin.include_tasks: rename_service_node_nic.yml
 
 - name: Set Service node details to node object
-  ansible.builtin.include_tasks: set_servicenode_details.yml
+  ansible.builtin.include_tasks: set_service_node_details.yml

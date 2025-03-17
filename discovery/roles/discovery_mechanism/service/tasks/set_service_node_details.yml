@@ -29,13 +29,37 @@
   when: item_service.value.service_tag == hostvars[inventory_hostname]['service_tag']
 
 - name: Make hosts on service nodes
-  ansible.builtin.command: /opt/xcat/sbin/makehosts all
-  changed_when: true
+  block:
+    - name: Run makehosts on all service nodes
+      ansible.builtin.command: "{{ xcat_sbin_path }}/makehosts all"
+      changed_when: true
+      register: makehosts_result
+  rescue:
+    - name: Log warning if makehosts fails
+      ansible.builtin.debug:
+        msg: "{{ hosts_entry_warning_msg }} {{ makehosts_result.stderr }}"
+      when: makehosts_result.stderr is defined
 
-- name: Make dns on service nodes
-  ansible.builtin.command: /opt/xcat/sbin/makedns -n
-  changed_when: true
+- name: Make DNS on service nodes
+  block:
+    - name: Run makedns -n
+      ansible.builtin.command: "{{ xcat_sbin_path }}/makedns -n"
+      changed_when: true
+      register: dns_config
+  rescue:
+    - name: Log warning if DNS configuration fails
+      ansible.builtin.debug:
+        msg: "{{ dns_config_warning_msg }} {{ dns_config.stderr }}"
+      when: dns_config.stderr is defined
 
-- name: Make dhcp on service nodegroup
-  ansible.builtin.command: /opt/xcat/sbin/makedhcp -a
-  changed_when: true
+- name: Make DHCP apply on service node group
+  block:
+    - name: Run makedhcp -a
+      ansible.builtin.command: "{{ xcat_sbin_path }}/makedhcp -a"
+      changed_when: true
+      register: makedhcp_result
+  rescue:
+    - name: Log failure message if makedhcp -a fails
+      ansible.builtin.fail:
+        msg: "{{ dhcp_config_apply_fail_msg }} {{ makedhcp_result.stderr }}"
+      when: makedhcp_result.stderr is defined
