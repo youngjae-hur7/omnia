@@ -11,10 +11,10 @@ Software Installed by Omnia
        <details>
        <summary>Click to view details for Windows</summary>
 
-       .. csv-table:: Softwares installed by Omnia
-          :file: ../../Tables/omnia_installed_software.csv
-          :header-rows: 1
-          :keepspace:
+   .. csv-table:: Softwares installed by Omnia
+       :file: ../../Tables/omnia_installed_software.csv
+       :header-rows: 1
+       :keepspace:
 
        </details>
 
