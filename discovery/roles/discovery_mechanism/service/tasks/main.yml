@@ -29,3 +29,4 @@
 
 - name: Copy syncfiles dir to service node
   ansible.builtin.include_tasks: copy_syncfiles.yml
+  when: "{{ hostvars['omnia_provision']['omnia_share_option'] }} == 'Local'"

@@ -15,8 +15,7 @@
 
 - name: Create groups for service node
   ansible.builtin.add_host:
-    name: "{{ item }}"
-    host: "{{ hierarchical_service_node_data[item]['admin_ip'] }}"
+    name: "{{ hierarchical_service_node_data[item]['admin_ip'] }}"
     groups: "service_nodes"
     service_tag: "{{ hierarchical_service_node_data[item]['service_tag'] }}"
     child_groups: "{{ hierarchical_service_node_data[item]['child_groups'] | list }}"
