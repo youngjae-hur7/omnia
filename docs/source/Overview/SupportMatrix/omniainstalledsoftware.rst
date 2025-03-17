@@ -1,7 +1,7 @@
 Software Installed by Omnia
 ===========================
 
-.. dropdown:: Click to expand Parameters for Software Configuration
+.. dropdown:: Software matrix for Ubuntu
 
    .. csv-table:: Parameters for Software Configuration
       :file: ../../Tables/omnia_installed_software.csv
