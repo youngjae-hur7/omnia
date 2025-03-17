@@ -24,5 +24,5 @@ dns_config_warning_msg: "[WARNING] makedns -n command is not successful. Error:"
 
 # Usage: copy_syncfiles.yml
 syncfiles_share_src: "{{ hostvars['omnia_provision']['syncfiles_share_path'] }}"
-syncfiles_share_dest: "{{ hostvars['omnia_provision'] }}"
+syncfiles_share_dest: "{{ hostvars['omnia_provision']['provision_shared_path'] }}"
 syncfiles_mode: "0755"
