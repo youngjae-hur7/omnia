@@ -112,10 +112,10 @@ def check_hierarchical_provision(group, groups_data, roles_data, layer):
         table_name='cluster.nodeinfo',
         filter_dict={'service_tag': parent, 'status': 'booted', 'role': "service"},
     )
-    service_node_grp = query_result[0]['group_name']
-    service_node_role = query_result[0]['role']
 
     if query_result:
+        service_node_grp = query_result[0]['group_name']
+        service_node_role = query_result[0]['role']
         data = {
             query_result[0]['node']: { 'admin_ip': query_result[0]['admin_ip'],
                                         'service_tag': query_result[0]['service_tag'] }

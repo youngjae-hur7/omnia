@@ -46,15 +46,3 @@
   ansible.builtin.shell: >
     ip link set {{ service_nic }} name {{ management_admin_nic }}
   changed_when: true
-
-- name: Task for creating DHCP configuration
-  block:
-    - name: Create DHCP configuration
-      ansible.builtin.command: "{{ xcat_sbin_path }}/makedhcp -n"
-      changed_when: true
-      register: create_dhcp_config
-  rescue:
-    - name: DHCP configuration failed
-      ansible.builtin.fail:
-        msg: "{{ dhcp_config_fail_msg }} {{ create_dhcp_config.stderr }}"
-      when: create_dhcp_config.stderr is defined

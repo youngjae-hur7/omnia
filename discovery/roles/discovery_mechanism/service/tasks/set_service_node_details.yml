@@ -32,7 +32,7 @@
 - name: Make hosts on service nodes
   block:
     - name: Run makehosts on all service nodes
-      ansible.builtin.command: "{{ xcat_sbin_path }}/makehosts all"
+      ansible.builtin.command: "{{ xcat_sbin_path }}/makehosts -n"
       changed_when: true
       register: makehosts_result
   rescue:
@@ -40,6 +40,18 @@
       ansible.builtin.debug:
         msg: "{{ hosts_entry_warning_msg }} {{ makehosts_result.stderr }}"
       when: makehosts_result.stderr is defined
+
+- name: Task for creating DHCP configuration
+  block:
+    - name: Create DHCP configuration
+      ansible.builtin.command: "{{ xcat_sbin_path }}/makedhcp -n"
+      changed_when: true
+      register: create_dhcp_config
+  rescue:
+    - name: DHCP configuration failed
+      ansible.builtin.fail:
+        msg: "{{ dhcp_config_fail_msg }} {{ create_dhcp_config.stderr }}"
+      when: create_dhcp_config.stderr is defined
 
 - name: Make DNS on service nodes
   block:

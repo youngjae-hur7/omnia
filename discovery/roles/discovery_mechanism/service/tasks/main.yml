@@ -17,10 +17,6 @@
   ansible.builtin.debug:
     msg: "{{ hostvars[inventory_hostname]['service_tag'] }}"
 
-- name: Service node serial
-  ansible.builtin.debug:
-    msg: "{{ hostvars['omnia_provision'] }}"
-
 - name: Rename nic interface on service node
   ansible.builtin.include_tasks: rename_service_node_nic.yml
 
