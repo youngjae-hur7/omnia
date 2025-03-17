@@ -10,8 +10,12 @@ Software Installed by Omnia
 
        <details>
        <summary>Click to view details for Windows</summary>
-       - Software A: 1.0, 1.1, 1.2
-       - Software B: 2.0, 2.1
+
+       .. csv-table:: Softwares installed by Omnia
+          :file: ../../Tables/omnia_installed_software.csv
+          :header-rows: 1
+          :keepspace:
+
        </details>
 
    .. raw:: html
