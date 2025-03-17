@@ -37,6 +37,7 @@ uncorrelated_admin_start_ip = ipaddress.IPv4Address(sys.argv[9])
 location_id = sys.argv[11]
 architecture = sys.argv[12]
 role = sys.argv[13]
+parent = sys.argv[14]
 discovery_mechanism = "mtms"
 bmc_mode = "static"
 admin_static_start_range = ipaddress.IPv4Address(admin_static_range.split('-')[0])
@@ -96,7 +97,7 @@ def update_db():
                     output = modify_network_details.check_presence_admin_ip(cursor, admin_ip)
                     if not output:
                         omniadb_connection.insert_node_info(serial[key], node, host_name, None, admin_ip,
-                                                            bmc[key], group_name, role, location_id, architecture, discovery_mechanism, bmc_mode, None, None,
+                                                            bmc[key], group_name, role, parent, location_id, architecture, discovery_mechanism, bmc_mode, None, None,
                                                             None)
                     elif output:
                         admin_ip = modify_network_details.cal_uncorrelated_admin_ip(cursor,
@@ -105,7 +106,7 @@ def update_db():
                                                                                     admin_static_end_range,
                                                                                     discovery_mechanism)
                         omniadb_connection.insert_node_info(serial[key], node, host_name, None, admin_ip,
-                                                            bmc[key], group_name, role, location_id, architecture, discovery_mechanism, bmc_mode, None, None,
+                                                            bmc[key], group_name, role, parent, location_id, architecture, discovery_mechanism, bmc_mode, None, None,
                                                             None)
                 else:
                     admin_ip = modify_network_details.cal_uncorrelated_admin_ip(cursor, uncorrelated_admin_start_ip,
@@ -113,7 +114,7 @@ def update_db():
                                                                                 admin_static_end_range,
                                                                                 discovery_mechanism)
                     omniadb_connection.insert_node_info(serial[key], node, host_name, None, admin_ip,
-                                                        bmc[key], group_name, role, location_id, architecture, discovery_mechanism, bmc_mode, None, None,
+                                                        bmc[key], group_name, role, parent, location_id, architecture, discovery_mechanism, bmc_mode, None, None,
                                                         None)
             else:
                 warnings.warn('Node already present in the database')
