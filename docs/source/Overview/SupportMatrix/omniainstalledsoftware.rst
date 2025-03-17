@@ -78,11 +78,11 @@ Software Installed by Omnia
 
  .. raw:: html
 
- .. dropdown:: RHEL/Rocky
-     :animate: fade-in
-     .. csv-table:: Softwares installed by Omnia
-           :file: ../../Tables/omnia_installed_software.csv
-           :header-rows: 1
-           :keepspace:
+    .. dropdown:: RHEL/Rocky
+        :animate: fade-in
+            .. csv-table:: Softwares installed by Omnia
+                :file: ../../Tables/omnia_installed_software.csv
+                :header-rows: 1
+                :keepspace:
 
 
