@@ -76,6 +76,8 @@ Software Installed by Omnia
       </script>
 
 
+ .. raw:: html
+
  .. dropdown:: RHEL/Rocky
      :animate: fade-in
      .. csv-table:: Softwares installed by Omnia
