@@ -13,18 +13,6 @@
 # limitations under the License.
 ---
 
-# - name: Fetch the admin_ip and serial from cluster.nodeinfo
-#   community.postgresql.postgresql_query:
-#     db: omniadb
-#     login_user: postgres
-#     query: SELECT admin_ip,service_tag FROM cluster.nodeinfo WHERE status = 'booted' and role like '%service%';
-#     login_password: "{{ postgresdb_password }}"
-#   become: true
-#   become_user: postgres
-#   register: query_status
-#   failed_when: false
-#   no_log: true
-
 - name: Create groups for service node
   ansible.builtin.add_host:
     name: "{{ item }}"
