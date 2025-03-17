@@ -17,5 +17,5 @@
   ansible.posix.synchronize:
     src: "{{ syncfiles_share_path }}"
     dest: "{{ syncfiles_share_path }}"
-    recursive: yes
+    recursive: true
   delegate_to: localhost
