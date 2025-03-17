@@ -27,7 +27,7 @@ def main():
     module_args = dict(
         credential_field=dict(type="str", required=True),
         credential_input=dict(type="str", required=True),
-        rules_file=dict(type="str", required=False, default="credential_rules.json")
+        rules_file=dict(type="str", required=False, default="./module_utils/schema/credential_rules.json")
     )
 
     module = AnsibleModule(argument_spec=module_args, supports_check_mode=True)
