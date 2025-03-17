@@ -13,9 +13,15 @@
 #  limitations under the License.
 ---
 
+- name: Create dir for syncfiles
+  ansible.builtin.file:
+    path: "{{ syncfiles_share_dest }}"
+    state: directory
+    mode: "{{ syncfiles_mode }}"
+
 - name: Copy syncfiles directory from localhost to service host
   ansible.posix.synchronize:
-    src: "{{ syncfiles_share_path }}"
-    dest: "{{ syncfiles_share_path }}"
+    src: "{{ syncfiles_share_src }}"
+    dest: "{{ syncfiles_share_dest }}"
     recursive: true
   delegate_to: localhost

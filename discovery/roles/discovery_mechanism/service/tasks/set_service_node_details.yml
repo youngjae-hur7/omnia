@@ -20,7 +20,7 @@
     xcatmaster={{ item_service.value.admin_ip }}
     conserver={{ item_service.value.admin_ip }}
     monserver={{ item_service.value.admin_ip }}
-  loop: "{{ hostvars['localhost']['hierarchical_service_node_data'] | dict2items | subelements('value.child_groups') }}"
+  loop: "{{ hierarchical_service_node_data | dict2items | subelements('value.child_groups') }}"
   loop_control:
     loop_var: item_pair
   vars:
