@@ -43,7 +43,7 @@ def main():
     credential_valid, credential_msg = validate_input(params["credential_field"], params["credential_input"], rules)
 
     if credential_valid:
-        module.exit_json(changed=False, msg=credential_msg)
+        module.exit_json(changed=False, msg=f"{credential_msg}")
     else:
         module.fail_json(msg=f"Validation failed: {credential_msg}")
 
