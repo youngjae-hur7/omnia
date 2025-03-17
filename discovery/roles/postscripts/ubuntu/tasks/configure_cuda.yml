@@ -57,6 +57,28 @@
     cuda_gpg_key: "{{ cuda_gpg_file.files[0].path.split('/')[-1] }}"
     cuda_debs_folder: "{{ cuda_gpg_file.files[0].path.split('/')[-2] }}"
 
+- name: Access CUDA version from host variables
+  ansible.builtin.set_fact:
+    cuda_version: "{{ hostvars[inventory_hostname]['cuda_version'] | default('unknown') }}"
+
+- name: Debug CUDA version
+  ansible.builtin.debug:
+    msg: "CUDA version is {{ cuda_version }}"
+
+- name: Check if libnccl2 package exists (only for CUDA 12.8.0)
+  ansible.builtin.stat:
+    path: "/opt/omnia_repo/cluster/ubuntu/24.04/iso/cuda/{{ cuda_version }}/libnccl2_2.25.1-1+cuda12.8_amd64.deb"
+  register: nccl_file
+  when: cuda_version == "12.8.0"
+
+- name: Copy libnccl2 package to CUDA debs folder (only for CUDA 12.8.0)
+  ansible.builtin.copy:
+    src: "/opt/omnia_repo/cluster/ubuntu/24.04/iso/cuda/{{ cuda_version }}/libnccl2_2.25.1-1+cuda12.8_amd64.deb"
+    dest: "{{ cuda_core_path }}/var/{{ cuda_debs_folder }}/"
+  when:
+    - cuda_version == "12.8.0"
+    - nccl_file.stat.exists
+
 - name: Copy CUDA script to postscripts
   ansible.builtin.template:
     src: "{{ item.src }}"
