@@ -13,4 +13,5 @@
 #  limitations under the License.
 ---
 
-# serice node vars will be added here
+xcat_bin_path: "/opt/xcat/bin/"
+xcat_sbin_path: "/opt/xcat/sbin/"
