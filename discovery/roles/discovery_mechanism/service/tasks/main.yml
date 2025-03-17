@@ -15,7 +15,7 @@
 
 - name: Service node serial
   ansible.builtin.debug:
-    msg: "{{ hostvars[ inventory_hostname ]['service_tag'] }}"
+    msg: "{{ hostvars[inventory_hostname]['service_tag'] }}"
 
 - name: Service node serial
   ansible.builtin.debug:

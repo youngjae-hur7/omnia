@@ -27,6 +27,7 @@
     item_service: "{{ item_pair.0 }}"
     item_group: "{{ item_pair.1 }}"
   when: item_service.value.service_tag == hostvars[inventory_hostname]['service_tag']
+  changed_when: true
 
 - name: Make hosts on service nodes
   block:

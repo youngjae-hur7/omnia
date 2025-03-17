@@ -45,6 +45,7 @@
   when: service_nic != management_admin_nic
   ansible.builtin.shell: >
     ip link set {{ service_nic }} name {{ management_admin_nic }}
+  changed_when: true
 
 - name: Task for creating DHCP configuration
   block:
