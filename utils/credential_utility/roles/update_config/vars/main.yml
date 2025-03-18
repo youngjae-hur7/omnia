@@ -63,7 +63,7 @@ omnia_credentials:
   slurm:
     mandatory:
       password:
-        - mariadb_password
+        - slurm_db_password
   openldap:
     mandatory:
       password:
