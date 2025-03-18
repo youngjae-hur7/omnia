@@ -16,6 +16,7 @@
 - name: Service node serial
   ansible.builtin.debug:
     msg: "{{ hostvars[inventory_hostname]['service_tag'] }}"
+    verbosity: 2
 
 - name: Set fact hierarchical_service_node_data
   ansible.builtin.set_fact:
