@@ -21,7 +21,8 @@
 
 - name: Copy syncfiles directory from localhost to service host
   ansible.posix.synchronize:
-    src: "{{ syncfiles_share_src }}"
-    dest: "{{ syncfiles_share_dest }}"
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
     recursive: true
   delegate_to: localhost
+  with_items: "{{ service_node_sync_files }}"
