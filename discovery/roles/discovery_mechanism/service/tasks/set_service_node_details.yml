@@ -15,7 +15,7 @@
 
 - name: Configure child groups with xcatmaster and servicenode
   ansible.builtin.command: >
-    /opt/xcat/bin/chdef -t group -o {{ item_group }}
+    {{ xcat_bin_path }}/chdef -t group -o {{ item_group }}
     servicenode={{ item_service.value.admin_ip }}
     xcatmaster={{ item_service.value.admin_ip }}
     conserver={{ item_service.value.admin_ip }}
