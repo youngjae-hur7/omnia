@@ -62,3 +62,7 @@ pulp_creds_fail_msg:
 
 pulp_pwd_min_length: 5
 pulp_password_fail_msg: "Failed. pulp_password should have minimum 5 characters in omnia_config_credentials.yml"
+
+# Usage: include_high_availability_config.yml
+high_availability_config_path: "{{ hostvars['localhost']['input_project_dir'] }}/high_availability_config.yml"
+high_availability_config_syntax_fail_msg: "Failed. Syntax errors present in high_availability_config.yml. Fix errors and re-run playbook again."

@@ -13,17 +13,17 @@
 # limitations under the License.
 ---
 
-- name: Validate passwordless ssh host
-  ansible.builtin.include_tasks: validate_passwordless_ssh_oim.yml
+- name: Include high_availability_config.yml
+  block:
+    - name: Include high_availability_config.yml
+      ansible.builtin.include_vars: "{{ high_availability_config_path }}"
+      register: high_availability_config
+      tags: init
+  rescue:
+    - name: Failed to include high_availability_config.yml
+      ansible.builtin.fail:
+        msg: "{{ high_availability_config_syntax_fail_msg }} Error: {{ high_availability_config.message }}"
 
-- name: Include provision_validation_vars role vars
-  ansible.builtin.include_tasks: pre_requisite.yml
-
-- name: Validate network spec
-  ansible.builtin.include_tasks: validate_network_spec.yml
-
-- name: Validate high availability config
-  ansible.builtin.include_tasks: validate_high_availability.yml
-
-- name: Check k8s support
-  ansible.builtin.include_tasks: check_k8s_support.yml
+- name: Set high_availability_status
+  ansible.builtin.set_fact:
+    enable_oim_ha: "{{ high_availability_config.ansible_facts.oim_ha.enable_oim_ha | default(false) }}"
