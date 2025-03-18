@@ -27,5 +27,5 @@ dns_config_warning_msg: "[WARNING] makedns -n command is not successful. Error:"
 syncfiles_mode: "0755"
 service_node_sync_files:
   - { src: "{{ hostvars['omnia_provision']['syncfiles_share_path'] }}", dest: "{{ hostvars['omnia_provision']['provision_shared_path'] }}" }
-  - { src: "/opt/omnia/provision/install", dest: "/install" }
-  - { src: "/opt/omnia/provision/tftpboot", dest: "/tftpboot" }
+  - { src: "/opt/omnia/provision/install", dest: "/" }
+  - { src: "/opt/omnia/provision/tftpboot", dest: "/" }
