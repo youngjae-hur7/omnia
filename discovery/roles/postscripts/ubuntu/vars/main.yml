@@ -43,7 +43,6 @@ Make sure cuda rpm file is downloaded completely."
 cuda_postscripts_path:
   - { src: "{{ role_path }}/../common/templates/omnia_cuda.j2", dest: "/install/postscripts/omnia_cuda", mode: "755" }
 
-
 # Usage: configure_rocm.yml
 rocm_postscripts_path:
   - { src: "{{ role_path }}/templates/omnia_rocm.j2", dest: "/install/postscripts/omnia_rocm", mode: "755" }
