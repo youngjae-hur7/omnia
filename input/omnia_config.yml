@@ -44,9 +44,7 @@ slurm_db_type: mariadb
 
 # Host and port of the Slurm database.
 # If no database is intalled on the given node, one will be created.
-# Defaults to the slurmdbd host if no host is given.
 # Defaults to 3306 if no port is given.
-# slurm_db_host: 
 slurm_db_port: 3306
 
 # ----------------------------K8S------------------------------------------------------
