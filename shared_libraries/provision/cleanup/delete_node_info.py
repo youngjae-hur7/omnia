@@ -43,6 +43,9 @@ def delete_node_info_from_oim(nodename):
         temp = subprocess.run(command, shell=False, check=True)
 
         # Run DHCP and dns
+        command = ['/opt/xcat/sbin/makedhcp', '-d', nodename]
+        temp = subprocess.run(command, shell=False, check=True)
+
         command = ['/opt/xcat/sbin/makedhcp', '-a']
         temp = subprocess.run(command, shell=False, check=True)
 
