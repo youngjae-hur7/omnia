@@ -16,7 +16,7 @@
 - name: Perform operations for static range
   when: bmc_static_status
   block:
-    - name: BMC discover for the group - {{ item.key }}
+    - name: BMC discover for the group
       ansible.builtin.include_tasks: bmc_group_discovery.yml
       when:
         - item.value.bmc_static_status is defined
