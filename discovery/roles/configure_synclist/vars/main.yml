@@ -49,5 +49,4 @@ xcat_path: /opt/xcat/bin
 synclists_dir: "{{ provision_shared_path }}/install/synclists"
 
 pcs_files:
-  - {src: "/opt/omnia/pcs/corosync.conf"}
   - {src: "/opt/omnia/pcs/omnia_pcs.container"}

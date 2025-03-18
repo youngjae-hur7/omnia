@@ -3,6 +3,5 @@
 {{ syncfiles_share_path }}/repos/* -> /etc/yum.repos.d/*
 
 {% if enable_oim_ha %}
-{{ syncfiles_share_path }}/pcs/corosync.conf -> /opt/omnia/pcs/corosync.conf
 {{ syncfiles_share_path }}/pcs/{{ pcs_container_name }}.container -> {{ container_systemd_dir }}/{{ pcs_container_name }}.container
 {% endif %}
