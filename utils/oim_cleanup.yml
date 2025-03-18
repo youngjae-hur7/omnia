@@ -39,5 +39,5 @@
     - oim_cleanup/oim_container_cleanup
 
 - name: Cleanup Omnia Credentials
-  ansible.builtin.import_playbook: roles/oim_cleanup/credential_cleanup # noqa:role-name[path]
+  ansible.builtin.import_playbook: roles/oim_cleanup/oim_container_cleanup/tasks/cleanup_credentials.yml # noqa:role-name[path]
   tags: credentials
