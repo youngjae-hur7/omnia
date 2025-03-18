@@ -61,19 +61,28 @@
   ansible.builtin.set_fact:
     cuda_version: "{{ hostvars[inventory_hostname]['cuda_version'] | default('unknown') }}"
 
-- name: Check if libnccl2 package exists (only for CUDA 12.8.0)
-  ansible.builtin.stat:
-    path: "/opt/omnia_repo/cluster/ubuntu/24.04/iso/cuda/{{ cuda_version }}/libnccl2_2.25.1-1+cuda12.8_amd64.deb"
-  register: nccl_file
-  when: cuda_version == "12.8.0"
+- name: Load CUDA JSON file
+  ansible.builtin.slurp:
+    src: "{{ cuda_json_file }}"
+  register: cuda_json_raw
 
-- name: Copy libnccl2 package to CUDA debs folder (only for CUDA 12.8.0)
+- name: Decode JSON content
+  ansible.builtin.set_fact:
+    cuda_json: "{{ cuda_json_raw.content | b64decode | from_json }}"
+
+- name: Extract libnccl2 and libnccl-dev package names
+  ansible.builtin.set_fact:
+    libnccl2_package_name: "{{ cuda_json | json_query(\"cuda.cluster[?contains(url, 'libnccl2')].url | [0]\") | basename }}"
+    libnccl_dev_package_name: "{{ cuda_json | json_query(\"cuda.cluster[?contains(url, 'libnccl-dev')].url | [0]\") | basename }}"
+
+- name: Copy libnccl packages to CUDA debs folder
   ansible.builtin.copy:
-    src: "/opt/omnia_repo/cluster/ubuntu/24.04/iso/cuda/{{ cuda_version }}/libnccl2_2.25.1-1+cuda12.8_amd64.deb"
+    src: "/opt/omnia_repo/cluster/ubuntu/24.04/iso/cuda/{{ cuda_version }}/{{ item }}"
     dest: "{{ cuda_core_path }}/var/{{ cuda_debs_folder }}/"
-  when:
-    - cuda_version == "12.8.0"
-    - nccl_file.stat.exists
+    remote_src: true
+  with_items:
+    - "{{ libnccl2_package_name }}"
+    - "{{ libnccl_dev_package_name }}"
 
 - name: Copy CUDA script to postscripts
   ansible.builtin.template:
