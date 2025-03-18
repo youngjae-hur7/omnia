@@ -38,8 +38,7 @@
   when: not share_exists
 
 - name: Add the OpenMPI libraries path into ldconfig config
-  when:
-    - openmpi_software_status
+  when: openmpi_software_status
   block:
     - name: Check Openmpi ldconf path file exists
       ansible.builtin.stat:
@@ -50,10 +49,10 @@
       ansible.builtin.copy:
         dest: "{{ openmpi_ldconf_path }}"
         content: "{{ omnia_share_path }}/{{ benchmarks_dir_openmpi }}/lib"
-        mode: '0644'
+        mode: "{{ copy_mode }}"
       when: not openmpi_ldconfig_file.stat.exists
 
     - name: Run ldconfig
       ansible.builtin.command: ldconfig
-      when: not openmpi_ldconfig_file.stat.exists
       changed_when: false
+
