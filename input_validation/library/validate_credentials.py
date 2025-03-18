@@ -16,7 +16,7 @@ def validate_input(field, value, rules):
 
     rule = rules[field]
     if not (rule["minLength"] <= len(value) <= rule["maxLength"]):
-        return (False, f"'{field}' length must be between {rule['min_length']} and {rule['max_length']} characters")
+        return (False, f"'{field}' length must be between {rule['minLength']} and {rule['maxLength']} characters")
 
     if "pattern" in rule and not re.match(rule["pattern"], value):
         return (False, f"'{field}' format is invalid. Expected pattern: {rule['pattern']}")
