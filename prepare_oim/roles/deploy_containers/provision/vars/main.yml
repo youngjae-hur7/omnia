@@ -13,7 +13,6 @@
 # limitations under the License.
 ---
 
-selinux: ""
 # Usage: deploy_provision_container.yml
 xcat_version: "2.17"  # Set the desired provision version
 omnia_nfs_share: "{{ oim_shared_path }}/omnia"  # Define NFS share path

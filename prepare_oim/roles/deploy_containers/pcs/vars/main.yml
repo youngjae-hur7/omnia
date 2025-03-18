@@ -13,7 +13,6 @@
 # limitations under the License.
 ---
 
-selinux: ""
 pcs_image_name: "omnia_pcs"
 pcs_image_tag: "latest"
 pcs_container_name: "omnia_pcs"

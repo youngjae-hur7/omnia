@@ -14,7 +14,6 @@
 
 ---
 
-selinux: ""
 # deploy_pulp.yml
 shared_storage_path: "{{ oim_shared_path }}/omnia"
 pulp_shared_path: "{{ shared_storage_path }}/pulp"

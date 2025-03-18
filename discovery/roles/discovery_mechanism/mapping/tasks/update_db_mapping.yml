@@ -37,7 +37,7 @@
   when: enable_oim_ha
 
 - name: Integrate passive OIM node mappings with DB
-  nodeinfo_db_update:
+  mapping_nodeinfo_db_update:
     db_path: "{{ db_path }}"
     node_details: "{{ passive_node_details }}"
     domain_name: "{{ domain_name }}"
@@ -51,4 +51,3 @@
     msg: "{{ ha_db_update_output }}"
     verbosity: 2
   when: enable_oim_ha
-
