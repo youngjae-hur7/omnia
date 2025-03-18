@@ -77,7 +77,7 @@
 
 - name: Copy libnccl packages to CUDA debs folder
   ansible.builtin.copy:
-    src: "/opt/omnia_repo/cluster/ubuntu/24.04/iso/libnccl/{{ item }}"
+    src: "{{ libnccl_path }}/{{ item }}"
     dest: "{{ cuda_core_path }}/var/{{ cuda_debs_folder }}/"
     mode: "{{ file_permission }}"
   with_items:
