@@ -71,7 +71,7 @@
     cuda_json: "{{ cuda_json_raw.content | b64decode | from_json }}"
 
 - name: Extract libnccl package names
-  set_fact:
+  ansible.builtin.set_fact:
     libnccl2_package_name: "{{ (cuda_json.cuda.cluster | selectattr('url', 'search', 'libnccl2') | map(attribute='url') | first | basename) | default('') }}"
     libnccl_dev_package_name: "{{ (cuda_json.cuda.cluster | selectattr('url', 'search', 'libnccl-dev') | map(attribute='url') | first | basename) | default('') }}"
 
