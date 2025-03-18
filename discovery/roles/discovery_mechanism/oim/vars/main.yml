@@ -37,3 +37,5 @@ empty_discover_node_msg: |
 
 # Usage: service_node_postgres_setting.yml
 pg_hba_conf_path: /var/lib/pgsql/data/pg_hba.conf
+provision_shared_path: /opt/omnia/provision/
+selinux_policy: "system_u:object_r:container_file_t:s0"
