@@ -20,7 +20,7 @@ def main():
     """Main function."""
     module_args = dict(
         credential_field=dict(type="str", required=True),
-        rules_file=dict(type="str", required=False, default="input_validation/module_utils/schema/credential_rules.json")
+        rules_file=dict(type="str", required=False, default="../../input_validation/module_utils/schema/credential_rules.json")
     )
 
     module = AnsibleModule(argument_spec=module_args, supports_check_mode=True)
