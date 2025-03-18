@@ -35,7 +35,7 @@ def main():
     # Fetch and return rule description
     success, message = fetch_rule(params["credential_field"], rules)
     if success:
-        module.exit_json(changed=False, msg=message, debug_rule=message)
+        module.exit_json(changed=False, msg=message)
     else:
         module.fail_json(msg=message)
 
