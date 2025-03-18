@@ -34,3 +34,4 @@
 - name: Create diskful osimage
   ansible.builtin.command: "{{ xcat_sbin_path }}/copycds {{ iso_file_path }}"
   changed_when: true
+

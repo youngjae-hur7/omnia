@@ -13,6 +13,7 @@
 # limitations under the License.
 ---
 
+sel_linux: ""
 # Usage: deploy_provision_container.yml
 xcat_version: "2.17"  # Set the desired provision version
 omnia_nfs_share: "{{ oim_shared_path }}/omnia"  # Define NFS share path
@@ -57,15 +58,15 @@ provision_container_failure_msg: |
   please run the utility/oim_cleanup.yml playbook to clean up any existing OIM resources.
   After the cleanup, you can re-run the original playbook to deploy the {{ provision_container_name }} container successfully.
 provision_volumes:
-  - "{{ omnia_nfs_share }}/ssh_config/.ssh:/root/.ssh:z"
-  - "{{ omnia_nfs_share }}:/opt/omnia:z"
+  - "{{ omnia_nfs_share }}/ssh_config/.ssh:/root/.ssh{{ sel_linux }}"
+  - "{{ omnia_nfs_share }}:/opt/omnia{{ sel_linux }}"
   - /sys/fs/cgroup:/sys/fs/cgroup:ro
-  - "{{ xcatdata_dir }}:/xcatdata:z"
-  - "{{ install_dir }}:/install:z"
-  - "{{ tftpboot_dir }}:/tftpboot:z"
-  - "{{ provision_logs_dir }}/xcat:/var/log/xcat:z"
-  - "{{ pgsql_data_dir }}:/var/lib/pgsql/data:z"
-  - "{{ hosts_file }}:/etc/hosts:z"
+  - "{{ xcatdata_dir }}:/xcatdata{{ sel_linux }}"
+  - "{{ install_dir }}:/install{{ sel_linux }}"
+  - "{{ tftpboot_dir }}:/tftpboot{{ sel_linux }}"
+  - "{{ provision_logs_dir }}/xcat:/var/log/xcat{{ sel_linux }}"
+  - "{{ pgsql_data_dir }}:/var/lib/pgsql/data{{ sel_linux }}"
+  - "{{ hosts_file }}:/etc/hosts{{ sel_linux }}"
 
 provision_devices:
   - /dev/loop0:/dev/loop0

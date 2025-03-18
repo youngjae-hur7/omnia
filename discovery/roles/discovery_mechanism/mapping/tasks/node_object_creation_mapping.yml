@@ -55,7 +55,7 @@
 - name: Register passive node(s) list
   ansible.builtin.set_fact:
     passive_node_details: "{{ high_availability_config.ansible_facts.oim_ha.passive_nodes.node_details | default([]) }}"
-  when: enable_oim_ha | default(false)
+  when: enable_oim_ha
 
 - name: Create high availability node object(s) from passive nodes provided by user
   ansible.builtin.shell: >
@@ -67,5 +67,5 @@
   changed_when: true
   loop_control:
     index_var: idx1
-  when: enable_oim_ha | default(false)
+  when: enable_oim_ha
   

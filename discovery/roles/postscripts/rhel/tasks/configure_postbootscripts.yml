@@ -27,9 +27,9 @@
     dest: "{{ item.dest }}"
     mode: "{{ item.mode }}"
   with_items: "{{ pcs_postbootscript_path }}"
-  when: enable_oim_ha | default(false)
+  when: enable_oim_ha
 
 - name: Configure pcs container setup postbootscripts
   ansible.builtin.command: "{{ xcat_path }}/chdef omnia_oim -p postbootscripts=\"omnia_pcs_setup\""
   changed_when: true
-  when: enable_oim_ha | default(false)
+  when: enable_oim_ha
