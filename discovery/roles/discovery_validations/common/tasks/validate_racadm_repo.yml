@@ -36,13 +36,13 @@
       ansible.builtin.set_fact:
         pulp_tarball_list: "{{ pulp_racadm_output.stdout | from_json }}"
       when: pulp_racadm_output.stdout | from_json | length > 0
-  
+
     - name: Warning - Please wait, This task will take few seconds
       ansible.builtin.pause:
         seconds: "{{ warning_wait_time }}"
         prompt: "{{ racadm_warning_msg }}"
       when: pulp_tarball_list | length == 0
-    
+
     - name: Set racadm_config_status to true
       ansible.builtin.set_fact:
         racadm_config_status: true

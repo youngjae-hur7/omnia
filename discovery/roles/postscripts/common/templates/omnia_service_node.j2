@@ -35,6 +35,16 @@ done
 echo "Updating enviornment variables" >> "$LOGFILE"
 echo "source /etc/profile.d/xcat.sh" >> "/root/.bashrc"
 
+wget "http://{{ admin_nic_ip }}:80/install/xcat-genesis-base-x86_64.tar.gz" -O /tmp/xcat-genesis-base-x86_64.tar.gz 
+genesis_url_status=$?
+if [ $genesis_url_status -eq 0 ]; then
+    tar -zxvf /tmp/xcat-genesis-base-x86_64.tar.gz -C /tmp
+    genesis_rpm_file=`rpm -qa | grep xCAT-genesis-base-x86_64`
+    rpm -e --nodeps $genesis_rpm_file
+    rpm -ivh /tmp/xCAT-genesis-base-x86_64-2.16.4-snap202308211541.noarch.rpm
+    mknb x86_64
+fi
+
 {% if omnia_share_option == "NFS" %}
 # Create omnia_path directory if it does not exist
 echo "Creating omnia shared path directory if it does not exist" >> "$LOGFILE"
