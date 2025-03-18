@@ -37,7 +37,7 @@
 
 - name: Create node list
   ansible.builtin.set_fact:
-    slurm_node_list: "{{ (slurm_node_list | default([])) + [ hostvars[item]['ansible_nodename'] | split('.') | first ] }}"
+    slurm_node_list: "{{ (slurm_node_list | default([])) + [hostvars[item]['ansible_nodename'] | split('.') | first] }}"
   loop: "{{ groups['slurm_node'] }}"
 
 - name: Create slurm.conf
