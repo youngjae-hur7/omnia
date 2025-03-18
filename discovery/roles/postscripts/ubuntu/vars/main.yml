@@ -32,7 +32,7 @@ mlnxofed_patch_path:
 mlnxofed_check_key: "#            if ping -c 3 ports.ubuntu.com"
 
 # Usage: configure_cuda.yml
-supported_os: "ubuntu" 
+supported_os: "ubuntu"
 supported_os_version: "24.04"
 cuda_json_file: "{{ role_path }}/../../../../input/config/{{ provision_os }}/{{ provision_os_version }}/cuda.json"
 file_permission: "0644"
