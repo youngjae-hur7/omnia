@@ -72,8 +72,8 @@
 
 - name: Extract libnccl package names
   ansible.builtin.set_fact:
-    libnccl2_package_name: "{{ (cuda_json.cuda.cluster | selectattr('url', 'search', 'libnccl2') | map(attribute='url') | first | basename) | default('') }}"
-    libnccl_dev_package_name: "{{ (cuda_json.cuda.cluster | selectattr('url', 'search', 'libnccl-dev') | map(attribute='url') | first | basename) | default('') }}"
+    libnccl2_package_name: "{{ (cuda_json.cuda.cluster | selectattr('url', 'search', 'libnccl2') | map(attribute='url') | first | basename) | default('') }}" # noqa: yaml[line-length]
+    libnccl_dev_package_name: "{{ (cuda_json.cuda.cluster | selectattr('url', 'search', 'libnccl-dev') | map(attribute='url') | first | basename) | default('') }}" # noqa: yaml[line-length]
 
 - name: Copy libnccl packages to CUDA debs folder
   ansible.builtin.copy:
