@@ -29,7 +29,7 @@
 
     - name: Include vars
       ansible.builtin.include_vars: "{{ role_path }}/vars/main.yml"
-    
+
     - name: Include vars from the pcs container
       ansible.builtin.include_vars: "{{ pcs_vars }}"
       when: enable_oim_ha

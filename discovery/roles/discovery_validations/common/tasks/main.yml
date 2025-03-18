@@ -58,7 +58,7 @@
 
 - name: Include high_availabiliity variables
   ansible.builtin.include_tasks: include_high_availability_config.yml
-  
+
 - name: Validate service_node repo
   ansible.builtin.include_tasks: validate_service_node_repo.yml
   when: service_role_required | default(false)

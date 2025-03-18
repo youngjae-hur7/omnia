@@ -17,9 +17,9 @@ if [ "$str_os_type" = "redhat" ]; then
 fi
 
 podman pull omnia_core:latest
-podman omnia_kubespray:v2.27.0
-podman omnia_pcs:latest
-podman omnia_provision:latest
+podman pull omnia_kubespray:v2.27.0
+podman pull omnia_pcs:latest
+podman pull omnia_provision:latest
 
 sudo systemctl enable podman.socket
 sudo systemctl start podman.socket
