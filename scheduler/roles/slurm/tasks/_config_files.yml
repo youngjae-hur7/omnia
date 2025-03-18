@@ -36,22 +36,22 @@
     - "{{ slurm_config_dir }}"
 
 - name: Create slurm.conf
-  ansible.builtin.template: # Create dest directory before
+  ansible.builtin.template:
     src: "slurm.conf.j2"
     dest: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
-    # owner: root
-    # group: root
+    owner: "{{ root_user }}"
+    group: "{{ root_group }}"
     mode: "{{ conf_file_mode }}"
   run_once: true
   notify:
     - Restart slurmctld
 
 - name: Create cgroup.conf
-  ansible.builtin.template: # Create dest directory before
+  ansible.builtin.template:
     src: "cgroup.conf.j2"
     dest: "{{ item }}"
-    owner: root
-    group: root
+    owner: "{{ root_user }}"
+    group: "{{ root_group }}"
     mode: "{{ conf_file_mode }}"
   loop:
     - "{{ slurm_share_prefix }}{{ slurm_config_dir }}/cgroup.conf"
@@ -60,16 +60,15 @@
     - Restart slurmctld
     - Restart slurmdbd
 
-# Environment Var SLURM_CONF
 - name: Set env variable
   community.general.ini_file:
-    path: "/etc/environment"
+    path: "{{ sys_env_path }}"
     option: SLURM_CONF
     value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
     no_extra_spaces: true
     mode: u=rw,g=r,o=r
 
-- name: All other host configs # TODO: failsafe
+- name: All other host configs
   ansible.builtin.template:
     src: "all_other.conf.j2"
     dest: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/{{ item }}.conf"
@@ -85,7 +84,7 @@
     - Reload slurmd
 
 - name: Local copy slurm.conf /etc/slurm/
-  ansible.builtin.template: # Local copy # FAILSAFE
+  ansible.builtin.template:
     src: "{{ item }}.conf.j2"
     dest: "{{ slurm_config_dir }}/{{ item }}.conf"
     owner: root
@@ -99,7 +98,7 @@
   notify:
     - Restart slurmctld
 
-- name: All other host local configs # FAILSAFE
+- name: All other host local configs
   ansible.builtin.template:
     src: "all_other.conf.j2"
     dest: "{{ slurm_config_dir }}/{{ item }}.conf"

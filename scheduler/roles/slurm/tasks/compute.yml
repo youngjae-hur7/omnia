@@ -35,7 +35,7 @@
     state: directory
     owner: "{{ slurm_user }}"
     group: "{{ slurm_user_group }}"
-    mode: "0755"
+    mode: "{{ common_mode }}"
   loop:
     - "{{ slurm_share_prefix }}{{ slurm_config_dir }}"
     - "{{ slurm_conf_dict['SlurmdSpoolDir'] }}"
@@ -46,7 +46,7 @@
     state: touch
     owner: "{{ slurm_user }}"
     group: "{{ slurm_user_group }}"
-    mode: "0644"
+    mode: "{{ slurm_mode }}"
   loop:
     - "{{ slurm_conf_dict['SlurmdLogFile'] }}"
     - "{{ slurm_conf_dict['SlurmdPidFile'] }}"
