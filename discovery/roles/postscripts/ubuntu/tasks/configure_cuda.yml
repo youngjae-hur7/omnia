@@ -79,7 +79,7 @@
   ansible.builtin.copy:
     src: "/opt/omnia_repo/cluster/ubuntu/24.04/iso/cuda/{{ cuda_version }}/{{ item }}"
     dest: "{{ cuda_core_path }}/var/{{ cuda_debs_folder }}/"
-    remote_src: true
+    mode: "{{ file_permission }}"
   with_items:
     - "{{ libnccl2_package_name }}"
     - "{{ libnccl_dev_package_name }}"
