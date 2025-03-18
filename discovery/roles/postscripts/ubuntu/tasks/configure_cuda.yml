@@ -62,7 +62,7 @@
     cuda_version: "{{ hostvars[inventory_hostname]['cuda_version'] | default('unknown') }}"
 
 - name: Handle CUDA JSON and libnccl packages for Ubuntu 24.04
-  when: provision_os == '{{ libnccl_supported_os }}' and provision_os_version == '{{ libnccl_supported_os_version }}'
+  when: provision_os == libnccl_supported_os and provision_os_version == libnccl_supported_os_version
   block:
     - name: Load CUDA JSON file
       ansible.builtin.slurp:
@@ -75,8 +75,8 @@
 
     - name: Extract libnccl package names
       ansible.builtin.set_fact:
-        libnccl2_package_name: "{{ (cuda_json.cuda.cluster | selectattr('url', 'search', 'libnccl2') | map(attribute='url') | first | basename) | default('') }}"
-        libnccl_dev_package_name: "{{ (cuda_json.cuda.cluster | selectattr('url', 'search', 'libnccl-dev') | map(attribute='url') | first | basename) | default('') }}"
+        libnccl2_package_name: "{{ (cuda_json.cuda.cluster | selectattr('url', 'search', 'libnccl2') | map(attribute='url') | first | basename) | default('') }}" # noqa: yaml[line-length]
+        libnccl_dev_package_name: "{{ (cuda_json.cuda.cluster | selectattr('url', 'search', 'libnccl-dev') | map(attribute='url') | first | basename) | default('') }}" # noqa: yaml[line-length]
 
     - name: Copy libnccl packages to CUDA debs folder
       ansible.builtin.copy:
