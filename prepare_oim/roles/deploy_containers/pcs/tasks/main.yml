@@ -14,8 +14,5 @@
 
 ---
 
-- name: Validate high availability config
-  ansible.builtin.include_tasks: validate_high_availability.yml
-
 - name: Deploying the pcs container
   ansible.builtin.include_tasks: deploy_pcs_container.yml

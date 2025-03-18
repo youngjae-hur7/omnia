@@ -25,19 +25,7 @@
       ansible.builtin.fail:
         msg: "{{ high_availability_config_syntax_fail_msg }} Error: {{ high_availability_config.message }}"
 
-- name: Include network_spec.yml
-  block:
-    - name: Include network_spec file
-      ansible.builtin.include_vars: "{{ network_spec }}"
-      register: include_network_spec
-      no_log: true
-      tags: init
-  rescue:
-    - name: Failed to include network_spec.yml
-      ansible.builtin.fail:
-        msg: "{{ network_spec_syntax_fail_msg }} Error: {{ include_network_spec.message }}"
-
-- name: Parse network_spec data
+- name: Parse high_availability_config data
   ansible.builtin.set_fact:
-    network_data: "{{ network_data | default({}) | combine({item.key: item.value}) }}"
-  with_dict: "{{ Networks }}"
+    oim_ha_data: "{{ high_availability_config | default({}) | combine({item.key: item.value}) }}"
+  with_dict: "{{ oim_ha }}"

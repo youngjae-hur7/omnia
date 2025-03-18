@@ -70,9 +70,9 @@ pcs resource create {{ kubespray_name }} ocf:heartbeat:podman \
  op stop interval={{ stop_interval }}  timeout={{ stop_timeout }}
 {% endif %}
 
-{% if high_availability_config.ansible_facts.oim_ha.enable_oim_ha %}
+{% if hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.enable_oim_ha %}
 pcs resource create VIP ocf:heartbeat:IPaddr2 \
-        ip={{ high_availability_config.ansible_facts.oim_ha.virtual_ip_address }} cidr_netmask={{ network_data.admin_network.netmask_bits }} \
+        ip={{ hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.virtual_ip_address }} cidr_netmask={{ hostvars['localhost']['network_data'].admin_network.netmask_bits }} \
         op monitor interval={{ monitor_interval }}
 {% endif %}
 
