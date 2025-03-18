@@ -35,12 +35,15 @@ slurm_mysql_cnf_path: /etc/my.cnf.d/mysql-server.cnf
 slurm_mariadb_cnf_path: /etc/my.cnf.d/mariadb-server.cnf
 slurm_munge_key_path: "{{ share_path }}/{{ slurm_dir_name }}/munge.key"
 slurm_partition_name: normal
+mariadb: mariadb
+mysql: mysql
 root_user: root
 root_group: root
 munge_user: munge
 munge_group: munge
 munge_key_timeout: 300
 munge_key_dest: "/etc/munge/munge.key"
+db_conf_file: "/etc/my.cnf"
 slurm_ctld_parameters: []
 partitions: {}
 _clean_before_install: false
