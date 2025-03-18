@@ -43,5 +43,5 @@
   connection: local
   gather_facts: false
   roles:
-    - omnia_credential_cleanup
+    - oim_cleanup/omnia_credential_cleanup # noqa:role-name[path]
   tags: credentials
