@@ -42,9 +42,9 @@
   hosts: oim
   connection: ssh
   gather_facts: false
+  vars_files:
+    - roles/oim_cleanup/oim_container_cleanup/vars/main.yml
   tasks:
     - name: Cleanup Omnia Credentials
       ansible.builtin.import_tasks: roles/oim_cleanup/oim_container_cleanup/tasks/cleanup_credentials.yml # noqa:role-name[path]
-      vars:
-        cred_path: "roles/oim_cleanup/oim_container_cleanup/vars/main.yml"
   tags: credentials
