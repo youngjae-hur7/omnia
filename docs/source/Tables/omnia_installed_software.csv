@@ -23,7 +23,7 @@ containerd,Apache-2.0,An open and reliable container runtime,1.7.24
 metallb,Apache-2.0,A network load-balancer implementation for Kubernetes using standard routing protocols,0.13.9
 mpi-operator,Apache-2.0,"Kubernetes Operator for MPI-based applications (distributed training, HPC, etc.)",0.6.0
 kubespray collection,Apache License 2.0,Deploy a Production Ready Kubernetes Cluster,2.27
-cryptography,Apache-2.0 OR BSD-3-Clause, cryptography is a package which provides cryptographic recipes and primitives to Python developers.,44.0.0
+cryptography,Apache-2.0 OR BSD-3-Clause,cryptography is a package which provides cryptographic recipes and primitives to Python developers.,44.0.0
 jmespath,MIT License,JMESPath is a query language for JSON.,1.0.1
 MarkupSafe,"BSD 3-Clause ""New"" or ""Revised"" License",Safely add untrusted strings to HTML/XML markup.,2.1.5
 netaddr,BSD License (BSD License),A Python library for representing and manipulating network addresses.,1.2.1
@@ -31,7 +31,7 @@ pbr,Apache License 2.0,Python Build Reasonableness.,6.0.0
 ruamel.yaml,MIT License,It is a YAML 1.2 loader/dumper package for Python.,0.18.6
 ruamel.yaml.clib,MIT License,It is the C based reader/scanner and emitter for ruamel.yaml,0.2.8
 jinja2,BSD-3-Clause,A very fast and expressive template engine.,3.1.5
-jsonschema,MIT license, An implementation of JSON Schema validation for Python,4.22.0
+jsonschema,MIT license,An implementation of JSON Schema validation for Python,4.22.0
 python3,PSF license,The Python programming language,3.11
 python-pip3,MIT license,The Python package installer,25.0.1
 ansible,GPL-3.0-or-later,GPL-3.0-or-later,9.5.1
@@ -43,7 +43,7 @@ community.grafana,GPL-3.0 license,Ansible Community General Collection,2.1.0
 community.mysql,GPL-3.0 license,MySQL is an open-source relational database management system.,3.10.3
 community.postgresql,GPL-3.0 license,Manage PostgreSQL with Ansible,3.5.0
 dellemc.os10,GNU-General Public License v3.0,It provides networking hardware abstraction through a common set of APIs,1.1.1
-dellemc.openmanage,GNU-General Public License v3.0," It is a systems management and monitoring application that provides a comprehensive view of the Dell EMC servers, chassis, storage, and network switches on the enterprise network",9.6.0
+dellemc.openmanage,GNU-General Public License v3.0,"It is a systems management and monitoring application that provides a comprehensive view of the Dell EMC servers, chassis, storage, and network switches on the enterprise network",9.6.0
 kubernetes.core,GNU-General Public License v3.0,"The collection includes a variety of Ansible content to help automate the management of applications in Kubernetes and OpenShift clusters, as well as the provisioning and maintenance of clusters themselves.",5.0.0
 rocm,MIT license,AMD ROCm™ Software,6.3.1
 beegfs,BeeGFS (formerly known as FhGFS) END USER LICENSE,Public repository for the BeeGFS Parallel File System,7.4.2
