@@ -25,7 +25,7 @@
 
     - name: Prompt user for "{{ username }}" # noqa name[template]
       ansible.builtin.pause:
-        prompt: "{{ lookup('vars', type.key ~ '_input') }}. {{ credential_rule.msg }} Enter value for {{ username }}:"
+        prompt: "{{ lookup('vars', type.key ~ '_input') }}. {{ credential_rule.msg }} Enter value for {{ username }}"
       register: username_input
 
     - name: Validate mandatory username not empty
@@ -39,6 +39,7 @@
       validate_credentials:
         credential_field: "{{ username }}"
         credential_input: "{{ username_input.user_input }}"
+      when: username_input.user_input | length != 0
 
     - name: Update vars file with entered username
       ansible.builtin.lineinfile:
