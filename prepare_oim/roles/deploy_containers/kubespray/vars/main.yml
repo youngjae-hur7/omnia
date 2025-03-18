@@ -14,7 +14,7 @@
 
 ---
 
-sel_linux: ""
+selinux: ""
 kubespray_version: "{{ hostvars['localhost']['kubespray_version'] }}"  # Set the desired Kubespray version
 omnia_nfs_share: "{{ oim_shared_path }}/omnia"  # Define NFS share path
 kubespray_logs_dir: "{{ omnia_nfs_share }}/log/kubespray" # For kubespray and all those logs
@@ -37,9 +37,9 @@ kubespray_image_pull_fail_msg: |
   After rectifying the issues, you can re-run the playbook to successfully pull the provision image.
 wait_time: 10
 kubespray_volumes:
-  - "{{ omnia_nfs_share }}/ssh_config/.ssh:/root/.ssh{{ sel_linux }}"
-  - "{{ omnia_nfs_share }}:/opt/omnia{{ sel_linux }}"
-  - "{{ hosts_file }}:/etc/hosts{{ sel_linux }}"
+  - "{{ omnia_nfs_share }}/ssh_config/.ssh:/root/.ssh{{ selinux }}"
+  - "{{ omnia_nfs_share }}:/opt/omnia{{ selinux }}"
+  - "{{ hosts_file }}:/etc/hosts{{ selinux }}"
 kubespray_container_success_msg: "The {{ kubespray_container_name }} container has been successfully deployed."
 kubespray_container_failure_msg: |
   The deployment of the {{ kubespray_container_name }} container has failed. To resolve this issue,
