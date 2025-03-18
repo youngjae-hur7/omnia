@@ -41,8 +41,6 @@ restart_slurm_services: true
 # Type of database to be used by Slurm.
 # Options are mysql or mariadb. Defaults to mariadb.
 slurm_db_type: mariadb
-# Username used for Slurm database.
-slurm_db_username: root
 
 # Host and port of the Slurm database.
 # If no database is intalled on the given node, one will be created.
