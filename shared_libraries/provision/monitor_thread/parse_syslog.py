@@ -62,7 +62,8 @@ def get_node_info_db(cursor: cursor, node: str) -> tuple:
             gpu_count,
             status,
             admin_mac,
-            hostname
+            hostname,
+            role
         FROM
             cluster.nodeinfo
         WHERE
@@ -309,7 +310,7 @@ def add_group_details(node_info_db: tuple, groups_inventory) -> None:
            group = group.strip()
            if group not in groups_inventory:
                groups_inventory[group] = []
-           if node not in groups_inventory[group]:
+           if hostname not in groups_inventory[group]:
                groups_inventory[group].append(hostname)
 
     except Exception as e:
