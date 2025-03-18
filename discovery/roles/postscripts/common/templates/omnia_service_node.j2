@@ -33,7 +33,7 @@ for pkg in "${PACKAGES[@]}"; do
 done
 
 echo "Updating enviornment variables" >> "$LOGFILE"
-source /etc/profile.d/xcat.sh >> "~/.bashrc"
+echo "source /etc/profile.d/xcat.sh" >> "/root/.bashrc"
 
 {% if omnia_share_option == "NFS" %}
 # Create omnia_path directory if it does not exist

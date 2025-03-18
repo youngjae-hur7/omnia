@@ -14,7 +14,8 @@
 ---
 
 # Usage: rename_service_node_nic.yml, set_service_node_details.yml
-xcat_sbin_path: "/opt/xcat/sbin/"
+xcat_bin_path: "/opt/xcat/bin"
+xcat_sbin_path: "/opt/xcat/sbin"
 dhcp_config_fail_msg: "Failed. makedhcp -n command is not successful. Error:"
 
 # Usage: set_service_node_details.yml
@@ -23,4 +24,6 @@ dhcp_config_apply_fail_msg: "Failed. makedhcp -a command is not successful. Erro
 dns_config_warning_msg: "[WARNING] makedns -n command is not successful. Error:"
 
 # Usage: copy_syncfiles.yml
-syncfiles_share_path: "{{ hostvars['omnia_provision']['syncfiles_share_path'] }}"
+syncfiles_share_src: "{{ hostvars['omnia_provision']['syncfiles_share_path'] }}"
+syncfiles_share_dest: "{{ hostvars['omnia_provision']['provision_shared_path'] }}"
+syncfiles_mode: "0755"
