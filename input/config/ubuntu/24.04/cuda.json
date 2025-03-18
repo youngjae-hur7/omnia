@@ -10,6 +10,11 @@
           "type": "iso",
           "url": "https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/libnccl2_2.25.1-1+cuda12.8_amd64.deb",
           "path": ""
+        },
+        { "package": "cuda",
+          "type": "iso",
+          "url": "https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/libnccl-dev_2.25.1-1+cuda12.8_amd64.deb",
+          "path": ""
         }
       ]
     }
