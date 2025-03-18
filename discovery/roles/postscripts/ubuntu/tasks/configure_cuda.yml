@@ -62,7 +62,7 @@
     cuda_version: "{{ hostvars[inventory_hostname]['cuda_version'] | default('unknown') }}"
 
 - name: Handle CUDA JSON and libnccl packages for Ubuntu 24.04
-  when: provision_os == '{{ supported_os }}' and provision_os_version == '{{ supported_os_version }}'
+  when: provision_os == '{{ libnccl_supported_os }}' and provision_os_version == '{{ libnccl_supported_os_version }}'
   block:
     - name: Load CUDA JSON file
       ansible.builtin.slurp:
