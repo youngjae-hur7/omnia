@@ -13,21 +13,9 @@
 # limitations under the License.
 ---
 
-- name: Pre-requisities for postscripts
-  ansible.builtin.include_tasks: pre_requisite.yml
-
-- name: Configure OFED postscripts
-  ansible.builtin.include_tasks: configure_ofed.yml
-  when: ofed_config_status
-
-- name: Configure CUDA postscripts
-  ansible.builtin.include_tasks: configure_cuda.yml
-  when: cuda_config_status
-
-- name: Configure ROCm postscripts
-  ansible.builtin.include_tasks: configure_rocm.yml
-  when: amdgpu_config_status
-
-- name: Configure racadm postscripts
-  ansible.builtin.include_tasks: configure_racadm.yml
-  when: racadm_config_status
+- name: Copy racadm script to postscripts
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  with_items: "{{ racadm_postscripts_path }}"

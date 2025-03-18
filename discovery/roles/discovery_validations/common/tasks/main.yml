@@ -100,6 +100,9 @@
 - name: Validate AMDGPU and ROCm repo
   ansible.builtin.include_tasks: validate_amdgpu_rocm_repo.yml
 
+- name: Validate racadm repo
+  ansible.builtin.include_tasks: validate_racadm_repo.yml
+
 # - name: Validate Broadcom repo
 #   ansible.builtin.include_tasks: validate_broadcom_repo.yml
 
