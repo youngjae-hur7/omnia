@@ -24,3 +24,4 @@ kubespray_container_name: "omnia_kubespray"
 
 # Usage: create_provision_group.yml
 provision_container_status_msg: "Provision container Status: {{ provision_container_status.containers[0].State.Status }}"
+provision_container_fail_msg: "Provision container is not running. Current Status: {{ container_info.containers[0].State.Status }}"
