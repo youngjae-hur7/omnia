@@ -13,10 +13,6 @@
 # limitations under the License.
 ---
 
-- name: Print the value of a variable
-  debug:
-    msg: "{{ mapping_details }}"
-
 - name: Integrate mapping file with DB
   mapping_nodeinfo_db_update:
     db_path: "{{ db_path }}"
