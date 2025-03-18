@@ -38,6 +38,11 @@
   roles:
     - oim_cleanup/oim_container_cleanup
 
-- name: Cleanup Omnia Credentials
-  ansible.builtin.import_tasks: roles/oim_cleanup/oim_container_cleanup/tasks/cleanup_credentials.yml # noqa:role-name[path]
-  tags: credentials
+- name: Cleanup Omnia Credentials # noqa:role-name[path]
+  hosts: oim
+  connection: ssh
+  gather_facts: false
+  tasks:
+    - name: Cleanup Omnia Credentials
+      ansible.builtin.import_tasks: roles/oim_cleanup/oim_container_cleanup/tasks/cleanup_credentials.yml # noqa:role-name[path]
+      tags: credentials
