@@ -15,7 +15,7 @@
 
 - name: Create dir for syncfiles
   ansible.builtin.file:
-    path: "{{ syncfiles_share_dest }}"
+    path: "{{ service_node_sync_files[0]['dest'] }}"
     state: directory
     mode: "{{ syncfiles_mode }}"
 
