@@ -33,6 +33,7 @@ mlnxofed_check_key: "#            if ping -c 3 ports.ubuntu.com"
 
 # Usage: configure_cuda.yml
 cuda_json_file: "{{ role_path }}/../../../../input/config/ubuntu/24.04/cuda.json"
+file_permission: "0644"
 cuda_core_path: /install/cuda/x86_64/cuda-core
 invalid_cuda_rpm_fail_msg: "Failed. Invalid cuda_toolkit_path: {{ cuda_toolkit_path }} provided in provision_config.yml.
 Make sure cuda rpm file is downloaded completely."
