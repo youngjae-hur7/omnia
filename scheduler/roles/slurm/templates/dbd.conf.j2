@@ -8,12 +8,12 @@
 
 {% if 'slurm_dbd' in groups %}
 # USER DEFINED SLURM DBD INFO
-DbdHost={{ groups['slurm_dbd'][0] }}
+DbdHost={{ hostvars[groups['slurm_dbd'][0]]['ansible_nodename'] | split('.') | first }}
 DbdPort={{ slurm_dbd_port }}
 {% endif %}
 
 # DATABASE INFO
-StorageHost={{ slurm_db_host }}
+StorageHost={{ hostvars[slurm_db_host]['ansible_nodename'] | split('.') | first }}
 {% if slurm_db_port is not none and slurm_db_port != omit %}
 StoragePort={{ slurm_db_port }}
 {% endif %}

@@ -35,6 +35,11 @@
     - "{{ slurm_conf_dict['StateSaveLocation'] }}"
     - "{{ slurm_config_dir }}"
 
+- name: Create node list
+  ansible.builtin.set_fact:
+    slurm_node_list: "{{ (slurm_node_list | default([])) + [ hostvars[item]['ansible_nodename'] | split('.') | first ] }}"
+  loop: "{{ groups['slurm_node'] }}"
+
 - name: Create slurm.conf
   ansible.builtin.template:
     src: "slurm.conf.j2"
