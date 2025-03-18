@@ -16,13 +16,11 @@
 - name: Perform operations for static range
   when: bmc_static_status
   block:
-    - name: BMC discover for the group
+    - name: BMC discover for the group - {{ item.key }}
       ansible.builtin.include_tasks: bmc_group_discovery.yml
       when:
         - item.value.bmc_static_status is defined
         - item.value.bmc_static_status
-        - item.value.parent is defined
-        - item.value.parent | length < 1
       loop: "{{ groups_roles_info | dict2items }}"
 
 - name: Perform operations for dynamic range
