@@ -174,8 +174,3 @@
     slurm_installation_type: "{{ slurm_installation_type }}"
   no_log: true
 
-- name: Encrypt input config file
-  ansible.builtin.command: >-
-    ansible-vault encrypt {{ input_project_dir }}/{{ config_filename }}
-    --vault-password-file {{ input_project_dir }}/{{ config_vaultname }}
-  changed_when: false
