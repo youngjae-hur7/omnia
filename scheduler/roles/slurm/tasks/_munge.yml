@@ -39,22 +39,22 @@
   ansible.builtin.wait_for:
     path: "{{ slurm_munge_key_path }}"
     state: present
-    timeout: 300
+    timeout: "{{ munge_key_timeout }}"
 
 - name: Check munge dir
   ansible.builtin.file:
-    path: /etc/munge
+    path: "{{ munge_key_dest | dirname }}"
     state: directory
-    owner: munge
-    group: munge
+    owner: "{{ munge_user }}"
+    group: "{{ munge_group }}"
     mode: "{{ munge_dir_mode }}"
 
 - name: Copy munge key
   ansible.builtin.copy:
     src: "{{ slurm_munge_key_path }}"
-    dest: /etc/munge/munge.key
-    owner: munge
-    group: munge
+    dest: "{{ munge_key_dest }}"
+    owner: "{{ munge_user }}"
+    group: "{{ munge_group }}"
     remote_src: true
     mode: "{{ munge_mode }}"
 

@@ -12,6 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
+- name: Set_fact for fetch omnia config credentials
+  hosts: localhost
+  tasks:
+    - name: Set dynamic run tags including 'slurm'
+      when: not config_file_status | default(false) | bool
+      ansible.builtin.set_fact:
+        omnia_run_tags: "{{ (ansible_run_tags | default([]) + ['slurm']) | unique }}"
+        cacheable: true
+
+- name: Invoke get_config_credentials.yml
+  when: not config_file_status | default(false) | bool
+  ansible.builtin.import_playbook: ../utils/credential_utility/get_config_credentials.yml
+
 - name: Update Inventory with ansible_host information
   ansible.builtin.import_playbook: ../utils/servicetag_host_mapping.yml
   when: not ( hostvars['127.0.0.1']['update_inventory_executed'] | default(false) | bool )
@@ -169,19 +182,6 @@
   gather_facts: false
   roles:
     - k8s_csi_powerscale_plugin
-
-- name: Set_fact for fetch omnia config credentials
-  hosts: localhost
-  tasks:
-    - name: Set dynamic run tags including 'slurm'
-      when: not config_file_status | default(false) | bool
-      ansible.builtin.set_fact:
-        omnia_run_tags: "{{ (ansible_run_tags | default([]) + ['slurm']) | unique }}"
-        cacheable: true
-
-- name: Invoke get_config_credentials.yml
-  when: not config_file_status | default(false) | bool
-  ansible.builtin.import_playbook: ../utils/credential_utility/get_config_credentials.yml
 
 - name: Install Slurm
   hosts: slurm_control_node, slurm_node, slurm_dbd, login

@@ -8,7 +8,6 @@
     name: "{{ item }}"
     state: stopped
   when: item in ansible_facts['services'].keys()
-  # ignore_errors: true
   loop:
     - slurmctld.service
     - slurmdbd.service
@@ -28,7 +27,7 @@
   loop:
     - "/var/spool/state"
     - "{{ slurm_config_dir }}"
-    - "/etc/munge/munge.key"
+    - "{{ munge_key_dest }}"
 
 - name: Remove packages
   ansible.builtin.package:
@@ -50,7 +49,7 @@
     name: slurm
     state: absent
 
-- name: UnSet env variable
+- name: Unset env variable
   community.general.ini_file:
     path: "{{ sys_env_path }}"
     option: SLURM_CONF

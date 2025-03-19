@@ -25,6 +25,7 @@
 - name: Assemble all slurm_nodes
   ansible.builtin.debug:
     var: rem_nodes
+    verbosity: 2
 
 - name: Restart slurmd on remaining nodes
   ansible.builtin.systemd_service:

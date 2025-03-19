@@ -8,7 +8,7 @@
 
 {% if 'slurm_dbd' in groups %}
 # USER DEFINED SLURM DBD INFO
-DbdHost={{ groups['slurm_dbd'][0] }}
+DbdHost={{ hostvars[groups['slurm_dbd'][0]]['ansible_nodename'] | split('.') | first }}
 DbdPort={{ slurm_dbd_port }}
 {% endif %}
 
