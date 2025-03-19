@@ -1,4 +1,4 @@
-# Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,6 +26,9 @@ timescale_telemetry_backup_file: "telemetry_tsdb_dump.sql"
 idrac_telemetry_path: "/go/src/github.com/telemetry-reference-tools/omnia_timescaledb.tar.gz"
 postgresql_pod_data: "/var/lib/postgresql/data"
 idrac_mnt_tar: "{{ mount_location }}/iDRAC-Telemetry-Reference-Tools/omnia_timescaledb.tar.gz"
+timescaledb_pod_name: "timescaledb-0"
+retry_count: 10
+delay_pod: 30
 
 # Usage: mysqldb.yml
 mysqldb_k8s_name: mysqldb
