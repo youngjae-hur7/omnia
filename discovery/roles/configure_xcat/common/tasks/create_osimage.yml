@@ -32,7 +32,25 @@
     - provision_os in diskful_osimage_check.stdout
     - provision_os_version in diskful_osimage_check.stdout
 
+- name: Create PCS directories
+  ansible.builtin.file:
+    path: "{{ tmp_dir }}"
+    state: directory
+    mode: "0755"
+
 - name: Create diskful osimage
-  ansible.builtin.command: "{{ xcat_sbin_path }}/copycds {{ iso_file_path }}"
+  ansible.builtin.command: "{{ xcat_sbin_path }}/copycds -p {{ tmp_dir }} {{ iso_file_path }}"
+  changed_when: true
+  when: not diskful_osimage_status
+
+- name: Copy osimages to xCAT install directory
+  ansible.builtin.copy:
+    src: "{{ tmp_dir }}/"
+    dest: "{{ xcat_install_dir }}"
+    remote_src: yes
+  when: not diskful_osimage_status
+
+- name: Modify osimages to xCAT install directory
+  ansible.builtin.command: "{{ xcat_sbin_path }}/chdef -t osimage rhels9.4.0-x86_64-install-compute pkgdir={{ xcat_install_dir }}"
   changed_when: true
   when: not diskful_osimage_status
