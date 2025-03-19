@@ -295,6 +295,12 @@ def process_image(package, repo_store_path, status_file_path, cluster_os_type, c
         remote_name = f"remote_{package['package'].replace('/', '_')}"
         package_identifier = package['package']
 
+        # Create container repository
+        with repository_creation_lock:
+            result = create_container_repository(repository_name, logger)
+        if result is False or (isinstance(result, dict) and result.get("returncode", 1) != 0):
+            raise Exception(f"Failed to create repository: {repository_name}")
+            
         # Process digest or tag
         if "digest" in package:
             package_identifier += f":{package['digest']}"
@@ -311,12 +317,6 @@ def process_image(package, repo_store_path, status_file_path, cluster_os_type, c
 
             if result is False or (isinstance(result, dict) and result.get("returncode", 1) != 0):
                 raise Exception(f"Failed to create remote: {remote_name}")
-
-        # Create container repository
-        with repository_creation_lock:
-            result = create_container_repository(repository_name, logger)
-        if result is False or (isinstance(result, dict) and result.get("returncode", 1) != 0):
-            raise Exception(f"Failed to create repository: {repository_name}")
 
 
         # Sync and distribute container repository
