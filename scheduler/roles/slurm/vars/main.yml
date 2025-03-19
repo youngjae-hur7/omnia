@@ -48,6 +48,7 @@ slurm_ctld_parameters: []
 partitions: {}
 _clean_before_install: false
 _force_install_nfs: true
+installroot: "/"
 conf_file_mode: "0644"
 slurm_mode: "0644"
 munge_mode: "0400"

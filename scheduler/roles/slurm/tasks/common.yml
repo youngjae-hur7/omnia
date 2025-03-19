@@ -36,6 +36,22 @@
       ansible.builtin.fail:
         msg: "{{ hosts_update_fail_msg }}"
 
+# - name: Install dnf controller packages on installroot #common
+#   ansible.builtin.dnf:
+#     name:
+#       - slurm
+#     state: present
+#     installroot: "{{ installroot }}"
+#   when: ansible_os_family == 'RedHat'
+  # Raising error first time though installed success 
+
+- name: Install slurm packages
+  ansible.builtin.shell: "dnf install -y --installroot={{ installroot }} slurm" # noqa: command-instead-of-shell
+  become: true
+  failed_when: false # WARNING failure in the above task, install though error
+  changed_when: false
+  tags: install
+
 - name: Install common packages
   ansible.builtin.package:
     name: "{{ common_packages[ansible_os_family] }}"
@@ -50,6 +66,13 @@
 - name: Create user and group
   ansible.builtin.include_tasks: _user.yml
 
+- name: Append share path if NFS
+  ansible.builtin.set_fact:
+    slurm_share_prefix: "{{ share_path + '/' +  slurm_dir_name if (slurm_installation_type == 'nfs_share') else '/' }}"
+- debug:
+    msg: "slurm_installation_type {{ slurm_installation_type }} slurm_share_prefix {{ slurm_share_prefix }} installroot {{ installroot }}" 
+# - pause:
+
 - name: Create the slurm directory on share
   ansible.builtin.file:
     path: "{{ share_path }}/{{ slurm_dir_name }}"
@@ -57,9 +80,10 @@
     owner: root
     group: root
     mode: "{{ common_mode }}"
+  when: (slurm_installation_type == 'nfs_share')
   run_once: true
 
-- name: Install and configure Munge
+- name: Install and configure munge
   ansible.builtin.include_tasks: _munge.yml
 
 - name: Slurm dict ops

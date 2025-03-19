@@ -14,15 +14,17 @@
 ---
 - name: Append share path if NFS
   ansible.builtin.set_fact:
-    slurm_share_prefix: "{{ share_path }}/{{ slurm_dir_name }}"
-
-- name: Ensure Slurm conf share dir
-  ansible.builtin.file:
-    path: "{{ slurm_share_prefix }}{{ slurm_config_dir }}"
-    state: directory
-    owner: "{{ root_user }}"
-    group: "{{ root_group }}"
-    mode: "{{ common_mode }}"
+    slurm_share_prefix: "{{ share_path + '/' +  slurm_dir_name if (slurm_installation_type == 'nfs_share') else '/' }}"
+- debug:
+    msg: "slurm_installation_type {{ slurm_installation_type }} slurm_share_prefix {{ slurm_share_prefix }} installroot {{ installroot }}" 
+# - pause:
+# - name: Ensure Slurm conf share dir
+#   ansible.builtin.file:
+#     path: "{{ slurm_share_prefix }}{{ slurm_config_dir }}"
+#     state: directory
+#     owner: root
+#     group: root
+#     mode: "{{ common_mode }}"
 
 - name: Ensure directories for slurm ops
   ansible.builtin.file:
@@ -33,7 +35,7 @@
     mode: "{{ common_mode }}"
   loop:
     - "{{ slurm_conf_dict['StateSaveLocation'] }}"
-    - "{{ slurm_config_dir }}"
+    - "{{ slurm_share_prefix }}{{ slurm_config_dir }}"
 
 - name: Create node list
   ansible.builtin.set_fact:
@@ -60,7 +62,6 @@
     mode: "{{ conf_file_mode }}"
   loop:
     - "{{ slurm_share_prefix }}{{ slurm_config_dir }}/cgroup.conf"
-    - "{{ slurm_config_dir }}/cgroup.conf"
   notify:
     - Restart slurmctld
     - Restart slurmdbd
@@ -88,34 +89,36 @@
     - Reload slurmctld
     - Reload slurmd
 
-- name: Local copy slurm.conf /etc/slurm/
-  ansible.builtin.template:
-    src: "{{ item }}.conf.j2"
-    dest: "{{ slurm_config_dir }}/{{ item }}.conf"
-    owner: root
-    group: root
-    mode: "{{ conf_file_mode }}"
-  ignore_errors: true
-  register: ignore_errors_register
-  loop:
-    - slurm
-    - cgroup
-  notify:
-    - Restart slurmctld
+# - pause:
+# - name: Local copy slurm.conf /etc/slurm/
+#   ansible.builtin.template: # Local copy # FAILSAFE
+#     src: "{{ item }}.conf.j2"
+#     dest: "{{ slurm_config_dir }}/{{ item }}.conf"
+#     owner: root
+#     group: root
+#     mode: "{{ conf_file_mode }}"
+#   ignore_errors: true
+#   register: ignore_errors_register
+#   loop:
+#     - slurm
+#     - cgroup
+#   notify:
+#     - Restart slurmctld
 
-- name: All other host local configs
-  ansible.builtin.template:
-    src: "all_other.conf.j2"
-    dest: "{{ slurm_config_dir }}/{{ item }}.conf"
-    mode: "{{ conf_file_mode }}"
-    backup: true
-  ignore_errors: true
-  register: ignore_errors_register
-  loop:
-    - mpi
-    - acct_gather
-    - gres
-  when: item in vars
-  notify:
-    - Reload slurmctld
-    - Reload slurmd
+# - name: All other host local configs # FAILSAFE
+#   ansible.builtin.template:
+#     src: "all_other.conf.j2"
+#     dest: "{{ slurm_config_dir }}/{{ item }}.conf"
+#     mode: "{{ conf_file_mode }}"
+#     backup: true
+#   ignore_errors: true
+#   register: ignore_errors_register
+#   loop:
+#     - mpi
+#     - acct_gather
+#     - gres
+#   when: item in vars
+#   notify:
+#     - Reload slurmctld
+#     - Reload slurmd
+
