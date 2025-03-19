@@ -2,7 +2,7 @@
 apiVersion: kubeflow.org/v2beta1
 kind: MPIJob
 metadata:
-  name: gaudi-llm-ds-ft-multi-8b
+  name: gaudi-llm-ds-ft
   namespace: workloads
 spec:
   slotsPerWorker: 8
@@ -15,18 +15,18 @@ spec:
         spec:
           containers:
             - image: vault.habana.ai/gaudi-docker/1.19.2/ubuntu24.04/habanalabs/pytorch-installer-2.5.1:latest
-              name: gaudi-llm-ds-ft-multi-8b-launcher
+              name: gaudi-llm-ds-ft-launcher
               env:
                 - name: HF_HOME
-                  value: "/root/.cache/huggingface"
+                  value: "/storage/huggingface"
                 - name: http_proxy
                   value: ""
                 - name: https_proxy
                   value: ""
                 - name: no_proxy
-                  value: "localhost,127.0.0.1"
+                  value: "127.0.0.1,localhost"
                 - name: LLM_MODEL
-                  value: meta-llama/Meta-Llama-3.1-8B-Instruct
+                  value: "meta-llama/Meta-Llama-3.1-8B-Instruct"
                 - name: NUM_HPU
                   value: "8"
                 - name: NUM_EPOCHS
@@ -160,7 +160,7 @@ spec:
 
               volumeMounts:
                 - name: datasets
-                  mountPath: /root/.cache
+                  mountPath: /storage
           volumes:
             - name: datasets
               persistentVolumeClaim:
@@ -173,7 +173,7 @@ spec:
           hostIPC: true
           containers:
             - image: vault.habana.ai/gaudi-docker/1.19.2/ubuntu24.04/habanalabs/pytorch-installer-2.5.1:latest
-              name: gaudi-llm-ds-ft-multi-8b-worker
+              name: gaudi-llm-ds-ft-worker
               command: ["/bin/bash", "-c"]
               args:
                 - >-
@@ -191,7 +191,7 @@ spec:
                   hugepages-2Mi: 312600Mi
               volumeMounts:
                 - name: datasets
-                  mountPath: /root/.cache
+                  mountPath: /storage
           volumes:
             - name: datasets
               persistentVolumeClaim:
