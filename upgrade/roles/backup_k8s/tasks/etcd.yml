@@ -124,12 +124,6 @@
   retries: "{{ retry_count }}"
   delay: "{{ delay_pod }}"
 
-- name: Copy mount location data to k8s_backup_location folder
-  ansible.builtin.copy:
-    src: "{{ mount_location.rstrip('/') }}"
-    dest: "{{ k8s_backup_location }}"
-    mode: "{{ directory_mode }}"
-
 - name: Create manifests directory
   ansible.builtin.file:
     path: "{{ manifests_dir }}"
