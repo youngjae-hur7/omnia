@@ -140,7 +140,7 @@
   ansible.builtin.copy:
     src: "{{ backup_file_source }}"
     dest: "{{ shell_script_file }}"
-    mode: "{{ file_mode }}"
+    mode: "{{ directory_mode }}"
 
 - name: Taking backup of manifest files
   ansible.builtin.command: "{{ shell_script_file }}"
