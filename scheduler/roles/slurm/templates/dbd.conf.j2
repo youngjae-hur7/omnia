@@ -13,7 +13,7 @@ DbdPort={{ slurm_dbd_port }}
 {% endif %}
 
 # DATABASE INFO
-StorageHost={{ hostvars[slurm_db_host]['ansible_nodename'] | split('.') | first }}
+StorageHost={{ slurm_db_host }}
 {% if slurm_db_port is not none and slurm_db_port != omit %}
 StoragePort={{ slurm_db_port }}
 {% endif %}

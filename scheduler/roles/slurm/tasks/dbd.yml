@@ -14,7 +14,7 @@
 ---
 - name: Is slurm_db_host defined
   ansible.builtin.set_fact:
-    slurm_db_host: "{{ groups['slurm_dbd'][0] }}"
+    slurm_db_host: "{{ ansible_facts['nodename'] | split('.') | first }}"
   when: (slurm_db_host is not defined) or (not slurm_db_host)
 
 - name: Is slurm_db_port defined
