@@ -17,7 +17,7 @@
   ansible.builtin.include_vars: "{{ omnia_metadata_file }}"
   register: include_metadata
   no_log: true
-  
+
 - name: Create and update repositories
   environment:
     XCATROOT: "{{ xcat_root_env }}"

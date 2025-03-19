@@ -66,14 +66,14 @@
     state: absent
   when: not diskful_osimage_status and nfs_used
 
-- name: get osimage name
+- name: Get osimage name
   ansible.builtin.shell: >
     set -o pipefail && \
     {{ xcat_path }}/lsdef -t osimage | grep "{{ osimage_search_key }}" | grep "{{ provision_os }}" | grep "{{ provision_os_version }}" | cut -d' ' -f1
   changed_when: false
   register: fetch_osimage
   when: not diskful_osimage_status and nfs_used
- 
+
 - name: Modify osimages to xCAT install directory
   ansible.builtin.command: "{{ xcat_path }}/chdef -t osimage {{ fetch_osimage.stdout }} pkgdir={{ xcat_install_dir }}"
   changed_when: true
