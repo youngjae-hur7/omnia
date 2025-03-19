@@ -26,6 +26,7 @@ osimage_search_key: install-compute
 service_osimage_search_key: install-service
 tmp_dir: /tmp/osimages
 xcat_install_dir: /install
+mode: "755"
 
 # Usage: update_ipmi_table.yml
 ipmi_success_msg: "Successfully updated IPMI table"
