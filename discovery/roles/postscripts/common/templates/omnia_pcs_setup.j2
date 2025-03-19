@@ -4,7 +4,25 @@
 #      Configure Omnia's pcs container on HA OIM nodes
 #
 #################################################################################################################
-echo "---------------------------"
+# Define log file
+LOGFILE="/var/log/omnia/pcs_setup.log"
+
+# Get the directory of the log file
+log_dir=$(dirname "$LOGFILE")
+
+# Create the log directory if it doesn't exist
+if [ ! -d "$log_dir" ]; then
+    mkdir -p "$log_dir"
+fi
+
+# Create the log file if it doesn't exist
+if [ ! -f "$LOGFILE" ]; then
+    touch "$LOGFILE"
+fi
+
+echo "--------------------------" >> "$LOGFILE"
+echo "$(date) - INFO - Starting OIM Passive node setup" >> "$LOGFILE"
+
 if [ -f "/etc/debian_version" ];then
   str_os_type="debian"
 else
@@ -15,11 +33,6 @@ fi
 if [ "$str_os_type" = "redhat" ]; then
     sudo dnf install -y podman
 fi
-
-podman pull omnia_core:latest
-podman pull omnia_kubespray:v2.27.0
-podman pull omnia_pcs:latest
-podman pull omnia_provision:latest
 
 sudo systemctl enable podman.socket
 sudo systemctl start podman.socket
@@ -54,6 +67,9 @@ fi
 echo "{{ nfs_server_ip }}:{{ nfs_server_share_path }} {{ oim_shared_path }} nfs nosuid,rw,sync,hard,intr" >> /etc/fstab
 {% endif %}
 
+podman load -i {{ oim_shared_path }}/omnia_images.tar 
+
 # Start the pcs container
 sudo sudo systemctl start omnia_pcs
+echo "$(date) - INFO - Finished OIM Passive node setup" >> "$LOGFILE"
 echo "---------------------------"

@@ -20,6 +20,7 @@ xcat_manpath_env: "/opt/xcat/share/man:$MANPATH"
 perl_badlang_env: 0
 xcat_path: /opt/xcat/bin
 xcat_sbin_path: /opt/xcat/sbin
+omnia_metadata_file: "/opt/omnia/.data/oim_metadata.yml"
 
 # Usage: create_osimage.yml
 osimage_search_key: install-compute

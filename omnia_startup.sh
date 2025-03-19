@@ -551,6 +551,10 @@ post_setup_config() {
 
     oim_metadata_file="$omnia_path/omnia/.data/oim_metadata.yml"
 
+    if [ -f "$oim_metadata_file" ]; then
+        echo -e "${GREEN} Deleting oim_metadata file${NC}"
+        rm "$oim_metadata_file"
+    fi
     if [ ! -f "$oim_metadata_file" ]; then
         echo -e "${GREEN} Creating oim_metadata file${NC}"
         {
