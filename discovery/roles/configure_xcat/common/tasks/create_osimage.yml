@@ -32,7 +32,7 @@
     - provision_os in diskful_osimage_check.stdout
     - provision_os_version in diskful_osimage_check.stdout
 
-- name: Create PCS directories
+- name: Create tmp osimage directory
   ansible.builtin.file:
     path: "{{ tmp_dir }}"
     state: directory
