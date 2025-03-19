@@ -20,8 +20,8 @@
   ansible.builtin.file:
     path: "{{ slurm_share_prefix }}{{ slurm_config_dir }}"
     state: directory
-    owner: root
-    group: root
+    owner: "{{ root_user }}"
+    group: "{{ root_group }}"
     mode: "{{ common_mode }}"
 
 - name: Ensure directories for slurm ops

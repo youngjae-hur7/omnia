@@ -53,7 +53,7 @@
     - "{{ slurm_dbd_conf_dict['PidFile'] }}"
 
 - name: Create slurmdbd.conf
-  ansible.builtin.template: # Create dest directory before
+  ansible.builtin.template:
     src: "dbd.conf.j2"
     dest: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurmdbd.conf"
     owner: "{{ slurm_user }}"
@@ -65,14 +65,13 @@
     - Restart slurmdbd
 
 - name: Local copy slurmdbd.conf /etc/slurm/
-  ansible.builtin.template: # Local copy #FAILSAFE
+  ansible.builtin.template:
     src: "dbd.conf.j2"
     dest: "{{ slurm_config_dir }}/slurmdbd.conf"
     owner: "{{ slurm_user }}"
     group: "{{ slurm_user }}"
     mode: "{{ slurm_dbd_mode }}"
   when: '"slurm_dbd" in group_names'
-  # ignore_errors: true
   notify:
     - Restart slurmdbd
     - Restart slurmctld
