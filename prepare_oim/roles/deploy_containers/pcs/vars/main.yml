@@ -83,7 +83,7 @@ omnia_core_run_opts: "-dt --hostname {{ omnia_core_name }} --restart=always --ne
 provision_container_name: "omnia_provision"
 provision_image_name: "omnia_provision"
 provision_image_tag: "latest"
-provision_image: "localhost/{{ provision_image_name }}:{{ provision_image_tag }}"
+provision_image: "{{ provision_image_name }}:{{ provision_image_tag }}"
 provision_dir: "{{ omnia_nfs_share }}/provision"
 xcatdata_dir: "{{ provision_dir }}/xcatdata"
 pgsql_data_dir: "{{ xcatdata_dir }}/pgsql/data"
@@ -101,7 +101,7 @@ provision_run_opts: " --network=host --restart=always --hostname {{ oim_hostname
 kubespray_image_name: "omnia_kubespray"
 kubespray_version: "{{ hostvars['localhost']['kubespray_version'] }}"
 kubespray_name: "omnia_kubespray_{{ kubespray_version }}"
-kubespray_image: "localhost/{{ kubespray_image_name }}:{{ kubespray_version }}"
+kubespray_image: "{{ kubespray_image_name }}:{{ kubespray_version }}"
 kubespray_run_opts: " -v {{ omnia_nfs_share }}/ssh_config/.ssh:/root/.ssh{{ selinux_option }} \
                     -v {{ omnia_nfs_share }}:/opt/omnia{{ selinux_option }} -v {{ hosts_file }}:/etc/hosts{{ selinux_option }} \
                     --network=host --restart=always --cap-add AUDIT_WRITE"
