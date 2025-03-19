@@ -293,15 +293,11 @@ def process_image(package, repo_store_path, status_file_path, cluster_os_type, c
         repo_name_prefix = "container_repo_"
         repository_name = f"{repo_name_prefix}{package['package'].replace('/', '_').replace(':', '_')}"
         remote_name = f"remote_{package['package'].replace('/', '_')}"
-
-        # Create container repository
-        with repository_creation_lock:
-            result = create_container_repository(repository_name, logger)
-        if result is False or (isinstance(result, dict) and result.get("returncode", 1) != 0):
-            raise Exception(f"Failed to create repository: {repository_name}")
+        package_identifier = package['package']
 
         # Process digest or tag
         if "digest" in package:
+            package_identifier += f":{package['digest']}"
             result = create_container_remote_digest(remote_name, base_url, package_content, policy_type, logger)
             if result is False or (isinstance(result, dict) and result.get("returncode", 1) != 0):
                 raise Exception(f"Failed to create remote digest: {remote_name}")
@@ -309,12 +305,19 @@ def process_image(package, repo_store_path, status_file_path, cluster_os_type, c
         elif "tag" in package:
             tag_template = Template(package.get('tag', None))  # Use Jinja2 Template for URL
             tag_val = tag_template.render(**version_variables)
-
+            package_identifier += f":{package['tag']}"
             with remote_creation_lock:  # Locking for single execution
                 result = create_container_remote(remote_name, base_url, package_content, policy_type, tag_val, logger)
 
             if result is False or (isinstance(result, dict) and result.get("returncode", 1) != 0):
                 raise Exception(f"Failed to create remote: {remote_name}")
+
+        # Create container repository
+        with repository_creation_lock:
+            result = create_container_repository(repository_name, logger)
+        if result is False or (isinstance(result, dict) and result.get("returncode", 1) != 0):
+            raise Exception(f"Failed to create repository: {repository_name}")
+
 
         # Sync and distribute container repository
         result = sync_container_repository(repository_name, remote_name, package_content,logger)
@@ -323,11 +326,9 @@ def process_image(package, repo_store_path, status_file_path, cluster_os_type, c
 
     except Exception as e:
         status = "Failed"
-        logger.error(f"Failed to process image: {package['package']}. Error: {e}")
-
+        logger.error(f"Failed to process image: {package_identifier}. Error: {e}")
     finally:
         # Write status to file
-        write_status_to_file(status_file_path, package['package'], package['type'], status, logger)
-
+        write_status_to_file(status_file_path, package_identifier, package['type'], status, logger)
         logger.info("#" * 30 + f" {process_image.__name__} end " + "#" * 30)
         return status
