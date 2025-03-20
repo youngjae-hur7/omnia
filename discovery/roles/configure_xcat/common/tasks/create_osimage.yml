@@ -35,7 +35,7 @@
 - name: Create diskful osimage locally
   ansible.builtin.command: "{{ xcat_sbin_path }}/copycds {{ iso_file_path }}"
   changed_when: true
-  when: not diskful_osimage_status and not nfs_used
+  when: not nfs_used
 
 - name: Create diskful osimage on NFS
   when: nfs_used
