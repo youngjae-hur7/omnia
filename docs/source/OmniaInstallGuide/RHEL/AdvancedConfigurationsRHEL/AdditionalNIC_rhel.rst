@@ -146,6 +146,8 @@ The ``server_spec_update.yml`` playbook can be used to do the following tasks:
             * intel_idle.max_cstate=0
             * intel_pstate=disable
 
+.. caution:: If duplicate entries of the same command line parameter is provided but with different values, then the playbook picks up to the last provided value overwriting any previous entries. For example, if the user provides ``"intel_iommu=on intel_iommu=off"`` as the parameters, the configuration will ultimately be set to ``"intel_iommu=off"``, as this is the last value provided.
+
 **Executing the playbook**
 
 After you have filled up the ``input/network_spec.yml`` and ``input/server_spec.yml`` with all the necessary details based on the configuration(s) required, do the following to execute the playbook:
