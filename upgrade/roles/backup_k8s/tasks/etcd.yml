@@ -125,7 +125,6 @@
     - pod_status.resources[0].status.phase == "Running"
   retries: "{{ retry_count }}"
   delay: "{{ delay_pod }}"
-  failed_when: false
 
 - name: Create manifests directory
   ansible.builtin.file:
