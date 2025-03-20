@@ -28,6 +28,12 @@
     - ansible_distribution | lower == "ubuntu"
     - ansible_distribution_version == "24.04"
 
+- name: Remove pam_systemd.so line in password-auth
+  ansible.builtin.lineinfile:
+    path: "{{ password_auth_file_path }}"
+    regexp: '\s*pam_systemd.so'
+    state: absent
+
 - name: Start slurmd on compute nodes
   ansible.builtin.systemd:
     name: slurmd.service

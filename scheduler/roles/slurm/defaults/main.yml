@@ -23,6 +23,7 @@ sys_env_path: '/etc/environment'
 mpi: {}
 cgroup: {}
 __cgroup_default_config:
+  CgroupAutomount: true
   CgroupPlugin: autodetect
   ConstrainCores: true
   ConstrainDevices: true
@@ -38,7 +39,12 @@ __slurm_default_config:
   ReturnToService: 2
   SchedulerType: sched/backfill
   MpiDefault: None
+  TaskPlugin: task/cgroup
   ProctrackType: proctrack/cgroup
+  PrologFlags: contain
+  JobCompType: jobcomp/none
+  JobAcctGatherType: jobacct_gather/linux
+  JobAcctGatherFrequency: 30
   SelectType: select/linear
   SlurmctldLogFile: /var/log/slurmctld.log
   SlurmdLogFile: /var/log/slurmd.log
