@@ -13,12 +13,6 @@
 # limitations under the License.
 ---
 
-- name: Notify user about default inputs
-  ansible.builtin.debug:
-    msg: "{{ default_warning_msg }}"
-
-- name: Fetch default credentials
-  ansible.builtin.include_tasks: prompt_credentials.yml
-  loop: "{{ type.value | dict2items }}"
-  loop_control:
-    loop_var: field
+# Usage: cleanup_credentials
+omnia_credential_config: "{{ input_project_dir }}/omnia_config_credentials.yml"
+omnia_credential_config_key: "{{ input_project_dir }}/.omnia_config_credentials_key"
