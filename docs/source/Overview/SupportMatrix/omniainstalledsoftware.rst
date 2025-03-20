@@ -5,7 +5,7 @@ Software Installed by Omnia
    :file: ../../Tables/omnia_installed_software.csv
    :header-rows: 1
    :keepspace:
-   :class: longtable
+   :class: table-responsive
 
 .. dropdown:: Software support matrix for RHEL/Rocky clusters
 
