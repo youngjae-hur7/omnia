@@ -6,11 +6,6 @@
 #################################################################################################################
 echo "--------------------------" >> /var/log/xcat/xcat.log
 
-NCCL_DOWNLOAD_URL="http://{{ admin_nic_ip }}:80{{ cuda_core_path }}/var/{{ cuda_debs_folder }}/{{ libnccl2_package_name }}"
-NCCL_DEV_DOWNLOAD_URL="http://{{ admin_nic_ip }}:80{{ cuda_core_path }}/var/{{ cuda_debs_folder }}/{{ libnccl_dev_package_name }}"
-
-
-
 if [ -f "/etc/debian_version" ]; then
   str_os_type="debian"
 else
@@ -43,15 +38,19 @@ if [[ $nvidia_check == *"NVIDIA"* ]]; then
 
       echo "# Installing CUDA..." >> "$LOG_FILE"
       apt install -y cuda >> "$LOG_FILE" 2>&1
+{% if ansible_distribution == "Ubuntu" and ansible_distribution_version == "24.04" %}    
       check_ubuntu24="$(cat /etc/os-release | grep 'VERSION_ID="24.04"' | wc -l)"
       if [[ "$check_ubuntu24" == "1" ]]
       then
+          NCCL_DOWNLOAD_URL="http://{{ admin_nic_ip }}:80{{ cuda_core_path }}/var/{{ cuda_debs_folder }}/{{ libnccl2_package_name }}"
+          NCCL_DEV_DOWNLOAD_URL="http://{{ admin_nic_ip }}:80{{ cuda_core_path }}/var/{{ cuda_debs_folder }}/{{ libnccl_dev_package_name }}"
           echo "Downloading CUDA libnccl packages" >> /var/log/xcat/xcat.log
           wget -O "/tmp/{{ libnccl2_package_name }}" "$NCCL_DOWNLOAD_URL" >> /var/log/xcat/xcat.log 2>&1
           wget -O "/tmp/{{ libnccl_dev_package_name }}" "$NCCL_DEV_DOWNLOAD_URL"  >> /var/log/xcat/xcat.log 2>&1
           dpkg -i "/tmp/{{ libnccl2_package_name }}" >> /var/log/xcat/xcat.log 2>&1
           dpkg -i "/tmp/{{ libnccl_dev_package_name }}" >> /var/log/xcat/xcat.log 2>&1
       fi
+{% endif %}      
     else
       echo "Starting CUDA installation in Debian" >> "$LOG_FILE"
       echo "$CUDA_REPO_ENTRY" >> "$DEFAULT_SOURCE_LIST/cuda.list"
