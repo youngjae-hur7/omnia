@@ -38,6 +38,7 @@
   when: not diskful_osimage_status and not nfs_used
 
 - name: Create diskful osimage on NFS
+  when: nfs_used
   block:
     - name: Create tmp osimage directory
       ansible.builtin.file:
@@ -45,7 +46,7 @@
         state: directory
         mode: "{{ mode }}"
 
-    - name: Create diskful osimage 
+    - name: Create diskful osimage
       ansible.builtin.command: "{{ xcat_sbin_path }}/copycds -p {{ tmp_dir }} {{ iso_file_path }}"
       changed_when: true
 
@@ -67,10 +68,8 @@
         {{ xcat_path }}/lsdef -t osimage | grep "{{ osimage_search_key }}" | grep "{{ provision_os }}" | grep "{{ provision_os_version }}" | cut -d' ' -f1
       changed_when: false
       register: fetch_osimage
-    
+
     - name: Modify osimages to xCAT install directory
       ansible.builtin.command: "{{ xcat_path }}/chdef -t osimage {{ fetch_osimage.stdout }} pkgdir={{ xcat_install_dir }}"
       changed_when: true
       when: fetch_osimage.stdout is defined
-
-  when: nfs_used
