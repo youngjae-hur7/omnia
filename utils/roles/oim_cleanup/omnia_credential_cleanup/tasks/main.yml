@@ -13,17 +13,6 @@
 # limitations under the License.
 ---
 
-- name: Notify user about optional inputs
-  ansible.builtin.debug:
-    msg: "{{ optional_warning_msg }}"
-
-- name: Fetch optional credentials
-  ansible.builtin.include_tasks: prompt_credentials.yml
-  loop: "{{ type.value | dict2items }}"
-  loop_control:
-    loop_var: field
-
-- name: Include updated omnia_credentials.yml
-  ansible.builtin.include_vars: "{{ omnia_credential_file }}"
-  register: include_omnia_credentials
-  no_log: true
+- name: Cleanup credentials
+  ansible.builtin.import_tasks: cleanup_credentials.yml
+  tags: credentials
