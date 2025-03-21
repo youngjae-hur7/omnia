@@ -17,17 +17,28 @@
 #     name: "{{ slurm_controller_packages[ansible_os_family] }}"
 #     state: present
 
-- name: Install dnf controller packages on installroot #common
+# - name: Update the yum repos cache
+#   ansible.builtin.command: dnf makecache
+#   changed_when: true
+
+# - name: Install slurm packages
+#   ansible.builtin.shell: "dnf install -y --installroot={{ installroot }} slurm" # noqa: command-instead-of-shell
+#   become: true
+#   failed_when: false # WARNING failure in the above task, install though error
+#   changed_when: false
+
+- name: Install dnf controller packages on installroot # OS
   ansible.builtin.dnf:
-    # name: "{{ slurm_controller_packages[ansible_os_family] }}"
     name:
       - slurm
     state: present
     installroot: "{{ installroot }}"
   when: ansible_os_family == 'RedHat'
+  # run_once: true # HA
+  ignore_errors: true
   # Raising error first time though installed success 
 
-- name: Install dnf controller service packages locally
+- name: Install dnf controller service packages locally # OS
   ansible.builtin.dnf:
     name: "{{ slurm_controller_packages[ansible_os_family] }}"
     state: present

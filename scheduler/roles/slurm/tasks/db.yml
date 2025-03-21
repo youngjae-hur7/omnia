@@ -15,6 +15,7 @@
 - name: Get slurm_db_password from hostvars
   ansible.builtin.set_fact:
     slurm_db_password: "{{ hostvars['localhost']['slurm_db_password'] }}"
+  no_log: true
 
 - name: Is slurm_db_username defined
   ansible.builtin.set_fact:

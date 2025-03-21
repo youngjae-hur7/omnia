@@ -37,3 +37,7 @@
 # TODO: Add validation for slurmdbd inputs
 
 # TODO: Add validation for db inputs
+- name: Check password
+  ansible.builtin.assert:
+    that:
+      - slurm_db_password | length > 1
