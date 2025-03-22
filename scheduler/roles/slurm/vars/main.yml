@@ -25,9 +25,9 @@ slurm_db_host: "{{ hostvars['localhost']['slurm_db_host'] | default(false) }}"
 slurm_db_port: "{{ hostvars['localhost']['slurm_db_port'] | default(3306) }}"
 slurm_db_type: "{{ hostvars['localhost']['slurm_db_type'] | default('mariadb') }}"
 share_path: "{{ hostvars['localhost']['share_path'] }}" # TODO: direct load vars omnia_config.yml
-slurm_share_prefix: ""
-slurm_config_dir: /etc/slurm
-slurm_dir_name: slurm
+slurm_share_prefix: "/"
+slurm_config_dir: etc/slurm
+slurm_dir_name: "slurm/"
 slurm_dbd_port: 6819
 slurm_dbd_db_username: "{{ slurm_user }}"
 slurm_dbd_db_password: slurmPassword123!
@@ -42,6 +42,7 @@ mariadb: mariadb
 mysql: mysql
 root_user: root
 root_group: root
+plugin_slurm_dir: "usr/lib64/slurm"
 munge_cmd: "/usr/sbin/create-munge-key -f"
 munge_user: munge
 munge_group: munge

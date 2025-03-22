@@ -25,10 +25,11 @@
     group: "{{ munge_group }}"
     mode: "{{ munge_dir_mode }}"
 
-# - name: Check if munge key exists
-#   ansible.builtin.stat:
-#     path: "{{ munge_key_dest }}"
-#   register: munge_present
+- name: Check if munge key exists
+  ansible.builtin.stat:
+    path: "{{ munge_key_dest }}"
+  register: munge_present
+  when: "'slurm_control_node' in group_names"
 
 - name: Ensure munge key is generated on control node
   ansible.builtin.command:
@@ -46,7 +47,7 @@
   with_items: "{{ ansible_play_hosts_all }}"
   when: "'slurm_control_node' in group_names" # HA
 
-- name: Ensure Munge is enabled and running
+- name: Ensure munge is enabled and running
   ansible.builtin.service:
     name: munge
     enabled: true

@@ -24,6 +24,12 @@
 
 - name: Configless service edits
   when: slurm_installation_type == configless_slurm
+  module_defaults:
+    community.general.ini_file:
+      owner: "{{ root_user }}"
+      group: "{{ root_group }}"
+      mode: "{{ conf_file_mode }}"
+      no_extra_spaces: true
   block:
     - name: Edit the service ConditionPathExists
       community.general.ini_file:
@@ -42,8 +48,7 @@
         option: ExecStart
         value: "/usr/sbin/slurmd -D
          --conf-server {{ (hostvars[groups['slurm_control_node'] | first])['inventory_hostname_short']
-         + ':' + (slurm_conf_dict['SlurmctldPort'] -s $SLURMD_OPTIONS
-         | string) }}" # HA
+         + ':' + (slurm_conf_dict['SlurmctldPort'] | string) }} -s $SLURMD_OPTIONS" # HA
       notify:
         - Reload slurmd
         - Restart slurmd
@@ -57,21 +62,22 @@
       when: not _force_install_nfs
       notify:
         - Reload slurmd
+        - Restart slurmd
 
     - name: Unset env variable
       community.general.ini_file:
         path: "{{ sys_env_path }}"
         option: SLURM_CONF
         state: absent
+
+- name: NFS share service edits
+  when: slurm_installation_type == nfs_share_slurm
   module_defaults:
     community.general.ini_file:
       owner: "{{ root_user }}"
       group: "{{ root_group }}"
       mode: "{{ conf_file_mode }}"
       no_extra_spaces: true
-
-- name: NFS share service edits
-  when: slurm_installation_type == nfs_share_slurm
   block:
     - name: Edit the service ConditionPathExists
       community.general.ini_file:
@@ -81,6 +87,7 @@
         value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
       notify:
         - Reload slurmd
+        - Restart slurmd
 
     - name: Edit the service to fetch specific conf
       community.general.ini_file:
@@ -90,6 +97,7 @@
         value: "/usr/sbin/slurmd -D -f {{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf -s $SLURMD_OPTIONS"
       notify:
         - Reload slurmd
+        - Restart slurmd
 
     - name: Add environment for nfs case above Execstart
       ansible.builtin.lineinfile:
@@ -102,6 +110,7 @@
       when: _force_install_nfs
       notify:
         - Reload slurmd
+        - Restart slurmd
     # - name: Add environment for nfs case
     #   community.general.ini_file:
     #     path: "{{ slurmd_service_path }}"
@@ -119,9 +128,3 @@
         value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
       notify:
         - Restart slurmd
-  module_defaults:
-    community.general.ini_file:
-      owner: "{{ root_user }}"
-      group: "{{ root_group }}"
-      mode: "{{ conf_file_mode }}"
-      no_extra_spaces: true

@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- name: Append share path if NFS
-  ansible.builtin.set_fact:
-    slurm_share_prefix: "{{ share_path + '/' +  slurm_dir_name if (slurm_installation_type == nfs_share_slurm) else '/' }}"
-
 - name: Check if line exists
   ansible.builtin.lineinfile:
     path: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
@@ -40,17 +36,16 @@
   when: not item.changed
   loop: "{{ node_check.results }}"
 
-- name: Get slurm info output if slurm is installed
+- name: Get slurm info output slurm computes
   ansible.builtin.shell: >
     set -o pipefail &&
     scontrol show node | awk '/NodeName/ {print $1}' | cut -d= -f2
   register: slurm_nodes_op
   changed_when: slurm_nodes_op.rc == 0
 
-
 - name: Assemble all slurm_nodes
   ansible.builtin.set_fact:
-    all_nodes: "{{ (groups['slurm_node'] + slurm_nodes_op['stdout_lines']) | unique | sort }}"
+    all_nodes: "{{ (slurm_node_list + slurm_nodes_op['stdout_lines']) | unique | sort }}"
 
 - name: Add the partition
   ansible.builtin.lineinfile:
@@ -59,3 +54,12 @@
     line: "PartitionName={{ slurm_partition_name }} Nodes={{ all_nodes | join(',') }} MaxTime=INFINITE State=UP"
     regexp: "^PartitionName={{ slurm_partition_name }} "
   register: partition_check
+
+- name: Distribute munge key to compute nodes
+  ansible.posix.synchronize:
+    src: "{{ munge_key_dest }}"
+    dest: "{{ munge_key_dest | dirname }}"
+    mode: pull
+    checksum: true
+  delegate_to: "{{ item }}"
+  with_items: "{{ slurm_node_list }}"

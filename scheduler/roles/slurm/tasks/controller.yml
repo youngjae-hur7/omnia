@@ -21,21 +21,21 @@
 #   ansible.builtin.command: dnf makecache
 #   changed_when: true
 
-# - name: Install slurm packages
-#   ansible.builtin.shell: "dnf install -y --installroot={{ installroot }} slurm" # noqa: command-instead-of-shell
-#   become: true
-#   failed_when: false # WARNING failure in the above task, install though error
-#   changed_when: false
+- name: Install slurm packages
+  ansible.builtin.shell: "dnf install -y --installroot={{ installroot }} slurm" # noqa: command-instead-of-shell
+  become: true
+  failed_when: false # WARNING failure in the above task, install though error
+  changed_when: false
 
-- name: Install dnf controller packages on installroot # OS
-  ansible.builtin.dnf:
-    name:
-      - slurm
-    state: present
-    installroot: "{{ installroot }}"
-  when: ansible_os_family == 'RedHat'
+# - name: Install dnf controller packages on installroot # OS
+#   ansible.builtin.dnf:
+#     name:
+#       - slurm
+#     state: present
+#     installroot: "{{ installroot }}"
+#   when: ansible_os_family == 'RedHat'
   # run_once: true # HA
-  ignore_errors: true
+  # ignore_errors: true
   # Raising error first time though installed success 
 
 - name: Install dnf controller service packages locally # OS
@@ -122,5 +122,3 @@
   when: (slurm_installation_type == 'configless') or not _force_install_nfs
   notify:
     - Reload slurmctld
-
-# - pause:

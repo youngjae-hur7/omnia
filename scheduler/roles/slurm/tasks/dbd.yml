@@ -64,18 +64,6 @@
     - Restart slurmctld
     - Restart slurmdbd
 
-- name: Local copy slurmdbd.conf /etc/slurm/
-  ansible.builtin.template:
-    src: "dbd.conf.j2"
-    dest: "{{ slurm_config_dir }}/slurmdbd.conf"
-    owner: "{{ slurm_user }}"
-    group: "{{ slurm_user }}"
-    mode: "{{ slurm_dbd_mode }}"
-  when: '"slurm_dbd" in group_names'
-  notify:
-    - Restart slurmdbd
-    - Restart slurmctld
-
 # Port Config
 - name: Enable SlurmdbdPort
   ansible.posix.firewalld:
@@ -108,12 +96,15 @@
     path: "{{ dbd_service['status']['FragmentPath'] | default(slurmdbd_service_default_path) }}"
     section: Service
     option: Environment
-    value: '"LD_LIBRARY_PATH={{ slurm_share_prefix }}/usr/lib64/"'
+    value: '"LD_LIBRARY_PATH={{ slurm_share_prefix }}usr/lib64/"'
     no_extra_spaces: true
     mode: u=rw,g=r,o=r
   when: (slurm_installation_type == 'nfs_share') and _force_install_nfs
   notify:
     - Reload slurmdbd
+    - Restart slurmdbd
+
+- pause:
 
 - name: Remove environment for configless case
   community.general.ini_file:
@@ -124,3 +115,4 @@
   when: (slurm_installation_type == 'configless') or not _force_install_nfs
   notify:
     - Reload slurmdbd
+    - Restart slurmdbd

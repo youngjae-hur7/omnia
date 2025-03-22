@@ -14,7 +14,7 @@
 ---
 - name: Append share path if NFS
   ansible.builtin.set_fact:
-    slurm_share_prefix: "{{ share_path }}/{{ slurm_dir_name }}"
+    slurm_share_prefix: "{{ share_path }}/{{ slurm_dir_name }}" # TODO
 
 - name: Remove the slurm nodes
   ansible.builtin.lineinfile:
