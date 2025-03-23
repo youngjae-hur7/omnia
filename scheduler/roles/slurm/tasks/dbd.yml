@@ -104,8 +104,6 @@
     - Reload slurmdbd
     - Restart slurmdbd
 
-- pause:
-
 - name: Remove environment for configless case
   community.general.ini_file:
     path: "{{ dbd_service['status']['FragmentPath'] | default(slurmdbd_service_default_path) }}"

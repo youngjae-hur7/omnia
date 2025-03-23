@@ -22,7 +22,7 @@
   check_mode: true
   loop: "{{ groups['slurm_node'] }}"
 
-- name: Insert Node
+- name: Insert node only if not exists
   ansible.builtin.lineinfile:
     path: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
     state: present
@@ -36,7 +36,7 @@
   when: not item.changed
   loop: "{{ node_check.results }}"
 
-- name: Get slurm info output slurm computes
+- name: Get slurm info output slurm computes # Requires controller service running
   ansible.builtin.shell: >
     set -o pipefail &&
     scontrol show node | awk '/NodeName/ {print $1}' | cut -d= -f2
