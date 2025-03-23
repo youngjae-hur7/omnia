@@ -42,7 +42,6 @@ __slurm_default_config:
   TaskPlugin: task/cgroup
   ProctrackType: proctrack/cgroup
   PrologFlags: contain
-  JobCompType: jobcomp/none
   JobAcctGatherType: jobacct_gather/linux
   JobAcctGatherFrequency: 30
   SelectType: select/linear
