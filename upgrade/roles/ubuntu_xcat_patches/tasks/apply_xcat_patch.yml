@@ -13,12 +13,6 @@
 # limitations under the License.
 ---
 
-#- name: Apply xcat patches
-#  ansible.posix.patch:
-#    src: "{{ item.src }}"
-#    dest: "{{ item.dest }}"
-#    state: present
-#  with_items: "{{ xcat_patch_files }}"
 - name: Apply xcat patches with retry and validation
   block:
     - name: Check if patch is already applied
@@ -36,8 +30,8 @@
       with_items: "{{ xcat_patch_files }}"
       when: patch_check.results | selectattr('rc', '!=', 0) | list | length > 0
       register: patch_result
-      retries: 3
-      delay: 5
+      retries: "{{ max_retries }}"
+      delay: "{{ max_delay }}"
       until: patch_result is succeeded
 
   rescue:
