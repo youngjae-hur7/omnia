@@ -27,3 +27,7 @@
 - name: Set high_availability_status
   ansible.builtin.set_fact:
     enable_oim_ha: "{{ high_availability_config.ansible_facts.oim_ha.enable_oim_ha | default(false) }}"
+
+- name: Register NFS Check
+  ansible.builtin.set_fact:
+    nfs_used: "{{ omnia_share_option == 'NFS' }}"
