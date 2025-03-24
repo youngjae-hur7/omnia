@@ -13,30 +13,10 @@
 #  limitations under the License.
 ---
 
-- name: Validate auth_server groups provided
-  when:
-    - "'auth_server' not in groups"
-  block:
-    - name: Invalid auth_server inventory format
-      ansible.builtin.fail:
-        msg: "{{ invalid_auth_server_inventory_fail_msg }}"
-      when: not cluster_layout_check.stat.exists
-
-    - name: Initialize variables for cluster_layout_status
-      ansible.builtin.set_fact:
-        auth_server_cluster_layout_status: true
-      when: cluster_layout_check.stat.exists
-
-    # Add hosts in cluster_layout file to groups kube_control_plane, kube_node and etcd
-    - name: Add hosts in cluster_layout file to groups
-      ansible.builtin.add_host:
-        name: '{{ item.split()[1] }}'
-        groups: '{{ item.split()[0] }}'
-      when:
-        - cluster_layout_check.stat.exists
-        - "'auth_server' in item.split()[0]"
-      with_lines:
-        - "{{ lookup('file', cluster_layout_path) }}"
+- name: Invalid auth_server inventory format
+  ansible.builtin.fail:
+    msg: "{{ invalid_auth_server_inventory_fail_msg }}"
+  when: "'auth_server' not in groups"
 
 - name: Validate auth_server group to contain exactly 1 node
   ansible.builtin.assert:
