@@ -65,7 +65,3 @@ invalid_auth_server_inventory_fail_msg:
   Invalid inventory format, specify auth_sever group in inventory and re-run playbook."
 auth_server_group_fail_msg: "Failed, auth_server group should contain exactly 1 node"
 auth_server_group_success_msg: "Success, inventory file is valid"
-
-# Usage: update_group.yml
-valid_k8s_groups: ['kube_control_plane', 'kube_node', 'etcd']
-valid_slurm_groups: ['slurm_control_node', 'slurm_node', 'slurm_dbd', 'login']

@@ -26,11 +26,23 @@
     - (groups['all'] | length == 0)
     - not cluster_layout_check.stat.exists
 
-- name: Initialize variables for cluster_layout_status
-  ansible.builtin.set_fact:
-    k8s_cluster_layout_status: false
-    slurm_cluster_layout_status: false
-    auth_server_cluster_layout_status: false
+- name: Create inventory from cluster_layout
+  when: cluster_layout_check.stat.exists
+  block:
+    - name: Read layout file
+      ansible.builtin.set_fact:
+        layout_file_content: "{{ lookup('file', cluster_layout_path) }}"
+
+    - name: Split layout content into lines
+      ansible.builtin.set_fact:
+        layout_lines: "{{ layout_file_content.split('\n') }}"
+
+    - name: Initialize current_group
+      ansible.builtin.set_fact:
+        current_group: ""
+
+    - name: Create inventory group
+      ansible.builtin.include_tasks: update_group.yml
 
 # Validate K8s requirements for all the nodes
 - name: Validate K8s nodes requirements
@@ -38,9 +50,9 @@
   ansible.builtin.include_tasks: k8s_validations.yml
 
 # Validate slurm requirements for all the nodes
-#- name: Validate Slurm nodes requirements
-#  when: slurm_support
-#  ansible.builtin.include_tasks: slurm_validations.yml
+- name: Validate Slurm nodes requirements
+  when: slurm_support
+  ansible.builtin.include_tasks: slurm_validations.yml
 
 - name: Validate auth_server nodes requirements
   when: freeipa_support or openldap_support

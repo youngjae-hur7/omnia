@@ -19,9 +19,7 @@
     current_group: "{{ item.strip('[]') }}"
 
 - name: Add host to current group
-  when:
-    - not item.startswith('[')
-    - current_group in valid_groups
+  when: not item.startswith('[')
   ansible.builtin.add_host:
     name: "{{ item.strip() }}"
     groups: "{{ current_group }}"
