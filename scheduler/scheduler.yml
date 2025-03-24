@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
+
 - name: Set_fact for fetch omnia config credentials
   hosts: localhost
+  connection: local
   tasks:
     - name: Set dynamic run tags including 'slurm'
       when: not config_file_status | default(false) | bool
@@ -22,18 +24,24 @@
         cacheable: true
 
 - name: Invoke get_config_credentials.yml
-  when: not config_file_status | default(false) | bool
   ansible.builtin.import_playbook: ../utils/credential_utility/get_config_credentials.yml
+  when: not ( hostvars['127.0.0.1']['config_file_status'] | default(false) | bool )
+
+- name: Include input project directory
+  ansible.builtin.import_playbook: ../utils/include_input_dir.yml
+  when: not ( hostvars['127.0.0.1']['project_dir_status'] | default(false) | bool )
 
 - name: Update Inventory with ansible_host information
   ansible.builtin.import_playbook: ../utils/servicetag_host_mapping.yml
   when: not ( hostvars['127.0.0.1']['update_inventory_executed'] | default(false) | bool )
 
 - name: Gather facts from all the nodes
-  hosts: kube_control_plane, kube_node, login, etcd
+  hosts: slurm_control_node, slurm_node, slurm_dbd, login, kube_control_plane, kube_node, etcd
+  gather_facts: true
 
-- name: Include input project directory
-  ansible.builtin.import_playbook: ../utils/include_input_dir.yml
+- name: Validate inventory
+  ansible.builtin.import_playbook: ../utils/inventory_validation.yml
+  when: not ( hostvars['127.0.0.1']['inventory_validation_executed'] | default(false) | bool )
 
 - name: Create kubespray container group
   ansible.builtin.import_playbook: ../utils/create_container_group.yml
