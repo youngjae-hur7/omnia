@@ -13,6 +13,10 @@
 #  limitations under the License.
 ---
 
+- name: Initialize login_node_required status
+  ansible.builtin.set_fact:
+    login_node_required: false
+
 - name: Validate the cluster_layout status
   ansible.builtin.stat:
     path: "{{ cluster_layout_path }}"
@@ -50,6 +54,10 @@
 - name: Validate K8s nodes requirements
   when: k8s_support
   ansible.builtin.include_tasks: k8s_validations.yml
+
+- name: Set login_node_required status
+  when: slurm_support
+  ansible.builtin.include_tasks: set_login_node_status.yml
 
 # Validate slurm requirements for all the nodes
 - name: Validate Slurm nodes requirements

@@ -26,10 +26,6 @@
 - name: Fetch software_config.json and check for beegfs and nfs support
   ansible.builtin.include_tasks: fetch_software_config.yml
 
-- name: Validate inventory format
-  ansible.builtin.include_tasks: validate_inventory.yml
-  when: not ( validate_slurm_k8s_inventory | default(false) | bool )
-
 - name: Validate beegfs variables
   ansible.builtin.include_tasks: validate_beegfs_vars.yml
 
