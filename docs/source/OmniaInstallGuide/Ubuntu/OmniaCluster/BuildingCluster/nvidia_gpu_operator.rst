@@ -28,7 +28,7 @@ Follow the below provided steps to set up the NVIDIA GPU operator for your clust
         * ``http_proxy``: This value can be found in the ``/opt/omnia/offline/local_repo_access.yml`` file.
         * ``https_proxy``: This value can be found in the ``/opt/omnia/offline/local_repo_access.yml`` file.
 
-.. note:: Omnia supports the successful deployment of the NVIDIA GPU Operator for the pre-filled basic configuration, under input/nvidia_gpu_operator. For a more customized installation, the configuration file can be edited as per the user's requirements. However, users must check and verify the compatibility of supported tools and driver versions before proceeding. Omnia does not claim responsibility for any issues arising from custom modifications or compatibility checks.
+.. note:: Omnia supports the successful deployment of the NVIDIA GPU Operator for the pre-filled basic configuration, under ``input/nvidia_gpu_operator``. For a more customized installation, the configuration file can be edited as per the user's requirements. However, users must check and verify the compatibility of supported tools and driver versions before proceeding. Omnia does not claim responsibility for any issues arising from custom modifications or compatibility checks.
 
 2. Once the ``nvidia_gpu_operator_config.yml`` file is ready, by default the filepath is added to the ``nvidia_gpu_operator_value_file_path`` parameter in ``input/omnia_config.yml`` file.
 
