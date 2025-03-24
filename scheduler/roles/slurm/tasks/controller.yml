@@ -22,10 +22,12 @@
 #   changed_when: true
 
 - name: Install slurm packages
-  ansible.builtin.shell: "dnf install -y --installroot={{ installroot }} slurm" # noqa: command-instead-of-shell
+  ansible.builtin.shell: "dnf install -y --installroot={{ installroot }} slurm slurm-slurmctld slurm-slurmdbd" # noqa: command-instead-of-shell
   become: true
-  failed_when: false # WARNING failure in the above task, install though error
+  failed_when: false # WARNING failure in the above task, install though error, pulp repos also reset 
   changed_when: false
+
+- pause:
 
 # - name: Install dnf controller packages on installroot # OS
 #   ansible.builtin.dnf:
@@ -38,12 +40,12 @@
   # ignore_errors: true
   # Raising error first time though installed success 
 
-- name: Install dnf controller service packages locally # OS
-  ansible.builtin.dnf:
-    name: "{{ slurm_controller_packages[ansible_os_family] }}"
-    state: present
+# - name: Install dnf controller service packages locally # OS
+#   ansible.builtin.dnf:
+#     name: "{{ slurm_controller_packages[ansible_os_family] }}"
+#     state: present
     # installroot: "{{ installroot }}"
-  when: ansible_os_family == 'RedHat'
+  # when: ansible_os_family == 'RedHat'
 
 - name: Create files - {{ item }} # TODO: file required?
   ansible.builtin.file:
@@ -64,13 +66,18 @@
     state: enabled
     immediate: true
 
- # if service installed locally - this following copy not required
-# - name: Copy the slurctld service local for both configless and nfs
-#   ansible.builtin.copy:
-#     src: "{{ installroot }}{{ slurmctld_service_default_path }}"
-#     dest: "{{ slurmctld_service_default_path }}"
-#     remote_src: true
-#     mode: preserve
+#  if service installed locally - this following copy not required
+- name: Copy the slurctld service local for both configless and nfs
+  ansible.builtin.copy:
+    src: "{{ installroot }}{{ slurmctld_service_default_path }}"
+    dest: "{{ slurmctld_service_default_path }}"
+    remote_src: true
+    mode: preserve
+  when: (slurm_installation_type == 'nfs_share') and _force_install_nfs
+
+- name: Enable the service
+  ansible.builtin.systemd_service:
+    daemon_reload: true
 
 # Edit service
 - name: Enable the service
@@ -95,7 +102,7 @@
     path: "{{ ctld_service['status']['FragmentPath'] | default(slurm_ctld_service_default_path) }}"
     section: Service
     option: ExecStart
-    value: "/usr/sbin/slurmctld -D -f {{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf -s $SLURMCTLD_OPTIONS"
+    value: "{{ slurm_share_prefix }}usr/sbin/slurmctld -D -f {{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf -s $SLURMCTLD_OPTIONS"
     no_extra_spaces: true
     mode: u=rw,g=r,o=r
   notify:
@@ -106,7 +113,7 @@
     path: "{{ ctld_service['status']['FragmentPath'] | default(slurm_ctld_service_default_path) }}"
     section: Service
     option: Environment
-    value: '"LD_LIBRARY_PATH={{ slurm_share_prefix }}/usr/lib64/"'
+    value: '"LD_LIBRARY_PATH={{ slurm_share_prefix }}usr/lib64/"'
     no_extra_spaces: true
     mode: u=rw,g=r,o=r
   when: (slurm_installation_type == 'nfs_share') and _force_install_nfs
@@ -122,3 +129,7 @@
   when: (slurm_installation_type == 'configless') or not _force_install_nfs
   notify:
     - Reload slurmctld
+
+- name: Set env special paths
+  ansible.builtin.include_tasks: configure_slurm_paths.yml
+  when: (slurm_installation_type == 'nfs_share') and _force_install_nfs

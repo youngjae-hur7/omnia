@@ -36,10 +36,16 @@
       delegate_to: "{{ slurm_db_host }}"
   run_once: true
 
-- name: Install DBD packages
-  ansible.builtin.package:
-    name: "{{ slurm_dbd_packages[ansible_os_family] }}"
-    state: present
+# - name: Install DBD packages
+#   ansible.builtin.package:
+#     name: "{{ slurm_dbd_packages[ansible_os_family] }}"
+#     state: present
+
+# - name: Install slurm packages
+#   ansible.builtin.shell: "dnf install -y --installroot={{ installroot }} slurm-slurmdbd" # noqa: command-instead-of-shell
+#   become: true
+#   failed_when: false # WARNING failure in the above task, install though error
+#   changed_when: false
 
 - name: Create files - {{ item }} # TODO: file required?
   ansible.builtin.file:
@@ -72,6 +78,18 @@
     state: enabled
     immediate: true
 
+- name: Copy the slurmdbd service local for both configless and nfs
+  ansible.builtin.copy:
+    src: "{{ installroot }}{{ slurmdbd_service_default_path }}"
+    dest: "{{ slurmdbd_service_default_path }}"
+    remote_src: true
+    mode: preserve
+  when: (slurm_installation_type == 'nfs_share') and _force_install_nfs
+
+- name: Enable the service
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+
 # Edit service
 - name: Enable the service
   ansible.builtin.service:
@@ -90,6 +108,17 @@
 #   notify:
 #     - Reload slurmdbd
 #     - Restart slurmdbd
+
+- name: Edit the service to fetch specific conf
+  community.general.ini_file:
+    path: "{{ dbd_service['status']['FragmentPath'] | default(slurmdbd_service_default_path) }}"
+    section: Service
+    option: ExecStart
+    value: "{{ slurm_share_prefix }}usr/sbin/slurmdbd $SLURMDBD_OPTIONS"
+    no_extra_spaces: true
+    mode: u=rw,g=r,o=r
+  notify:
+    - Reload slurmctld
 
 - name: Add environment for nfs case above Execstart
   ansible.builtin.lineinfile:

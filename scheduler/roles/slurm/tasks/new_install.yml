@@ -23,13 +23,17 @@
   ansible.builtin.include_tasks: controller.yml
   when: '"slurm_control_node" in group_names'
 
-- name: Include compute installation tasks
-  ansible.builtin.include_tasks: compute.yml
-  when: '"slurm_node" in group_names'
-
 # - name: Include slurm DBD installation tasks
 #   ansible.builtin.include_tasks: dbd.yml
 #   when: '"slurm_dbd" in group_names'
+
+# - name: Include controller installation tasks
+#   ansible.builtin.include_tasks: update_slurmdbd_conf_nfs.yml
+#   when: '"slurm_control_node" in group_names'
+
+- name: Include compute installation tasks
+  ansible.builtin.include_tasks: compute.yml
+  when: '"slurm_node" in group_names'
 
 - name: Include login node installation tasks
   ansible.builtin.include_tasks: login.yml

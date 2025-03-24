@@ -31,6 +31,7 @@ slurm_dir_name: "slurm/"
 slurm_dbd_port: 6819
 slurm_dbd_db_username: "{{ slurm_user }}"
 slurm_dbd_db_password: slurmPassword123!
+bashrc_path: "/etc/bashrc"
 slurm_db_login_unix_socket: /var/lib/mysql/mysql.sock
 slurm_mysql_cnf_path: /etc/my.cnf.d/mysql-server.cnf
 slurm_mariadb_cnf_path: /etc/my.cnf.d/mariadb-server.cnf

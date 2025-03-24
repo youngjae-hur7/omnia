@@ -19,9 +19,9 @@
   ansible.builtin.dnf:
     name: "{{ db_packages[ansible_os_family][slurm_db_type] }}"
     state: present
-  environment:
-    PKG_CONFIG_PATH: "{{ slurm_share_prefix }}"
-    PATH: "{{ ansible_env.PATH }}:{{ slurm_share_prefix }}"
+  # environment:
+  #   PKG_CONFIG_PATH: "{{ slurm_share_prefix }}"
+  #   PATH: "{{ ansible_env.PATH }}:{{ slurm_share_prefix }}"
 
 - name: Enable and start the mysql service
   ansible.builtin.service:

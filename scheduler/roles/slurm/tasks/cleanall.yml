@@ -18,11 +18,20 @@
     state: stopped
   when: item in ansible_facts['services'].keys()
   ignore_errors: true
+  no_log: true
   loop:
     - slurmctld.service
     - slurmdbd.service
     - slurmd.service
     - munge.service
+
+- name: Refresh mounts
+  ansible.builtin.shell: |
+    umount {{ share_path }}
+    mount -a
+  register: refresh_mounts
+  ignore_errors: true
+  changed_when: refresh_mounts.rc == 0
 
 - name: Remove share slurm path
   ansible.builtin.file:
