@@ -13,6 +13,9 @@
 #  limitations under the License.
 ---
 
+- name: Include input project directory
+  ansible.builtin.import_playbook: include_input_dir.yml
+
 - name: Validate cluster inventory file
   hosts: localhost
   connection: local
