@@ -43,6 +43,8 @@
 
     - name: Create inventory group
       ansible.builtin.include_tasks: update_group.yml
+      loop: "{{ layout_lines }}"
+      when: item != ""
 
 # Validate K8s requirements for all the nodes
 - name: Validate K8s nodes requirements
