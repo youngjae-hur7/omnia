@@ -11,7 +11,7 @@
 DbdHost={{ hostvars[groups['slurm_dbd'][0]]['ansible_nodename'] | split('.') | first }}
 DbdPort={{ slurm_dbd_port }}
 {% endif %}
-
+PluginDir={{ installroot }}{{ plugin_slurm_dir }}
 # DATABASE INFO
 StorageHost={{ slurm_db_host }}
 {% if slurm_db_port is not none and slurm_db_port != omit %}

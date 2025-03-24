@@ -107,10 +107,15 @@
         no_extra_spaces: true
         mode: u=rw,g=r,o=r
 
+    - name: Check current environment variables
+      ansible.builtin.shell: echo $PATH # noqa: command-instead-of-shell
+      changed_when: false
+      register: path_output
+
     - name: Set env variable
       community.general.ini_file:
         path: "{{ sys_env_path }}"
         option: PATH
-        value: "$PATH:{{ slurm_share_prefix }}usr/bin"
+        value: "{{ path_output.stdout }}:{{ slurm_share_prefix }}usr/bin:{{ slurm_share_prefix }}usr/sbin"
         no_extra_spaces: true
         mode: u=rw,g=r,o=r

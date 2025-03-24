@@ -50,10 +50,10 @@
     - "{{ slurm_conf_dict['SlurmdLogFile'] }}"
     - "{{ slurm_conf_dict['SlurmdPidFile'] }}"
 
-- name: Remove the local slurm conf # !!?? Else this is taking prirority
+- name: Remove the local slurm conf # !!?? this is taking prirority
   ansible.builtin.file:
     path: "/{{ slurm_config_dir }}/slurm.conf"
     state: absent
-- pause:
+
 - name: Configless settings
   ansible.builtin.include_tasks: _configless.yml
