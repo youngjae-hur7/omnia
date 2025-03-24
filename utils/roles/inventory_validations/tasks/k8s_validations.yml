@@ -26,17 +26,12 @@
       ansible.builtin.set_fact:
         k8s_cluster_layout_status: true
       when: cluster_layout_check.stat.exists
-
-    # Add hosts in cluster_layout file to groups kube_control_plane, kube_node and etcd
-    - name: Add hosts in cluster_layout file to groups
-      ansible.builtin.add_host:
-        name: '{{ item.split()[1] }}'
-        groups: '{{ item.split()[0] }}'
-      when:
-        - cluster_layout_check.stat.exists
-        - "'kube' in item.split()[0]"
-      with_lines:
-        - "{{ lookup('file', cluster_layout_path) }}"
+    
+    - name: Create k8s inventory group
+      ansible.builtin.include_tasks: update_group.yml
+      when: cluster_layout_check.stat.exists
+      vars:
+        valid_groups: valid_k8s_groups 
 
 - name: Ensure correct Kubernetes in non-HA setup 
   block:
