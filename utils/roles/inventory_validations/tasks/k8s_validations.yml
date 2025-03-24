@@ -1,0 +1,110 @@
+#  Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+---
+
+- name: Validate k8s groups provided
+  when:
+    - "('kube_control_plane' not in groups or 'kube_node' not in groups or 'etcd' not in groups)"
+  block:
+    - name: Invalid inventory format for Kube
+      ansible.builtin.fail:
+        msg: "{{ invalid_kube_inventory_fail_msg }}"
+      when: not cluster_layout_check.stat.exists
+
+    - name: Initialize variables for cluster_layout_status
+      ansible.builtin.set_fact:
+        k8s_cluster_layout_status: true
+      when: cluster_layout_check.stat.exists
+
+    # Add hosts in cluster_layout file to groups kube_control_plane, kube_node and etcd
+    - name: Add hosts in cluster_layout file to groups
+      ansible.builtin.add_host:
+        name: '{{ item.split()[1] }}'
+        groups: '{{ item.split()[0] }}'
+      when:
+        - cluster_layout_check.stat.exists
+        - "'kube' in item.split()[0]"
+      with_lines:
+        - "{{ lookup('file', cluster_layout_path) }}"
+
+- name: Ensure correct Kubernetes in non-HA setup 
+  block:
+    - name: Kube control plane group to contain at least 1 kube control plane
+      ansible.builtin.assert:
+        that:
+          - "((groups['kube_control_plane'] | length | int) >= 1)"
+        success_msg: "{{ kube_one_node_validation_success_msg }}"
+        fail_msg: "{{ kube_control_plane_validation_fail_msg }}"
+
+    - name: Warning Kube control plane group contain multiple kube control plane
+      ansible.builtin.pause:
+        seconds: "{{ warning_wait_time }}"
+        prompt: "{{ kube_NonHA_setup_warning_msg }}"
+      when: 
+        - groups['kube_control_plane'] | length | int > 1
+  when: k8s_head_node_ha[0].enable_k8s_ha == false
+
+- name: Ensure correct Kubernetes in HA setup
+  block:
+    - name: Kube control plane group to contain at least 1 kube control plane
+      ansible.builtin.assert:
+        that:
+          - "((groups['kube_control_plane'] | length | int) >= 1)"
+        success_msg: "{{ kube_one_node_validation_success_msg }}"
+        fail_msg: "{{ kube_control_plane_validation_fail_msg }}"
+
+    - name: Warning Kube control plane group contain even number of nodes in the inventory
+      ansible.builtin.pause:
+        seconds: "{{ warning_wait_time }}"
+        prompt: "{{ kube_HA_setup_warning_msg }}"
+      when:
+        - ((groups['kube_control_plane'] | length | int) % 2) == 0
+  when: k8s_head_node_ha[0].enable_k8s_ha == true
+
+- name: Etcd node group to contain atleast 1 etcd node
+  ansible.builtin.assert:
+    that: "((groups['etcd'] | length | int) % 2) == 1"
+    success_msg: "{{ etcd_node_validation_success_msg }}"
+    fail_msg: "{{ etcd_node_validation_fail_msg }}"
+
+- name: Add all hosts in kube_control_plane and kube_node to group k8s_cluster
+  ansible.builtin.add_host:
+    name: '{{ item }}'
+    groups: k8s_cluster
+  with_items:
+    - "{{ groups['kube_control_plane'] }}"
+    - "{{ groups['kube_node'] }}"
+
+- name: Add all hosts in k8s_cluster and etcd to group k8s_cluster_all
+  ansible.builtin.add_host:
+    name: '{{ item }}'
+    groups: k8s_cluster_all
+  with_items:
+    - "{{ groups['k8s_cluster'] }}"
+    - "{{ groups['etcd'] }}"
+
+- name: Initialize variables
+  ansible.builtin.set_fact:
+    unreachable_kube_control_plane: []
+
+- name: Set unreachable_kube_control_plane
+  ansible.builtin.set_fact:
+    unreachable_kube_control_plane: "{{ unreachable_kube_control_plane + [item] }}"
+  when: item not in ansible_play_hosts
+  with_items: "{{ groups['kube_control_plane'] }}"
+
+- name: Unreachable kube_control_plane in inventory
+  ansible.builtin.fail:
+    msg: "{{ unreachable_kube_control_plane_fail_msg }}"
+  when: unreachable_kube_control_plane | length >= 1
