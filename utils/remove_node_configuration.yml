@@ -22,6 +22,7 @@
   vars:
     omnia_kubespray_group: true
     omnia_provision_group: true
+    omnia_provision_validation: true
   tags: always
 
 - name: Warning and User confirmation for removing slurm and kube node
