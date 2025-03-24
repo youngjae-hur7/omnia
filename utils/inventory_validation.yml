@@ -21,4 +21,4 @@
   hosts: localhost
   connection: local
   roles:
-    - inventory_validations
+    - inventory_validation
