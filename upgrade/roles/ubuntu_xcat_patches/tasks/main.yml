@@ -30,3 +30,4 @@
 
 - name: Apply xcat patch
   ansible.builtin.include_tasks: apply_xcat_patch.yml
+  when: patch_result.rc == 0
