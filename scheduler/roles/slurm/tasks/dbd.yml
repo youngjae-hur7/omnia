@@ -36,17 +36,6 @@
       delegate_to: "{{ slurm_db_host }}"
   run_once: true
 
-# - name: Install DBD packages
-#   ansible.builtin.package:
-#     name: "{{ slurm_dbd_packages[ansible_os_family] }}"
-#     state: present
-
-# - name: Install slurm packages
-#   ansible.builtin.shell: "dnf install -y --installroot={{ installroot }} slurm-slurmdbd" # noqa: command-instead-of-shell
-#   become: true
-#   failed_when: false # WARNING failure in the above task, install though error
-#   changed_when: false
-
 - name: Create files - {{ item }} # TODO: file required?
   ansible.builtin.file:
     path: "{{ item }}"
@@ -97,34 +86,38 @@
     enabled: true
   register: dbd_service
 
-# - name: Edit the service
-#   community.general.ini_file:
-#     path: "{{ dbd_service['status']['FragmentPath'] | default(slurmdbd_service_default_path) }}"
-#     section: Unit
-#     option: ConditionPathExists
-#     value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurmdbd.conf"
-#     no_extra_spaces: true
-#     mode: "{{ slurm_mode }}"
-#   notify:
-#     - Reload slurmdbd
-#     - Restart slurmdbd
+- name: Edit the service
+  community.general.ini_file:
+    path: "{{ dbd_service['status']['FragmentPath'] | default(slurmdbd_service_default_path) }}"
+    section: Unit
+    option: ConditionPathExists
+    state: absent
+    owner: "{{ root_user }}"
+    group: "{{ root_group }}"
+    mode: "{{ conf_file_mode }}"
+  notify:
+    - Reload slurmdbd
+    - Restart slurmdbd
 
 - name: Edit the service to fetch specific conf
   community.general.ini_file:
     path: "{{ dbd_service['status']['FragmentPath'] | default(slurmdbd_service_default_path) }}"
     section: Service
     option: ExecStart
-    value: "{{ slurm_share_prefix }}usr/sbin/slurmdbd $SLURMDBD_OPTIONS"
+    value: "{{ installroot }}usr/sbin/slurmdbd -D -s $SLURMDBD_OPTIONS"
     no_extra_spaces: true
-    mode: u=rw,g=r,o=r
+    owner: "{{ root_user }}"
+    group: "{{ root_group }}"
+    mode: "{{ conf_file_mode }}"
   notify:
-    - Reload slurmctld
+    - Reload slurmdbd
+    - Restart slurmdbd
 
 - name: Add environment for nfs case above Execstart
   ansible.builtin.lineinfile:
     path: "{{ dbd_service['status']['FragmentPath'] | default(slurmdbd_service_default_path) }}"
     insertbefore: '^ExecStart='
-    line: 'Environment="LD_LIBRARY_PATH={{ slurm_share_prefix }}/usr/lib64/"'
+    line: 'Environment="LD_LIBRARY_PATH={{ installroot }}usr/lib64/"'
     owner: "{{ root_user }}"
     group: "{{ root_group }}"
     mode: "{{ conf_file_mode }}"
@@ -139,7 +132,31 @@
     section: Service
     option: Environment
     state: absent
+    owner: "{{ root_user }}"
+    group: "{{ root_group }}"
+    mode: "{{ conf_file_mode }}"
   when: (slurm_installation_type == 'configless') or not _force_install_nfs
   notify:
     - Reload slurmdbd
     - Restart slurmdbd
+
+- name: Set dbd symbolic links
+  when: slurm_installation_type == 'nfs_share'
+  block: 
+    - name: Create directory for symbolic link
+      ansible.builtin.file:
+        path: "/etc/slurm"
+        state: directory
+        owner: "{{ root_user }}"
+        group: "{{ root_group }}"
+        mode: "{{ conf_file_mode }}"
+
+    - name: Create symbolic link for slurmdbd.conf
+      ansible.builtin.file:
+        src: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurmdbd.conf"
+        dest: "/etc/slurm/slurmdbd.conf"
+        state: link
+        owner: "{{ slurm_user }}"
+        group: "{{ slurm_user }}"
+        mode: "{{ slurm_dbd_mode }}"
+        force: true

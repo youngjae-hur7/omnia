@@ -18,9 +18,9 @@ PluginDir={{ installroot }}{{ plugin_slurm_dir }}
 
 # SLURM DBD
 {% if 'slurm_dbd' in groups %}
-#AccountingStorageHost={{ hostvars[groups['slurm_dbd'][0]]['ansible_nodename'] | split('.') | first }}
-#AccountingStoragePort={{ slurm_dbd_port }}
-#AccountingStorageType=accounting_storage/slurmdbd
+AccountingStorageHost={{ hostvars[groups['slurm_dbd'][0]]['ansible_nodename'] | split('.') | first }}
+AccountingStoragePort={{ slurm_dbd_port }}
+AccountingStorageType=accounting_storage/slurmdbd
 {% endif %}
 
 # COMPUTE NODES

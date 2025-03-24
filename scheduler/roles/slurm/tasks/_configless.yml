@@ -111,20 +111,19 @@
       notify:
         - Reload slurmd
         - Restart slurmd
-    # - name: Add environment for nfs case
-    #   community.general.ini_file:
-    #     path: "{{ slurmd_service_path }}"
-    #     section: Service
-    #     option: Environment
-    #     value: '"LD_LIBRARY_PATH={{ slurm_share_prefix }}/usr/lib64/"'
-    #   when: _force_install_nfs
-    #   notify:
-    #     - Reload slurmd
 
     - name: Set env variable
       community.general.ini_file:
         path: "{{ sys_env_path }}"
         option: SLURM_CONF
         value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
+        owner: "{{ root_user }}"
+        group: "{{ root_group }}"
+        mode: "{{ conf_file_mode }}"
       notify:
+        - Reload slurmd
         - Restart slurmd
+
+    - name: Enable etc enviroment
+      ansible.builtin.shell: source {{ sys_env_path }} # noqa: command-instead-of-shell
+      changed_when: false

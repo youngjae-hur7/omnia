@@ -35,7 +35,7 @@
         path: "{{ bashrc_path_final }}"
         regexp: '^PATH=*'
         insertafter: EOF
-        line: 'PATH={{ environment_output.stdout }}:{{ slurm_share_prefix }}/usr/bin:{{ slurm_share_prefix }}/usr/sbin'
+        line: 'PATH={{ environment_output.stdout }}:{{ slurm_share_prefix.rstrip("/") }}/usr/bin:{{ slurm_share_prefix.rstrip("/") }}/usr/sbin'
 
 - name: Check if environment variables are set
   ansible.builtin.command: echo $LD_LIBRARY_PATH
@@ -57,7 +57,7 @@
         path: "{{ bashrc_path_final }}"
         regexp: '^LD_LIBRARY_PATH=*'
         insertafter: EOF
-        line: 'export LD_LIBRARY_PATH={{ slurm_share_prefix }}/usr/lib64/'
+        line: 'export LD_LIBRARY_PATH={{ slurm_share_prefix.rstrip("/") }}/usr/lib64/'
 
 - name: Check if environment variables are set
   ansible.builtin.shell: echo $SLURM_CONF
