@@ -17,5 +17,3 @@ xcat_patch_files:
   - { src: "{{ role_path }}/../../../prepare_oim/roles/install_xcat/common/files/confignetwork.patch", dest: "/install/postscripts/confignetwork" }
 upgrade_config_path: "{{ role_path }}/../../upgrade_config.yml"
 revert_xcat_patch_failed: "Reverting xCAT patch failed!"
-max_retries: 10
-max_delay: 30
