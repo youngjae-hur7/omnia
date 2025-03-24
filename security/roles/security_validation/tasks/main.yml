@@ -42,9 +42,6 @@
     - name: Fetch freeIPA inputs
       ansible.builtin.include_tasks: validate_input_params.yml
 
-    - name: Validate inventory format
-      ansible.builtin.include_tasks: validate_inventory.yml
-
     - name: Fetch freeIPA inputs
       ansible.builtin.include_tasks: fetch_freeipa_inputs.yml
       when: authentication_system == 'freeipa'

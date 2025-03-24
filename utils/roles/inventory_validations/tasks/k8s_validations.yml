@@ -13,7 +13,6 @@
 #  limitations under the License.
 ---
 
-
 - name: Invalid inventory format for Kube
   ansible.builtin.fail:
     msg: "{{ invalid_kube_inventory_fail_msg }}"
@@ -90,9 +89,3 @@
   ansible.builtin.fail:
     msg: "{{ unreachable_kube_control_plane_fail_msg }}"
   when: unreachable_kube_control_plane | length >= 1
-
-# - name: Modify kubespray collection task
-#   ansible.builtin.lineinfile:
-#     path: "{{ ansible_collection_folder }}{{ kubespray_certificate_key_taskfile_path }}"
-#     insertafter: "- name: Set kubeadm certificate key"
-#     line: "  no_log: true"
