@@ -22,7 +22,7 @@
 - name: Remove pam_systemd.so line in common-session
   ansible.builtin.lineinfile:
     path: "{{ common_session_file_path }}"
-    regexp: '\s*pam_systemd.so'
+    regexp: "{{ pam_systemd_regexp }}"
     state: absent
   when:
     - ansible_distribution | lower == "ubuntu"
@@ -31,7 +31,7 @@
 - name: Remove pam_systemd.so line in password-auth
   ansible.builtin.lineinfile:
     path: "{{ password_auth_file_path }}"
-    regexp: '\s*pam_systemd.so'
+    regexp: "{{ pam_systemd_regexp }}"
     state: absent
 
 - name: Start slurmd on compute nodes
@@ -40,6 +40,4 @@
     state: restarted
     enabled: true
   register: slurmd_status
-  until: slurmd_status is succeeded
-  retries: 5
-  delay: 30
+  when: 'slurm_node' in group_names

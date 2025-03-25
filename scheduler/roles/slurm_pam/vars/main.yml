@@ -28,6 +28,7 @@ pam_sshd_regexp: "^account    required"
 pam_sshd_config_compute: "account    required     pam_slurm_adopt.so action_no_jobs=deny"
 common_session_file_path: "/etc/pam.d/common-session"
 password_auth_file_path: "/etc/pam.d/password-auth"
+pam_systemd_regexp: "\s*pam_systemd.so"
 
 # Usage: slurm_pam_login_node.yml
 pam_sshd_config_login: "account    sufficient     pam_slurm_adopt.so action_no_jobs=deny"
