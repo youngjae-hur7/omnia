@@ -22,7 +22,7 @@
     path: "{{ sys_env_path }}"
     option: PATH
     state: absent
-    mode: u=rw,g=r,o=r
+    mode: "{{ conf_file_mode }}"
 
 - name: Set env variable
   community.general.ini_file:
@@ -30,7 +30,7 @@
     option: SLURM_CONF
     value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
     no_extra_spaces: true
-    mode: u=rw,g=r,o=r
+    mode: "{{ conf_file_mode }}"
 
 - name: Login node configless
   when: slurm_installation_type == configless_slurm
@@ -101,6 +101,13 @@
         name: slurmd
         state: restarted
       when: restart_slurm_services
+
+- name: Remove local slurm.conf for nfs
+  ansible.builtin.file:
+    path: "/{{ slurm_config_dir }}/slurm.conf"
+    state: absent
+    mode: "{{ slurm_mode }}"
+  when: slurm_installation_type == nfs_share_slurm
 
 - name: Enable etc enviroment
   ansible.builtin.shell: source {{ sys_env_path }} # noqa: command-instead-of-shell

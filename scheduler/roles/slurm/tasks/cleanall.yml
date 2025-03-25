@@ -74,9 +74,13 @@
 - name: Unset env variable
   community.general.ini_file:
     path: "{{ sys_env_path }}"
-    option: SLURM_CONF
+    option: "{{ item }}"
     state: absent
-    mode: u=rw,g=r,o=r
+    mode: "{{ conf_file_mode }}"
+  loop:
+    - 'SLURM_CONF'
+    - 'PATH'
+    - 'LD_LIBRARY_PATH'
 
 - name: Just force systemd to reread configs
   ansible.builtin.systemd_service:

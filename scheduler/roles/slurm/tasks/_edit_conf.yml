@@ -20,7 +20,7 @@
     regexp: "^NodeName={{ item }} "
   register: node_check
   check_mode: true
-  loop: "{{ groups['slurm_node'] }}"
+  loop: "{{ slurm_node_list }}"
 
 - name: Insert node only if not exists
   ansible.builtin.lineinfile:

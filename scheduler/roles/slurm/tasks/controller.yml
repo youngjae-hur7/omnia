@@ -164,7 +164,7 @@
       loop:
         - "{{ ['PATH', env_path_list] }}"
         - "{{ ['SLURM_CONF', env_slurm_conf] }}"
-        - "{{ ['LD_LIBRARY_PATH', ld_library_path] }}"
+        # - "{{ ['LD_LIBRARY_PATH', ld_library_path] }}"
 
 - name: Enable etc enviroment
   ansible.builtin.shell: source {{ sys_env_path }} # noqa: command-instead-of-shell
