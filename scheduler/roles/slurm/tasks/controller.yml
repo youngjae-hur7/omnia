@@ -124,7 +124,7 @@
 
 - name: Get path env
   ansible.builtin.set_fact:
-    env_path_list: "{{ (path_out.stdout | split(':') | reject('search', 'slurm') | list) | join(':') }}"
+    env_path_list: "{{ (path_out.stdout | split(':') | reject('search', 'slurm') | list) }}"
     env_slurm_conf: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
     ld_library_path: "/usr/lib64"
 

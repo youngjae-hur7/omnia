@@ -12,36 +12,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
+- name: Install login packages
+  ansible.builtin.package:
+    name: "{{ slurm_login_packages[ansible_os_family] }}"
+    state: present
+
+- name: Remove PATH env variable
+  community.general.ini_file:
+    path: "{{ sys_env_path }}"
+    option: PATH
+    state: absent
+    mode: u=rw,g=r,o=r
+
+- name: Set env variable
+  community.general.ini_file:
+    path: "{{ sys_env_path }}"
+    option: SLURM_CONF
+    value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
+    no_extra_spaces: true
+    mode: u=rw,g=r,o=r
+
 - name: Login node configless
   when: slurm_installation_type == configless_slurm
   block:
-    - name: Install login packages
-      ansible.builtin.package:
-        name: "{{ slurm_login_packages[ansible_os_family] }}"
-        state: present
-
-    - name: Get slurm conf from controller
+    - name: Get slurm conf from controller # HA
       ansible.posix.synchronize:
         src: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
         dest: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/"
         mode: push
         checksum: true
       delegate_to: "{{ groups['slurm_control_node'] | first }}"
-
-    - name: Set env variable
-      community.general.ini_file:
-        path: "{{ sys_env_path }}"
-        option: SLURM_CONF
-        value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
-        no_extra_spaces: true
-        mode: u=rw,g=r,o=r
-
-    - name: Remove PATH env variable
-      community.general.ini_file:
-        path: "{{ sys_env_path }}"
-        option: PATH
-        state: absent
-        mode: u=rw,g=r,o=r
 
     # Below is slurmd daemon install as per slurm guide
     - name: Install compute packages
@@ -102,26 +102,6 @@
         state: restarted
       when: restart_slurm_services
 
-- name: Login node nfs_share
-  when: slurm_installation_type == nfs_share_slurm
-  block:
-    - name: Set env variable
-      community.general.ini_file:
-        path: "{{ sys_env_path }}"
-        option: SLURM_CONF
-        value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
-        no_extra_spaces: true
-        mode: u=rw,g=r,o=r
-
-    - name: Check current environment variables
-      ansible.builtin.shell: echo $PATH # noqa: command-instead-of-shell
-      changed_when: false
-      register: path_output
-
-    - name: Set env variable
-      community.general.ini_file:
-        path: "{{ sys_env_path }}"
-        option: PATH
-        value: "{{ path_output.stdout }}:{{ slurm_share_prefix }}usr/bin:{{ slurm_share_prefix }}usr/sbin"
-        no_extra_spaces: true
-        mode: u=rw,g=r,o=r
+- name: Enable etc enviroment
+  ansible.builtin.shell: source {{ sys_env_path }} # noqa: command-instead-of-shell
+  changed_when: false
