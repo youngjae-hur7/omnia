@@ -18,7 +18,6 @@ slurm_db_username_default: root
 slurmctld_service_default_path: '/usr/lib/systemd/system/slurmctld.service'
 slurmd_service_default_path: '/usr/lib/systemd/system/slurmd.service'
 slurmdbd_service_default_path: '/usr/lib/systemd/system/slurmdbd.service'
-slurmdbd_default_conf_path: ''
 sys_env_path: '/etc/environment'
 mpi: {}
 cgroup: {}
