@@ -13,6 +13,7 @@
 # limitations under the License.
 ---
 
+# Usage: deploy_pcs_container.yml
 pcs_image_name: "omnia_pcs"
 pcs_image_tag: "latest"
 pcs_container_name: "omnia_pcs"
@@ -28,7 +29,6 @@ pcs_directories:
   - { path: "{{ pcs_container_dir }}", mode: "{{ read_write_execute_mode }}" }
   - { path: "{{ container_systemd_dir }}", mode: "{{ read_write_mode }}" }
 
-migration_threshold: 0
 pcs_startup_file:
   - {template: "pcs-start.sh.j2", dest: "{{ oim_shared_path }}/omnia/pcs/pcs-start.sh", mode: "{{ read_write_execute_mode }}" }
   - {template: "corosync.conf.j2", dest: "{{ oim_shared_path }}/omnia/pcs/corosync.conf", mode: "{{ read_write_mode }}" }
@@ -59,12 +59,16 @@ pcs_container_failure_msg: |
 # Usage: pcs-start.sh.j2:Common
 omnia_nfs_share: "{{ oim_shared_path }}/omnia" # Define NFS share path
 oim_metadata_file: "{{ omnia_nfs_share }}/.data/oim_metadata.yml"
-monitor_interval: "60s"
+monitor_interval: "30s"
 monitor_timeout: "100s"
 start_interval: "0s"
 start_timeout: "20s"
 stop_interval: "0s"
 stop_timeout: "90s"
+
+migration_threshold: 0
+ha_migration_threshold: 1
+pcs_group: omnia
 
 # Usage: pcs-start.sh.j2: omnia_core
 omnia_core_name: "omnia_core"

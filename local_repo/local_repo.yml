@@ -65,4 +65,3 @@
   roles:
     - validation
     - parse_and_download
-

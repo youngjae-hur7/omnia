@@ -32,6 +32,8 @@ echo "Corosync and Pacemaker have started. Continuing with the script."
 pcs property set stonith-enabled=false
 pcs property set no-quorum-policy=ignore
 
+pcs resource group add {{ pcs_group }}
+
 pcs resource create {{ omnia_core_name }} ocf:heartbeat:podman \
  image={{ omnia_core_image }} \
  name={{ omnia_core_name }} \
@@ -39,7 +41,7 @@ pcs resource create {{ omnia_core_name }} ocf:heartbeat:podman \
  run_opts="{{ omnia_core_run_opts }}" \
  op monitor interval={{ monitor_interval }} timeout={{ monitor_timeout }} on-fail=restart \
  op start interval={{ start_interval }} timeout={{ start_timeout }} \
- op stop interval={{ stop_interval }}  timeout={{ stop_timeout }}
+ op stop interval={{ stop_interval }}  timeout={{ stop_timeout }} --group {{ pcs_group }}
 
 pcs resource create {{ pulp_container_name }} ocf:heartbeat:podman \
  name={{ pulp_container_name }} \
@@ -48,7 +50,7 @@ pcs resource create {{ pulp_container_name }} ocf:heartbeat:podman \
  run_opts="{{ pulp_run_opts }}" \
  op monitor interval={{ monitor_interval }} timeout={{ monitor_timeout }} on-fail=restart \
  op start interval={{ start_interval }} timeout={{ start_timeout }} \
- op stop interval={{ stop_interval }}  timeout={{ stop_timeout }}
+ op stop interval={{ stop_interval }}  timeout={{ stop_timeout }} --group {{ pcs_group }}
 
 pcs resource create {{ provision_container_name }} ocf:heartbeat:podman \
  name={{ provision_container_name }} \
@@ -57,7 +59,7 @@ pcs resource create {{ provision_container_name }} ocf:heartbeat:podman \
  run_opts="{{ provision_run_opts }}" \
  op monitor interval={{ monitor_interval }} timeout={{ monitor_timeout }} on-fail=restart \
  op start interval={{ start_interval }} timeout={{ start_timeout }} \
- op stop interval={{ stop_interval }}  timeout={{ stop_timeout }}
+ op stop interval={{ stop_interval }}  timeout={{ stop_timeout }} --group {{ pcs_group }}
 
 {% if hostvars['localhost']['k8s_support'] %}
 pcs resource create {{ kubespray_name }} ocf:heartbeat:podman \
@@ -67,13 +69,7 @@ pcs resource create {{ kubespray_name }} ocf:heartbeat:podman \
  run_opts="{{ kubespray_run_opts }}" \
  op monitor interval={{ monitor_interval }} timeout={{ monitor_timeout }} on-fail=restart \
  op start interval={{ start_interval }} timeout={{ start_timeout }} \
- op stop interval={{ stop_interval }}  timeout={{ stop_timeout }}
-{% endif %}
-
-{% if hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.enable_oim_ha %}
-pcs resource create VIP ocf:heartbeat:IPaddr2 \
-        ip={{ hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.virtual_ip_address }} cidr_netmask={{ hostvars['localhost']['network_data'].admin_network.netmask_bits }} \
-        op monitor interval={{ monitor_interval }}
+ op stop interval={{ stop_interval }}  timeout={{ stop_timeout }} --group {{ pcs_group }}
 {% endif %}
 
 # Create ordering constraints
@@ -84,6 +80,14 @@ pcs constraint order start {{ omnia_core_name }} then start {{ kubespray_name }}
 {% endif %}
 
 pcs resource defaults update migration-threshold={{ migration_threshold }}
+
+{% if hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.enable_oim_ha %}
+pcs resource create VIP ocf:heartbeat:IPaddr2 \
+        ip={{ hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.virtual_ip_address }} cidr_netmask={{ hostvars['localhost']['network_data'].admin_network.netmask_bits }} \
+        op monitor interval={{ monitor_interval }} --group {{ pcs_group }}
+
+pcs resource defaults update migration-threshold={{ ha_migration_threshold }}
+{% endif %}
 
 # Initialize the total sleep time
 total_sleep_time=0
