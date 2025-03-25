@@ -15,11 +15,15 @@
 
 - name: Check if package manager is not locked
   ansible.builtin.import_playbook: utils/check_package_lock.yml
-  when: not ( hostvars['127.0.0.1']['apt_lock_status'] | default(false) | bool )
+  when: not ( apt_lock_status | default(false) | bool )
 
 - name: Include input project directory
   ansible.builtin.import_playbook: utils/include_input_dir.yml
   when: not ( project_dir_status | default(false) | bool )
+
+- name: Validate inventory
+  ansible.builtin.import_playbook: utils/inventory_validation.yml
+  when: not ( inventory_validation_executed | default(false) | bool )
 
 - name: Update Inventory with ansible_host information
   ansible.builtin.import_playbook: utils/servicetag_host_mapping.yml
@@ -28,11 +32,6 @@
 - name: Gather facts from all the nodes
   hosts: slurm_control_node, slurm_node, slurm_dbd, login, kube_control_plane, kube_node, etcd, auth_server
   gather_facts: true
-
-- name: Validate inventory
-  ansible.builtin.import_playbook: utils/inventory_validation.yml
-  when: not ( inventory_validation_executed | default(false) | bool )
-
 
 - name: Validate all input parameters
   hosts: localhost
