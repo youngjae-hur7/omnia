@@ -82,7 +82,7 @@ login_node_warning_msg: |
   Proceeding execution with provided nodes"
 
 # Usage: validate_inventory.yml
-invalid_auth_server_inventory_fail_msg: 
+invalid_auth_server_inventory_fail_msg:
   "Failed. openldap or freeipa software is present in software_config.json.
   Invalid inventory format, specify auth_sever group in inventory and re-run playbook."
 auth_server_group_fail_msg: "Failed, auth_server group should contain exactly 1 node"
