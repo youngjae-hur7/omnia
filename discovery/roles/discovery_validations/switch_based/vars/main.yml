@@ -17,12 +17,16 @@
 enable_switch_based_fail_msg: "Failed. enable_switch_based in provision_config.yml should be either true or false"
 
 # Usage: validate_switch_based_details.yml
-fail_unique_switch_v3_ip: "Failed. Please provide unique switch v3 IPs in switch_based_details of provision_config.yml."
-switch_details_success_msg: "switch_based_details validated"
-switch_details_fail_msg: |
-  "Failed. Please provide switch_based_details in provision_config.yml with switch ip and switch ports
-  when enable_switch_based is set true."
-ping_switch_py: "{{ provision_shared_library_path }}/validation/switch_v3_ping.py"
+warning_wait_time: 30
+switch_unreachable_message: |
+  [Warning] These groups switch are unreachable:
+  {% for group, details in unreachable_switch_ip_groups.items() %}
+    - Group: {{ group }}, IP: {{ details.switch_details.ip }}
+  {% endfor %}
+warning_switch_unreachable_message: |
+  Nodes associated with unreachable switch groups will not be provisioned.
+  Please update the switch details in input/roles_config.yml and rerun the discovery_provision.yml playbook.
+switch_based_skip_msg: "None of groups have reachable switch ip, so switch based discovery will be skipped"
 
 # Usage: validate_switch_snmp_params.yml
 switch_snmp3_password_fail_msg: "Failed. Incorrect switch_snmp3_username or switch_snmp3_password format in omnia_config_credentials.yml"
