@@ -145,7 +145,7 @@
   block:
     - name: Create directory for symbolic link
       ansible.builtin.file:
-        path: "/etc/slurm"
+        path: "{{ slurmdbd_conf_path | dirname }}"
         state: directory
         owner: "{{ root_user }}"
         group: "{{ root_group }}"
@@ -154,7 +154,7 @@
     - name: Create symbolic link for slurmdbd.conf
       ansible.builtin.file:
         src: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurmdbd.conf"
-        dest: "/etc/slurm/slurmdbd.conf"
+        dest: "{{ slurmdbd_conf_path }}"
         state: link
         owner: "{{ slurm_user }}"
         group: "{{ slurm_user }}"

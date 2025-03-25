@@ -20,7 +20,7 @@ slurm_user_group: slurm
 slurm_installation_type: "{{ hostvars['localhost']['slurm_installation_type'] }}" # TODO direct load vars omnia_config.yml
 restart_slurm_services: "{{ hostvars['localhost']['restart_slurm_services'] }}"
 slurm_db_username: "{{ hostvars['localhost']['slurm_db_username'] | default('root') }}"
-slurm_db_password: "{{ hostvars['localhost']['slurm_db_password'] }}" # TODO password not read from the utility
+slurm_db_password: "{{ hostvars['localhost']['slurm_db_password'] }}"
 slurm_db_host: "{{ hostvars['localhost']['slurm_db_host'] | default(false) }}"
 slurm_db_port: "{{ hostvars['localhost']['slurm_db_port'] | default(3306) }}"
 slurm_db_type: "{{ hostvars['localhost']['slurm_db_type'] | default('mariadb') }}"
@@ -30,6 +30,7 @@ slurm_config_dir: etc/slurm
 slurm_dir_name: "slurm/"
 slurm_dbd_port: 6819
 slurm_dbd_db_username: "{{ slurm_user }}"
+slurmdbd_conf_path: "/etc/slurm/slurmdbd.conf"
 slurm_db_login_unix_socket: /var/lib/mysql/mysql.sock
 slurm_mysql_cnf_path: /etc/my.cnf.d/mysql-server.cnf
 slurm_mariadb_cnf_path: /etc/my.cnf.d/mariadb-server.cnf
