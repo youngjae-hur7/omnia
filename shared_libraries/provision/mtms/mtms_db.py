@@ -86,14 +86,15 @@ def update_db():
             output = cursor.fetchone()[0]
             bmc_output = modify_network_details.check_presence_bmc_ip(cursor, bmc[key])
             if not bmc_output and not output:
-                sql = '''select id from cluster.nodeinfo ORDER BY id DESC LIMIT 1'''
-                cursor.execute(sql)
+                sql = '''select count(id) from cluster.nodeinfo where 'group' = %s'''
+                cursor.execute(sql, (group_name,))
                 temp = cursor.fetchone()
                 if temp is None:
                     temp = [0]
                 count = '%03d' % (int(temp[0]) + 1)
                 node = node_name + str(count)
                 host_name = node_name + str(count) + "." + domain_name
+
                 modify_network_details.update_stanza_file(serial[key].lower(), node, static_stanza_path)
                 admin_ip = correlation_admin_bmc.correlation_bmc_to_admin(bmc[key], admin_subnet, netmask_bits)
                 if admin_static_start_range <= admin_ip <= admin_static_end_range:
