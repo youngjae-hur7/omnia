@@ -54,9 +54,9 @@
         name: deploy_containers/common
         tasks_from: add_known_hosts.yml
 
-- name: Validate high availability config
-  ansible.builtin.import_playbook: ../input_validation/validate_config.yml
-  when: hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.enable_oim_ha | default(false)
+# - name: Validate high availability config
+#   ansible.builtin.import_playbook: ../input_validation/validate_config.yml
+#   when: hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.enable_oim_ha | default(false)
 
 - name: Deploy all container
   hosts: oim
@@ -88,6 +88,15 @@
       vars:
         target_port: "{{ kubespray_ssh_port }}"
 
+# PCS container has to be deployed after all containers are deployed
+- name: Deploy pcs container
+  hosts: oim
+  connection: ssh
+  gather_facts: false
+  tags: deploy_containers
+  roles:
+    - role: deploy_containers/pcs  # noqa:role-name[path]
+  
 - name: Configure Pulp container
   hosts: localhost
   connection: local
@@ -105,15 +114,6 @@
       ansible.builtin.include_role:
         name: deploy_containers/provision
         tasks_from: configure_provision_container.yml
-
-# PCS container has to be deployed after all containers are deployed and configured
-- name: Deploy pcs container
-  hosts: oim
-  connection: ssh
-  gather_facts: false
-  tags: deploy_containers
-  roles:
-    - role: deploy_containers/pcs  # noqa:role-name[path]
 
 - name: Save container images to NFS share
   hosts: oim

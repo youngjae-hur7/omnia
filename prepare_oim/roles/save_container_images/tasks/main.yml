@@ -19,6 +19,11 @@
     state: directory
     mode: "{{ read_write_mode }}"
 
+- name: Remove container images tar file if exists
+  ansible.builtin.file:
+    path: "{{ images_directory_path }}/{{ container_tar_file }}"
+    state: absent
+
 - name: Save container images
   ansible.builtin.command: "podman save -m -o {{ images_directory_path }}/{{ container_tar_file }} {{ container_images }}"
   changed_when: true
