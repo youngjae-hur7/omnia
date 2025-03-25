@@ -13,16 +13,17 @@
 # limitations under the License.
 ---
 
-- name: Set switch_ip_list
-  ansible.builtin.set_fact:
-    switch_ip_list: "{{ switch_ip_list | default('') }} {{ item.ip }}"
-  with_items: "{{ switch_based_details }}"
-
 - name: Create switch object
-  ansible.builtin.command: |
-    {{ python_version }} {{ create_switch_object_path }} {{ switch_ip_list | trim }} {{ switch_snmp3_username }} {{ switch_snmp3_password }}
-    {{ db_operations_path }}
+  create_switch_object:
+    groups_roles_info: "{{ groups_roles_info }}"
+    switch_snmp3_username: "{{ switch_snmp3_username }}"
+    switch_snmp3_password: "{{ switch_snmp3_password }}"
+  register: create_switch_object_result
   changed_when: true
+
+- name: Show all created switch objects
+  ansible.builtin.debug:
+    msg: "{{ create_switch_object_result.msg }}"
 
 - name: Task for adding hosts entry
   block:

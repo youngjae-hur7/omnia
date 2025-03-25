@@ -14,6 +14,9 @@
 ---
 
 - name: Create node object for switch_based discovery
-  ansible.builtin.command: |
-    {{ python_version }} {{ create_node_object_path_switch_based }} {{ db_operations_path }}
-  changed_when: true
+  create_switch_node_object:
+  register: switch_node_object_result
+
+- name: Show output of switch node object creation
+  ansible.builtin.debug:
+    msg: "{{ switch_node_object_result }}"
