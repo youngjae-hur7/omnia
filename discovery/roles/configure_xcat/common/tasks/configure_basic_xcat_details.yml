@@ -42,7 +42,7 @@
 - name: Configure site table
   ansible.builtin.shell: >
     {{ xcat_path }}/chdef -t site dhcpinterfaces="{{ pxe_nic }}" master="{{ pxe_nic_ip }}" dhcplease="{{ default_lease_time }}"
-    timezone="{{ timezone }}" forwarders="" nameservers=""
+    timezone="{{ timezone }}" forwarders="" nameservers="" SNsyncfiledir="/"
   changed_when: true
 
 
