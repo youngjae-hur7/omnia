@@ -20,4 +20,4 @@
     option: max_parallel_downloads
     value: "{{ dnf_max_parallel }}"
     backup: true
-    mode: "{{ dnf_max_mode }}"
+    mode: "{{ file_permission }}"
