@@ -13,17 +13,17 @@
 #  limitations under the License.
 ---
 
-- name: Check if security config file is encrypted
-  ansible.builtin.command: cat {{ security_config_file }}
-  changed_when: false
-  register: config_content
-  no_log: true
+# - name: Check if security config file is encrypted
+#   ansible.builtin.command: cat {{ security_config_file }}
+#   changed_when: false
+#   register: config_content
+#   no_log: true
 
-- name: Decrpyt security_config.yml
-  ansible.builtin.command: >-
-    ansible-vault decrypt {{ security_config_file }} --vault-password-file {{ security_vaultname }}
-  when: "'$ANSIBLE_VAULT;' in config_content.stdout"
-  changed_when: true
+# - name: Decrpyt security_config.yml
+#   ansible.builtin.command: >-
+#     ansible-vault decrypt {{ security_config_file }} --vault-password-file {{ security_vaultname }}
+#   when: "'$ANSIBLE_VAULT;' in config_content.stdout"
+#   changed_when: true
 
 - name: Include variable file security_config.yml
   block:
@@ -36,26 +36,26 @@
       ansible.builtin.fail:
         msg: "{{ security_config_syntax_fail_msg }} Error: {{ include_security_config.message }}"
 
-- name: Create ansible vault key
-  ansible.builtin.set_fact:
-    provision_vault_key: "{{ lookup('password', '/dev/null chars=ascii_letters') }}"
-  when: ansible_vault_search_key not in config_content.stdout
+# - name: Create ansible vault key
+#   ansible.builtin.set_fact:
+#     provision_vault_key: "{{ lookup('password', '/dev/null chars=ascii_letters') }}"
+#   when: ansible_vault_search_key not in config_content.stdout
 
-- name: Check if security_vault_key exists
-  ansible.builtin.stat:
-    path: "{{ security_vaultname }}"
-  register: vault_key_result
+# - name: Check if security_vault_key exists
+#   ansible.builtin.stat:
+#     path: "{{ security_vaultname }}"
+#   register: vault_key_result
 
-- name: Create ansible vault key if it does not exist
-  ansible.builtin.set_fact:
-    vault_key: "{{ lookup('password', '/dev/null chars=ascii_letters') }}"
-  when: not vault_key_result.stat.exists
+# - name: Create ansible vault key if it does not exist
+#   ansible.builtin.set_fact:
+#     vault_key: "{{ lookup('password', '/dev/null chars=ascii_letters') }}"
+#   when: not vault_key_result.stat.exists
 
-- name: Save vault key
-  ansible.builtin.lineinfile:
-    path: "{{ security_vaultname }}"
-    line: "{{ vault_key }}"
-    mode: "{{ vault_key_permission }}"
-    owner: root
-    create: true
-  when: not vault_key_result.stat.exists
+# - name: Save vault key
+#   ansible.builtin.lineinfile:
+#     path: "{{ security_vaultname }}"
+#     line: "{{ vault_key }}"
+#     mode: "{{ vault_key_permission }}"
+#     owner: root
+#     create: true
+#   when: not vault_key_result.stat.exists
