@@ -71,7 +71,7 @@ slurm_one_node_validation_success_msg: |
   slurm_node_validation_fail_msg: "Failed. slurm software is present in software_config.json.
   At least one slurm_node should be present in the inventory."
 slurm_node_validation_success_msg: "At least one slurm_node exists in the inventory"
-unreachable_slurm_control_node_fail_msg:
+unreachable_slurm_control_node_fail_msg: |
   "Failed. Unreachable node mentioned in inventory for slurm_control_node.
   Re-run playbook with reachable slurm_control_node."
 slurm_control_node_in_login_fail_msg: "Failed. Node mentioned in slurm_control_node group should not be present in login group"
@@ -82,7 +82,7 @@ login_node_warning_msg: |
   Proceeding execution with provided nodes"
 
 # Usage: validate_inventory.yml
-invalid_auth_server_inventory_fail_msg:
+invalid_auth_server_inventory_fail_msg: |
   "Failed. openldap or freeipa software is present in software_config.json.
   Invalid inventory format, specify auth_sever group in inventory and re-run playbook."
 auth_server_group_fail_msg: "Failed, auth_server group should contain exactly 1 node"
