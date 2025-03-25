@@ -53,16 +53,16 @@ Groups:
       ports: ""
     architecture: "x86"
 
-  grp0:
-    location_id: SU-1.RACK-2
-    resource_mgr_id: ""
-    parent: ""
-    bmc_details:
-      static_range: ""
-    switch_details:
-      ip: ""
-      ports: ""
-    architecture: "x86"
+  # grp1:
+  #   location_id: SU-1.RACK-2
+  #   resource_mgr_id: ""
+  #   parent: ""
+  #   bmc_details:
+  #     static_range: ""
+  #   switch_details:
+  #     ip: ""
+  #     ports: ""
+  #   architecture: "x86"
 
 #************************************************************************************************************************
 #  Roles
