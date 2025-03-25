@@ -114,6 +114,5 @@ xcat_patch_files:
   - { src: "{{ role_path }}/../common/files/configib.patch", dest: "/install/postscripts/configib" }
   - { src: "{{ role_path }}/../common/files/nicutils.patch", dest: "/install/postscripts/nicutils.sh" }
 
-ubuntu24_version: "24.04"
 ubuntu24_patch_files:
   - { src: "{{ role_path }}/../common/files/pgsqlsetup.patch", dest: "/opt/xcat/bin/pgsqlsetup" }

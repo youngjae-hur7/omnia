@@ -17,6 +17,8 @@ The following configurations takes place while running the ``accelerator.yml`` p
 	i. Servers with Intel Gaudi accelerators are identified and the latest drivers and software stack are downloaded and installed.
 	ii. Servers with no accelerator are skipped.
 
+.. note:: If the ``input/software_config.json`` file contains both intelgaudi and bcm_roce softwares, only the Intel Gaudi software and drivers are installed. The BCM RoCE drivers will not be installed on the nodes.
+
 **Executing the playbook**
 
 To install all the latest drivers and toolkits, run: ::
