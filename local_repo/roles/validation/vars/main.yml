@@ -30,6 +30,7 @@ yum_repos_path: "/etc/yum.repos.d"
 yum_conf_path: "/etc/yum.conf"
 dnf_conf_path: "/etc/dnf/dnf.conf"
 dnf_max_parallel: 10
+dnf_max_mode: "0644"
 
 python_version: "{{ ansible_python_interpreter }}"
 apt_conf_dest: /etc/apt/apt.conf
