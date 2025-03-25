@@ -74,7 +74,7 @@
   with_items:
      - "{{ groups['login'] }}"
 
-# Need to discuss for this flow
+# Need to discuss for this flow, will update later
 # - name: Initialize variables
 #   ansible.builtin.set_fact:
 #      unreachable_slurm_control_node: []
