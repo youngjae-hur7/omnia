@@ -16,7 +16,7 @@
 - name: Render Multus Deployment Manifest
   ansible.builtin.template:
     src: "{{ multus_deployment_template }}"
-    dest: "{{ multus_deployment_manifest }}"
+    dest: "{{ multus_deployment_manifest_path }}"
     mode: "{{ multus_deployment_manifest_mode }}"
   when: multus_config
   delegate_to: localhost
