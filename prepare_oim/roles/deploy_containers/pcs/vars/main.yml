@@ -73,11 +73,15 @@ core_container_name: "omnia_core"
 omnia_core_image: "{{ omnia_core_name }}:{{ core_container_image_tag }}"
 core_container_logs_dir: "{{ omnia_nfs_share }}/log/core/container"
 pulp_ha_dir: "{{ omnia_nfs_share }}/pulp/pulp_ha"
-omnia_core_run_opts: "-dt --hostname {{ omnia_core_name }} --restart=always --network=host \
-                     -v {{ omnia_nfs_share }}:/opt/omnia{{ selinux_option }} -v {{ omnia_nfs_share }}/ssh_config/.ssh:/root/.ssh{{ selinux_option }} \
-                     -v {{ core_container_logs_dir }}:/var/log{{ selinux_option }} -v {{ hosts_file }}:/etc/hosts{{ selinux_option }} \
-                     -v {{ pulp_ha_dir }}:/root/.config/pulp{{ selinux_option }} -e ROOT_PASSWORD_HASH={{ hostvars['localhost']['omnia_core_hashed_passwd'] }} \
-                     --name {{ omnia_core_name }} --cap-add=CAP_AUDIT_WRITE"
+omnia_core_run_opts: >-
+  -dt --hostname {{ omnia_core_name }} --restart=always --network=host
+  -v {{ omnia_nfs_share }}:/opt/omnia{{ selinux_option }}
+  -v {{ omnia_nfs_share }}/ssh_config/.ssh:/root/.ssh{{ selinux_option }}
+  -v {{ core_container_logs_dir }}:/var/log{{ selinux_option }}
+  -v {{ hosts_file }}:/etc/hosts{{ selinux_option }}
+  -v {{ pulp_ha_dir }}:/root/.config/pulp{{ selinux_option }}
+  -e ROOT_PASSWORD_HASH={{ hostvars['localhost']['omnia_core_hashed_passwd'] }}
+  --name {{ omnia_core_name }} --cap-add=CAP_AUDIT_WRITE
 
 # Usage: pcs-start.sh.j2: omnia_provision
 provision_container_name: "omnia_provision"
@@ -108,24 +112,27 @@ kubespray_image_name: "omnia_kubespray"
 kubespray_version: "{{ hostvars['localhost']['kubespray_version'] }}"
 kubespray_name: "omnia_kubespray_{{ kubespray_version }}"
 kubespray_image: "{{ kubespray_image_name }}:{{ kubespray_version }}"
-kubespray_run_opts: " -v {{ omnia_nfs_share }}/ssh_config/.ssh:/root/.ssh{{ selinux_option }} \
-                    -v {{ omnia_nfs_share }}:/opt/omnia{{ selinux_option }} -v {{ hosts_file }}:/etc/hosts{{ selinux_option }} \
-                    --network=host --restart=always --cap-add AUDIT_WRITE"
+kubespray_run_opts: >-
+  -v {{ omnia_nfs_share }}/ssh_config/.ssh:/root/.ssh{{ selinux_option }}
+  -v {{ omnia_nfs_share }}:/opt/omnia{{ selinux_option }}
+  -v {{ hosts_file }}:/etc/hosts{{ selinux_option }}
+  --network=host --restart=always --cap-add AUDIT_WRITE
 
 # Usage: pcs-start.sh.j2: pulp
 pulp_container_name: "omnia_pulp"
 pulp_image: "docker.io/pulp/pulp"
 pulp_port: "2225:80"
 pulp_share: "{{ omnia_nfs_share }}/pulp"
-pulp_run_opts: " --hostname {{ pulp_container_name }} --device /dev/fuse:/dev/fuse:rwm \
-               -e PULP_WORKERS=10 -e PULP_API_WORKERS=10 -e PULP_CONTENT_WORKERS=10 \
-               -e PULP_GUNICORN_TIMEOUT=30 -e PULP_API_WORKERS_MAX_REQUESTS=1000 \
-               -e PULP_API_WORKERS_MAX_REQUESTS_JITTER=50 --restart=always --publish {{ pulp_port }} \
-               -v {{ pulp_share }}/settings:/etc/pulp{{ selinux_option }} \
-               -v {{ pulp_share }}/settings/pulp_storage:/var/lib/pulp{{ selinux_option }} \
-               -v {{ pulp_share }}/settings/pgsql:/var/lib/pgsql{{ selinux_option }} \
-               -v {{ pulp_share }}/settings/containers:/var/lib/containers{{ selinux_option }} \
-               -v {{ omnia_nfs_share }}/log/pulp:/var/log/pulp{{ selinux_option }}"
+pulp_run_opts: >-
+  --hostname {{ pulp_container_name }} --device /dev/fuse:/dev/fuse:rwm
+  -e PULP_WORKERS=10 -e PULP_API_WORKERS=10 -e PULP_CONTENT_WORKERS=10
+  -e PULP_GUNICORN_TIMEOUT=30 -e PULP_API_WORKERS_MAX_REQUESTS=1000
+  -e PULP_API_WORKERS_MAX_REQUESTS_JITTER=50 --restart=always --publish {{ pulp_port }}
+  -v {{ pulp_share }}/settings:/etc/pulp{{ selinux_option }}
+  -v {{ pulp_share }}/settings/pulp_storage:/var/lib/pulp{{ selinux_option }}
+  -v {{ pulp_share }}/settings/pgsql:/var/lib/pgsql{{ selinux_option }}
+  -v {{ pulp_share }}/settings/containers:/var/lib/containers{{ selinux_option }}
+  -v {{ omnia_nfs_share }}/log/pulp:/var/log/pulp{{ selinux_option }}
 
 pcs_resources:
   - "{{ pulp_container_name }}"
