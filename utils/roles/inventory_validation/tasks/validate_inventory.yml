@@ -63,10 +63,6 @@
   when: k8s_support
   ansible.builtin.include_tasks: k8s_validations.yml
 
-- name: Set login_node_required status
-  when: slurm_support
-  ansible.builtin.include_tasks: set_login_node_status.yml
-
 # Validate slurm requirements for all the nodes
 - name: Validate Slurm nodes requirements
   when: slurm_support
