@@ -43,7 +43,7 @@
 #     state: present
 #     installroot: "{{ installroot }}"
 #   when: ansible_os_family == 'RedHat'
-  # Raising error first time though installed success 
+  # Raising error first time though installed success
 
 # - name: Install slurm packages
 #   ansible.builtin.shell: "dnf install -y --installroot={{ installroot }} slurm" # noqa: command-instead-of-shell

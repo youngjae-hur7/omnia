@@ -2,7 +2,7 @@
 # tasks file for slurm
 - name: Append share path if NFS
   ansible.builtin.set_fact:
-    slurm_share_prefix: "{{ share_path + '/' +  slurm_dir_name if (slurm_installation_type == 'nfs_share') else '/' }}"
+    slurm_share_prefix: "{{ share_path + '/' + slurm_dir_name if (slurm_installation_type == 'nfs_share') else '/' }}"
 
 - name: Just force systemd to reread configs
   ansible.builtin.systemd_service:
@@ -18,6 +18,7 @@
     state: stopped
   when: item in ansible_facts['services'].keys()
   ignore_errors: true
+  register: stop_services_out
   no_log: true
   loop:
     - slurmctld.service

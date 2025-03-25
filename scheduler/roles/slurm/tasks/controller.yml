@@ -122,35 +122,50 @@
   changed_when: false
   register: path_out
 
-- name: Remove slurm from path env
+- name: Get path env
   ansible.builtin.set_fact:
-    env_path_list: "{{ ( path_out.stdout | split(':') | reject('search', 'slurm') | list ) | join(':') }}"
-    env_slurm_conf: "/etc/slurm/slurm.conf"
+    env_path_list: "{{ (path_out.stdout | split(':') | reject('search', 'slurm') | list) | join(':') }}"
+    env_slurm_conf: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
     ld_library_path: "/usr/lib64"
 
-- name: Set env special paths
-  ansible.builtin.set_fact:
-    env_path_list: "{{ (env_path_list + [slurm_share_prefix.rstrip('/')+'/usr/bin'] + [slurm_share_prefix.rstrip('/') + '/usr/sbin']) | join(':') }}"
-    ld_library_path: "{{ installroot }}usr/lib64/"
-    env_slurm_conf: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
-  when: (slurm_installation_type == 'nfs_share') and _force_install_nfs
-
-- name: Set env variable
+- name: Clean the environment
   community.general.ini_file:
     path: "{{ sys_env_path }}"
     option: "{{ item[0] }}"
     value: "{{ item[1] }}"
+    state: "{{ 'present' if item[1] else 'absent' }}"
     no_extra_spaces: true
     owner: "{{ root_user }}"
     group: "{{ root_group }}"
     mode: "{{ conf_file_mode }}"
   loop:
-    - "{{ ['PATH', env_path_list] }}"
+    - "{{ ['PATH', false] }}"
     - "{{ ['SLURM_CONF', env_slurm_conf] }}"
-    - "{{ ['LD_LIBRARY_PATH', ld_library_path] }}"
+    - "{{ ['LD_LIBRARY_PATH', false] }}"
+
+- name: Handle NFS envs
+  when: (slurm_installation_type == 'nfs_share') and _force_install_nfs
+  block:
+    - name: Set env special paths
+      ansible.builtin.set_fact:
+        env_path_list: "{{ (env_path_list + [slurm_share_prefix.rstrip('/') + '/usr/bin'] + [slurm_share_prefix.rstrip('/') + '/usr/sbin']) | join(':') }}"
+        ld_library_path: "{{ installroot }}usr/lib64/"
+        env_slurm_conf: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
+
+    - name: Set env variable
+      community.general.ini_file:
+        path: "{{ sys_env_path }}"
+        option: "{{ item[0] }}"
+        value: "{{ item[1] }}"
+        no_extra_spaces: true
+        owner: "{{ root_user }}"
+        group: "{{ root_group }}"
+        mode: "{{ conf_file_mode }}"
+      loop:
+        - "{{ ['PATH', env_path_list] }}"
+        - "{{ ['SLURM_CONF', env_slurm_conf] }}"
+        - "{{ ['LD_LIBRARY_PATH', ld_library_path] }}"
 
 - name: Enable etc enviroment
   ansible.builtin.shell: source {{ sys_env_path }} # noqa: command-instead-of-shell
   changed_when: false
-
-- pause:

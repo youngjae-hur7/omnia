@@ -28,7 +28,6 @@
     community.general.ini_file:
       owner: "{{ root_user }}"
       group: "{{ root_group }}"
-      mode: "{{ conf_file_mode }}"
       no_extra_spaces: true
   block:
     - name: Edit the service ConditionPathExists
@@ -37,6 +36,7 @@
         section: Unit
         option: ConditionPathExists
         state: absent
+        mode: "{{ conf_file_mode }}"
       notify:
         - Reload slurmd
         - Restart slurmd
@@ -46,6 +46,7 @@
         path: "{{ slurmd_service_path }}"
         section: Service
         option: ExecStart
+        mode: "{{ conf_file_mode }}"
         value: "/usr/sbin/slurmd -D
          --conf-server {{ (hostvars[groups['slurm_control_node'] | first])['inventory_hostname_short']
          + ':' + (slurm_conf_dict['SlurmctldPort'] | string) }} -s $SLURMD_OPTIONS" # HA
@@ -59,6 +60,7 @@
         section: Service
         option: Environment
         state: absent
+        mode: "{{ conf_file_mode }}"
       when: not _force_install_nfs
       notify:
         - Reload slurmd
@@ -69,6 +71,7 @@
         path: "{{ sys_env_path }}"
         option: SLURM_CONF
         state: absent
+        mode: "{{ conf_file_mode }}"
 
 - name: NFS share service edits
   when: slurm_installation_type == nfs_share_slurm
@@ -76,7 +79,6 @@
     community.general.ini_file:
       owner: "{{ root_user }}"
       group: "{{ root_group }}"
-      mode: "{{ conf_file_mode }}"
       no_extra_spaces: true
   block:
     - name: Edit the service ConditionPathExists
@@ -85,6 +87,7 @@
         section: Unit
         option: ConditionPathExists
         value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
+        mode: "{{ conf_file_mode }}"
       notify:
         - Reload slurmd
         - Restart slurmd
@@ -95,6 +98,7 @@
         section: Service
         option: ExecStart
         value: "/usr/sbin/slurmd -D -f {{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf -s $SLURMD_OPTIONS"
+        mode: "{{ conf_file_mode }}"
       notify:
         - Reload slurmd
         - Restart slurmd
@@ -117,8 +121,6 @@
         path: "{{ sys_env_path }}"
         option: SLURM_CONF
         value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
-        owner: "{{ root_user }}"
-        group: "{{ root_group }}"
         mode: "{{ conf_file_mode }}"
       notify:
         - Reload slurmd

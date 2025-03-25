@@ -71,6 +71,9 @@
         path: "{{ slurmd_service_path }}"
         section: Unit
         option: ConditionPathExists
+        owner: "{{ root_user }}"
+        group: "{{ root_group }}"
+        mode: "{{ conf_file_mode }}"
         state: absent
 
     - name: Edit the service ExecStart
@@ -78,6 +81,9 @@
         path: "{{ slurmd_service_path }}"
         section: Service
         option: ExecStart
+        owner: "{{ root_user }}"
+        group: "{{ root_group }}"
+        mode: "{{ conf_file_mode }}"
         value: "/usr/sbin/slurmd -D
          --conf-server {{ (hostvars[groups['slurm_control_node'] | first])['inventory_hostname_short']
          + ':' + (slurm_conf_dict['SlurmctldPort'] | string) }} -s $SLURMD_OPTIONS" # HA

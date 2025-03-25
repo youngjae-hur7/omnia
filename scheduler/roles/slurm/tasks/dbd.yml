@@ -142,7 +142,7 @@
 
 - name: Set dbd symbolic links
   when: slurm_installation_type == 'nfs_share'
-  block: 
+  block:
     - name: Create directory for symbolic link
       ansible.builtin.file:
         path: "/etc/slurm"
