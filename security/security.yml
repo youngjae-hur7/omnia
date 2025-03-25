@@ -19,7 +19,7 @@
   tasks:
     - name: Set dynamic run tags including 'local_repo'
       ansible.builtin.set_fact:
-        omnia_run_tags: "{{ (ansible_run_tags | default([]) + ['freeipa'] + ['openldap'']) | unique }}"
+        omnia_run_tags: "{{ (ansible_run_tags | default([]) + ['freeipa'] + ['openldap']) | unique }}"
         cacheable: true
 
 - name: Invoke get_config_credentials.yml
