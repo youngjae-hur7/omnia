@@ -30,8 +30,11 @@
     - (groups['all'] | length == 0)
     - not cluster_layout_check.stat.exists
 
-- name: Create inventory from cluster_layout
-  when: cluster_layout_check.stat.exists
+- name: Create inventory from cluster_layout when inventory not provided
+  when:
+    - groups['all'] is defined
+    - (groups['all'] | length == 0)
+    - cluster_layout_check.stat.exists
   block:
     - name: Read layout file
       ansible.builtin.set_fact:
