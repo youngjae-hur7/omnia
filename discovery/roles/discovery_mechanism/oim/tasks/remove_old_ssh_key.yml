@@ -26,12 +26,12 @@
   no_log: true
 
 - name: Create a list of unique roles
-  set_fact:
+  ansible.builtin.set_fact:
     unique_roles: "{{ unique_roles | default([]) + item.split(',') | map('trim') | list   }}"
   loop: "{{ query_status.query_result | map(attribute='role') | list }}"
 
-- name: Print the list of unique roles
-  set_fact:
+- name: Set fact for unique roles
+  ansible.builtin.set_fact:
     fetch_unique_roles: "{{ unique_roles | unique }}"
 
 - name: Fail if no nodes are discovered
