@@ -17,6 +17,9 @@
   ansible.builtin.import_playbook: utils/check_package_lock.yml
   when: not ( hostvars['127.0.0.1']['apt_lock_status'] | default(false) | bool )
 
+- name: Include input project directory
+  ansible.builtin.import_playbook: utils/include_input_dir.yml
+
 - name: Set flag
   hosts: localhost
   connection: local

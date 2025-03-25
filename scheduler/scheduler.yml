@@ -188,7 +188,7 @@
   any_errors_fatal: true
   roles:
     - slurm
-    # - slurm_pam
+    - slurm_pam
 
 - name: Compile and install the ucx and openmpi on the nfs share of compute nodes
   hosts: slurm_control_node, kube_control_plane

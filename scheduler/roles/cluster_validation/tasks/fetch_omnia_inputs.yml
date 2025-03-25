@@ -168,9 +168,7 @@
 
 - name: Save input variables from file
   ansible.builtin.set_fact:
-    db_password: "{{ mariadb_password }}"
     k8s_cni: "{{ k8s_cni }}"
     ansible_conf_file_path: "{{ ansible_config_file_path }}"
     slurm_installation_type: "{{ slurm_installation_type }}"
   no_log: true
-
