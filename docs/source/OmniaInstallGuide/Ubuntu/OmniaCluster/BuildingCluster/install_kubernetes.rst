@@ -18,59 +18,31 @@ Set up Kubernetes
 
 **Inventory details**
 
-.. dropdown:: Basic Inventory
+* For Kubernetes, all the applicable inventory groups are ``kube_control_plane``, ``kube_node``, and ``etcd``.
 
-    * For Kubernetes, all the applicable inventory groups are ``kube_control_plane``, ``kube_node``, and ``etcd``.
-
-    * The inventory file must contain:
+* The inventory file must contain:
 
     1. Exactly 1 ``kube_control_plane``.
     2. At least 1 ``kube_node``.
     3. Odd number of ``etcd`` nodes.
 
-    .. note:: Ensure that the inventory includes an ``[etcd]`` node. etcd is a consistent and highly-available key value store used as Kubernetes' backing store for all cluster data. For more information, `click here. <https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/>`_
-
-.. dropdown:: Hiearachical Inventory
-
-    * For Kubernetes, all the applicable inventory groups are ``kube_control_plane`` and ``etcd``.
-
-    * The inventory file must contain:
-
-    1. Exactly 1 ``kube_control_plane``.
-    2. Odd number of ``etcd`` nodes.
-
-    .. note:: Ensure that the inventory includes an ``[etcd]`` node. etcd is a consistent and highly-available key value store used as Kubernetes' backing store for all cluster data. For more information, `click here. <https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/>`_
+.. note:: Ensure that the inventory includes an ``[etcd]`` node. etcd is a consistent and highly-available key value store used as Kubernetes' backing store for all cluster data. For more information, `click here. <https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/>`_
 
 **Sample inventory**
+::
 
-.. dropdown:: Basic Inventory
+    [kube_control_plane]
 
-    ::
+    10.5.1.101
 
-        [kube_control_plane]
+    [kube_node]
 
-        10.5.1.101
+    10.5.1.102
 
-        [kube_node]
+    [etcd]
 
-        10.5.1.102
+    10.5.1.101
 
-        [etcd]
-
-        10.5.1.101
-
-
-.. dropdown:: Hiearachical Inventory
-
-    ::
-
-        [kube_control_plane]
-
-        10.5.1.101
-
-        [etcd]
-
-        10.5.1.101
 
 **To install Kubernetes**
 
