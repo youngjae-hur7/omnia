@@ -36,22 +36,6 @@
       ansible.builtin.fail:
         msg: "{{ hosts_update_fail_msg }}"
 
-# - name: Install dnf controller packages on installroot #common
-#   ansible.builtin.dnf:
-#     name:
-#       - slurm
-#     state: present
-#     installroot: "{{ installroot }}"
-#   when: ansible_os_family == 'RedHat'
-  # Raising error first time though installed success
-
-# - name: Install slurm packages
-#   ansible.builtin.shell: "dnf install -y --installroot={{ installroot }} slurm" # noqa: command-instead-of-shell
-#   become: true
-#   failed_when: false # WARNING failure in the above task, install though error
-#   changed_when: false
-#   tags: install
-
 - name: Install common packages
   ansible.builtin.package:
     name: "{{ common_packages[ansible_os_family] }}"
