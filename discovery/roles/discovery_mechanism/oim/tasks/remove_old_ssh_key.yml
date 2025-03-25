@@ -25,6 +25,15 @@
   failed_when: false
   no_log: true
 
+- name: Create a list of unique roles
+  set_fact:
+    unique_roles: "{{ unique_roles | default([]) + item.split(',') | map('trim') | list   }}"
+  loop: "{{ query_status.query_result | map(attribute='role') | list }}"
+
+- name: Print the list of unique roles
+  set_fact:
+    fetch_unique_roles: "{{ unique_roles | unique }}"
+
 - name: Fail if no nodes are discovered
   ansible.builtin.fail:
     msg: "{{ empty_discover_node_msg }}"
