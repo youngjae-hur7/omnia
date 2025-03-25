@@ -42,15 +42,15 @@
   ansible.builtin.set_fact:
      login_node_required: true
   when:
-    - groups['login'] is defined
-    - "groups['login'] | length | int == 1"
+     - groups['login'] is defined
+     - "groups['login'] | length | int == 1"
 
 - name: Fail when more than 1 login node provided
   ansible.builtin.fail:
      msg: "{{ multiple_login_node_fail_msg }}"
   when:
-    - groups['login'] is defined
-    - "groups['login'] | length | int > 1"
+     - groups['login'] is defined
+     - "groups['login'] | length | int > 1"
 
 - name: Warning when login node not provided
   ansible.builtin.pause:
