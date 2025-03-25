@@ -85,7 +85,7 @@ Prerequisites
         ::
             cat /usr/local/apache2/conf/webui_httpd.conf | grep -A 20 "# Platform API"
     iii. Check the response and see if ``IsiAuthTypeBasic Off`` is displayed. If yes, it means that basic auth is not enabled from PowerScale. Use the following command to activate it:
-        ::
+         ::
             isi_gconfig -t web-config auth_basic=true
     
 .. note:: In order to integrate PowerScale solution to the deployed Kubernetes cluster, Omnia requires the following fixed parameter values in ``values.yaml`` file:
