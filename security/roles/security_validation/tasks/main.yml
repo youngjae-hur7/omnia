@@ -30,9 +30,6 @@
 - name: Include local repo access variable file
   ansible.builtin.include_vars: "{{ local_repo_access_config_file }}"
 
-- name: Set login_node_required status
-  ansible.builtin.include_tasks: set_login_node_status.yml
-
 - name: Fetch software_config.json and check for authentication system
   ansible.builtin.include_tasks: fetch_software_config.yml
 
