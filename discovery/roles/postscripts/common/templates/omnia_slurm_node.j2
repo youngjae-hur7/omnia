@@ -1,0 +1,40 @@
+#!/bin/bash
+#####################################################################################################
+#  Omnia Slurm Node:
+#      Install required Slurm packages for Compute Nodes
+#
+#####################################################################################################
+
+LOGFILE="/var/log/xcat/xcat.log"
+
+echo "--------------------------" >> "$LOGFILE"
+echo "Starting Slurm Compute Node package installation" >> "$LOGFILE"
+
+# Common packages
+COMMON_PACKAGES=(
+    {% for pkg in common_packages %}
+        "{{ pkg.package }}"
+    {% endfor %}
+)
+
+# Role-specific packages
+ROLE_PACKAGES=(
+    {% for pkg in role_specific_packages %}
+        "{{ pkg.package }}"
+    {% endfor %}
+)
+
+# Install packages
+for pkg in "${COMMON_PACKAGES[@]}" "${ROLE_PACKAGES[@]}"; do
+    echo "DEBUG: Processing package - $pkg" | tee -a "$LOGFILE"
+    echo "**** Installing Package - $pkg..." | tee -a "$LOGFILE"
+    
+    if ! dnf install -y "$pkg" >> "$LOGFILE" 2>&1; then
+        echo "WARNING: Failed to install $pkg, continuing..." | tee -a "$LOGFILE"
+    else
+        echo "SUCCESS: Installed $pkg successfully!" | tee -a "$LOGFILE"
+    fi
+done
+
+echo "--------------------------" >> "$LOGFILE"
+echo "Slurm Compute Node setup complete." >> "$LOGFILE"
