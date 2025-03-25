@@ -26,33 +26,30 @@ def create_node_object():
     sql = '''SELECT switch_name, switch_port FROM cluster.nodeinfo WHERE switch_port IS NOT NULL and switch_name IS NOT NULL'''
     switch_port_output = execute_select_query(query=sql)
 
-    results = []
     if not switch_port_output:
-        return results
+        return "No switch information found in the database"
+    msg = ''
     for switch in switch_port_output:
         switch_name = switch['switch_name']
         switch_port = switch['switch_port']
         sql = f"SELECT * FROM cluster.nodeinfo WHERE switch_port = %s AND switch_name = %s"
-        row_output = execute_select_query(query=sql, params=(switch_port, switch_name))[0]
+        query_result = execute_select_query(query=sql, params=(switch_port, switch_name))
         groups_switch_based = 'switch_based,all'
-        if row_output:
-            groups_switch_based += row_output['roles']
-            groups_switch_based += row_output['group_name']
+        if not query_result:
+            msg += f"No matching rows found for switch_port={switch_port} and switch_name={switch_name}\n"
+        else:
+            row_output = query_result[0]
+            groups_switch_based += ',' + row_output['role']
+            groups_switch_based += ',' + row_output['group_name']
             command = [
                 "/opt/xcat/bin/chdef", row_output['node'], f"groups={groups_switch_based}", "mgt=ipmi", "cons=ipmi",
                 f"ip={row_output['admin_ip']}", f"bmc={row_output['bmc_ip']}", "netboot=xnba", "installnic=mac", "primarynic=mac",
                 f"switch={row_output['switch_ip']}", f"switchport={row_output['switch_port']}"
             ]
             result = subprocess.run(command, capture_output=True, text=True)
+            msg += f"Created node object {row_output['node']} for switch details - ip: {row_output['switch_ip']}, port: {row_output['switch_port']}, name: {row_output['switch_name']}\n"
 
-            results.append({
-                "node": row_output[0],
-                "stdout": result.stdout,
-                "stderr": result.stderr,
-                "returncode": result.returncode
-            })
-
-    return results
+    return msg
 
 def main():
     module = AnsibleModule(
