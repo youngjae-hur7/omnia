@@ -80,8 +80,17 @@ Prerequisites
 
     * isiPath: /ifs/data/csi
 
+5. Enable ``auth_basic`` for the PowerScale devices: Omnia authenticates and connects with PowerScale devices using basic authentication. To check and enable basic authentication from PowerScale's end, do the following:
 
-.. note:: In order to integrate PowerScale solution to the deployed Kubernetes cluster, Omnia 1.7 requires the following fixed parameter values in ``values.yaml`` file:
+    i. Establish an SSH connection with the PowerScale node.
+    ii. Execute the following command: 
+        ::
+            cat /usr/local/apache2/conf/webui_httpd.conf | grep -A 20 "# Platform API"
+    iii. Check the response and see if ``IsiAuthTypeBasic Off`` is displayed. If yes, it means that basic auth is not enabled from PowerScale. Use the following command to activate it:
+        ::
+            isi_gconfig -t web-config auth_basic=true
+
+.. note:: In order to integrate PowerScale solution to the deployed Kubernetes cluster, Omnia requires the following fixed parameter values in ``values.yaml`` file:
 
     * controllerCount: 1
     * Replication: false
