@@ -22,6 +22,17 @@ file_names = config.files
 create_error_msg = validation_utils.create_error_msg
 create_file_path = validation_utils.create_file_path
 
+def check_duplicate_groups(yaml_content):
+    """Check for duplicate group names in YAML content."""
+    seen_groups = set()
+    lines = yaml_content.split('\n')
+    for line in lines:
+        if line.strip().startswith('grp'):
+            group_name = line.split(':')[0].strip()
+            if group_name in seen_groups:
+                raise ValueError(f"Duplicate group name found: {group_name}")
+            seen_groups.add(group_name)
+
 def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir, project_name):
     """
     Validates the L2 logic of the roles_config.yaml file.
@@ -50,19 +61,32 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
     empty_parent_roles = {'login', 'compiler', 'service', 'kube_control_plane', 'etcd', 'slurm_control_plane', 'slurm_dbd', 'auth_server'}
 
     errors = []
-
-    # Catch any empty config files or malformed config files
+    # Empty file validation
     if not data:
         errors.append(create_error_msg("config_roles.yml,", None, "EMPTY roles_config.yml"))
-    else:
+        return errors
+
+    # Validate required sections exist
+    roles = data.get(ROLES)
+    groups = data.get(GROUPS)
+
+    if roles is None:
+        errors.append(create_error_msg(ROLES, None, en_us_validation_msg.no_roles_msg))
+    if groups is None:
+        errors.append(create_error_msg(GROUPS, None, en_us_validation_msg.no_groups_msg))
+
+    # Check for duplicate groups if groups section exists
+    if groups is not None:
         try:
-            roles = data[ROLES]
-        except:
-            errors.append(create_error_msg(ROLES, None, en_us_validation_msg.no_roles_msg))
-        try:
-            groups = data[GROUPS]
-        except:
-            errors.append(create_error_msg(GROUPS, None, en_us_validation_msg.no_groups_msg))
+            with open(input_file_path, 'r') as f:
+                yaml_content = f.read()
+            check_duplicate_groups(yaml_content)
+        except ValueError as e:
+            errors.append(create_error_msg("Groups", str(e), en_us_validation_msg.duplicate_group_name_msg))
+        except Exception as e:
+            errors.append(create_error_msg("File", f"Error reading {input_file_path}: {str(e)}",
+                "Failed to validate group duplicates"))
+
     if errors:
         return errors
 
@@ -174,15 +198,3 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
                 errors.append(create_error_msg(group, f'Group {group} should not have the resource_mgr_id set.', en_us_validation_msg.resource_mgr_id_msg))
 
     return errors
-
-# def check_bmc_network(input_file_path, logger, module, omnia_base_dir, project_name) -> bool:
-    # """
-    # Check if the BMC network is defined in the given input file.
-
-    # Returns:
-    #     bool: True if the BMC network's nic_name and netmask_bits are defined, False otherwise.
-    # """
-#     admin_bmc_networks = common_validation.get_admin_bmc_networks(input_file_path, logger, module, omnia_base_dir, project_name)
-#     bmc_network_defined = admin_bmc_networks["bmc_network"].get("nic_name", None) != None and admin_bmc_networks["bmc_network"].get("netmask_bits", None) != None
-
-#     return bmc_network_defined

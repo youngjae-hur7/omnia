@@ -36,6 +36,7 @@ invalid_location_id_msg = "location_id must follow the format SU-<n>.RACK-<n> wh
 no_groups_msg = "Outer Group object was probably not defined."
 no_roles_msg = "Outer Role object was probably not defined."
 invalid_switch_ports_msg = "Please provide any port ranges as start-end (example: 0-15,4:4,51-53)."
+duplicate_group_name_msg = "Duplicate group names are not allowed."
 
 # provision_config.yml
 default_lease_time_fail_msg = "Please provide a valid default_lease_time."
