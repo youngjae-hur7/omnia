@@ -17,23 +17,42 @@
     that:
       - "'slurm_control_node' in groups"
       - "'slurm_node' in groups"
-      - groups['slurm_control_node'] | length | int >= 1
+      - groups['slurm_control_node'] | length | int >= 1 # HA
       - groups['slurm_node'] | length | int >= 1
     fail_msg: "{{ inv_validation_fail_msg }}"
+
+- name: Controller list
+  ansible.builtin.set_fact:
+    control_node_list: "{{ (control_node_list | default([])) + ([hostvars[item]['ansible_nodename'] | split('.') | first]) }}"
+  loop: "{{ groups['slurm_control_node'] }}"
+
+- name: Node list
+  ansible.builtin.set_fact:
+    slurm_node_list: "{{ (slurm_node_list | default([])) + ([hostvars[item]['ansible_nodename'] | split('.') | first]) }}"
+  loop: "{{ groups['slurm_node'] }}"
+
+- name: Login list
+  ansible.builtin.set_fact:
+    login_node_list: "{{ (login_node_list | default([])) + ([hostvars[item]['ansible_nodename'] | split('.') | first]) }}"
+  loop: "{{ groups['login'] | default([]) }}"
 
 - name: Control node not part of other groups
   ansible.builtin.assert:
     that:
-      - groups['slurm_control_node'] | intersect(groups['slurm_node']) | length | int == 0
-      - groups['slurm_control_node'] | intersect(groups['login'] | default([])) | length | int == 0
+      - control_node_list | intersect(slurm_node_list) | length | int == 0
+      - control_node_list | intersect(login_node_list | default([])) | length | int == 0
     fail_msg: "{{ intersect_validation_fail_msg }}"
 
 - name: Check unreachable
   ansible.builtin.assert:
     that:
-      - groups['slurm_control_node'] | difference(ansible_play_hosts) | length | int == 0
+      - groups['slurm_control_node'] | difference(ansible_play_hosts) | length | int == 0 # nodename
     fail_msg: "All control nodes are not reachable."
 
 # TODO: Add validation for slurmdbd inputs
 
 # TODO: Add validation for db inputs
+- name: Check password
+  ansible.builtin.assert:
+    that:
+      - slurm_db_password | length > 1

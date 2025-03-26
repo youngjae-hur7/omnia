@@ -19,7 +19,7 @@
     - hostvars['localhost']['k8s_service_addresses'] is defined
     - hostvars['localhost']['k8s_service_addresses'] | length > 0
   ansible.builtin.set_fact:
-    service_addr: "{{ hostvars['localhost']['k8s_service_addresses'] | ansible.utils.ipaddr('network') | ansible.utils.ipaddr('address') | regex_replace('(\\d+\\.\\d+)\\..*', '\\1') }}" # noqa: yaml[line-length]
+    service_addr: "{{ hostvars['localhost']['k8s_service_addresses'] | default('') | ansible.utils.ipaddr('network') | ansible.utils.ipaddr('address') | regex_replace('(\\d+\\.\\d+)\\..*', '\\1') }}" # noqa: yaml[line-length]
 
 - name: Remove entry from resolv.conf
   when: service_addr is defined and service_addr | length > 0

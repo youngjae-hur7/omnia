@@ -40,4 +40,4 @@
     state: restarted
     enabled: true
   register: slurmd_status
-  when: 'slurm_node' in group_names
+  when: '"slurm_node" in group_names'

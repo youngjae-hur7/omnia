@@ -16,79 +16,116 @@
   ansible.builtin.service:
     name: slurmd
     enabled: true
-  register: d_service
+  register: slurmd_service
 
 - name: Get service path
   ansible.builtin.set_fact:
-    slurmd_service_path: "{{ d_service['status']['FragmentPath'] | default(slurmd_service_default_path) }}"
+    slurmd_service_path: "{{ slurmd_service['status']['FragmentPath'] | default(slurmd_service_default_path) }}"
 
-- name: Edit the service !ConditionPathExists
-  community.general.ini_file:
-    path: "{{ slurmd_service_path }}"
-    section: Unit
-    option: ConditionPathExists
-    state: absent
-    mode: u=rw,g=r,o=r
-  when: slurm_installation_type == 'configless'
-  notify:
-    - Reload slurmd
-    - Restart slurmd
+- name: Configless service edits
+  when: slurm_installation_type == configless_slurm
+  module_defaults:
+    community.general.ini_file:
+      owner: "{{ root_user }}"
+      group: "{{ root_group }}"
+      no_extra_spaces: true
+  block:
+    - name: Edit the service ConditionPathExists
+      community.general.ini_file:
+        path: "{{ slurmd_service_path }}"
+        section: Unit
+        option: ConditionPathExists
+        state: absent
+        mode: "{{ conf_file_mode }}"
+      notify:
+        - Reload slurmd
+        - Restart slurmd
 
-- name: Edit the service ExecStart
-  community.general.ini_file:
-    path: "{{ slurmd_service_path }}"
-    section: Service
-    option: ExecStart
-    value: "/usr/sbin/slurmd -D -s $SLURMD_OPTIONS
-     --conf-server {{ (hostvars[groups['slurm_control_node'] | first])['inventory_hostname_short']
-      + ':' + (slurm_conf_dict['SlurmctldPort']
-      | string) }}" # HA
-    no_extra_spaces: true
-    mode: u=rw,g=r,o=r
-  when: slurm_installation_type == 'configless'
-  notify:
-    - Reload slurmd
-    - Restart slurmd
+    - name: Edit the service ExecStart
+      community.general.ini_file:
+        path: "{{ slurmd_service_path }}"
+        section: Service
+        option: ExecStart
+        mode: "{{ conf_file_mode }}"
+        value: "/usr/sbin/slurmd -D
+         --conf-server {{ (hostvars[groups['slurm_control_node'] | first])['inventory_hostname_short']
+         + ':' + (slurm_conf_dict['SlurmctldPort'] | string) }} -s $SLURMD_OPTIONS" # HA
+      notify:
+        - Reload slurmd
+        - Restart slurmd
 
-- name: Set env variable
-  community.general.ini_file:
-    path: "/etc/environment"
-    option: SLURM_CONF
-    state: absent
-    mode: u=rw,g=r,o=r
-  when: slurm_installation_type == 'configless'
+    - name: Remove environment for configless case
+      community.general.ini_file:
+        path: "{{ slurmd_service_path }}"
+        section: Service
+        option: Environment
+        state: absent
+        mode: "{{ conf_file_mode }}"
+      when: not _force_install_nfs
+      notify:
+        - Reload slurmd
+        - Restart slurmd
 
-- name: Edit the service ConditionPathExists
-  community.general.ini_file:
-    path: "{{ slurmd_service_path }}"
-    section: Unit
-    option: ConditionPathExists
-    value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
-    no_extra_spaces: true
-    mode: u=rw,g=r,o=r
-  when: slurm_installation_type != 'configless'
-  notify:
-    - Reload slurmd
+    - name: Unset env variable
+      community.general.ini_file:
+        path: "{{ sys_env_path }}"
+        option: SLURM_CONF
+        state: absent
+        mode: "{{ conf_file_mode }}"
 
-- name: Edit the service to fetch specific conf
-  community.general.ini_file:
-    path: "{{ slurmd_service_path }}"
-    section: Service
-    option: ExecStart
-    value: "/usr/sbin/slurmd -D -s $SLURMD_OPTIONS -f {{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
-    no_extra_spaces: true
-    mode: u=rw,g=r,o=r
-  when: slurm_installation_type != 'configless'
-  notify:
-    - Reload slurmd
+- name: NFS share service edits
+  when: slurm_installation_type == nfs_share_slurm
+  module_defaults:
+    community.general.ini_file:
+      owner: "{{ root_user }}"
+      group: "{{ root_group }}"
+      no_extra_spaces: true
+  block:
+    - name: Edit the service ConditionPathExists
+      community.general.ini_file:
+        path: "{{ slurmd_service_path }}"
+        section: Unit
+        option: ConditionPathExists
+        value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
+        mode: "{{ conf_file_mode }}"
+      notify:
+        - Reload slurmd
+        - Restart slurmd
 
-- name: Set env variable
-  community.general.ini_file:
-    path: "{{ sys_env_path }}"
-    option: SLURM_CONF
-    value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
-    no_extra_spaces: true
-    mode: u=rw,g=r,o=r
-  when: slurm_installation_type != 'configless'
-  notify:
-    - Restart slurmd
+    - name: Edit the service to fetch specific conf
+      community.general.ini_file:
+        path: "{{ slurmd_service_path }}"
+        section: Service
+        option: ExecStart
+        value: "/usr/sbin/slurmd -D -f {{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf -s $SLURMD_OPTIONS"
+        mode: "{{ conf_file_mode }}"
+      notify:
+        - Reload slurmd
+        - Restart slurmd
+
+    - name: Add environment for nfs case above Execstart
+      ansible.builtin.lineinfile:
+        path: "{{ slurmd_service_path }}"
+        insertbefore: '^ExecStart='
+        line: 'Environment="LD_LIBRARY_PATH={{ slurm_share_prefix }}/usr/lib64/"'
+        owner: "{{ root_user }}"
+        group: "{{ root_group }}"
+        mode: "{{ conf_file_mode }}"
+      when: _force_install_nfs
+      notify:
+        - Reload slurmd
+        - Restart slurmd
+
+    - name: Set env variable
+      community.general.ini_file:
+        path: "{{ sys_env_path }}"
+        option: SLURM_CONF
+        value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
+        mode: "{{ conf_file_mode }}"
+      notify:
+        - Reload slurmd
+        - Restart slurmd
+
+    - name: Enable etc enviroment
+      ansible.builtin.shell: source {{ sys_env_path }} # noqa: command-instead-of-shell
+      changed_when: false
