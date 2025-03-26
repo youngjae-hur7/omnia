@@ -99,29 +99,6 @@ provision_metadata_path: "/opt/omnia/.data/provision_metadata.yml"
 metadata_missing_fail_msg: "Failed. Missing /opt/omnia/.data/provision_metadata.yml in Omnia Infrastructure Manager.
 Run discovery_provision.yml before executing omnia.yml/storage.yml playbook for creating metdata.yml file."
 
-# Usage: k8s_validations.yml
-invalid_kube_inventory_fail_msg: "Failed. k8s software is present in software_config.json.
-Invalid inventory format, specify kube_control_plane, kube_node and etcd"
-kube_one_node_validation_fail_msg: "Failed. k8s software is present in software_config.json.
-There should be exactly one entry for kube_control_plane in the inventory"
-kube_one_node_validation_success_msg: "One kube_control_plane exists in the inventory"
-kube_node_validation_fail_msg: "Failed. k8s software is present in software_config.json.
-At least one kube_node should be present in the inventory."
-kube_node_validation_success_msg: " At least one kube_node exists in the inventory"
-etcd_node_validation_fail_msg: "Failed. k8s software is present in software_config.json.
-etcd group in inventory must have atleast one node and total node count must be odd."
-etcd_node_validation_success_msg: "etcd should have odd number of nodes in the inventory"
-
-# Usage: slurm_validations.yml
-invalid_slurm_inventory_fail_msg: "Failed. slurm software is present in software_config.json.
-Invalid inventory format, specify slurm_control_node and slurm_node."
-slurm_one_node_validation_fail_msg: "Failed. slurm software is present in software_config.json.
-There should be exactly one entry for slurm_control_node in the inventory."
-slurm_one_node_validation_success_msg: "One slurm_control_node exists in the inventory"
-slurm_node_validation_fail_msg: "Failed. slurm software is present in software_config.json.
-At least one slurm_node should be present in the inventory."
-slurm_node_validation_success_msg: "At least one slurm_node exists in the inventory"
-
 # Usage: fetch_omnia_config.yml
 omnia_config_path: "{{ input_project_dir }}/omnia_config.yml"
 omnia_vault_path: "{{ input_project_dir }}/.omnia_vault_key"
@@ -129,12 +106,3 @@ vault_key_permission: "0644"
 omnia_config_syntax_fail_msg: "Failed. Syntax errors present in omnia_config.yml. Fix errors and re-run playbook again."
 slurm_installation_type_wrong_failure_msg: "Slurm Installation Type should be either nfs_share or configless in omnia_config.yml"
 
-# Usage: validate_inventory.yml
-empty_inventory_fail_msg: "Failed. inventory not provided. Re-run playbook with inventory providing -i inventory.
-Inventory support groups are slurm_control_node, slurm_node, kube_control_plane, kube_node, etcd, auth_server, login"
-invalid_storage_inventory_warn_msg: "[WARNING] Invalid inventory format for the execution.
-When k8s software is present in software_config.json, specify kube_control_plane, kube_node and etcd.
-When slurm software is present in software_config.json, specify slurm_control_node and slurm_node.
-Remaining tasks of the playbook will be executed for groups slurm_control_node, slurm_node, kube_control_plane, kube_node, etcd, auth_server, login
-available in the inventory.
-Remaining groups in the inventory will be skipped."

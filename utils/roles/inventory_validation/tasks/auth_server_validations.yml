@@ -13,14 +13,13 @@
 #  limitations under the License.
 ---
 
-- name: Create provision container group
-  ansible.builtin.import_playbook: create_container_group.yml
-  vars:
-    omnia_provision_group: true
-    omnia_provision_validation: true
+- name: Invalid auth_server inventory format
+  ansible.builtin.fail:
+    msg: "{{ invalid_auth_server_inventory_fail_msg }}"
+  when: "'auth_server' not in groups"
 
-- name: Host Mapping
-  hosts: omnia_provision
-  connection: ssh
-  roles:
-    - servicetag_host_mapping
+- name: Validate auth_server group to contain exactly 1 node
+  ansible.builtin.assert:
+    that: "groups['auth_server'] | length | int == 1"
+    fail_msg: "{{ auth_server_group_fail_msg }}"
+    success_msg: "{{ auth_server_group_success_msg }}"
