@@ -89,7 +89,7 @@ input_file_inventory = {
 
 # All of the passwords fields
 passwords_set = {
-    "mariadb_password",
+    "slurm_db_password",
     "directory_manager_password",
     "kerberos_admin_password",
     "openldap_db_password",
