@@ -21,24 +21,24 @@
       ansible.builtin.set_fact:
         omnia_run_tags: "{{ (ansible_run_tags | default([]) + ['freeipa'] + ['openldap'] + ['slurm']) | unique }}"
         cacheable: true
-      when: not ( config_file_status | default(false) | bool )
+      when: not (config_file_status | default(false) | bool)
 
 - name: Invoke get_config_credentials.yml
   ansible.builtin.import_playbook: utils/credential_utility/get_config_credentials.yml
-  when: not ( config_file_status | default(false) | bool )
+  when: not (config_file_status | default(false) | bool)
 
 
 - name: Check if package manager is not locked
   ansible.builtin.import_playbook: utils/check_package_lock.yml
-  when: not ( apt_lock_status | default(false) | bool )
+  when: not (apt_lock_status | default(false) | bool)
 
 - name: Include input project directory
   ansible.builtin.import_playbook: utils/include_input_dir.yml
-  when: not ( project_dir_status | default(false) | bool )
+  when: not (project_dir_status | default(false) | bool)
 
 - name: Validate inventory
   ansible.builtin.import_playbook: utils/inventory_validation.yml
-  when: not ( inventory_validation_executed | default(false) | bool )
+  when: not (inventory_validation_executed | default(false) | bool)
 
 - name: Set flag
   hosts: localhost
@@ -50,7 +50,7 @@
 
 - name: Update Inventory with ansible_host information
   ansible.builtin.import_playbook: utils/servicetag_host_mapping.yml
-  when: not ( update_inventory_executed | default(false) | bool )
+  when: not (update_inventory_executed | default(false) | bool)
 
 - name: Gather facts from all the nodes
   hosts: slurm_control_node, slurm_node, slurm_dbd, login, kube_control_plane, kube_node, etcd, auth_server
