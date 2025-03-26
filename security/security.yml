@@ -21,9 +21,11 @@
       ansible.builtin.set_fact:
         omnia_run_tags: "{{ (ansible_run_tags | default([]) + ['freeipa'] + ['openldap']) | unique }}"
         cacheable: true
+      when: not config_file_status | default(false) | bool
 
 - name: Invoke get_config_credentials.yml
   ansible.builtin.import_playbook: ../utils/credential_utility/get_config_credentials.yml
+  when: not config_file_status | default(false) | bool
 
 - name: Include input project directory
   when: not project_dir_status | default(false) | bool
