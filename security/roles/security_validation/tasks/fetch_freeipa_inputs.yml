@@ -18,9 +18,7 @@
     msg: "{{ input_config_failure_msg }}"
   when:
     - ( domain_name | length < 1 or
-      realm_name | length < 1 or
-      directory_manager_password | length < 1 or
-      kerberos_admin_password | length < 1 )
+      realm_name | length < 1 )
 
 - name: Validate the domain name
   ansible.builtin.assert:

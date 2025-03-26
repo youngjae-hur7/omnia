@@ -30,7 +30,7 @@ domain_name_success_msg: "domain name successfully validated"
 domain_name_fail_msg: "Failed. Incorrect format provided for domain name in security_config.yml"
 realm_name_success_msg: "realm_name successfully validated"
 realm_name_fail_msg: "Failed. Incorrect realm_name formate in security_config.yml"
-input_config_failure_msg: "Failed. Since, authentication_system is freeipa, provide few additional parameters in input/security_config.yml."
+input_config_failure_msg: "Failed. Since, authentication_system is freeipa, provide domain_name and realm_name in input/security_config.yml."
 secure_login_node_success_msg: "secure_login_node present in input/software_config.json."
 secure_login_node_fail_msg: "Failed. enable_secure_login_node should be either true or false"
 secure_login_node_warning_msg: "[WARNING] secure_login_node present in input/software_config.json and
