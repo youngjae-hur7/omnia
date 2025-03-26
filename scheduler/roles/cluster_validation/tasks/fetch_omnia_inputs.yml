@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 ---
-
 - name: Check if omnia_vault_key exists
   ansible.builtin.stat:
     path: "{{ input_project_dir }}/{{ config_vaultname }}"
@@ -171,4 +170,3 @@
     k8s_cni: "{{ k8s_cni }}"
     ansible_conf_file_path: "{{ ansible_config_file_path }}"
     slurm_installation_type: "{{ slurm_installation_type }}"
-  no_log: true
