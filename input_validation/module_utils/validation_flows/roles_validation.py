@@ -33,6 +33,52 @@ def check_duplicate_groups(yaml_content):
                 raise ValueError(f"Duplicate group name found: {group_name}")
             seen_groups.add(group_name)
 
+def validate_basic_structure(data, roles, groups):
+    """
+    Validates the basic structure of roles and groups in the config.
+
+    Args:
+        data (dict): The parsed YAML data
+
+    Returns:
+        list: List of validation errors
+    """
+    errors = []
+
+    if roles is None:
+        errors.append(create_error_msg("Roles", None, en_us_validation_msg.no_roles_msg))
+    elif not isinstance(roles, list):
+        errors.append(create_error_msg("Roles", None, en_us_validation_msg.invalid_attributes_role_msg))
+
+    if groups is None:
+        errors.append(create_error_msg("Groups", None, en_us_validation_msg.no_groups_msg))
+
+    return errors
+
+def validate_group_duplicates(input_file_path):
+    """
+    Checks for duplicate group names in the config file.
+
+    Args:
+        input_file_path (str): Path to the config file
+
+    Returns:
+        list: List of validation errors
+    """
+    errors = []
+
+    try:
+        with open(input_file_path, 'r') as f:
+            yaml_content = f.read()
+        check_duplicate_groups(yaml_content)
+    except ValueError as e:
+        errors.append(create_error_msg("Groups", str(e), en_us_validation_msg.duplicate_group_name_msg))
+    except Exception as e:
+        errors.append(create_error_msg("File", f"Error reading {input_file_path}: {str(e)}",
+            "Failed to validate group duplicates"))
+
+    return errors
+
 def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir, project_name):
     """
     Validates the L2 logic of the roles_config.yaml file.
@@ -66,42 +112,32 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
         errors.append(create_error_msg("config_roles.yml,", None, "EMPTY roles_config.yml"))
         return errors
 
-    # Validate required sections exist
     roles = data.get(ROLES)
     groups = data.get(GROUPS)
 
-    if roles is None:
-        errors.append(create_error_msg(ROLES, None, en_us_validation_msg.no_roles_msg))
-    if groups is None:
-        errors.append(create_error_msg(GROUPS, None, en_us_validation_msg.no_groups_msg))
-
-    # Check for duplicate groups if groups section exists
-    if groups is not None:
-        try:
-            with open(input_file_path, 'r') as f:
-                yaml_content = f.read()
-            check_duplicate_groups(yaml_content)
-        except ValueError as e:
-            errors.append(create_error_msg("Groups", str(e), en_us_validation_msg.duplicate_group_name_msg))
-        except Exception as e:
-            errors.append(create_error_msg("File", f"Error reading {input_file_path}: {str(e)}",
-                "Failed to validate group duplicates"))
-
+    # Validate basic structure
+    errors.extend(validate_basic_structure(data, roles, groups))
     if errors:
         return errors
 
-    if groups:
-        groups_used = set(list(groups.keys()))
+    # Check for duplicate groups if groups section exists
+    if groups is not None:
+        errors.extend(validate_group_duplicates(input_file_path))
+        if errors:
+            return errors
 
-    # Check for at least 1 group
-    # Check for at least 1 role
-     # Check to make sure there are not more than 100 roles
+    # List of groups used in roles
+    if groups:
+        groups_used = set(groups.keys())
+
+    # Check for minimum required sections
     if not groups:
-        errors.append(create_error_msg(GROUPS, f'Current number of groups is 0:', en_us_validation_msg.min_number_of_groups_msg))
+        errors.append(create_error_msg(GROUPS, 'Current number of groups is 0:', en_us_validation_msg.min_number_of_groups_msg))
     if not roles:
-        errors.append(create_error_msg(ROLES, f'Current number of roles is 0:', en_us_validation_msg.min_number_of_roles_msg))
+        errors.append(create_error_msg(ROLES, 'Current number of roles is 0:', en_us_validation_msg.min_number_of_roles_msg))
+    # Check maximum roles limit
     if roles and len(roles) > MAX_ROLES:
-        errors.append(create_error_msg(ROLES, f'Current number of roles is {str(len(roles))}:', en_us_validation_msg.max_number_of_roles_msg))
+        errors.append(create_error_msg(ROLES, f'Current number of roles is {len(roles)}:', en_us_validation_msg.max_number_of_roles_msg))
 
     if len(errors) <= 0:
         # List of groups which need to have their resource_mgr_id set
