@@ -37,12 +37,28 @@ def check_presence_switch_port(switch_name, switch_port):
     return bool(result[0]["exists"]) if result else False
 
 def get_next_node_name(group):
-    """Fetch the next node ID for insertion."""
-    query = "SELECT count(id) FROM cluster.nodeinfo where group_name = %s"
+    """Fetch the next available node name based on ordering."""
+    query = """
+        SELECT node_name
+        FROM cluster.nodeinfo
+        WHERE group_name = %s
+        ORDER BY node_name DESC
+        LIMIT 1;
+    """
 
     result = execute_select_query(query=query, params=(group,))
-    next_node_name = f"{group}node{result[0]['count'] + 1}"
+
+    if not result:
+        return f"{group}node001"  # First node if none exists
+
+    last_node_name = result[0]['node_name']
+
+    # Extract numeric part dynamically (assumes format: group + "node" + number)
+    last_node_number = int(last_node_name.split('node')[-1])  # Extract numeric part
+    next_node_name = f"{group}node{last_node_number + 1:03d}"  # Ensure 3-digit format
+
     return next_node_name
+
 
 def assign_bmc_admin_ip(cursor, admin_details, admin_subnet, bmc_details,
                         admin_uncorrelated_node_start_ip, discovery_mechanism, mtms_db_path):
@@ -86,8 +102,6 @@ def assign_bmc_admin_ip(cursor, admin_details, admin_subnet, bmc_details,
     else:
         admin_ip = modify_network_details.cal_uncorrelated_admin_ip(cursor, admin_uncorrelated_node_start_ip, admin_static_start_ip,admin_static_end_ip,discovery_mechanism)
     return bmc_ip, admin_ip
-
-
 
 def main():
     """Main function to execute Ansible module."""
