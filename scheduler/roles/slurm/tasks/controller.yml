@@ -149,7 +149,7 @@
     - name: Set env special paths
       ansible.builtin.set_fact:
         env_path_list: "{{ (env_path_list + [slurm_share_prefix.rstrip('/') + '/usr/bin'] + [slurm_share_prefix.rstrip('/') + '/usr/sbin']) | join(':') }}"
-        ld_library_path: "{{ installroot }}usr/lib64/"
+        ld_library_path: "/usr/lib64:{{ installroot }}usr/lib64"
         env_slurm_conf: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurm.conf"
 
     - name: Set env variable
@@ -164,7 +164,7 @@
       loop:
         - "{{ ['PATH', env_path_list] }}"
         - "{{ ['SLURM_CONF', env_slurm_conf] }}"
-        # - "{{ ['LD_LIBRARY_PATH', ld_library_path] }}"
+        - "{{ ['LD_LIBRARY_PATH', ld_library_path] }}"
 
 - name: Enable etc enviroment
   ansible.builtin.shell: source {{ sys_env_path }} # noqa: command-instead-of-shell
