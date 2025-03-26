@@ -18,9 +18,9 @@
     unique_roles: "{{ unique_roles | default([]) + item.split(',') | map('trim') | list }}"
   loop: "{{ query_status.query_result | map(attribute='role') | list }}"
 
-- name: Fetch list of unique roles
+- name: Fetch list of unique supported roles
   ansible.builtin.set_fact:
-    fetch_unique_roles: "{{ unique_roles | unique }}"
+    fetch_unique_roles: "{{ unique_roles | unique | select('in', supported_roles) | list }}"
 
 - name: Read and convert slurm.json to variable
   ansible.builtin.set_fact:
@@ -31,8 +31,7 @@
     src: "{{ role_template_path }}"
     dest: "{{ postscripts_dest_path }}"
     mode: "{{ file_permissions }}"
-  loop: "{{ fetch_unique_roles | list | difference(['default']) }}"
-  when: item in slurm_roles.keys()
+  loop: "{{ fetch_unique_roles }}"
   vars:
     common_packages: "{{ slurm_roles.slurm.cluster | default([]) | selectattr('type', 'equalto', 'rpm') | list }}"
     role_specific_packages: "{{ slurm_roles[item].cluster | default([]) | selectattr('type', 'equalto', 'rpm') | list }}"
