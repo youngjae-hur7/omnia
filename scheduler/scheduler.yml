@@ -16,13 +16,13 @@
   hosts: localhost
   tasks:
     - name: Set dynamic run tags including 'slurm'
-      when: not config_file_status | default(false) | bool
+      when: not ( hostvars['127.0.0.1']['config_file_status'] | default(false) | bool )
       ansible.builtin.set_fact:
         omnia_run_tags: "{{ (ansible_run_tags | default([]) + ['slurm']) | unique }}"
         cacheable: true
 
 - name: Invoke get_config_credentials.yml
-  when: not config_file_status | default(false) | bool
+  when: not (hostvars['127.0.0.1']['config_file_status'] | default(false) | bool)
   ansible.builtin.import_playbook: ../utils/credential_utility/get_config_credentials.yml
 
 - name: Update Inventory with ansible_host information
@@ -188,7 +188,7 @@
   any_errors_fatal: true
   roles:
     - slurm
-    # - slurm_pam
+    - slurm_pam
 
 - name: Compile and install the ucx and openmpi on the nfs share of compute nodes
   hosts: slurm_control_node, kube_control_plane

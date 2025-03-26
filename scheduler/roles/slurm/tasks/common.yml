@@ -12,13 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- name: Refresh mounts - sometimes the mounts fail
+- name: Refresh mounts
   ansible.builtin.shell: |
     umount {{ share_path }}
     mount -a
   register: refresh_mounts
   ignore_errors: true
-  changed_when: refresh_mounts == 0
+  changed_when: refresh_mounts.rc == 0
 
 - name: Update hosts file for all slurm groups
   block:
@@ -41,6 +41,10 @@
     name: "{{ common_packages[ansible_os_family] }}"
     state: present
 
+- name: Install utils packages
+  ansible.builtin.include_tasks: install_utils_packages.yml
+  when: utils_support is true
+
 - name: Firewall service running
   ansible.builtin.systemd_service:
     name: firewalld
@@ -57,9 +61,10 @@
     owner: root
     group: root
     mode: "{{ common_mode }}"
+  when: (slurm_installation_type == 'nfs_share')
   run_once: true
 
-- name: Install and configure Munge
+- name: Install and configure munge
   ansible.builtin.include_tasks: _munge.yml
 
 - name: Slurm dict ops

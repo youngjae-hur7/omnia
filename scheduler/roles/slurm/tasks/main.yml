@@ -43,6 +43,15 @@
   ansible.builtin.set_fact:
     slurmctld_status: "{{ hostvars[groups['slurm_control_node'][0]]['controller_running'] }}" # HA
 
+- name: Append share path if NFS
+  ansible.builtin.set_fact:
+    slurm_share_prefix: "{{ share_path + '/' + slurm_dir_name if (slurm_installation_type == 'nfs_share') else '/' }}"
+
+- name: Set nfs flow
+  ansible.builtin.set_fact:
+    installroot: "{{ share_path }}/{{ slurm_dir_name }}"
+  when: (slurm_installation_type == 'nfs_share') and _force_install_nfs
+
 - name: Existing cluster
   ansible.builtin.include_tasks: add_node.yml
   when: slurmctld_status

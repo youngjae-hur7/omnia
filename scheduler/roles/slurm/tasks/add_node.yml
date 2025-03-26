@@ -12,6 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
+- name: Check munge dir
+  ansible.builtin.file:
+    path: "{{ munge_key_dest | dirname }}"
+    state: directory
+    owner: "{{ munge_user }}"
+    group: "{{ munge_group }}"
+    mode: "{{ munge_dir_mode }}"
+
 - name: Include slurm_conf tasks
   ansible.builtin.include_tasks: _edit_conf.yml
   when: '"slurm_control_node" in group_names'
@@ -33,11 +41,16 @@
 - name: Assemble all slurm_nodes
   ansible.builtin.debug:
     var: all_nodes
+  when: ('slurm_control_node' in group_names)
 
 - name: Restart slurmd on all nodes
   ansible.builtin.systemd_service:
     name: slurmd
     state: restarted
-  when: restart_slurm_services and ('slurm_control_node' in group_names) and (node_check.changed or partition_check.changed) and all_nodes is defined
+  when:
+    - restart_slurm_services
+    - ('slurm_control_node' in group_names)
+    - (node_check.changed or partition_check.changed)
+    - all_nodes is defined
   delegate_to: "{{ item }}"
   loop: "{{ all_nodes }}"
