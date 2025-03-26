@@ -86,8 +86,8 @@ def update_db():
             output = cursor.fetchone()[0]
             bmc_output = modify_network_details.check_presence_bmc_ip(cursor, bmc[key])
             if not bmc_output and not output:
-                sql = '''SELECT node_name FROM cluster.nodeinfo
-                    WHERE group_name = %s ORDER BY node_name DESC LIMIT 1'''
+                sql = '''SELECT node FROM cluster.nodeinfo
+                    WHERE group_name = %s ORDER BY node DESC LIMIT 1'''
                 cursor.execute(sql, (group_name,))
                 temp = cursor.fetchone()
 

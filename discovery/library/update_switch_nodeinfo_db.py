@@ -39,10 +39,10 @@ def check_presence_switch_port(switch_name, switch_port):
 def get_next_node_name(group):
     """Fetch the next available node name based on ordering."""
     query = """
-        SELECT node_name
+        SELECT node
         FROM cluster.nodeinfo
         WHERE group_name = %s
-        ORDER BY node_name DESC
+        ORDER BY node DESC
         LIMIT 1;
     """
 
@@ -51,7 +51,7 @@ def get_next_node_name(group):
     if not result:
         return f"{group}node001"  # First node if none exists
 
-    last_node_name = result[0]['node_name']
+    last_node_name = result[0]['node']
 
     # Extract numeric part dynamically (assumes format: group + "node" + number)
     last_node_number = int(last_node_name.split('node')[-1])  # Extract numeric part
