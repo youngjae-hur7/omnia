@@ -17,10 +17,6 @@
 # Use the below command for execution, by providing appropriate values for input fields.
 # ansible-playbook install_ipa_client.yml -i inventory -e kerberos_admin_password="" -e ipa_server_hostname="" -e domain_name="" -e ipa_server_ipadress=""
 
-- name: Check if virtual environment is active
-  ansible.builtin.import_playbook: ../check_venv.yml
-  when: not ( hostvars['127.0.0.1']['check_venv_executed'] | default(false) | bool )
-
 - name: Initialize variables
   hosts: localhost
   tasks:
