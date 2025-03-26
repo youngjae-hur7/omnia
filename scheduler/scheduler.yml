@@ -16,8 +16,14 @@
   ansible.builtin.import_playbook: ../utils/servicetag_host_mapping.yml
   when: not ( hostvars['127.0.0.1']['update_inventory_executed'] | default(false) | bool )
 
-- name: Gather facts from all the nodes
-  hosts: slurm_control_node, kube_control_plane, slurm_node, kube_node, login, etcd
+- name: Set_fact for fetch omnia config credentials
+  hosts: localhost
+  tasks:
+    - name: Set dynamic run tags including 'slurm'
+      when: not config_file_status | default(false) | bool
+      ansible.builtin.set_fact:
+        omnia_run_tags: "{{ (ansible_run_tags | default([]) + ['slurm']) | unique }}"
+        cacheable: true
 
 - name: Include input project directory
   ansible.builtin.import_playbook: ../utils/include_input_dir.yml
@@ -39,13 +45,6 @@
       ansible.builtin.include_role:
         name: cluster_validation
         tasks_from: validation_status_check.yml
-
-- name: Apply common Slurm installation and config
-  hosts: slurm_control_node, slurm_node, login
-  gather_facts: false
-  any_errors_fatal: true
-  roles:
-    - slurm_common
 
 - name: Prepare kube control plane for kubernetes installations
   hosts: kube_control_plane
@@ -157,24 +156,6 @@
   roles:
     - update_containerd_config
 
-# - name: Prepare habana container runtime
-#   hosts: kube_node
-#   gather_facts: false
-#   roles:
-#     - k8s_habana_container_runtime
-
-# - name: Install nvidia-container-toolkit on nodes with Nvidia GPU
-#   hosts: kube_control_plane, kube_node, etcd
-#   gather_facts: false
-#   roles:
-#     - k8s_nvidia_container_toolkit
-
-# - name: Install Plugin only when one of nodes with AMD GPU
-#   hosts: kube_control_plane, kube_node, etcd
-#   gather_facts: false
-#   roles:
-#     - k8s_amd
-
 - name: Start K8s worker servers on kube control nodes
   hosts: kube_control_plane
   gather_facts: false
@@ -182,53 +163,15 @@
     - k8s_start_services
     - multus_and_whereabouts
 
-# - name: CSI powerscale image pulling
-#   hosts: kube_node, kube_control_plane
-#   tasks:
-#     - name: Pull images
-#       ansible.builtin.include_role:
-#         name: k8s_csi_powerscale_plugin
-#         tasks_from: csi_powerscale_image_pull.yml
-#       when: hostvars['127.0.0.1']['csi_driver_powerscale_precheck_pass'] | default(false) | bool
-
-# - name: Install CSI powerscale plugin on kube control nodes
-#   hosts: kube_control_plane
-#   gather_facts: false
-#   roles:
-#     - k8s_csi_powerscale_plugin
-
-- name: Apply slurm control node config
-  hosts: slurm_control_node
-  gather_facts: false
+- name: Install Slurm
+  hosts: slurm_control_node, slurm_node, slurm_dbd, login
+  any_errors_fatal: true
   roles:
-    - slurm_manager
-
-- name: Configure Slurm worker nodes
-  hosts: slurm_node, login
-  gather_facts: false
-  roles:
-    - slurm_workers
-
-- name: Start slurm services on slurm control node
-  hosts: slurm_control_node
-  gather_facts: false
-  roles:
-    - slurm_start_services
-
-- name: Start slurm services on slurm node and login
-  hosts: slurm_node, login
-  gather_facts: false
-  roles:
-    - slurm_workers_service
-
-- name: Setup slurm pam authentication
-  hosts: slurm_control_node, slurm_node, login
-  gather_facts: true
-  roles:
+    - slurm
     - slurm_pam
 
-# - name: Compile and install the ucx and openmpi on the nfs share of compute nodes
-#   hosts: slurm_control_node, kube_control_plane
-#   gather_facts: true
-#   roles:
-#     - install_benchmarks_tools
+- name: Compile and install the ucx and openmpi on the nfs share of compute nodes
+  hosts: slurm_control_node, kube_control_plane
+  gather_facts: true
+  roles:
+    - install_benchmarks_tools
