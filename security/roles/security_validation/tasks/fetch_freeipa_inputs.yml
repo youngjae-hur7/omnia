@@ -18,7 +18,9 @@
     msg: "{{ input_config_failure_msg }}"
   when:
     - ( domain_name | length < 1 or
-      realm_name | length < 1 )
+      realm_name | length < 1 or
+      directory_manager_password | length < 1 or
+      kerberos_admin_password | length < 1 )
 
 - name: Validate the domain name
   ansible.builtin.assert:
@@ -34,3 +36,27 @@
       - '"." in realm_name'
     success_msg: "{{ realm_name_success_msg }}"
     fail_msg: "{{ realm_name_fail_msg }}"
+
+- name: Assert directory_manager_password
+  ansible.builtin.assert:
+    that:
+      - directory_manager_password | length > min_length | int - 1
+      - directory_manager_password | length < max_length | int + 1
+      - '"-" not in directory_manager_password '
+      - '"\\" not in directory_manager_password '
+      - '"\"" not in directory_manager_password '
+      - " \"'\" not in directory_manager_password "
+    success_msg: "{{ success_msg_directory_manager_password }}"
+    fail_msg: "{{ fail_msg_directory_manager_password }}"
+
+- name: Assert kerberos_admin_password
+  ansible.builtin.assert:
+    that:
+      - kerberos_admin_password | length > min_length | int - 1
+      - kerberos_admin_password | length < max_length | int + 1
+      - '"-" not in kerberos_admin_password '
+      - '"\\" not in kerberos_admin_password '
+      - '"\"" not in kerberos_admin_password '
+      - " \"'\" not in kerberos_admin_password "
+    success_msg: "{{ success_msg_kerberos_admin_password }}"
+    fail_msg: "{{ fail_msg_kerberos_admin_password }}"

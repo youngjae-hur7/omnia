@@ -27,6 +27,42 @@
     msg: "{{ fail_msg_ltb_dir }}"
   when: not dir_status.stat.exists
 
+- name: Assert openldap_config_password
+  ansible.builtin.assert:
+    that:
+      - openldap_config_password | length > min_length | int - 1
+      - openldap_config_password | length < max_length | int + 1
+      - '"-" not in openldap_config_password '
+      - '"\\" not in openldap_config_password '
+      - '"\"" not in openldap_config_password '
+      - " \"'\" not in openldap_config_password "
+    success_msg: "{{ success_msg_config_root_password }}"
+    fail_msg: "{{ fail_msg_config_root_password }}"
+
+- name: Assert openldap_db_password
+  ansible.builtin.assert:
+    that:
+      - openldap_db_password | length > min_length | int - 1
+      - openldap_db_password | length < max_length | int + 1
+      - '"-" not in openldap_db_password '
+      - '"\\" not in openldap_db_password '
+      - '"\"" not in openldap_db_password '
+      - " \"'\" not in openldap_db_password "
+    success_msg: "{{ success_msg_database_root_password }}"
+    fail_msg: "{{ fail_msg_database_root_password }}"
+
+- name: Assert openldap_monitor_password
+  ansible.builtin.assert:
+    that:
+      - openldap_monitor_password | length > min_length | int - 1
+      - openldap_monitor_password | length < max_length | int + 1
+      - '"-" not in openldap_monitor_password '
+      - '"\\" not in openldap_monitor_password '
+      - '"\"" not in openldap_monitor_password '
+      - " \"'\" not in openldap_monitor_password "
+    success_msg: "{{ success_msg_monitor_root_password }}"
+    fail_msg: "{{ fail_msg_monitor_root_password }}"
+
 - name: Validate Certificate directory
   when:
     - tls_ca_certificate != ''
