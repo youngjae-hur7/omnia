@@ -17,11 +17,18 @@
   ansible.builtin.command: "{{ xcat_path }}/chdef all postscripts=\"syslog,remoteshell,syncfiles\""
   changed_when: true
 
-- name: Apply role postscripts to xCAT groups
-  ansible.builtin.command:
-    cmd: "{{ xcat_path }}/chdef {{ item }} -p postscripts=omnia_{{ item }}"
-  loop: {{ fetch_unique_roles | list | difference(['default']) }}
-  changed_when: true
+- name: Apply postscripts to xCAT groups
+  block:
+    - name: Apply postscripts to xCAT groups
+      ansible.builtin.command:
+        cmd: "{{ xcat_path }}/chdef {{ item }} -p postscripts=omnia_{{ item }}"
+      loop: "{{ fetch_unique_roles | list | difference(['default']) }}"
+      when: fetch_unique_roles | list | difference(['default']) | length > 0
+      changed_when: true
+  rescue:
+    - name: Warn about missing roles
+      ansible.builtin.debug:
+        msg: "{{ unique_role_not_found_msg }}"
 
 - name: Configure ubuntu postscripts
   ansible.builtin.include_tasks: "{{ role_path }}/../{{ provision_os }}/tasks/configure_postscripts.yml"
