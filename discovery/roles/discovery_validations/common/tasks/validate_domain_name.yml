@@ -28,7 +28,7 @@
 - name: Assert length of hostname is less than 64 characters
   ansible.builtin.assert:
     that:
-      - domain_name_len|int < 46
+      - domain_name_len|int < 46 # Node name max can go up to 13 leters - grp100node100
     success_msg: "{{ hostname_success_msg }}"
     fail_msg: "{{ hostname_fail_msg }}"
 
