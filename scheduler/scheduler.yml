@@ -25,6 +25,7 @@
 
 - name: Invoke get_config_credentials.yml
   ansible.builtin.import_playbook: ../utils/credential_utility/get_config_credentials.yml
+  when: not ( hostvars['127.0.0.1']['config_file_status'] | default(false) | bool )
 
 - name: Include input project directory
   ansible.builtin.import_playbook: ../utils/include_input_dir.yml
