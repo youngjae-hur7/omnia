@@ -16,6 +16,9 @@
   ansible.builtin.import_playbook: ../utils/servicetag_host_mapping.yml
   when: not ( hostvars['127.0.0.1']['update_inventory_executed'] | default(false) | bool )
 
+- name: Invoke get_config_credentials.yml
+  ansible.builtin.import_playbook: ../utils/credential_utility/get_config_credentials.yml
+
 - name: Set_fact for fetch omnia config credentials
   hosts: localhost
   tasks:
@@ -32,9 +35,6 @@
   ansible.builtin.import_playbook: ../utils/create_container_group.yml
   vars:
     omnia_kubespray_group: true
-
-- name: Invoke get_config_credentials.yml
-  ansible.builtin.import_playbook: ../utils/credential_utility/get_config_credentials.yml
 
 - name: Validate scheduler input parameters
   hosts: localhost
