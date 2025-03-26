@@ -15,6 +15,7 @@
 
 - name: Set_fact for fetch omnia config credentials
   hosts: localhost
+  connection: local
   tasks:
     - name: Set dynamic run tags including 'slurm'
       when: not ( hostvars['127.0.0.1']['config_file_status'] | default(false) | bool )
