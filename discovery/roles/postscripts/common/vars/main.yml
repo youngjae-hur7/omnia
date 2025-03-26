@@ -56,9 +56,14 @@ setup_ntp_warning_msg: |
 warning_time: 30
 async_time: 300
 poll_time: 15
+supported_roles:
+  - service
+  - slurm_control_node
+  - slurm_dbd
+  - slurm_node
 
 # Usage: configure_service_node.yml
 servive_node_postscripts_path:
-  - { src: "{{ role_path }}/templates/omnia_service_node.j2", dest: "/install/postscripts/omnia_service_node", mode: "755" }
+  - { src: "{{ role_path }}/templates/omnia_service.j2", dest: "/install/postscripts/omnia_service", mode: "755" }
 genesis_package_path:
   - { src: "{{ role_path }}/../rhel/files/xcat-genesis-base-x86_64.tar.gz", dest: "/install/xcat-genesis-base-x86_64.tar.gz", mode: "755" }
