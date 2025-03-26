@@ -13,6 +13,21 @@
 # limitations under the License.
 ---
 
+- name: Set_fact for fetch omnia config credentials
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Set dynamic run tags including 'local_repo'
+      ansible.builtin.set_fact:
+        omnia_run_tags: "{{ (ansible_run_tags | default([]) + ['freeipa'] + ['openldap'] + ['slurm']) | unique }}"
+        cacheable: true
+      when: not ( config_file_status | default(false) | bool )
+
+- name: Invoke get_config_credentials.yml
+  ansible.builtin.import_playbook: utils/credential_utility/get_config_credentials.yml
+  when: not ( config_file_status | default(false) | bool )
+
+
 - name: Check if package manager is not locked
   ansible.builtin.import_playbook: utils/check_package_lock.yml
   when: not ( apt_lock_status | default(false) | bool )
@@ -24,6 +39,14 @@
 - name: Validate inventory
   ansible.builtin.import_playbook: utils/inventory_validation.yml
   when: not ( inventory_validation_executed | default(false) | bool )
+
+- name: Set flag
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Set flag to indicate check_package_lock.yml has been executed
+      ansible.builtin.set_fact:
 
 - name: Update Inventory with ansible_host information
   ansible.builtin.import_playbook: utils/servicetag_host_mapping.yml
@@ -59,6 +82,7 @@
         update_inventory_executed: true
         inventory_validation_executed: true
         project_dir_status: true
+        config_file_status: true
 
 - name: Import playbook to install ROCm on nodes
   ansible.builtin.import_playbook: utils/rocm_installation.yml

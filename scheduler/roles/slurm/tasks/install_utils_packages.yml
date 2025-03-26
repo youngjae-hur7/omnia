@@ -1,4 +1,4 @@
-#  Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+#  Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 ---
-
 - name: Load software_config.json
   ansible.builtin.include_vars:
     file: "{{ software_config_json_file }}"
@@ -25,18 +24,8 @@
 - name: Extract and set facts for rpm packages
   ansible.builtin.set_fact:
     utils_packages: "{{ utils_packages_json['utils']['cluster'] | selectattr('type', 'equalto', 'rpm') | map(attribute='package') | list }}"
-  when:
-    - os_supported_redhat in compute_os or
-      os_supported_rocky in compute_os
-
-- name: Extract and set facts for deb packages
-  ansible.builtin.set_fact:
-    utils_packages: "{{ utils_packages_json['utils']['cluster'] | selectattr('type', 'equalto', 'deb') | map(attribute='package') | list }}"
-  when:
-    - os_supported_ubuntu in compute_os
 
 - name: Install utils packages
   ansible.builtin.package:
     name: "{{ utils_packages }}"
     state: present
-  tags: install
