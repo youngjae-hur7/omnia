@@ -19,10 +19,6 @@
 # It's recommended to do extensive tests when installing a new Gaudi node.
 # This can be controlled using var: run_intel_gaudi_tests: true
 
-- name: Check if virtual environment is active
-  ansible.builtin.import_playbook: ../check_venv.yml
-  when: not ( check_venv_executed | default(false) | bool )
-
 - name: Include omnia config file
   hosts: localhost
   connection: local
