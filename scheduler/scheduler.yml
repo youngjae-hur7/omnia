@@ -18,7 +18,7 @@
   connection: local
   tasks:
     - name: Set dynamic run tags including 'slurm'
-      when: not ( hostvars['127.0.0.1']['config_file_status'] | default(false) | bool )
+      when: not (hostvars['127.0.0.1']['config_file_status'] | default(false) | bool)
       ansible.builtin.set_fact:
         omnia_run_tags: "{{ (ansible_run_tags | default([]) + ['slurm']) | unique }}"
         cacheable: true
@@ -58,10 +58,6 @@
         name: cluster_validation
         tasks_from: validation_status_check.yml
 
-- name: Update Repositories/Registries on nodes
-  ansible.builtin.import_playbook: ../utils/update_user_repo.yml
-  when: not ( hostvars['127.0.0.1']['update_user_repo_executed'] | default(false) | bool )
-
 - name: Prepare kube control plane for kubernetes installations
   hosts: kube_control_plane
   gather_facts: false
@@ -82,31 +78,42 @@
     k8s_logs_dir: "/opt/omnia/log/kubespray"
     dir_mode: '0755'
   tasks:
-    - name: Copy k8s_start_setup to kubespray nfs share
-      ansible.builtin.copy:
-        src: "{{ playbook_dir }}/playbooks/k8s_start_setup.yml"
-        dest: "{{ k8s_nfs_share }}/k8s_start_setup.yml"
-    
-    - name: Ensure /log/kubespray directory exists
-      ansible.builtin.file:
-        path: "{{ k8s_logs_dir }}"
-        state: directory
-        mode: "{{ dir_mode }}"
+    - name: Install Kubernetes using kubespray
+      when:
+        - hostvars['127.0.0.1']['k8s_support']
+        - not hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
+      block:
+        - name: Copy k8s_start_setup to kubespray nfs share
+          ansible.builtin.copy:
+            src: "{{ playbook_dir }}/playbooks/k8s_start_setup.yml"
+            dest: "{{ k8s_nfs_share }}/k8s_start_setup.yml"
+            mode: "{{ dir_mode }}"
 
-    - name: Execute ansible-playbook for Kubernetes setup asynchronously
-      ansible.builtin.shell:
-        cmd: /venv/bin/ansible-playbook {{ k8s_nfs_share }}/k8s_start_setup.yml -i {{ k8s_nfs_share }}/inv_k8s --extra-vars "@{{ k8s_nfs_share }}/k8s_all_vars.yml" -vvv | /usr/bin/tee {{ k8s_logs_dir }}//k8s_deployment.log
-      async: 3600  # Set async timeout (e.g., 1 hour)
-      poll: 0  # Non-blocking (continue the playbook without waiting for completion)
-      register: result  # Register the result to capture job ID
+        - name: Ensure /log/kubespray directory exists
+          ansible.builtin.file:
+            path: "{{ k8s_logs_dir }}"
+            state: directory
+            mode: "{{ dir_mode }}"
 
-    - name: Wait for the Kubernetes installation to finish. Logs can be checked at /opt/omnia/log/kubespray/k8s_deployment.log
-      ansible.builtin.async_status:
-        jid: "{{ result.ansible_job_id }}"  # Job ID from the previous task
-      register: job_result
-      until: job_result.finished
-      retries: 60  # Retry the task 60 times (1 hour total)
-      delay: 10  # Wait 10 seconds between retries
+        - name: Execute ansible-playbook for Kubernetes setup asynchronously
+          ansible.builtin.shell: |
+            set -o pipefail
+            /venv/bin/ansible-playbook {{ k8s_nfs_share }}/k8s_start_setup.yml \
+            -i {{ k8s_nfs_share }}/inv_k8s \
+            --extra-vars "@{{ k8s_nfs_share }}/k8s_all_vars.yml" -vvv | \
+            /usr/bin/tee {{ k8s_logs_dir }}/k8s_deployment.log
+          async: 3600  # Set async timeout (e.g., 1 hour)
+          poll: 0  # Non-blocking (continue the playbook without waiting for completion)
+          register: result  # Register the result to capture job ID
+          changed_when: false
+
+        - name: Wait for the Kubernetes installation to finish. Logs can be checked at /opt/omnia/log/kubespray/k8s_deployment.log
+          ansible.builtin.async_status:
+            jid: "{{ result.ansible_job_id }}"  # Job ID from the previous task
+          register: job_result
+          until: job_result.finished
+          retries: 60  # Retry the task 60 times (10 min total)
+          delay: 10  # Wait 10 seconds between retries
 
 - name: Add nodes to kubernetes cluster
   hosts: omnia_kubespray
@@ -115,11 +122,17 @@
     k8s_logs_dir: "/opt/omnia/log/kubespray"
     dir_mode: '0755'
   tasks:
-    - block:
+    - name: Add new nodes using kubespray
+      when:
+        - hostvars['127.0.0.1']['k8s_support']
+        - hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
+        - hostvars[groups['kube_control_plane'][0]]['k8s_new_nodes'] != ''
+      block:
         - name: Copy k8s_add_node to kubespray nfs share
           ansible.builtin.copy:
             src: "{{ playbook_dir }}/playbooks/k8s_add_node.yml"
             dest: "{{ k8s_nfs_share }}/k8s_add_node.yml"
+            mode: "{{ dir_mode }}"
 
         - name: Ensure log/kubespray directory exists
           ansible.builtin.file:
@@ -128,68 +141,39 @@
             mode: "{{ dir_mode }}"
 
         - name: Execute ansible-playbook for Kubernetes setup asynchronously
-          ansible.builtin.shell:
-            cmd: /venv/bin/ansible-playbook {{ k8s_nfs_share }}/k8s_add_node.yml -i {{ k8s_nfs_share }}/inv_k8s --extra-vars "@{{ k8s_nfs_share }}/k8s_all_vars.yml" -vvv | /usr/bin/tee {{ k8s_logs_dir }}//k8s_add_node.log
-          async: 3600  # Set async timeout (e.g., 1 hour)
-          poll: 0  # Non-blocking (continue the playbook without waiting for completion)
-          register: result  # Register the result to capture job ID
+          ansible.builtin.shell: |
+            set -o pipefail
+            /venv/bin/ansible-playbook {{ k8s_nfs_share }}/k8s_add_node.yml \
+              -i {{ k8s_nfs_share }}/inv_k8s \
+              --extra-vars "@{{ k8s_nfs_share }}/k8s_all_vars.yml" -vvv | \
+              /usr/bin/tee {{ k8s_logs_dir }}/k8s_add_node.log
+          args:
+            executable: /bin/bash  # Ensures bash is used for `set -o pipefail`
+          async: 3600  # Run asynchronously for up to 1 hour
+          poll: 0  # Non-blocking execution
+          register: result  # Capture the job ID
+          changed_when: false
 
         - name: Wait for the Kubernetes installation to finish. Logs can be checked at /opt/omnia/log/kubespray/k8s_add_node.log
           ansible.builtin.async_status:
             jid: "{{ result.ansible_job_id }}"  # Job ID from the previous task
           register: job_result
           until: job_result.finished
-          retries: 60  # Retry the task 60 times (1 hour total)
+          retries: 60  # Retry the task 60 times (10 min total)
           delay: 10  # Wait 10 seconds between retries
-      when:
-        - hostvars['127.0.0.1']['k8s_support']
-        - hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
-        - hostvars[groups['kube_control_plane'][0]]['k8s_new_nodes'] != ''
 
-- name: Prepare habana container runtime
-  hosts: kube_node
-  gather_facts: false
-  roles:
-    - k8s_habana_container_runtime
-
-- name: Install nvidia-container-toolkit on nodes with Nvidia GPU
-  hosts: kube_control_plane, kube_node, etcd
-  gather_facts: false
-  roles:
-    - k8s_nvidia_container_toolkit
-
-- name: Install Plugin only when one of nodes with AMD GPU
-  hosts: kube_control_plane, kube_node, etcd
-  gather_facts: false
-  roles:
-    - k8s_amd
-
-- name: Prepare kube control plane and kube nodes for kubernetes services installations
+- name: Update containerd config on nodes
   hosts: kube_control_plane, kube_node
   gather_facts: false
   roles:
-    - k8s_prepare_services
+    - update_containerd_config
 
 - name: Start K8s worker servers on kube control nodes
   hosts: kube_control_plane
   gather_facts: false
   roles:
     - k8s_start_services
-
-- name: CSI powerscale image pulling
-  hosts: kube_node, kube_control_plane
-  tasks:
-    - name: Pull images
-      ansible.builtin.include_role:
-        name: k8s_csi_powerscale_plugin
-        tasks_from: csi_powerscale_image_pull.yml
-      when: hostvars['127.0.0.1']['csi_driver_powerscale_precheck_pass'] | default(false) | bool
-
-- name: Install CSI powerscale plugin on kube control nodes
-  hosts: kube_control_plane
-  gather_facts: false
-  roles:
-    - k8s_csi_powerscale_plugin
+    - multus_and_whereabouts
 
 - name: Install Slurm
   hosts: slurm_control_node, slurm_node, slurm_dbd, login
