@@ -36,11 +36,6 @@
       delegate_to: "{{ slurm_db_host }}"
   run_once: true
 
-- name: Install DBD packages
-  ansible.builtin.package:
-    name: "{{ slurm_dbd_packages[ansible_os_family] }}"
-    state: present
-
 - name: Create files - {{ item }} # TODO: file required?
   ansible.builtin.file:
     path: "{{ item }}"
@@ -64,18 +59,6 @@
     - Restart slurmctld
     - Restart slurmdbd
 
-- name: Local copy slurmdbd.conf /etc/slurm/
-  ansible.builtin.template:
-    src: "dbd.conf.j2"
-    dest: "{{ slurm_config_dir }}/slurmdbd.conf"
-    owner: "{{ slurm_user }}"
-    group: "{{ slurm_user }}"
-    mode: "{{ slurm_dbd_mode }}"
-  when: '"slurm_dbd" in group_names'
-  notify:
-    - Restart slurmdbd
-    - Restart slurmctld
-
 # Port Config
 - name: Enable SlurmdbdPort
   ansible.posix.firewalld:
@@ -84,21 +67,96 @@
     state: enabled
     immediate: true
 
+- name: Copy the slurmdbd service local for both configless and nfs
+  ansible.builtin.copy:
+    src: "{{ installroot }}{{ slurmdbd_service_default_path }}"
+    dest: "{{ slurmdbd_service_default_path }}"
+    remote_src: true
+    mode: preserve
+  when: (slurm_installation_type == 'nfs_share') and _force_install_nfs
+
+- name: Enable the service
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+
 # Edit service
 - name: Enable the service
   ansible.builtin.service:
     name: slurmdbd
     enabled: true
-  register: ctld_service
+  register: dbd_service
 
 - name: Edit the service
   community.general.ini_file:
-    path: "{{ ctld_service['status']['FragmentPath'] | default(slurmdbd_service_default_path) }}"
+    path: "{{ dbd_service['status']['FragmentPath'] | default(slurmdbd_service_default_path) }}"
     section: Unit
     option: ConditionPathExists
-    value: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurmdbd.conf"
-    no_extra_spaces: true
-    mode: "{{ slurm_mode }}"
+    state: absent
+    owner: "{{ root_user }}"
+    group: "{{ root_group }}"
+    mode: "{{ conf_file_mode }}"
   notify:
     - Reload slurmdbd
     - Restart slurmdbd
+
+- name: Edit the service to fetch specific conf
+  community.general.ini_file:
+    path: "{{ dbd_service['status']['FragmentPath'] | default(slurmdbd_service_default_path) }}"
+    section: Service
+    option: ExecStart
+    value: "{{ installroot }}usr/sbin/slurmdbd -D -s $SLURMDBD_OPTIONS"
+    no_extra_spaces: true
+    owner: "{{ root_user }}"
+    group: "{{ root_group }}"
+    mode: "{{ conf_file_mode }}"
+  notify:
+    - Reload slurmdbd
+    - Restart slurmdbd
+
+- name: Add environment for nfs case above Execstart
+  ansible.builtin.lineinfile:
+    path: "{{ dbd_service['status']['FragmentPath'] | default(slurmdbd_service_default_path) }}"
+    insertbefore: '^ExecStart='
+    line: 'Environment="LD_LIBRARY_PATH={{ installroot }}usr/lib64/"'
+    owner: "{{ root_user }}"
+    group: "{{ root_group }}"
+    mode: "{{ conf_file_mode }}"
+  when: (slurm_installation_type == 'nfs_share') and _force_install_nfs
+  notify:
+    - Reload slurmdbd
+    - Restart slurmdbd
+
+- name: Remove environment for configless case
+  community.general.ini_file:
+    path: "{{ dbd_service['status']['FragmentPath'] | default(slurmdbd_service_default_path) }}"
+    section: Service
+    option: Environment
+    state: absent
+    owner: "{{ root_user }}"
+    group: "{{ root_group }}"
+    mode: "{{ conf_file_mode }}"
+  when: (slurm_installation_type == 'configless') or not _force_install_nfs
+  notify:
+    - Reload slurmdbd
+    - Restart slurmdbd
+
+- name: Set dbd symbolic links
+  when: slurm_installation_type == 'nfs_share'
+  block:
+    - name: Create directory for symbolic link
+      ansible.builtin.file:
+        path: "{{ slurmdbd_conf_path | dirname }}"
+        state: directory
+        owner: "{{ root_user }}"
+        group: "{{ root_group }}"
+        mode: "{{ conf_file_mode }}"
+
+    - name: Create symbolic link for slurmdbd.conf
+      ansible.builtin.file:
+        src: "{{ slurm_share_prefix }}{{ slurm_config_dir }}/slurmdbd.conf"
+        dest: "{{ slurmdbd_conf_path }}"
+        state: link
+        owner: "{{ slurm_user }}"
+        group: "{{ slurm_user }}"
+        mode: "{{ slurm_dbd_mode }}"
+        force: true
