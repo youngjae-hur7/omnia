@@ -13,15 +13,24 @@
 #  limitations under the License.
 ---
 
+- name: Create a list of unique roles
+  set_fact:
+    unique_roles: "{{ unique_roles | default([]) + item.split(',') | map('trim') | list   }}"
+  loop: "{{ query_status.query_result | map(attribute='role') | list }}"
+
+- name: Fetch list of unique roles
+  set_fact:
+    fetch_unique_roles: "{{ unique_roles | unique }}"
+    
 - name: Read and convert slurm.json to variable
   ansible.builtin.set_fact:
-    slurm_roles: "{{ lookup('file', hostvars['localhost']['input_project_dir'] + '/config/{{ provision_os }}/{{ provision_os_version }}/slurm.json') | from_json }}"
+    slurm_roles: "{{ lookup('file', hostvars['localhost']['input_project_dir'] + '/config/{{ provision_os }}/{{ provision_os_version }}/slurm.json') | from_json }}" # noqa: yaml[line-length]
 
 - name: Generate postscripts for each role
   ansible.builtin.template:
-    src: "{{ role_path }}/templates/omnia_{{ item }}.j2"
-    dest: "/install/postscripts/omnia_{{ item }}"
-    mode: "0755"
+    src: "{{ role_template_path }}"
+    dest: "{{ postscripts_dest_path }}"
+    mode: "{{ file_permissions }}"
   loop: "{{ fetch_unique_roles | list | difference(['default'])}}"
   when: item in slurm_roles.keys()
   vars:
