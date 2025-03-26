@@ -44,23 +44,11 @@
       ansible.builtin.fail:
         msg: "{{ ha_config_syntax_fail_msg }} Error: {{ include_ha_config.message }}"
 
-- name: Check if k8s support is true
+- name: Set k8s, slurm, freeipa and openldap support
   ansible.builtin.set_fact:
     k8s_support: "{{ software_config.softwares | selectattr('name', 'equalto', 'k8s') | list | length > 0 }}"
-
-- name: Check if slurm support is true
-  ansible.builtin.set_fact:
     slurm_support: "{{ software_config.softwares | selectattr('name', 'equalto', 'slurm') | list | length > 0 }}"
-
-- name: Check freeipa support
-  ansible.builtin.set_fact:
     freeipa_support: "{{ software_config.softwares | selectattr('name', 'equalto', 'freeipa') | list | length > 0 }}"
-
-- name: Check openldap support
-  ansible.builtin.set_fact:
     openldap_support: "{{ software_config.softwares | selectattr('name', 'equalto', 'openldap') | list | length > 0 }}"
-
-- name: Set facts for cluster
-  ansible.builtin.set_fact:
     cluster_os_type: "{{ software_config.cluster_os_type }}"
     cluster_os_version: "{{ software_config.cluster_os_version }}"
