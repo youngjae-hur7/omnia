@@ -30,6 +30,11 @@ service_nodes_warning_msg: "[WARNING] Service nodes not found. The service role 
 but no nodes were found for this role using the specified discovery mechanism.
 Please verify that all the input parameters are valid and re-run the discovery_provision.yml"
 
+# Usage: generate_postscripts_slurm.yml
+role_template_path: "{{ role_path }}/templates/omnia_{{ item }}.j2"
+postscripts_dest_path: "/install/postscripts/omnia_{{ item }}"
+file_permissions: 0755
+
 # Usage: configure_postscripts.yml
 mlnx_ofed_repo: /install/ofed
 cuda_core_path: /install/cuda/x86_64/cuda-core
@@ -41,6 +46,7 @@ cpu_gpu_info_postscripts_path:
 provision_os_ubuntu: "ubuntu"
 ubuntu_reboot_script_path:
   - { src: "{{ role_path }}/files/omnia_reboot", dest: "/install/postscripts/omnia_reboot", mode: "755" }
+unique_role_not_found_msg: "No unique roles found. Skipping xCAT postscripts assignment."
 
 # Usage: configure_postsctipts_ntp.yml
 setup_ntp_warning_msg: |
