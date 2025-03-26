@@ -33,7 +33,7 @@ Please verify that all the input parameters are valid and re-run the discovery_p
 # Usage: generate_postscripts_slurm.yml
 role_template_path: "{{ role_path }}/templates/omnia_{{ item }}.j2"
 postscripts_dest_path: "/install/postscripts/omnia_{{ item }}"
-file_permissions: 0755
+file_permissions: 755
 
 # Usage: configure_postscripts.yml
 mlnx_ofed_repo: /install/ofed
