@@ -51,8 +51,7 @@
     - name: Apply postscripts to xCAT groups
       ansible.builtin.command:
         cmd: "{{ xcat_path }}/chdef {{ item }} -p postscripts=omnia_{{ item }}"
-      loop: "{{ fetch_unique_roles | list | difference(['default']) }}"
-      when: fetch_unique_roles | list | intersection(supported_roles) | length > 0
+      loop: "{{ fetch_unique_roles }}"
       changed_when: true
   rescue:
     - name: Warn about missing roles
