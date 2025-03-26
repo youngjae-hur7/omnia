@@ -87,6 +87,11 @@
         ldaptoolbox_openldap_olcTLSCertificateKeyFile: "{{ tls_certificates_directory_path }}/{{ hostvars['127.0.0.1']['tls_certificate_key']
          | basename }}" # noqa var-naming
 
+- name: Ensure ldap group exists
+  ansible.builtin.group:
+    name: "{{ file_group }}"
+    state: present
+
 - name: Change group permissions for certificate files
   ansible.builtin.file:
     path: "{{ item }}"
