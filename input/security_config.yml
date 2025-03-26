@@ -32,20 +32,6 @@ domain_name: "omnia.test"
 # A realm name is often, but not always the upper case version of the name of the DNS domain over which it presides
 realm_name: "OMNIA.TEST"
 
-# The directory server operations require an administrative user.
-# This user is referred to as the Directory Manager and has full access to the Directory for system management tasks
-# and will be added to the instance of directory server created for IPA.
-# The password must be at least 8 characters long
-# The password must not contain -,\, ',"
-directory_manager_password: ""
-
-# kerberos_admin_password used by IPA admin user in Rocky OS and used by 389-ds for kerberos admin password in leap OS
-# The IPA server requires an administrative user, named 'admin'.
-# This user is a regular system account used for IPA server administration
-# The password must be at least 8 characters long
-# The password must not contain -,\, ',"
-kerberos_admin_password: ""
-
 # ---------------------------OpenLDAP---------------------------
 # Connection Type can be TLS, SSL
 # If TLS is given, valid server certificates are mandatory
@@ -64,19 +50,6 @@ tls_ca_certificate: ""
 tls_certificate: ""
 # OpenLDAP Certificate key file path
 tls_certificate_key: ""
-
-# OpenLDAP server is configured using three admin users for configuration, database, and monitor
-# By default the user for configuration and database is admin
-# Monitor admin username is not to be provided as it is by default set to "monitor"
-# It is mandatory to provide password for the admin users
-# Update this variable if these users are different from admin
-# The password must be at least 8 characters long
-# The password must not contain -,\, ',"
-openldap_db_username: "admin"
-openldap_db_password: ""
-openldap_config_username: "admin"
-openldap_config_password: ""
-openldap_monitor_password: ""
 
 # OpenLDAP server is configured using organizations
 # These organizations and its units are necessary for user creation and group mapping
