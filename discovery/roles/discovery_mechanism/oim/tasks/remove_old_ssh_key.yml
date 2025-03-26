@@ -17,7 +17,10 @@
   community.postgresql.postgresql_query:
     db: omniadb
     login_user: postgres
-    query: SELECT admin_ip,hostname,node,role FROM cluster.nodeinfo where (node!='oim');
+    query: |
+      SELECT admin_ip,hostname,node,role
+      FROM cluster.nodeinfo
+      WHERE node!='oim' AND status!='booted';
     login_password: "{{ postgresdb_password }}"
   become: true
   become_user: postgres
