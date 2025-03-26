@@ -62,8 +62,6 @@ pulp_registry_port: "2225"
 
 # Usage: fetch_omnia_inputs.yml
 config_filename: "omnia_config.yml"
-config_vaultname: .omnia_vault_key
-vault_key_permission: "0644"
 min_length: 8
 max_length: 30
 omnia_config_syntax_fail_msg: "Failed. Syntax errors present in omnia_config.yml. Fix errors and re-run playbook again."
@@ -201,3 +199,4 @@ fail_msg_isipath: "isiPath must be a valid Unix absolute path in secret.yaml fil
 fail_msg_isi_volume_path_permissions: "isiVolumePathPermissions must be a valid directory permission (example: 0777) in secret.yaml file."
 fail_msg_api_call: "Please recheck powerscale username, password, endpoint and endpointPort details provided in secret.yaml and
   values.yaml (if endpointPort is provided only in values.yaml) file. API call to powerscale was not successful"
+vault_key_permission: "0644"

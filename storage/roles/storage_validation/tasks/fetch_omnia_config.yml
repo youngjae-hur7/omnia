@@ -13,38 +13,6 @@
 #  limitations under the License.
 ---
 
-- name: Check if omnia_vault_key exists
-  ansible.builtin.stat:
-    path: "{{ omnia_vault_path }}"
-  register: vault_key_result
-
-- name: Create ansible vault key if it does not exist
-  ansible.builtin.set_fact:
-    vault_key: "{{ lookup('password', '/dev/null chars=ascii_letters') }}"
-  when: not vault_key_result.stat.exists
-
-- name: Save vault key
-  ansible.builtin.lineinfile:
-    path: "{{ omnia_vault_path }}"
-    line: "{{ vault_key }}"
-    mode: "{{ vault_key_permission }}"
-    owner: root
-    create: true
-  when: not vault_key_result.stat.exists
-
-- name: Check if omnia config file is encrypted
-  ansible.builtin.command: cat {{ omnia_config_path }}
-  changed_when: false
-  register: config_content
-  no_log: true
-
-- name: Decrpyt omnia_config.yml
-  ansible.builtin.command: >-
-    ansible-vault decrypt {{ omnia_config_path }}
-    --vault-password-file {{ omnia_vault_path }}
-  when: "'$ANSIBLE_VAULT;' in config_content.stdout"
-  changed_when: true
-
 - name: Include variable file omnia_config.yml
   block:
     - name: Include variable file omnia_config.yml
@@ -62,9 +30,3 @@
   register: input_config_check
   when:
     - slurm_installation_type | default("", true) not in ["nfs_share", "configless"]
-
-- name: Encrypt input config file
-  ansible.builtin.command: >-
-    ansible-vault encrypt {{ omnia_config_path }}
-    --vault-password-file {{ omnia_vault_path }}
-  changed_when: false
