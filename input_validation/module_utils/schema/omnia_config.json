@@ -3,18 +3,6 @@
   "description": "Omina config related parameters",
   "type": "object",
   "properties": {
-    "ansible_config_file_path": {
-      "description": "ansible default config file path",
-      "type": "string",
-      "pattern":"^/|(^/[a-zA-Z0-9_-]+)+$"
-    },
-    "mariadb_password": {
-      "description": "mariadb password config",
-      "type": "string",
-      "pattern": "^(?:[^\\-\\'\\\"\\\\]*)?$",
-      "minLength": 8,
-      "maxLength": 30
-    },
     "slurm_installation_type": {
       "description":"slurm installation is supported in configless mode or slurm in nfs",
       "enum":["configless", "nfs_share"]
@@ -53,8 +41,6 @@
     }
 },
   "required": [
-     "ansible_config_file_path",
-     "mariadb_password",
      "slurm_installation_type",
      "restart_slurm_services",
      "k8s_cni",

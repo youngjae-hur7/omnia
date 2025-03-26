@@ -26,13 +26,6 @@
 
 - name: Validate input parameters are not empty
   ansible.builtin.fail:
-    msg: "{{ input_config_failure_msg }}"
-  register: input_config_check
-  when:
-    - ansible_config_file_path | default("", true) | length < 1
-
-- name: Validate input parameters are not empty
-  ansible.builtin.fail:
     msg: " {{ slurm_installation_type_empty_failure_msg }}"
   register: input_config_check
   when:
@@ -137,5 +130,4 @@
 - name: Save input variables from file
   ansible.builtin.set_fact:
     k8s_cni: "{{ k8s_cni }}"
-    ansible_conf_file_path: "{{ ansible_config_file_path }}"
     slurm_installation_type: "{{ slurm_installation_type }}"
