@@ -188,12 +188,6 @@ fi
 [ -d $venv_location ] || mkdir $venv_location
 [ -d /var/log/omnia ] || mkdir /var/log/omnia
 
-if [[ "$OS_ID" == "rocky" ]]; then
-  echo "------------------------"
-  echo "INSTALLING EPEL RELEASE:"
-  echo "------------------------"
-  dnf install epel-release -y
-fi
 
 allow_unauth_apt=""
 echo ""

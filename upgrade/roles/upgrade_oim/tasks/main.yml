@@ -46,7 +46,7 @@
     - name: Upgrade omnia_telemetry binary
       ansible.builtin.include_role:
         name: omnia_telemetry
-    
+
   rescue:
     - name: Failed to upgrade Omnia Infrastructure Manager
       ansible.builtin.fail:

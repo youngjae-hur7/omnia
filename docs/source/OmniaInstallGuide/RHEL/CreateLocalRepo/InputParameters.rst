@@ -20,8 +20,8 @@ Input parameters for Local Repositories
             "cluster_os_version": "8.8",
             "repo_config": "partial",
             "softwares": [
-                {"name": "amdgpu", "version": "6.2.2"},
-                {"name": "cuda", "version": "12.3.2"},
+                {"name": "amdgpu", "version": "6.3.1"},
+                {"name": "cuda", "version": "12.8.0"},
                 {"name": "ofed", "version": "24.01-0.3.3.1"},
                 {"name": "freeipa"},
                 {"name": "openldap"},
@@ -46,7 +46,7 @@ Input parameters for Local Repositories
             ],
 
             "amdgpu": [
-                {"name": "rocm", "version": "6.2.2" }
+                {"name": "rocm", "version": "6.3.1" }
             ],
             "vllm": [
                 {"name": "vllm_amd"},
@@ -97,7 +97,8 @@ For a list of repositories (and their types) configured for AMD GPUs, view the `
       },
       "rocm": {
         "cluster": [
-          {"package": "rocm-hip-sdk{{ rocm_version }}*", "type": "deb", "repo_name": "rocm"}
+          {"package": "rocm", "type": "rpm", "repo_name": "rocm"}
+          {"package": "rocm-validation-suite", "type": "rpm", "repo_name": "rocm"}
         ]
       }
     }
