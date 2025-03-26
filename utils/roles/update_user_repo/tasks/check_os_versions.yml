@@ -40,9 +40,9 @@
     os_no_match: true
   when: cluster_os_version != oim_os_version
 
-- name: Set distro to nobel (Ubuntu 24 OS)
+- name: Set distro to noble (Ubuntu 24 OS)
   ansible.builtin.set_fact:
-    distro: "nobel"
+    distro: "noble"
   when: cluster_os_type == 'ubuntu' and cluster_os_version == '24.04'
 
 - name: Set distro to jammy (Ubuntu 22 OS)
