@@ -25,5 +25,7 @@
     state: absent
 
 - name: Save container images
-  ansible.builtin.command: "podman save -m -o {{ images_directory_path }}/{{ container_tar_file }} {{ container_images }}"
-  changed_when: true
+  containers.podman.podman_save:
+    image: "{{ container_images }}"
+    dest: "{{ images_directory_path }}"
+    multi_image_archive: true

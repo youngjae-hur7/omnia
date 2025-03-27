@@ -65,6 +65,7 @@
   tags: deploy_containers
   roles:
     - role: deploy_containers/common  # noqa:role-name[path]
+    - role: deploy_containers/pcs  # noqa:role-name[path]
     - role: deploy_containers/provision  # noqa:role-name[path]
     - role: deploy_containers/pulp  # noqa:role-name[path]
     - role: deploy_containers/kubespray  # noqa:role-name[path]
@@ -88,15 +89,6 @@
       vars:
         target_port: "{{ kubespray_ssh_port }}"
 
-# PCS container has to be deployed after all containers are deployed
-- name: Deploy pcs container
-  hosts: oim
-  connection: ssh
-  gather_facts: false
-  tags: deploy_containers
-  roles:
-    - role: deploy_containers/pcs  # noqa:role-name[path]
-  
 - name: Configure Pulp container
   hosts: localhost
   connection: local
@@ -115,12 +107,21 @@
         name: deploy_containers/provision
         tasks_from: configure_provision_container.yml
 
+- name: Deploy PCS container resources
+  hosts: oim
+  connection: ssh
+  tasks:
+    - name: Create all PCS container resources # noqa:role-name[path]
+      ansible.builtin.include_role:
+        name: deploy_containers/pcs
+        tasks_from: deploy_pcs_container_resources.yml
+
 - name: Save container images to NFS share
   hosts: oim
   connection: ssh
   gather_facts: false
   roles:
-    - role: save_container_images  
+    - role: save_container_images
       when: hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.enable_oim_ha and omnia_share_option == 'NFS'
 
 - name: Prepare oim completion
