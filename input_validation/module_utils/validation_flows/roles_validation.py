@@ -79,6 +79,55 @@ def validate_group_duplicates(input_file_path):
 
     return errors
 
+def validate_layer_group_separation(roles):
+    """
+    Validates that groups are not shared between frontend and compute layers.
+
+    Args:
+        roles (list): List of role dictionaries from the config
+
+    Returns:
+        list: List of validation errors
+    """
+    errors = []
+
+    # Define layer roles
+    frontend_roles = {
+        "service", "login", "auth_server", "compiler",
+        "kube_control_plane", "etcd", "slurm_control_node", "slurm_dbd"
+    }
+    compute_roles = {"kube_node", "slurm_node", "default"}
+
+    # Single pass through roles to build mappings and check for same group usage
+    group_layer_mapping = {}  # {group: {"frontend": [roles], "compute": [roles]}}
+
+    for role in roles:
+        role_name = role.get("name", "")
+        role_groups = role.get("groups", [])
+
+        # Determine which layer this role belongs to
+        if role_name in frontend_roles:
+            layer = "frontend"
+        elif role_name in compute_roles:
+            layer = "compute"
+        else:
+            continue
+
+        # Process each group for this role
+        for group in role_groups:
+            if group not in group_layer_mapping:
+                group_layer_mapping[group] = {"frontend": [], "compute": []}
+            group_layer_mapping[group][layer].append(role_name)
+
+    # Check for violations and build error messages
+    for group, layers in group_layer_mapping.items():
+        if layers["frontend"] and layers["compute"]:
+            errors.append(create_error_msg("Roles", None,
+                en_us_validation_msg.duplicate_group_name_in_layers_msg(group,
+                    ', '.join(sorted(layers['frontend'])), ', '.join(sorted(layers['compute'])))))
+
+    return errors
+
 def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir, project_name):
     """
     Validates the L2 logic of the roles_config.yaml file.
@@ -109,11 +158,11 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
     errors = []
     # Empty file validation
     if not data:
-        errors.append(create_error_msg("config_roles.yml,", None, "EMPTY roles_config.yml"))
+        errors.append(create_error_msg("roles_config.yml,", None, "EMPTY roles_config.yml"))
         return errors
 
-    roles = data.get(ROLES)
-    groups = data.get(GROUPS)
+    roles = data.get(ROLES, [])
+    groups = data.get(GROUPS, [])
 
     # Validate basic structure
     errors.extend(validate_basic_structure(data, roles, groups))
@@ -123,6 +172,12 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
     # Check for duplicate groups if groups section exists
     if groups is not None:
         errors.extend(validate_group_duplicates(input_file_path))
+        if errors:
+            return errors
+
+    # Validate same group usage among layers
+    if roles is not None:
+        errors.extend(validate_layer_group_separation(roles))
         if errors:
             return errors
 

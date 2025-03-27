@@ -19,7 +19,7 @@ max_number_of_roles_msg = "A max of 100 roles can be supported."
 min_number_of_groups_msg = "At least 1 group is required."
 min_number_of_roles_msg = "At least 1 role is required."
 max_number_of_roles_per_group_msg = "Groups can support a maximum of 5 roles."
-resource_mgr_id_msg = "The resource_mgr_id needs to be set if and only if the group belongs to kube_node or slurm_node roles."
+resource_mgr_id_msg = "The resource_mgr_id is mandatory if the group is mapped to kube_node or slurm_node roles."
 grp_exist_msg = "A valid group must be provided."
 invalid_switch_ip_msg = "Please provide a valid switch IPv4 address (example: 10.5.0.1)."
 grp_role_msg = "Please associate this group with a role."
@@ -38,6 +38,8 @@ no_groups_msg = "Outer Group object was probably not defined."
 no_roles_msg = "Outer Role object was probably not defined."
 invalid_switch_ports_msg = "Please provide any port ranges as start-end (example: 0-15,4:4,51-53)."
 duplicate_group_name_msg = "Duplicate group names are not allowed."
+def duplicate_group_name_in_layers_msg(group_name, frontend, compute):
+    return f"The following groups are mapped to both frontend and compute layers, which is not allowed for group: [{group_name}] in frontend layer: [{frontend}] and compute layer: [{compute}]"
 
 # provision_config.yml
 default_lease_time_fail_msg = "Please provide a valid default_lease_time."
