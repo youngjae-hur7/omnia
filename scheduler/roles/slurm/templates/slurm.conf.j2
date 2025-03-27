@@ -8,6 +8,7 @@ SlurmctldHost={{ hostvars[host]['ansible_nodename'] | split('.') | first }}
 {% if slurm_ctld_parameters | length > 0 %}
 SlurmctldParameters={{ slurm_ctld_parameters | join(',') }}
 {% endif %}
+PluginDir={{ installroot }}{{ plugin_slurm_dir }}
 {% for key in slurm_conf_dict | sort %}
 {% set val = slurm_conf_dict[key] %}
 {% if val is not none and val != omit %}

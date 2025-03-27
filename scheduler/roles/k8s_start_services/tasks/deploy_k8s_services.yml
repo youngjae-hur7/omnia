@@ -156,7 +156,7 @@
 - name: Deploy Xilinx Device plugin
   ansible.builtin.command: "kubectl create -f '{{ xilinx_device_plugin_yaml_url }}'"
   changed_when: true
-  when: "'device-plugin-daemonset' not in k8s_pods.stdout"
+  when: "'device-plugin-daemonset' not in k8s_daemonset.stdout"
 
 # NFS CLIENT PROVISIONER
 - name: Start NFS Client Provisioner using NFS on manager node

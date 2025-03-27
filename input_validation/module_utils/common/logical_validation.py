@@ -24,7 +24,6 @@ import roles_validation
 def validate_input_logic(input_file_path, data, logger, module, omnia_base_dir, project_name):
     # Based on the file_name, run validation function
     validation_functions = {
-        "provision_config_credentials.yml": provision_validation.validate_provision_config_credentials,
         "provision_config.yml": provision_validation.validate_provision_config,
         "software_config.json": common_validation.validate_software_config,
         "network_spec.yml": provision_validation.validate_network_spec,
@@ -43,7 +42,7 @@ def validate_input_logic(input_file_path, data, logger, module, omnia_base_dir, 
         "roles_config.yml": roles_validation.validate_roles_config,
         "high_availability_config.yml": common_validation.validate_high_availability_config
     }
-    
+
     path_parts = input_file_path.split("/")
     file_name = path_parts[-1]
     validation_function = validation_functions.get(file_name, None)

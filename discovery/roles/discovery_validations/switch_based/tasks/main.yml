@@ -1,4 +1,4 @@
-# Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,17 +13,10 @@
 #  limitations under the License.
 ---
 
-- name: Check if discovery mechanism is switch_based
-  ansible.builtin.include_tasks: validate_switch_mechanism.yml
+- name: Initialize variable
+  ansible.builtin.set_fact:
+    discovery_mech_switch_based: false
 
-- name: Validate switch based parameters when discovery mechanism is switch_based
-  when: enable_switch_based
-  block:
-    - name: Validate proper switch details
-      ansible.builtin.include_tasks: validate_switch_based_details.yml
-
-    - name: Validate switch snmp v3 details
-      ansible.builtin.include_tasks: validate_switch_snmp_params.yml
-
-    - name: Validate bmc details status
-      ansible.builtin.include_tasks: validate_bmc_details_status.yml
+- name: Validate proper switch details
+  ansible.builtin.include_tasks: validate_switch_based_details.yml
+  when: switch_status | default(false)

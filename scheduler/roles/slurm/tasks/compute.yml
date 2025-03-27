@@ -19,14 +19,13 @@
 
 - name: Enable SlurmdPort
   ansible.posix.firewalld:
-    port: "{{ slurm_conf_dict['SlurmdPort'] }}/tcp"
+    port: "{{ item }}/tcp"
     permanent: true
     state: enabled
     immediate: true
-
-- name: Append share path if NFS
-  ansible.builtin.set_fact:
-    slurm_share_prefix: "{{ share_path }}/{{ slurm_dir_name }}"
+  loop:
+    - "{{ slurm_conf_dict['SlurmdPort'] }}"
+    - "{{ slurm_conf_dict['SrunPortRange'] }}"
 
 # file and directory permissions
 - name: Ensure directories - {{ item }}
@@ -50,6 +49,11 @@
   loop:
     - "{{ slurm_conf_dict['SlurmdLogFile'] }}"
     - "{{ slurm_conf_dict['SlurmdPidFile'] }}"
+
+- name: Remove the local slurm conf # !!?? this is taking prirority
+  ansible.builtin.file:
+    path: "/{{ slurm_config_dir }}/slurm.conf"
+    state: absent
 
 - name: Configless settings
   ansible.builtin.include_tasks: _configless.yml
