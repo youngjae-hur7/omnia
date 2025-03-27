@@ -14,7 +14,7 @@
 ---
 
 - name: Integrate mapping file with DB
-  mapping_nodeinfo_db_update:
+  update_mapping_nodeinfo_db:
     node_details: "{{ mapping_details }}"
     domain_name: "{{ domain_name }}"
     discovery_mechanism: "{{ mapping_node_group }}"
@@ -32,7 +32,7 @@
   when: enable_oim_ha
 
 - name: Integrate passive OIM node mappings with DB
-  mapping_nodeinfo_db_update:
+  update_mapping_nodeinfo_db:
     node_details: "{{ passive_node_details }}"
     domain_name: "{{ domain_name }}"
     discovery_mechanism: "{{ passive_oim_mapping }}"
