@@ -59,9 +59,9 @@
         - compute_os_version == "24.04"
 
     - name: Enable lldpad systemd service
-      systemd:
+      ansible.builtin.systemd:
         name: lldpad
-        enabled: yes
+        enabled: true
         state: started
 
     - name: Remove (old) Gaudi kernel modules if present
