@@ -15,6 +15,7 @@
 
 - name: Include input project directory
   ansible.builtin.import_playbook: ../utils/include_input_dir.yml
+  tags: always
 
 - name: Create kubespray container group
   ansible.builtin.import_playbook: ../utils/create_container_group.yml
