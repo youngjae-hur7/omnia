@@ -13,40 +13,37 @@
 #  limitations under the License.
 ---
 
-- name: Assert that switch_based_details are not empty
-  ansible.builtin.assert:
-    that:
-      - switch_based_details | length > 0
-    success_msg: "{{ switch_details_success_msg }}"
-    fail_msg: "{{ switch_details_fail_msg }}"
+- name: Check switch reachability
+  ping_switch:
+    groups_roles_info: "{{ groups_roles_info }}"
+  register: switch_ping_status
 
-- name: Assert details fro switch_based_details
-  ansible.builtin.assert:
-    that:
-      - item.ip != None
-      - item.ip | ansible.utils.ipv4
-      - item.ports != ''
-    success_msg: "{{ switch_details_success_msg }}"
-    fail_msg: "{{ switch_details_fail_msg }}"
-  with_items: "{{ switch_based_details }}"
+- name: Show reachable switches
+  ansible.builtin.debug:
+    var: switch_ping_status.reachable_switch_groups
 
-- name: Create list of switch IPs
+- name: Set fact for reachable and unreachable switches
   ansible.builtin.set_fact:
-    switch_based_ip_list: "{{ switch_based_ip_list | default([]) + [item.ip] }}"
-  with_items: "{{ switch_based_details }}"
+    reachable_switch_ip_groups: "{{ switch_ping_status.reachable_switch_groups }}"
+    unreachable_switch_ip_groups: "{{ switch_ping_status.unreachable_switch_groups }}"
+    discovery_mech_switch_based: "{{ switch_ping_status.switch_status }}"
+    switch_status: "{{ switch_ping_status.switch_status }}"
 
-- name: Create list of switch IPs - Ensure unique
-  ansible.builtin.set_fact:
-    switch_based_ip_list: "{{ switch_based_ip_list | unique }}"
+- name: Warning for unreachable switches
+  when: unreachable_switch_ip_groups | length > 0
+  block:
+    - name: Display warning if there are unreachable switches
+      ansible.builtin.debug:
+        msg: "{{ switch_unreachable_message }}"
 
-- name: Fail if unique IPs are not present
-  ansible.builtin.fail:
-    msg: "{{ fail_unique_switch_v3_ip }}"
-  when: switch_based_ip_list | union(switch_based_details) | length != (switch_based_ip_list | length + switch_based_details | length)
+    - name: Warning for unreachable switches
+      ansible.builtin.pause:
+        seconds: "{{ warning_wait_time }}"
+        prompt: "{{ warning_switch_unreachable_message }}"
 
-- name: Test using ping
-  ansible.builtin.command: |
-    {{ python_version }}  {{ ping_switch_py }} {{ item.ip }}
-  register: ping_switchv3
-  with_items: "{{ switch_based_details }}"
-  changed_when: false
+- name: Warning none of groups have reachable switch ip
+  when: reachable_switch_ip_groups | length == 0
+  block:
+    - name: Switch based discovery will be skipped
+      ansible.builtin.debug:
+        msg: "{{ switch_based_skip_msg }}"

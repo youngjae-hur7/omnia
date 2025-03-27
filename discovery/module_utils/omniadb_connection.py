@@ -15,6 +15,7 @@
 import psycopg2 as pg
 from psycopg2.extras import DictCursor
 from cryptography.fernet import Fernet
+import sys
 
 key_file_path = '/opt/omnia/.postgres/.postgres_pass.key'
 pass_file_path = '/opt/omnia/.postgres/.encrypted_pwd'
@@ -121,24 +122,25 @@ def insert_node_info(service_tag, node, hostname, admin_mac, admin_ip, bmc_ip, g
     conn.commit()
     conn.close()
 
-def insert_switch_info(cursor, switch_name, switch_ip):
+def insert_switch_info(switch_name, switch_ip, group):
     """
     Inserts switch details into the cluster.switchinfo table.
 
     Parameters:
-        cursor (psycopg2.extensions.cursor): The database cursor.
         switch_name (str): The name of the switch.
         switch_ip (str): The IP address of the switch.
 
     Returns:
         None
     """
+    conn = create_connection()
+    cursor = conn.cursor()
     # Insert switch details to cluster.switchinfo table
-    sql = '''INSERT INTO cluster.switchinfo(switch_name,switch_ip) VALUES (%s,%s)'''
-    params = (switch_name, switch_ip)
+    sql = '''INSERT INTO cluster.switchinfo(switch_name,switch_ip, group_name) VALUES (%s,%s,%s)'''
+    params = (switch_name, switch_ip, group)
     cursor.execute(sql, params)
 
-    print(f"Inserted switch_ip: {switch_ip} with switch_name: {switch_name} into cluster.switchinfo table")
+    return f"Inserted switch_ip: {switch_ip} with switch_name: {switch_name} into cluster.switchinfo table"
 
 def get_data_from_db(db='omniadb', table_name='cluster.nodeinfo', filter_dict={}):
     """
@@ -217,3 +219,30 @@ def get_db_connection(db):
         sys.exit(f"Invalid database: {db}")
 
     return conn
+
+def execute_select_query(query, db='omniadb', params=None):
+    """
+    Executes a user-provided query on the given database and returns the result.
+
+    Parameters:
+        query (str): The SQL query to execute.
+        db (str): The database name, default is 'omniadb'.
+        params (tuple, optional): Parameters for the query to prevent SQL injection.
+
+    Returns:
+        list: Query result as a list of dictionaries.
+
+    Raises:
+        Exception: If the query execution fails.
+    """
+    conn = get_db_connection(db)
+    cursor = conn.cursor(cursor_factory=DictCursor)
+
+    try:
+        cursor.execute(query, params or ())
+        result = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return [dict(row) for row in result]  # Convert to list of dicts
+    except Exception as ex:
+        sys.exit(f"Failed to execute query: {ex}")

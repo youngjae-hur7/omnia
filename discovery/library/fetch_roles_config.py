@@ -151,12 +151,15 @@ def roles_groups_mapping(groups_data, roles_data, layer):
         tuple: A tuple containing the following:
             - bmc_check (bool): A boolean indicating if BMC is required.
             - switch_check (bool): A boolean indicating if switch is required.
+            - hierarchical_provision_status (bool): A boolean indicating if hierarchical provisioning is required.
             - roles_groups_data (dict): A dictionary containing the roles and groups data.
             - groups_roles_info (dict): A dictionary containing the groups and roles information.
+            - hierarchical_service_data (dict): A dictionary containing the hierarchical service node data.
 
     Raises:
         Exception: If a group doesn't exist in the roles_config.yml Groups dict.
     """
+
 
     valid_roles = filter_roles(groups_data, roles_data, layer)
 
@@ -174,9 +177,11 @@ def roles_groups_mapping(groups_data, roles_data, layer):
                 groups_roles_info.setdefault(group, {}).setdefault('roles', []).append(role)
                 groups_roles_info[group].update(groups_data.get(group))
                 grp_bmc_check = check_bmc_required(groups_data[group])
-                bmc_check = bmc_check or grp_bmc_check
                 grp_switch_check = grp_bmc_check and check_switch_required(groups_data[group], layer)
+                # For a group bmc will be false if switch is true
+                grp_bmc_check = False if grp_switch_check else grp_bmc_check
                 switch_check = switch_check or grp_switch_check
+                bmc_check = bmc_check or grp_bmc_check
                 service_node = check_hierarchical_provision(group, groups_data, roles_data, layer)
                 if service_node:
                     snode_name = list(service_node.keys())[0]

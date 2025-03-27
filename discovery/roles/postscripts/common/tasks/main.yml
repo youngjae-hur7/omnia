@@ -46,7 +46,7 @@
       when: all_node_status
 
     - name: Generation of postscripts
-      ansible.builtin.include_tasks: generate_postscripts_slurm.yml
+      ansible.builtin.include_tasks: generate_role_based_postscripts.yml
       when: all_node_status
 
     - name: Configuration of postscripts

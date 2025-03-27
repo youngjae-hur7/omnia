@@ -177,8 +177,8 @@ def reassign_bmc_ip(cursor, bmc_static_start_ip, bmc_static_end_ip):
         output = check_presence_bmc_ip(cursor, temp_bmc_ip)
         if not output:
             return temp_bmc_ip
-        elif output and temp_bmc_ip < bmc_static_end_ip:
-            temp_bmc_ip = ipaddress.IPv4Address(temp_bmc_ip) + 1
-        elif temp_bmc_ip > bmc_static_end_ip:
+        elif temp_bmc_ip >= bmc_static_end_ip:
             sys.exit(
                 "We have reached the end of bmc_static_ranges. Please do a cleanup and provide a wider range, if more nodes needs to be discovered.")
+        else:
+            temp_bmc_ip = ipaddress.IPv4Address(temp_bmc_ip) + 1
