@@ -16,9 +16,11 @@
 # Usage: main.yml
 no_inventory_file_provided: "Inventory file not provided. Please specify the inventory file using -i option."
 default_inv_path: '/etc/ansible/hosts'
+omnia_inventory_file: '/opt/omnia/omnia_inventory/cluster_layout'
+omnia_inventory_confirmation: "DEFAULT OMNIA GENERATED INVENTORY '{{ omnia_inventory_file }}' is provided, Are you sure you want to remove? Type 'yes' to remove cluster"
 warning_msg: "[WARNING] This utility will remove slurm and kubernetes configuration from node hence job scheduling need to disable on node.
-Abort play if any jobs are running on the given slurm or kube node.
-Recommeded to drain node to disable job scheduling."
+ Abort play if any jobs are running on the given slurm or kube node.
+ Recommeded to drain node to disable job scheduling."
 warning_wait_time: 10
 confirmation_msg: "Are you sure you want to remove slurm or k8s configuration from slurm or kube node? Type 'yes' to proceed."
 confirmation_fail_msg: "Remove node configuration confirmation failed"
