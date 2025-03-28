@@ -42,6 +42,10 @@
     - servicetag_host_mapping
   tags: always
 
+- name: Validate inventory
+  ansible.builtin.import_playbook: ../utils/inventory_validation.yml
+  when: not ( hostvars['127.0.0.1']['inventory_validation_executed'] | default(false) | bool )
+    
 - name: Proceeding to remove slurm login node
   tags: login_node
   hosts: localhost

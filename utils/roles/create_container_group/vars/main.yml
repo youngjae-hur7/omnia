@@ -20,7 +20,8 @@ oim_host_group: "oim"
 provision_container_port: "2223"
 provision_container_name: "omnia_provision"
 kubespray_container_port: "2224"
-kubespray_container_name: "omnia_kubespray"
+kubespray_container_hostname: "omnia_kubespray"
+kubespray_container_name: "omnia_kubespray_v2.27.0"
 
 # Usage: validate_provision_container.yml
 provision_container_status_msg: "Provision container Status: {{ provision_container_status.containers[0].State.Status }}"

@@ -42,6 +42,10 @@
     - servicetag_host_mapping
   tags: always
 
+- name: Validate inventory
+  ansible.builtin.import_playbook: ../utils/inventory_validation.yml
+  when: not ( hostvars['127.0.0.1']['inventory_validation_executed'] | default(false) | bool )
+
 - name: Proceeding to remove slurm cluster
   hosts: slurm_node, login, slurm_control_node
   connection: ssh
@@ -93,7 +97,7 @@
           register: k8s_reset_result  # Register the result to capture job ID
           changed_when: false
 
-        - name: Wait for the Kubernetes rest cluster to finish. Logs can be checked at /opt/omnia/log/kubespray/k8s_reset_cluster.log
+        - name: Wait for the Kubernetes reset cluster to finish. Logs can be checked at /opt/omnia/log/kubespray/k8s_reset_cluster.log
           ansible.builtin.async_status:
             jid: "{{ k8s_reset_result.ansible_job_id }}"  # Job ID from the previous task
           register: job_result
