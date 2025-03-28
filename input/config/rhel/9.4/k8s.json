@@ -243,6 +243,11 @@
       },
       {
         "package": "ghcr.io/k8snetworkplumbingwg/multus-cni",
+        "tag": "v4.1.4-thick",
+        "type": "image"
+      },
+      {
+        "package": "ghcr.io/k8snetworkplumbingwg/multus-cni",
         "tag": "snapshot",
         "type": "image"
       },
