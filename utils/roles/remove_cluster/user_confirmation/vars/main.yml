@@ -17,7 +17,8 @@
 no_inventory_file_provided: "Inventory file not provided. Please specify the inventory file using -i option."
 default_inv_path: '/etc/ansible/hosts'
 omnia_inventory_file: '/opt/omnia/omnia_inventory/cluster_layout'
-omnia_inventory_confirmation: "DEFAULT OMNIA GENERATED INVENTORY '{{ omnia_inventory_file }}' is provided, Are you sure you want to remove? Type 'yes' to remove cluster"
+omnia_inventory_confirmation: "DEFAULT OMNIA GENERATED INVENTORY '{{ omnia_inventory_file }}' is provided,
+ Are you sure you want to remove? Type 'yes' to remove cluster"
 warning_msg: "[WARNING] This will remove Slurm/ Kuberentes cluster.
 Abort play if any jobs are running on give slurm_node or kube_node.
 Recommeded to drain node to disable job scheduling"
