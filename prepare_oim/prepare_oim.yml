@@ -58,7 +58,7 @@
 #   ansible.builtin.import_playbook: ../input_validation/validate_config.yml
 #   when: hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.enable_oim_ha | default(false)
 
-- name: Deploy all container
+- name: Deploy the PCS container
   hosts: oim
   connection: ssh
   gather_facts: false
@@ -66,6 +66,22 @@
   roles:
     - role: deploy_containers/common  # noqa:role-name[path]
     - role: deploy_containers/pcs  # noqa:role-name[path]
+
+- name: Configure admin_ip with VIP if high availability is enabled
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Configure virtual IP as admin_ip task # noqa:role-name[path]
+      ansible.builtin.include_role:
+        name: deploy_containers/common
+        tasks_from: set_vip.yml
+
+- name: Deploy all other containers
+  hosts: oim
+  connection: ssh
+  gather_facts: false
+  tags: deploy_containers
+  roles:
     - role: deploy_containers/provision  # noqa:role-name[path]
     - role: deploy_containers/pulp  # noqa:role-name[path]
     - role: deploy_containers/kubespray  # noqa:role-name[path]

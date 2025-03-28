@@ -14,6 +14,11 @@
 ---
 
 - name: Set virtual IP as admin IP if OIM high availability is enabled
-  ansible.builtin.set_fact:
-    admin_nic_ip: "{{ hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.virtual_ip_address }}"
   when: hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.enable_oim_ha | default(false) and hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.virtual_ip_address is defined
+  block:
+    - name: Set original_admin_nic_ip
+      ansible.builtin.set_fact:
+        original_admin_nic_ip: "{{ hostvars['localhost']['admin_nic_ip'] }}"
+    - name: Set admin_nic_ip
+      ansible.builtin.set_fact:
+        admin_nic_ip: "{{ hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.virtual_ip_address }}"
