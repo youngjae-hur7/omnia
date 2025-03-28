@@ -48,8 +48,8 @@ def load_yaml_as_json(yaml_file, omnia_base_dir, project_name, logger, module):
 
         error_context = " | ".join(error_parts)
         logger.error(error_context)
-        module.fail_json(msg=error_context)
-        raise Exception(error_context)
+        # Instead of raising exception immediately, return None to indicate validation failure, in case there are other validations to perform
+        return None
 
 def create_error_msg(key, value, msg):
     return {"error_key": key, "error_value": value, "error_msg": msg}

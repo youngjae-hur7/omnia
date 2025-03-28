@@ -158,7 +158,7 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
     errors = []
     # Empty file validation
     if not data:
-        errors.append(create_error_msg("roles_config.yml,", None, "EMPTY roles_config.yml"))
+        errors.append(create_error_msg("roles_config.yml,", None, en_us_validation_msg.empty_or_syntax_error_roles_config_msg))
         return errors
 
     roles = data.get(ROLES, [])

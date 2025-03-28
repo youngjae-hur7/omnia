@@ -280,8 +280,13 @@ def main():
         """
         try:
             input_data, extension = get_input_data(input_file_path)
-            schema = json.load(open(schema_file_path, "r"))
 
+            # If input_data is None, it means there was a YAML syntax error
+            if input_data is None:
+                return False
+
+            # Load schema
+            schema = json.load(open(schema_file_path, "r"))
             logger.debug(en_us_validation_msg.get_validation_initiated(input_file_path))
 
             # Validate the input file with the schema and output the errors
