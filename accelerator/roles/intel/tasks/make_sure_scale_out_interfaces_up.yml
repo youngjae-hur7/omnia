@@ -106,20 +106,23 @@
     mode: "{{ file_permissions }}"
 
 - name: Check if the service is installed
-  ansible.builtin.command: systemctl status {{ intel_scale_up_ports_service_name }}
+  ansible.builtin.systemd:
+    name: {{ intel_scale_up_ports_service_name }}
+    state: started
   register: service_status
-  ignore_errors: true
+  ignore_errors: yes
+  failed_when: false
   changed_when: false
 
 - name: Ensure the service directory exists
-  when: service_status.rc != 0
+  when: service_status.status is not defined
   ansible.builtin.file:
     path: "{{ intel_scale_up_ports_service_dir }}"
     state: directory
     mode: '0755'
 
 - name: Create the systemd service unit file
-  when: service_status.rc != 0
+  when: service_status.status is not defined
   ansible.builtin.copy:
     dest: "{{ intel_scale_up_ports_service_dir }}/{{ intel_scale_up_ports_service_name }}"
     content: |
@@ -140,7 +143,7 @@
     mode: '0644'
 
 - name: Reload systemd to pick up new service
-  when: service_status.rc != 0
+  when: service_status.status is not defined
   ansible.builtin.systemd:
     daemon_reload: true
 
