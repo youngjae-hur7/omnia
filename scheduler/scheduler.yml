@@ -53,7 +53,7 @@
 
 - name: Prepare kube control plane for kubernetes installations
   hosts: kube_control_plane
-  gather_facts: true 
+  gather_facts: true
   roles:
     - k8s_manager
 
