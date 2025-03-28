@@ -247,9 +247,19 @@
         "type": "image"
       },
       {
+        "package": "ghcr.io/k8snetworkplumbingwg/multus-cni",
+        "tag": "snapshot",
+        "type": "image"
+      },
+      {
         "package": "ghcr.io/k8snetworkplumbingwg/whereabouts",
         "tag": "latest",
         "type": "image"
+      },
+      {
+      "package": "multus-daemonset",
+       "type": "manifest",
+       "url": "https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset.yml"
       },
       {
            "package": "whereabouts",

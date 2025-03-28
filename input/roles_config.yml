@@ -25,7 +25,7 @@
 # This file contains Roles and Groups used by the omnia for cluster formation.
 # Groups: - Groups will contain the list of groups defined by the user. User must define atleast one group.
 #   grpN:                 - <Mandatory> "grpN" -  User defined name of the group. Range for N is 0-99
-#     location_id:        - <Mandatory> su-<n>.rack-<n> Scalable unit and rack number range is 0-99.
+#     location_id:        - <Mandatory> SU-<n>.RACK-<n> Scalable unit and rack number range is 0-99. This input is case-sensitive. Please use uppercase letters only.
 #     resource_mgr_id:    - <Conditional Mandatory> list of service tag of active head node(s).
 #                         - Set the value only for group of nodes belonging to kube_node and slurm_node roles,
 #                         - And empty for other roles.
@@ -43,7 +43,7 @@
 
 Groups:
   grp0:
-    location_id: su-1.rack-1
+    location_id: SU-1.RACK-1
     resource_mgr_id: ""
     parent: ""
     bmc_details:
@@ -54,7 +54,7 @@ Groups:
     architecture: "x86"
 
   # grp1:
-  #   location_id: su-1.rack-2
+  #   location_id: SU-1.RACK-2
   #   resource_mgr_id: ""
   #   parent: ""
   #   bmc_details:

@@ -10,7 +10,7 @@
           "properties": {
             "location_id": {
               "type": "string",
-              "description": "Scalable unit and rack number range is 0-99. Format: su-<n>.rack-<n>",
+              "description": "Scalable unit and rack number range is 0-99. Format: SU-<n>.RACK-<n>",
               "pattern": "^(SU-\\d{1,2}\\.RACK-\\d{1,2})$"
             },
             "resource_mgr_id": {
