@@ -22,7 +22,7 @@ ha_config_syntax_fail_msg: "Failed. Syntax errors present in high_availability_c
 # Usage: validate_inventory.yml
 empty_inventory_fail_msg: |
   "Failed. inventory not provided. Re-run playbook with inventory by providing -i inventory.
-  Inventory support groups are slurm_control_node, slurm_node, slurm_dbd, login, kube_control_plane, kube_node, etcd, auth_server"
+  Inventory support groups are slurm_control_node, slurm_node, login, kube_control_plane, kube_node, etcd, auth_server"
 cluster_layout_path: "/opt/omnia/omnia_inventory/cluster_layout"
 warning_wait_time: 30
 inventory_warn_msg: |
@@ -80,6 +80,9 @@ multiple_login_node_fail_msg: "Failed. Currently only one login node supported i
 login_node_warning_msg: |
   "[WARNING] login group with ip for login node not present in the inventory.
   Proceeding execution with provided nodes"
+slurm_node_validation_fail_msg: |
+  "Failed. slurm software is present in software_config.json.
+  There should be atleast one entry for slurm_node in the inventory."
 
 # Usage: validate_inventory.yml
 invalid_auth_server_inventory_fail_msg: |
