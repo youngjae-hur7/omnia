@@ -107,10 +107,10 @@
 
 - name: Check if the service is installed
   ansible.builtin.systemd:
-    name: {{ intel_scale_up_ports_service_name }}
+    name: "{{ intel_scale_up_ports_service_name }}"
     state: started
   register: service_status
-  ignore_errors: yes
+  ignore_errors: true
   failed_when: false
   changed_when: false
 
