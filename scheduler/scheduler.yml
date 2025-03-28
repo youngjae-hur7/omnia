@@ -51,7 +51,7 @@
 
 - name: Prepare kube control plane for kubernetes installations
   hosts: kube_control_plane
-  gather_facts: false
+  gather_facts: true 
   roles:
     - k8s_manager
 
@@ -70,9 +70,6 @@
     dir_mode: '0755'
   tasks:
     - name: Install Kubernetes using kubespray
-      when:
-        - hostvars['127.0.0.1']['k8s_support']
-        - not hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
       block:
         - name: Copy k8s_start_setup to kubespray nfs share
           ansible.builtin.copy:
@@ -105,6 +102,9 @@
           until: job_result.finished
           retries: 60  # Retry the task 60 times (10 min total)
           delay: 10  # Wait 10 seconds between retries
+      when:
+        - hostvars['127.0.0.1']['k8s_support']
+        - not hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
 
 - name: Add nodes to kubernetes cluster
   hosts: omnia_kubespray
@@ -113,11 +113,7 @@
     k8s_logs_dir: "/opt/omnia/log/kubespray"
     dir_mode: '0755'
   tasks:
-    - name: Add new nodes using kubespray
-      when:
-        - hostvars['127.0.0.1']['k8s_support']
-        - hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
-        - hostvars[groups['kube_control_plane'][0]]['k8s_new_nodes'] != ''
+    - name: Add nodes to kubernetes cluster
       block:
         - name: Copy k8s_add_node to kubespray nfs share
           ansible.builtin.copy:
@@ -152,6 +148,10 @@
           until: job_result.finished
           retries: 60  # Retry the task 60 times (10 min total)
           delay: 10  # Wait 10 seconds between retries
+      when:
+        - hostvars['127.0.0.1']['k8s_support']
+        - hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
+        - hostvars[groups['kube_control_plane'][0]]['k8s_new_nodes'] != ''
 
 - name: Update containerd config on nodes
   hosts: kube_control_plane, kube_node
