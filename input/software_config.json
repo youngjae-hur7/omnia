@@ -13,9 +13,12 @@
         {"name": "k8s", "version":"1.31.4"},
         {"name": "slurm"}
     ],
-
     "amdgpu": [
         {"name": "rocm", "version": "6.3.1" }
+    ],
+    "slurm": [
+        {"name": "slurm_control_node"},
+        {"name": "slurm_node"},
+        {"name": "login"}
     ]
-
 }
