@@ -21,6 +21,7 @@
   vars:
     omnia_kubespray_group: true
     omnia_provision_group: true
+    omnia_kubespray_validation: true
   tags: always
 
 - name: Warning and User confirmation for removing cluster
@@ -56,6 +57,7 @@
     - { role: remove_cluster/remove_k8s_cluster } # noqa: role-name[path]
 
 - name: Reset kubernetes cluster
+  tags: k8s_cluster
   hosts: omnia_kubespray
   vars:
     k8s_nfs_share: "/opt/omnia/kubespray"
