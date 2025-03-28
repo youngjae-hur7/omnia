@@ -13,14 +13,12 @@
 #  limitations under the License.
 ---
 
-- name: Create provision container group
-  ansible.builtin.import_playbook: create_container_group.yml
-  vars:
-    omnia_provision_group: true
-    omnia_provision_validation: true
+- name: Include input project directory
+  ansible.builtin.import_playbook: include_input_dir.yml
+  when: not ( hostvars['127.0.0.1']['project_dir_status'] | default(false) | bool )
 
-- name: Host Mapping
-  hosts: omnia_provision
-  connection: ssh
+- name: Validate cluster inventory file
+  hosts: localhost
+  connection: local
   roles:
-    - servicetag_host_mapping
+    - inventory_validation

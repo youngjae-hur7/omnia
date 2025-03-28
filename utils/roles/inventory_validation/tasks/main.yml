@@ -13,14 +13,8 @@
 #  limitations under the License.
 ---
 
-- name: Create provision container group
-  ansible.builtin.import_playbook: create_container_group.yml
-  vars:
-    omnia_provision_group: true
-    omnia_provision_validation: true
+- name: Fetch software_config.json
+  ansible.builtin.include_tasks: fetch_software_config.yml
 
-- name: Host Mapping
-  hosts: omnia_provision
-  connection: ssh
-  roles:
-    - servicetag_host_mapping
+- name: Validate inventory
+  ansible.builtin.include_tasks: validate_inventory.yml

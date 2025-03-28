@@ -21,6 +21,7 @@
   vars:
     omnia_kubespray_group: true
     omnia_provision_group: true
+    omnia_provision_validation: true
     omnia_kubespray_validation: true
   tags: always
 

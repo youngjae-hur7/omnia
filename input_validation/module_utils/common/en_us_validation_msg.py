@@ -58,7 +58,6 @@ ubuntu_os_url_msg = "ubuntu_os_url is empty. Please provide a ubuntu_os_url valu
 #omnia_config.yml
 invalid_password_msg = "Provided password is invalid. Password must meet the specified requirements: should not be empty, must have a length of at least 8 characters, and should not contain the following characters: '-', '\', "'", or '"'"
 k8s_cni_fail_msg = "k8s_cni is empty or invalid. k8s_cni must be set to either calico or flannel. "
-ansible_config_file_path_fail_msg = "Please provide a valid ansible_config_file_path value."
 pod_external_ip_range_fail_msg = "pod_external_ip_range value is either empty or invalid. Please provide one of the following acceptable formats: '10.11.0.100-10.11.0.150' (range between start and end IP addresses) or '10.11.0.0/16' (CIDR notation)."
 slurm_installation_type_fail_msg = "slurm_installation_type is empty or invalid. slurm_installation_type_fail_msg must either be set to nfs_share or configless."
 restart_slurm_services_fail_msg = "restart_slurm_services is empty or invalid. restart_slurm_services must be set to either true or false."

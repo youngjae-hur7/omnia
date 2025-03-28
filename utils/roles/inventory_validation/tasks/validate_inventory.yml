@@ -1,4 +1,4 @@
-#  Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+#  Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,23 +13,44 @@
 #  limitations under the License.
 ---
 
+- name: Initialize login_node_required status
+  ansible.builtin.set_fact:
+    login_node_required: false
+
+- name: Validate the cluster_layout status
+  ansible.builtin.stat:
+    path: "{{ cluster_layout_path }}"
+  register: cluster_layout_check
+
 - name: Inventory not provided
   ansible.builtin.fail:
     msg: "{{ empty_inventory_fail_msg }}"
   when:
     - groups['all'] is defined
     - (groups['all'] | length == 0)
+    - not cluster_layout_check.stat.exists
+
+- name: Create inventory from cluster_layout when inventory not provided
+  when:
+    - groups['all'] is defined
+    - (groups['all'] | length == 0)
+    - cluster_layout_check.stat.exists
+  block:
+    - name: Warning - inventory not provided, using omnia generated inventory
+      ansible.builtin.pause:
+        seconds: "{{ warning_wait_time }}"
+        prompt: "{{ inventory_warn_msg }}"
 
 # Validate K8s requirements for all the nodes
 - name: Validate K8s nodes requirements
-  when: k8s_support is true
+  when: k8s_support
   ansible.builtin.include_tasks: k8s_validations.yml
 
 # Validate slurm requirements for all the nodes
 - name: Validate Slurm nodes requirements
-  when: slurm_support is true
+  when: slurm_support
   ansible.builtin.include_tasks: slurm_validations.yml
 
-- name: Set validate validate_slurm_k8s_inventory to true
-  ansible.builtin.set_fact:
-    validate_slurm_k8s_inventory: true
+- name: Validate auth_server nodes requirements
+  when: freeipa_support or openldap_support
+  ansible.builtin.include_tasks: auth_server_validations.yml

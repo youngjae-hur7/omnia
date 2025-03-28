@@ -75,23 +75,18 @@
     - "{{ groups['k8s_cluster'] }}"
     - "{{ groups['etcd'] }}"
 
-- name: Initialize variables
-  ansible.builtin.set_fact:
-    unreachable_kube_control_plane: []
+# Need to discuss for this flow, will update later
+# - name: Initialize variables
+#   ansible.builtin.set_fact:
+#     unreachable_kube_control_plane: []
 
-- name: Set unreachable_kube_control_plane
-  ansible.builtin.set_fact:
-    unreachable_kube_control_plane: "{{ unreachable_kube_control_plane + [item] }}"
-  when: item not in ansible_play_hosts
-  with_items: "{{ groups['kube_control_plane'] }}"
+# - name: Set unreachable_kube_control_plane
+#   ansible.builtin.set_fact:
+#     unreachable_kube_control_plane: "{{ unreachable_kube_control_plane + [item] }}"
+#   when: item not in ansible_play_hosts
+#   with_items: "{{ groups['kube_control_plane'] }}"
 
-- name: Unreachable kube_control_plane in inventory
-  ansible.builtin.fail:
-    msg: "{{ unreachable_kube_control_plane_fail_msg }}"
-  when: unreachable_kube_control_plane | length >= 1
-
-# - name: Modify kubespray collection task
-#   ansible.builtin.lineinfile:
-#     path: "{{ ansible_collection_folder }}{{ kubespray_certificate_key_taskfile_path }}"
-#     insertafter: "- name: Set kubeadm certificate key"
-#     line: "  no_log: true"
+# - name: Unreachable kube_control_plane in inventory
+#   ansible.builtin.fail:
+#     msg: "{{ unreachable_kube_control_plane_fail_msg }}"
+#   when: unreachable_kube_control_plane | length >= 1
