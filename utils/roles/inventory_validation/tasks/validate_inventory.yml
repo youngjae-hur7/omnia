@@ -41,23 +41,6 @@
         seconds: "{{ warning_wait_time }}"
         prompt: "{{ inventory_warn_msg }}"
 
-    - name: Read layout file
-      ansible.builtin.set_fact:
-        layout_file_content: "{{ lookup('file', cluster_layout_path) }}"
-
-    - name: Split layout content into lines
-      ansible.builtin.set_fact:
-        layout_lines: "{{ layout_file_content.split('\n') }}"
-
-    - name: Initialize current_group
-      ansible.builtin.set_fact:
-        current_group: ""
-
-    - name: Create inventory group
-      ansible.builtin.include_tasks: update_group.yml
-      loop: "{{ layout_lines }}"
-      when: item != ""
-
 # Validate K8s requirements for all the nodes
 - name: Validate K8s nodes requirements
   when: k8s_support
