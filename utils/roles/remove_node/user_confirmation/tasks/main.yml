@@ -18,6 +18,19 @@
     msg: "{{ no_inventory_file_provided }}"
   when: ansible_inventory_sources[0] == default_inv_path
 
+- name: Default omnia_inventory_file is provided check
+  ansible.builtin.pause:
+    prompt: "{{ omnia_inventory_confirmation }}"
+  register: default_omnia_inventory
+  when: ansible_inventory_sources[0] == omnia_inventory_file
+
+- name: Fail if user does not confirm deletion
+  ansible.builtin.fail:
+    msg: "{{ confirmation_fail_msg }}"
+  when:
+    - ansible_inventory_sources[0] == omnia_inventory_file
+    - default_omnia_inventory.user_input | default('no') != 'yes'
+
 - name: Warning message for removing slurm or kube node
   ansible.builtin.pause:
     prompt: "{{ warning_msg }}"

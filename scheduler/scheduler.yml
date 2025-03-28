@@ -178,7 +178,7 @@
     - multus_and_whereabouts
 
 - name: Install Slurm
-  hosts: slurm_control_node, slurm_node, slurm_dbd, login
+  hosts: slurm_control_node, slurm_node, login
   any_errors_fatal: true
   roles:
     - slurm

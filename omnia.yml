@@ -84,8 +84,8 @@
         project_dir_status: true
         config_file_status: true
 
-- name: Import playbook to install ROCm on nodes
-  ansible.builtin.import_playbook: utils/rocm_installation.yml
+# - name: Import playbook to install ROCm on nodes
+#   ansible.builtin.import_playbook: utils/rocm_installation.yml
 
 - name: Verify Gaudi nodes
   ansible.builtin.import_playbook: utils/verify_intel_gaudi/verify_intel_gaudi_installation.yml
