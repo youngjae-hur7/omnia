@@ -110,16 +110,14 @@
     name: "{{ intel_scale_up_ports_service_name }}"
     state: started
   register: service_status
-  ignore_errors: true
   failed_when: false
-  changed_when: false
 
 - name: Ensure the service directory exists
   when: service_status.status is not defined
   ansible.builtin.file:
     path: "{{ intel_scale_up_ports_service_dir }}"
     state: directory
-    mode: '0755'
+    mode: "{{ file_permissions }}"
 
 - name: Create the systemd service unit file
   when: service_status.status is not defined
@@ -140,7 +138,7 @@
 
       [Install]
       WantedBy=multi-user.target
-    mode: '0644'
+    mode: "{{ svc_file_permissions }}"
 
 - name: Reload systemd to pick up new service
   when: service_status.status is not defined
