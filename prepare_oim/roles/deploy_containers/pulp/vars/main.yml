@@ -86,7 +86,7 @@ pulp_config_filepath: "{{ pulp_ha_dir }}/cli.toml"
 config_default_dir: "/root/.config/pulp/"
 config_default_loc: "{{ config_default_dir }}/cli.toml"
 pulp_status_url: "http://{{ pulp_server_ip }}:{{ pulp_container_port }}/pulp/api/v3/status/"
-endpoint_retries: 9
+endpoint_retries: 10
 endpoint_delay: 10
 endpoint_timeout: 60
 # verify_ssl_regex: '^verify_ssl = .*'

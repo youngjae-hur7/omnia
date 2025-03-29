@@ -24,8 +24,13 @@
     path: "{{ images_directory_path }}/{{ container_tar_file }}"
     state: absent
 
+- name: Add kubespray to container image list if k8s_support is true
+  when: hostvars['localhost']['k8s_support'] | default(false)
+  set_fact:
+    container_images: "{{ container_images + ['omnia_kubespray:' + kubespray_tag] }}"
+
 - name: Save container images
   containers.podman.podman_save:
     image: "{{ container_images }}"
-    dest: "{{ images_directory_path }}"
+    dest: "{{ images_directory_path }}/{{ container_tar_file }}"
     multi_image_archive: true
