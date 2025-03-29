@@ -19,6 +19,9 @@ login_node_security_config_file: "{{ hostvars['localhost']['input_project_dir'] 
 hosts_file_dest: "/etc/hosts"
 hosts_file_mode: "0644"
 security_config_syntax_fail_msg: "Failed. Syntax errors present in security_config.yml. Fix errors and re-run playbook again."
+security_vault_path: "{{ hostvars['localhost']['input_project_dir'] }}/.security_vault.key"
+ansible_vault_search_key: "$ANSIBLE_VAULT;"
+file_permission: '0644'
 
 # Usage: validate_input_params.yml
 authentication_system_success_msg: "authentication_system variable successfully validated"

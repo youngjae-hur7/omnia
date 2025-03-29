@@ -1,4 +1,4 @@
-# Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -40,15 +40,15 @@
       changed_when: false
       failed_when: false
 
-    - name: Verify the domain name is not blank in hostname
+    - name: Set the domain name
+      ansible.builtin.set_fact:
+        ms_domain_name: "{{ hostvars['localhost']['domain_name'] }}"
+ 
+    - name: Verify the domain name is not blank
       ansible.builtin.fail:
         msg: " {{ domain_name_blank_msg }}"
-      when: domain_name_set.stdout | length < 1
-
-    - name: Set fact for the domain name in hostname
-      ansible.builtin.set_fact:
-        ms_domain_name: "{{ domain_name_set.stdout }}"
-
+      when: ms_domain_name is not defined or ms_domain_name | trim | length == 0
+ 
     - name: Validate the domain name set on the host
       ansible.builtin.assert:
         that:
