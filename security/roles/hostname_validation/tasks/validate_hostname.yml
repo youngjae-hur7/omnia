@@ -43,12 +43,12 @@
     - name: Set the domain name
       ansible.builtin.set_fact:
         ms_domain_name: "{{ hostvars['localhost']['domain_name'] }}"
- 
+
     - name: Verify the domain name is not blank
       ansible.builtin.fail:
         msg: " {{ domain_name_blank_msg }}"
       when: ms_domain_name is not defined or ms_domain_name | trim | length == 0
- 
+
     - name: Validate the domain name set on the host
       ansible.builtin.assert:
         that:
