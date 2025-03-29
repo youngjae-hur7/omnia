@@ -12,13 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- name: Refresh mounts
-  ansible.builtin.shell: |
-    umount {{ share_path }}
-    mount -a
-  register: refresh_mounts
-  ignore_errors: true
-  changed_when: refresh_mounts.rc == 0
+- name: Refresh the NFS volume
+  ansible.posix.mount:
+    path: "{{ share_path }}"
+    state: remounted
+  when: slurm_installation_type == nfs_share_slurm
 
 - name: Update hosts file for all slurm groups
   block:
@@ -61,7 +59,7 @@
     owner: root
     group: root
     mode: "{{ common_mode }}"
-  when: (slurm_installation_type == 'nfs_share')
+  when: (slurm_installation_type == nfs_share_slurm)
   run_once: true
 
 - name: Install and configure munge
