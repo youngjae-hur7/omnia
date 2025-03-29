@@ -12,14 +12,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 ---
-
+input_project_dir: "{{ hostvars['localhost']['input_project_dir'] }}"
 # Usage: rocm_validation.yml
-software_config_json_file: "{{ role_path }}/../../../input/software_config.json"
+software_config_json_file: "{{ input_project_dir }}/software_config.json"
 rocm_version_msg: "Warning, ROCm will not be installed. software_config.json does not have the version for ROCM."
 rocm_repo_msg: "Warning, ROCm will not be installed. local_repo.yml is not executed for downloading ROCM packages."
 rocm_stack_msg: "AMDGPU ROCm software stack not present in software_config.json"
 warning_time: 10
 
 # Usage: include_local_repo_config.yml
-local_repo_config_file: "{{ role_path }}/../../../input/local_repo_config.yml"
+local_repo_config_file: "{{ input_project_dir }}/local_repo_config.yml"
 local_repo_config_syntax_fail_msg: "Failed. Syntax errors present in local_repo_config.yml. Fix errors and re-run playbook again."
