@@ -26,7 +26,7 @@
 
 - name: Add kubespray to container image list if k8s_support is true
   when: hostvars['localhost']['k8s_support'] | default(false)
-  set_fact:
+  ansible.builtin.set_fact:
     container_images: "{{ container_images + ['omnia_kubespray:' + kubespray_tag] }}"
 
 - name: Save container images

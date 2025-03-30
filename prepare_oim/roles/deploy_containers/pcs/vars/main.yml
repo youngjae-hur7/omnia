@@ -35,7 +35,7 @@ pcs_startup_file:
   - {template: "pcs-container.container.j2", dest: "{{ oim_shared_path }}/omnia/pcs/{{ pcs_container_name }}.container", mode: "{{ read_write_mode }}" }
   - {template: "pcs-container.container.j2", dest: "{{ container_systemd_dir }}/{{ pcs_container_name }}.container", mode: "{{ read_write_mode }}" }
 
-pcs_resource_script: 
+pcs_resource_script:
   - {template: "pcs-container-resource-init.sh.j2", dest: "{{ oim_shared_path }}/omnia/pcs/pcs-start.sh", mode: "{{ read_write_execute_mode }}" }
 
 pcs_image_pull_fail_msg: >

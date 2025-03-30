@@ -145,7 +145,7 @@
         msg: "{{ postgres_set_password_fail_msg }} Error: {{ postgresdb_config.module_error }}"
 
 - name: Ensure host entries exists in pg_hba.conf
-  block: 
+  block:
     - name: Add admin_nic_ip to pg_hba.conf
       when: not pg_hba_conf_admin_update
       ansible.builtin.lineinfile:
