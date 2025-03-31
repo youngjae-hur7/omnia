@@ -39,8 +39,7 @@ no_roles_msg = "Outer Role object was probably not defined."
 invalid_switch_ports_msg = "Please provide any port ranges as start-end (example: 0-15,4:4,51-53)."
 duplicate_group_name_msg = "Duplicate group names are not allowed."
 empty_or_syntax_error_roles_config_msg = "File is either empty or contains syntax errors. File must contain valid YAML with 'Roles' and 'Groups' sections along with valid syntax. Check the file content and ensure proper YAML formatting."
-def duplicate_group_name_in_layers_msg(group_name, frontend, compute):
-    return f"The following groups are mapped to both frontend and compute layers, which is not allowed for group: [{group_name}] in frontend layer: [{frontend}] and compute layer: [{compute}]"
+duplicate_group_name_in_layers_msg = "The following groups are mapped to both frontend and compute layers, which is not allowed for group: [{0}] in frontend layer: [{1}] and compute layer: [{2}]"
 
 # provision_config.yml
 default_lease_time_fail_msg = "Please provide a valid default_lease_time."

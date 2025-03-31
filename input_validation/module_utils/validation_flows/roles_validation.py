@@ -79,7 +79,7 @@ def validate_group_duplicates(input_file_path):
 
     return errors
 
-def validate_layer_group_separation(roles):
+def validate_layer_group_separation(logger, roles):
     """
     Validates that groups are not shared between frontend and compute layers.
 
@@ -122,9 +122,11 @@ def validate_layer_group_separation(roles):
     # Check for violations and build error messages
     for group, layers in group_layer_mapping.items():
         if layers["frontend"] and layers["compute"]:
+            frontend_layer = ', '.join(sorted(layers['frontend']))
+            compute_layer = ', '.join(sorted(layers['compute']))
             errors.append(create_error_msg("Roles", None,
-                en_us_validation_msg.duplicate_group_name_in_layers_msg(group,
-                    ', '.join(sorted(layers['frontend'])), ', '.join(sorted(layers['compute'])))))
+                en_us_validation_msg.duplicate_group_name_in_layers_msg.format(group,
+                    frontend_layer, compute_layer)))
 
     return errors
 
@@ -177,7 +179,7 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
 
     # Validate same group usage among layers
     if roles is not None:
-        errors.extend(validate_layer_group_separation(roles))
+        errors.extend(validate_layer_group_separation(logger, roles))
         if errors:
             return errors
 
