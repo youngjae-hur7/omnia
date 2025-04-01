@@ -36,4 +36,4 @@
 
 - name: Set vip_status
   ansible.builtin.set_fact:
-    vip_status: "{{ high_availability_config.ansible_facts.oim_ha.virtual_ip_address is defined | default(false) }}"
+    vip_status: "{{ oim_ha_data.ansible_facts.oim_ha.virtual_ip_address is defined and oim_ha_data.ansible_facts.oim_ha.virtual_ip_address | length > 1 | default(false) }}"

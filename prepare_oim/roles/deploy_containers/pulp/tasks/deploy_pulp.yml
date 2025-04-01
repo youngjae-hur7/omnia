@@ -85,4 +85,4 @@
   retries: "{{ retries_var }}"
   delay: "{{ delay_var }}"
   when: pulp_password | length > 1
-  no_log: false
+  no_log: true
