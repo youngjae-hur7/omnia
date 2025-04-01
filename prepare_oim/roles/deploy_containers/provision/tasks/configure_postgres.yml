@@ -143,7 +143,7 @@
         - postgresdb_config.module_error | length > 0
       ansible.builtin.fail:
         msg: "{{ postgres_set_password_fail_msg }} Error: {{ postgresdb_config.module_error }}"
-
+    
 - name: Ensure host entries exists in pg_hba.conf
   block:
     - name: Add admin_nic_ip to pg_hba.conf
@@ -155,6 +155,7 @@
         insertafter: "^# IPv4 local connections:"
         regexp: "^host\\s+all\\s+all\\s+{{ admin_nic_ip }}/32\\s+md5"
       register: pg_hba_conf_admin_update
+
     - name: Add original OIM admin IP to pg_hba.conf
       when: hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.enable_oim_ha | default(false)
       ansible.builtin.lineinfile:
@@ -163,6 +164,7 @@
         state: present
         insertafter: "^# IPv4 local connections:"
         regexp: "^host\\s+all\\s+all\\s+{{ hostvars['localhost']['original_admin_nic_ip'] }}/32\\s+md5"
+
     - name: Add all passive OIM admin IPs to pg_hba.conf
       when: hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.enable_oim_ha | default(false) and item.ADMIN_IP is defined
       ansible.builtin.lineinfile:

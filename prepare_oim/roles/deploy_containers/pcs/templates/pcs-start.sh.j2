@@ -34,7 +34,7 @@ pcs property set no-quorum-policy=ignore
 
 pcs resource group add {{ pcs_group }}
 
-{% if hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.enable_oim_ha %}
+{% if hostvars['localhost']['enable_oim_ha'] %}
 pcs resource create VIP ocf:heartbeat:IPaddr2 \
         ip={{ hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.virtual_ip_address }} cidr_netmask={{ hostvars['localhost']['network_data'].admin_network.netmask_bits }} \
         op monitor interval={{ monitor_interval }} --group {{ pcs_group }}
