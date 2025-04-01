@@ -291,13 +291,14 @@ def add_hostname_inventory(inventory_file: str, hostname: str) -> None:
         # Change the permission of the file to readonly
         os.chmod(inventory_file, 0o444)
 
-def add_group_details(node_info_db: tuple, groups_inventory) -> None:
+def add_group_details(node_info_db: tuple, groups_inventory, generate_flag: bool) -> bool:
     """
     Adds group details to the groups_inventory dictionary.
 
     Parameters:
         node_info_db (tuple): A tuple containing the service tag, admin IP, CPU, GPU, and hostname from the database.
         groups_inventory (dict): A dictionary containing the groups and hosts.
+        generate_flag (bool): A flag indicating whether to generate the inventory file.
     
     Returns:
         None
@@ -312,16 +313,22 @@ def add_group_details(node_info_db: tuple, groups_inventory) -> None:
                groups_inventory[group] = []
            if hostname not in groups_inventory[group]:
                groups_inventory[group].append(hostname)
+               generate_flag = True
+        
+        # return generate_flag
+        return generate_flag
 
     except Exception as e:
         syslog.syslog(syslog.LOG_ERR, f"parse_syslog:add_group_details: Exception occurred: {str(type(e))} {str(e)}")
+        return generate_flag
 
-def generate_inventory(groups_inventory: tuple) -> None:
+def generate_inventory(groups_inventory: tuple, generate_flag: bool) -> None:
     """
     Generates the inventory file based on the groups and hosts.
 
     Parameters:
         groups_inventory (tuple): A tuple containing the groups and hosts.
+        generate_flag (bool): A flag indicating whether to generate the inventory file.
 
     Returns:
         None
@@ -330,6 +337,9 @@ def generate_inventory(groups_inventory: tuple) -> None:
         Exception: If an error occurs while writing the inventory file.
     """
     try:
+        # Check the generate flag and skip generating the inventory if it's False
+        if not generate_flag:
+            return
         omnia_inventory_file = "/opt/omnia/omnia_inventory/cluster_layout"
         # Read the inventory file
         with open(omnia_inventory_file, 'w+') as file:

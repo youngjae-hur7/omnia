@@ -129,6 +129,8 @@ def add_details_to_db():
     conn = omniadb_connection.create_connection()
     cursor = conn.cursor()
 
+    # generate flag will be used to generate group inventory after updating DB
+    generate_flag = False
     for node in node_details.keys():
         node_info_db = parse_syslog.get_node_info_db(cursor, node)
         if node_info_db is None:
@@ -142,7 +144,7 @@ def add_details_to_db():
             updated_node_info = parse_syslog.get_updated_cpu_gpu_info(node)     # Collects latest CPU & GPU details from computes.log file
             parse_syslog.update_db(cursor, node, updated_node_info)             # Updates DB with latest info.
             parse_syslog.update_inventory(node_info_db, updated_node_info)      # Updates inventory with latest info.
-            parse_syslog.add_group_details(node_info_db, groups_inventory)       # Updates group inventory with latest info.
+            generate_flag = parse_syslog.add_group_details(node_info_db, groups_inventory, generate_flag)       # Updates group inventory with latest info.
 
         if xcat_status is not db_status:
             sql_update_status = "Update cluster.nodeinfo set status = %s where node = %s"
@@ -155,7 +157,8 @@ def add_details_to_db():
         if not db_service_tag and xcat_service_tag:
             sql_serial = "Update cluster.nodeinfo set service_tag = %s where node = %s"
             cursor.execute(sql_serial, (xcat_service_tag, node))
-    parse_syslog.generate_inventory(groups_inventory)               # generates the inventory /opt/omnia/omnia_inventory/cluster_layout file
+
+    parse_syslog.generate_inventory(groups_inventory, generate_flag)               # generates the inventory /opt/omnia/omnia_inventory/cluster_layout file
     conn.close()
 
 
