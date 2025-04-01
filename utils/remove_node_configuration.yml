@@ -93,8 +93,8 @@
   tags: kube_node
   vars:
     node: "{{ hostvars['remove_nodes']['nodes_removing'] }}"
-    k8s_nfs_share: "/opt/omnia/kubespray"
-    k8s_log_dir: "/opt/omnia/log/kubespray"
+    kubespray_nfs_share: "/opt/omnia/kubespray"
+    kubespray_log_path: "/opt/omnia/log/kubespray/remove_kube_node.yml"
     dir_mode: '0755'
   tasks:
     - name: Execute tasks for Remove kube nodes
@@ -103,28 +103,22 @@
         - name: Copy remove_kube_node to kubespray nfs share
           ansible.builtin.copy:
             src: "{{ playbook_dir }}/playbooks/remove_kube_node.yml"
-            dest: "{{ k8s_nfs_share }}/remove_kube_node.yml"
-            mode: "{{ dir_mode }}"
-
-        - name: Ensure log/kubespray directory exists
-          ansible.builtin.file:
-            path: "{{ k8s_log_dir }}"
-            state: directory
+            dest: "{{ kubespray_nfs_share }}/remove_kube_node.yml"
             mode: "{{ dir_mode }}"
 
         - name: Execute ansible-playbook for Kubernetes add node asynchronously
           ansible.builtin.shell:
             cmd: >
               set -o pipefail &&
-              /venv/bin/ansible-playbook {{ k8s_nfs_share }}/remove_kube_node.yml -i {{ k8s_nfs_share }}/inv_k8s
-              --extra-vars "@{{ k8s_nfs_share }}/k8s_all_vars.yml"
-              --extra-vars "node={{ node }}" -vvv | /usr/bin/tee {{ k8s_log_dir }}/k8s_remove_nodes.log
+              /venv/bin/ansible-playbook {{ kubespray_nfs_share }}/remove_kube_node.yml -i {{ kubespray_nfs_share }}/inv_k8s
+              --extra-vars "@{{ kubespray_nfs_share }}/k8s_all_vars.yml"
+              --extra-vars "node={{ node }}" -vvv | /usr/bin/tee {{ kubespray_log_path }}
           async: 3600  # Set async timeout (e.g., 1 hour)
           poll: 0  # Non-blocking (continue the playbook without waiting for completion)
           register: k8s_remove_result  # Register the result to capture job ID
           changed_when: false
 
-        - name: Wait for the Kubernetes remove kube_nodes to finish. Logs can be checked at /opt/omnia/log/kubespray/k8s_remove_nodes.log
+        - name: Wait for the Kubernetes remove kube_nodes to finish. Logs can be checked at {{ kubespray_log_path }}
           ansible.builtin.async_status:
             jid: "{{ k8s_remove_result.ansible_job_id }}"  # Job ID from the previous task
           register: job_result
