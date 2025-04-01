@@ -13,38 +13,12 @@
 #  limitations under the License.
 ---
 
-- name: Check security_config.yml file is encrypted
-  ansible.builtin.command: cat {{ security_config_file }}
-  changed_when: false
-  register: security_config_content
-  no_log: true
-
-- name: Decrpyt security_config.yml
-  ansible.builtin.command: >-
-    ansible-vault decrypt {{ security_config_file }}
-    --vault-password-file {{ security_vault_path }}
-  changed_when: false
-  when: ansible_vault_search_key in security_config_content.stdout
-
 - name: Include security_config.yml
   block:
     - name: Include security_config.yml
       ansible.builtin.include_vars: "{{ security_config_file }}"
       register: include_security_config
-      no_log: true
   rescue:
     - name: Failed to include security_config.yml
       ansible.builtin.fail:
         msg: "{{ security_config_syntax_fail_msg }} Error: {{ include_security_config.message }}"
-
-- name: Encrypt security_config.yml
-  ansible.builtin.command: >-
-    ansible-vault encrypt {{ security_config_file }}
-    --vault-password-file {{ security_vault_path }}
-  changed_when: false
-  when: ansible_vault_search_key in security_config_content.stdout
-
-- name: Update security_config.yml permission
-  ansible.builtin.file:
-    path: "{{ security_config_file }}"
-    mode: "{{ file_permission }}"
