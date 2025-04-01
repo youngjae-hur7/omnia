@@ -13,11 +13,12 @@
 #  limitations under the License.
 ---
 
-- name: Include security_config.yml
+- name: Include variable file security_config.yml
   block:
-    - name: Include security_config.yml
+    - name: Include variable file security_config.yml
       ansible.builtin.include_vars: "{{ security_config_file }}"
       register: include_security_config
+      no_log: true
   rescue:
     - name: Failed to include security_config.yml
       ansible.builtin.fail:
