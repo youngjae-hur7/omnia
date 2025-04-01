@@ -143,7 +143,7 @@
         - postgresdb_config.module_error | length > 0
       ansible.builtin.fail:
         msg: "{{ postgres_set_password_fail_msg }} Error: {{ postgresdb_config.module_error }}"
-    
+
 - name: Ensure host entries exists in pg_hba.conf
   block:
     - name: Add admin_nic_ip to pg_hba.conf
