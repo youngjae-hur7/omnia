@@ -12,9 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-- name: DNF make cache
-  ansible.builtin.shell: "dnf makecache"
-
 - name: Install slurm packages
   ansible.builtin.shell: "dnf install -y --installroot={{ installroot }} slurm slurm-slurmctld slurm-slurmdbd" # noqa: command-instead-of-shell
   become: true
