@@ -34,12 +34,14 @@
         state: absent
         force_delete: true
 
-    - name: Remove Pulp Directory
+    - name: Remove Pulp and Offline repo Directory
       ansible.builtin.file:
         path: "{{ item }}"
         state: absent
+        recurse: true
       with_items:
         - "{{ pulp_cleanup_directory }}"
+
   rescue:
     - name: Pulp container removal failed
       ansible.builtin.fail:
