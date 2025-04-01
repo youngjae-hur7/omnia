@@ -19,7 +19,6 @@ login_node_security_config_file: "{{ hostvars['localhost']['input_project_dir'] 
 hosts_file_dest: "/etc/hosts"
 hosts_file_mode: "0644"
 security_config_syntax_fail_msg: "Failed. Syntax errors present in security_config.yml. Fix errors and re-run playbook again."
-file_permission: '0644'
 
 # Usage: validate_input_params.yml
 authentication_system_success_msg: "authentication_system variable successfully validated"
@@ -107,6 +106,7 @@ openldap_software_failure_msg: "Failed, OpenLDAP software stack is not present i
 Update openldap software stack in software_config.json and execute local_repo.yml."
 ldap_repo_failure_msg: "Failed. The OpenLDAP repository is missing. Please run the local_repo.yml playbook to download the required OpenLDAP packages.
 Once the playbook has been successfully executed, you can rerun the original playbook."
+file_permission: '0644'
 
 # Usage: fetch_software_config.yml
 software_config_json_file: "{{ hostvars['localhost']['input_project_dir'] }}/software_config.json"
