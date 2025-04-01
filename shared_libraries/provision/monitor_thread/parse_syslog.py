@@ -277,6 +277,7 @@ def add_hostname_inventory(inventory_file: str, hostname: str) -> None:
         # Change the permission of the file
         os.chmod(inventory_file, 0o644)
 
+        config.
         # Set the hostname
         config.set(inventory_file, hostname)
 
@@ -291,71 +292,43 @@ def add_hostname_inventory(inventory_file: str, hostname: str) -> None:
         # Change the permission of the file to readonly
         os.chmod(inventory_file, 0o444)
 
-def add_group_details(node_info_db: tuple, groups_inventory, generate_flag: bool) -> bool:
+def generate_inventory_for_node(node_info_db: tuple) -> None:
     """
-    Adds group details to the groups_inventory dictionary.
+    generate_inventory_for_node: Generates the inventory file for the node based on the information in the database.
 
     Parameters:
         node_info_db (tuple): A tuple containing the service tag, admin IP, CPU, GPU, and hostname from the database.
-        groups_inventory (dict): A dictionary containing the groups and hosts.
-        generate_flag (bool): A flag indicating whether to generate the inventory file.
     
     Returns:
         None
     """
     try:
+       omnia_inventory_file = "/opt/omnia/omnia_inventory/cluster_layout"
+        # Read the inventory file
+       if not os.path.exists(omnia_inventory_file):
+       # Create a new file if it doesn't exist
+          with open(omnia_inventory_file, 'w') as file:
+             existing_inventory = file.read()
+       else:
+          # Open the file in read mode if it exists
+          with open(omnia_inventory_file, 'r') as file:
+             existing_inventory = file.read()
+
        # unpacking
        hostname, roles_name = node_info_db[8], node_info_db[9]
        roles_list = roles_name.strip().split(",")
        for group in roles_list:
            group = group.strip()
-           if group not in groups_inventory:
-               groups_inventory[group] = []
-           if hostname not in groups_inventory[group]:
-               groups_inventory[group].append(hostname)
-               generate_flag = True
-        
-        # return generate_flag
-        return generate_flag
-
-    except Exception as e:
-        syslog.syslog(syslog.LOG_ERR, f"parse_syslog:add_group_details: Exception occurred: {str(type(e))} {str(e)}")
-        return generate_flag
-
-def generate_inventory(groups_inventory: tuple, generate_flag: bool) -> None:
-    """
-    Generates the inventory file based on the groups and hosts.
-
-    Parameters:
-        groups_inventory (tuple): A tuple containing the groups and hosts.
-        generate_flag (bool): A flag indicating whether to generate the inventory file.
-
-    Returns:
-        None
-
-    Raises:
-        Exception: If an error occurs while writing the inventory file.
-    """
-    try:
-        # Check the generate flag and skip generating the inventory if it's False
-        if not generate_flag:
-            return
-        omnia_inventory_file = "/opt/omnia/omnia_inventory/cluster_layout"
-        # Read the inventory file
-        with open(omnia_inventory_file, 'w+') as file:
-            existing_inventory = file.read()
-
-        # Add the new groups and hosts to the existing inventory
-        for group, hosts in groups_inventory.items():
-            if group not in existing_inventory:
+           if group not in existing_inventory:
                 existing_inventory += f"\n[{group}]\n"
-            for host in hosts:
-                existing_inventory += f"{host}\n"
+           existing_inventory += f"{hostname}\n"
 
         # Write the updated inventory back to the file
-        with open(omnia_inventory_file, 'w') as file:
-            file.write(existing_inventory)
+       with open(omnia_inventory_file, 'w') as file:
+           file.write(existing_inventory)
 
+       print("Inventory file updated: inventory")
+    
     except FileNotFoundError:
         # Print an error message if the file is not found
         syslog.syslog(syslog.LOG_ERR, f"parse_syslog:generate_inventory: File not found:", omnia_inventory_file)
@@ -364,7 +337,7 @@ def generate_inventory(groups_inventory: tuple, generate_flag: bool) -> None:
         syslog.syslog(syslog.LOG_ERR, f"parse_syslog:generate_inventory: Permission denied:", omnia_inventory_file)
     except Exception as e:
         syslog.syslog(syslog.LOG_ERR, f"parse_syslog:generate_inventory: Exception occurred: {str(type(e))} {str(e)}")
-
+     
 def update_inventory(node_info_db: tuple, updated_node_info: tuple) -> None:
     """
 	Update the inventory files based on the changes in the node information.
