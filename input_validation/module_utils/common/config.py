@@ -29,7 +29,6 @@ files = {
     "network_spec": "network_spec.yml",
     "omnia_config": "omnia_config.yml",
     "passwordless_ssh_config": "passwordless_ssh_config.yml",
-    "provision_config_credentials": "provision_config_credentials.yml",
     "provision_config": "provision_config.yml",
     "roce_plugin_config": "roce_plugin_config.yml",
     "security_config": "security_config.yml",
@@ -46,7 +45,6 @@ files = {
 input_file_inventory = {
     "scheduler": [files["omnia_config"], files["software_config"]],
     "provision": [
-        files["provision_config_credentials"],
         files["provision_config"],
         files["network_spec"],
         files["server_spec"],
@@ -72,7 +70,6 @@ input_file_inventory = {
         files["network_spec"],
         files["server_spec"],
         files["omnia_config"],
-        files["provision_config_credentials"],
         files["security_config"],
         files["login_node_security_config"],
         files["telemetry_config"],
@@ -121,10 +118,7 @@ os_version_ranges = {
 # Dict of the file that can be encrypted and it's ansible vault key
 def get_vault_password(yaml_file):
     vault_passwords = {
-        "provision_config_credentials.yml": ".provision_credential_vault_key",
-        # "telemetry_config.yml": ".telemetry_vault_key",
-        "omnia_config.yml": ".omnia_vault_key",
-        "security_config.yml": ".security_vault.key"
+        "omnia_config_credentials.yml": ".omnia_config_credentials_key",
     }
     parts = yaml_file.split(os.sep)
     file = parts[-1]
