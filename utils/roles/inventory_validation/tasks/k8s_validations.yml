@@ -77,9 +77,9 @@
 
 - name: Place the inventory into the kubespray nfs share
   block:
-    - name: set fact inventory file paths
+    - name: Set fact inventory file paths
       ansible.builtin.set_fact:
-        user_inventory_path : "{{ ansible_inventory_sources[0] }}"
+        user_inventory_path: "{{ ansible_inventory_sources[0] }}"
         omnia_inventory_path: "{{ cluster_layout_path }}"
 
     - name: Inventory not provided ,copy omnia genrated inventory to kubespray nfs share
