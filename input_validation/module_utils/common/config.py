@@ -118,9 +118,7 @@ os_version_ranges = {
 # Dict of the file that can be encrypted and it's ansible vault key
 def get_vault_password(yaml_file):
     vault_passwords = {
-        # "telemetry_config.yml": ".telemetry_vault_key",
-        "omnia_config.yml": ".omnia_vault_key",
-        "security_config.yml": ".security_vault.key"
+        "omnia_config_credentials.yml": ".omnia_config_credentials_key",
     }
     parts = yaml_file.split(os.sep)
     file = parts[-1]
