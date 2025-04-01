@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
+- name: DNF make cache
+  ansible.builtin.shell: "dnf makecache"
+
 - name: Install slurm packages
   ansible.builtin.shell: "dnf install -y --installroot={{ installroot }} slurm slurm-slurmctld slurm-slurmdbd" # noqa: command-instead-of-shell
   become: true
@@ -92,21 +95,6 @@
     - Reload slurmctld
     - Restart slurmctld
 
-- name: Add environment for nfs case
-  community.general.ini_file:
-    path: "{{ ctld_service_path }}"
-    section: Service
-    option: Environment
-    value: '"LD_LIBRARY_PATH={{ installroot }}usr/lib64/"'
-    no_extra_spaces: true
-    owner: "{{ root_user }}"
-    group: "{{ root_group }}"
-    mode: "{{ conf_file_mode }}"
-  when: (slurm_installation_type == nfs_share_slurm) and _force_install_nfs
-  notify:
-    - Reload slurmctld
-    - Restart slurmctld
-
 - name: Remove environment for configless case
   community.general.ini_file:
     path: "{{ ctld_service_path }}"
@@ -116,10 +104,28 @@
     owner: "{{ root_user }}"
     group: "{{ root_group }}"
     mode: "{{ conf_file_mode }}"
-  when: (slurm_installation_type == configless_slurm) or not _force_install_nfs
   notify:
     - Reload slurmctld
     - Restart slurmctld
+
+- name: Add environment for nfs case above Execstart
+  ansible.builtin.lineinfile:
+    path: "{{ ctld_service_path }}"
+    insertbefore: '^ExecStart='
+    line: 'Environment="LD_LIBRARY_PATH={{ slurm_share_prefix }}/usr/lib64/"'
+    owner: "{{ root_user }}"
+    group: "{{ root_group }}"
+    mode: "{{ conf_file_mode }}"
+  when: (slurm_installation_type == nfs_share_slurm) and _force_install_nfs
+  notify:
+    - Reload slurmctld
+    - Restart slurmctld
+
+- name: Remove the local slurm conf
+  ansible.builtin.file:
+    path: "/{{ slurm_config_dir }}/slurm.conf"
+    state: absent
+  when: slurm_installation_type == nfs_share_slurm
 
 - name: Get path env
   ansible.builtin.shell: echo $PATH # noqa: command-instead-of-shell

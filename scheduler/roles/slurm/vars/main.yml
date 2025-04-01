@@ -51,7 +51,7 @@ db_conf_file: "/etc/my.cnf"
 slurm_ctld_parameters: []
 partitions: {}
 _clean_before_install: false
-_force_install_nfs: true
+_force_install_nfs: false
 installroot: "/"
 conf_file_mode: "0644"
 slurm_mode: "0644"
