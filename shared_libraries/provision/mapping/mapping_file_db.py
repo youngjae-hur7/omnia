@@ -12,16 +12,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys, os
-import pandas as pd
-import ipaddress
+import sys
+import json
 
 db_path = sys.argv[1]
 sys.path.insert(0, db_path)
 
 import omniadb_connection
 
-pxe_mapping_path = os.path.abspath(sys.argv[2])
+mapping_details = json.loads(sys.argv[2])
 domain_name = sys.argv[3]
 discovery_mechanism = "mapping"
 admin_mac = []
@@ -31,31 +30,14 @@ bmc_ip = []
 nan = float('nan')
 
 
-def not_nan_val(ip):
-    """
-    Check if the given IP address is not NaN.
-
-    Args:
-        ip (Any): The IP address to check.
-
-    Returns:
-        bool: True if the IP address is not NaN, False otherwise.
-    """
-    if pd.notna(ip):
-        ipaddress.ip_address(ip)
-        return True
-    else:
-        return False
-
 
 def mapping_file_db_update():
     """
-    Updates the database with the information from a mapping file.
+    Updates the database with node information from the provided JSON mapping_details.
 
-    This function reads a mapping file containing information about nodes, such as service tags, hostnames,
-    admin MAC addresses, admin IP addresses, and BMC IP addresses. It then connects to the database and checks
-    if the service tags already exist in the table. If a service tag is not found, it inserts the information
-    into the table. If a service tag is found, it appends the admin MAC address to a list.
+    This function processes each node entry in the mapping_details list, checks if the
+    service tag exists in the database, and either inserts a new record or logs that the
+    node already exists.
 
     Parameters:
         None
@@ -63,43 +45,46 @@ def mapping_file_db_update():
     Returns:
         None
     """
-    data = pd.read_csv(pxe_mapping_path)
-    admin_mac = data['ADMIN_MAC'].tolist()
-    hostname = data['HOSTNAME'].tolist()
-    admin_ip = data['ADMIN_IP'].tolist()
-    bmc_ip = data['BMC_IP'].tolist()
-    service_tag = data['SERVICE_TAG'].tolist()
     existing_mac = []
 
+    # Establish database connection
     conn = omniadb_connection.create_connection()
     cursor = conn.cursor()
 
-    for key in range(0, len(admin_mac)):
-        temp_mac = admin_mac[key]
-        temp_service_tag = service_tag[key]
-        # Check if the mac address already exists in the table
-        query = "SELECT EXISTS(SELECT service_tag FROM cluster.nodeinfo WHERE service_tag=%s)"
-        cursor.execute(query, (temp_service_tag,))
-        output = cursor.fetchone()[0]
-        fqdn_hostname = hostname[key] + "." + domain_name
-        node = hostname[key]
-        temp_admin_ip = admin_ip[key]
-        temp_service_tag = service_tag[key]
+    for node_data in mapping_details:
+        temp_mac = node_data.get("admin_mac")
+        temp_service_tag = node_data.get("service_tag")
+        temp_admin_ip = node_data.get("admin_ip")
+        temp_bmc_ip = node_data.get("bmc_ip")
+        node = node_data.get("hostname")
+        fqdn_hostname = f"{node}.{domain_name}"
+        group_name = node_data.get("group_name")
+        role = node_data.get("roles")
+        parent = node_data.get("parent")
+        location_id = node_data.get("location_id")
+        architecture = node_data.get("architecture")
 
-        # Check if bmc_ip/ ib_ip is NAN value
-        temp_bmc_ip = bmc_ip[key]
-        bmc_out = not_nan_val(temp_bmc_ip)
-        if not bmc_out:
+        # Validate BMC IP, set to None if invalid
+        if not temp_bmc_ip:
             temp_bmc_ip = None
 
-        if output is False:
-            omniadb_connection.insert_node_info(temp_service_tag, node, fqdn_hostname, temp_mac, temp_admin_ip,
-                                                temp_bmc_ip, discovery_mechanism, None, None, None, None)
+        # Validate admin IP, set to None if invalid
+        if not temp_admin_ip:
+            temp_admin_ip = None
+
+        # Check if the service tag already exists in the table
+        query = "SELECT EXISTS(SELECT 1 FROM cluster.nodeinfo WHERE service_tag=%s)"
+        cursor.execute(query, (temp_service_tag,))
+        exists = cursor.fetchone()[0]
+
+        if not exists:
+            # Insert new node record
+            omniadb_connection.insert_node_info(temp_service_tag, node, fqdn_hostname, temp_mac, temp_admin_ip, temp_bmc_ip,
+            group_name, role, parent, location_id, architecture, discovery_mechanism, None, None, None, None)
         else:
-            existing_mac.append(admin_mac[key])
-            sys.stdout.write(admin_mac[key] + " already present in DB.")
+            existing_mac.append(temp_mac)
+            sys.stdout.write(f"{temp_mac} already present in DB.\n")
 
     conn.close()
-
 
 mapping_file_db_update()

@@ -20,6 +20,7 @@
   ansible.builtin.import_playbook: create_container_group.yml
   vars:
     omnia_provision_group: true
+    omnia_provision_validation: true
 
 - name: Delete node
   hosts: localhost
@@ -27,7 +28,7 @@
   roles:
     - { role: node_deletion/user_confirmation } # noqa: role-name[path]
     - { role: common, tags: 'credentials_config' }
-   
+
 - name: Delete node
   hosts: omnia_provision
   connection: ssh

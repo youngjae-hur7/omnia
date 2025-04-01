@@ -23,35 +23,50 @@
   failed_when: false
   register: node_mac_list
 
-- name: Read mapping file provided by user
-  community.general.read_csv:
-    path: "{{ temp_pxe_file_path }}"
-  register: mapping_file_output
-
-- name: Create node object from mapping file provided by user
+- name: Create node object from mapping_details JSON
   ansible.builtin.shell: >
-    {{ xcat_path }}/mkdef -t node "{{ mapping_file_output.list[idx1].HOSTNAME.split('.')[0] }}" groups={{ mapping_node_group }},all
-    ip="{{ mapping_file_output.list[idx1].ADMIN_IP | trim }}" mac="{{ mapping_file_output.list[idx1].ADMIN_MAC | trim }}"
-    hostnames="{{ mapping_file_output.list[idx1].HOSTNAME | trim }}" serial="{{ mapping_file_output.list[idx1].SERVICE_TAG | trim }}"
-    netboot=xnba arch=x86_64  -f
-  with_items: "{{ mapping_file_output.list }}"
+    {{ xcat_path }}/mkdef -t node "{{ item.hostname.split('.')[0] }}"
+    groups={{ mapping_node_group }},{{ item.roles }},{{ item.group_name }},all
+    ip="{{ item.admin_ip | trim }}" mac="{{ item.admin_mac | trim }}"
+    hostnames="{{ item.hostname | trim }}" serial="{{ item.service_tag | trim }}"
+    netboot=xnba arch={{ item.architecture }} -f
+  loop: "{{ mapping_details }}"
+  changed_when: true
+  loop_control:
+    label: "{{ item.hostname }}"
+  when:
+    - item.bmc_ip == ""
+    - item.admin_mac | lower not in node_mac_list.stdout | lower
+
+
+- name: Create node object from mapping_details JSON
+  ansible.builtin.shell: >
+    {{ xcat_path }}/mkdef -t node "{{ item.hostname.split('.')[0] }}"
+    groups={{ mapping_node_group }},{{ mapping_bmc_node_group }},{{ item.roles }},{{ item.group_name }},all
+    ip="{{ item.admin_ip | trim }}" bmc="{{ item.bmc_ip | trim }}" mgt=ipmi
+    mac="{{ item.admin_mac | trim }}" serial="{{ item.service_tag | trim }}"
+    hostnames="{{ item.hostname | trim }}" netboot=xnba arch={{ item.architecture }} -f
+  loop: "{{ mapping_details }}"
+  changed_when: true
+  loop_control:
+    label: "{{ item.hostname }}"
+  when:
+    - item.bmc_ip != ""
+    - item.admin_mac | lower not in node_mac_list.stdout | lower
+
+- name: Register passive node(s) list
+  ansible.builtin.set_fact:
+    passive_node_details: "{{ high_availability_config.ansible_facts.oim_ha.passive_nodes.node_details | default([]) }}"
+  when: enable_oim_ha
+
+- name: Create high availability node object(s) from passive nodes provided by user
+  ansible.builtin.shell: >
+    {{ xcat_path }}/mkdef -t node "{{ passive_node_details[idx1].HOSTNAME.split('.')[0] }}" groups=oim_ha,all
+    ip="{{ passive_node_details[idx1].ADMIN_IP | trim }}" bmc="{{ passive_node_details[idx1].BMC_IP | trim }}" mgt=ipmi
+    mac="{{ passive_node_details[idx1].ADMIN_MAC | trim }}" hostnames="{{ passive_node_details[idx1].HOSTNAME | trim }}"
+    serial="{{ passive_node_details[idx1].SERVICE_TAG | trim }}" netboot=xnba arch=x86_64  -f
+  with_items: "{{ passive_node_details }}"
   changed_when: true
   loop_control:
     index_var: idx1
-  when:
-    - mapping_file_output.list[idx1].BMC_IP == ""
-    - mapping_file_output.list[idx1].ADMIN_MAC | lower not in node_mac_list.stdout | lower
-
-- name: Create node object from mapping file provided by user
-  ansible.builtin.shell: >
-    {{ xcat_path }}/mkdef -t node "{{ mapping_file_output.list[idx1].HOSTNAME.split('.')[0] }}" groups={{ mapping_node_group }},{{ mapping_bmc_node_group }},all
-    ip="{{ mapping_file_output.list[idx1].ADMIN_IP | trim }}" bmc="{{ mapping_file_output.list[idx1].BMC_IP | trim }}" mgt=ipmi
-    mac="{{ mapping_file_output.list[idx1].ADMIN_MAC | trim }}" serial="{{ mapping_file_output.list[idx1].SERVICE_TAG | trim }}"
-    hostnames="{{ mapping_file_output.list[idx1].HOSTNAME | trim }}" netboot=xnba arch=x86_64  -f
-  with_items: "{{ mapping_file_output.list }}"
-  changed_when: true
-  loop_control:
-    index_var: idx1
-  when:
-    - mapping_file_output.list[idx1].BMC_IP != ""
-    - mapping_file_output.list[idx1].ADMIN_MAC | lower not in node_mac_list.stdout | lower
+  when: enable_oim_ha

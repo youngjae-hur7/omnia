@@ -21,8 +21,8 @@ import pandas as pd
 mapping_file_path = os.path.abspath(sys.argv[1])
 admin_static_start_ip = sys.argv[2]
 admin_static_end_ip = sys.argv[3]
-mandatory_col = ["SERVICE_TAG", "ADMIN_MAC", "HOSTNAME", "ADMIN_IP", "BMC_IP"]
-non_null_col = ["SERVICE_TAG", "ADMIN_MAC", "HOSTNAME", "ADMIN_IP"]
+mandatory_col = ["GROUP_NAME", "SERVICE_TAG", "ADMIN_MAC", "HOSTNAME", "ADMIN_IP", "BMC_IP"]
+non_null_col = ["GROUP_NAME", "SERVICE_TAG", "ADMIN_MAC", "HOSTNAME", "ADMIN_IP"]
 nan = float('nan')
 
 
@@ -175,14 +175,13 @@ def validate_col(df):
     for i in mandatory_col:
         if i not in curr_cols:
             sys.exit(
-                " Please provide a valid mapping file. It should contain SERVICE_TAG,ADMIN_MAC,HOSTNAME,ADMIN_IP,"
-                "BMC_IP.")
+                " Please provide a valid mapping file. It should contain GROUP_NAME,SERVICE_TAG,ADMIN_MAC,HOSTNAME,ADMIN_IP,BMC_IP.")
 
     # Calculate null columns
     null_col_list = df.columns[df.isna().any()].tolist()
     for i in non_null_col:
         if i in null_col_list:
-            sys.exit(" SERVICE_TAG,ADMIN_MAC,HOSTNAME and ADMIN_IP can't be null. Please provide proper values.")
+            sys.exit("GROUP_NAME,SERVICE_TAG,ADMIN_MAC,HOSTNAME and ADMIN_IP can't be null. Please provide proper values.")
     unique_val_col(df)
 
 

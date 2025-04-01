@@ -5,16 +5,20 @@
     "repo_config": "always",
     "softwares": [
         {"name": "amdgpu", "version": "6.3.1"},
-        {"name": "cuda", "version": "12.5.0"},
+        {"name": "cuda", "version": "12.8.0"},
         {"name": "ofed", "version": "24.10-1.1.4.0"},
+        {"name": "service_node" },
         {"name": "openldap"},
         {"name": "nfs"},
         {"name": "k8s", "version":"1.31.4"},
         {"name": "slurm"}
     ],
-
     "amdgpu": [
         {"name": "rocm", "version": "6.3.1" }
+    ],
+    "slurm": [
+        {"name": "slurm_control_node"},
+        {"name": "slurm_node"},
+        {"name": "login"}
     ]
-
 }

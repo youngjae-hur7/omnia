@@ -20,6 +20,7 @@
   ansible.builtin.import_playbook: ../create_container_group.yml
   vars:
     omnia_provision_group: true
+    omnia_provision_validation: true
 
 - name: Servicetag Host mapping # noqa: role-name[path]
   hosts: omnia_provision
@@ -28,7 +29,7 @@
   roles:
     - ../roles/servicetag_host_mapping
 
-- name: server_spec validation
+- name: Server_spec validation
   hosts: localhost
   connection: local
   roles:

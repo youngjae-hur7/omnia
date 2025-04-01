@@ -24,12 +24,11 @@
 - name: Length of domain name and node name
   ansible.builtin.set_fact:
     domain_name_len: "{{ domain_name | length }}"
-    node_name_len: "{{ node_name | length }}"
 
 - name: Assert length of hostname is less than 64 characters
   ansible.builtin.assert:
     that:
-      - domain_name_len|int + node_name_len|int < 59
+      - domain_name_len|int < 46 # Node name max can go up to 13 leters - grp100node100
     success_msg: "{{ hostname_success_msg }}"
     fail_msg: "{{ hostname_fail_msg }}"
 
@@ -78,14 +77,16 @@
     oim_domain_name: "{{ domain_name }}"
     oim_hostname: "{{ hostname_result.stdout }}"
 
-# This logic will be updated based on /etc/hosts mount
-- name: Check if hosts_file_path entry for oim_hostname is present
-  ansible.builtin.command: grep -q "{{ pxe_nic_ip }} {{ oim_hostname }}" "{{ hosts_file_path }}"
-  register: oim_hostname_entry_present
-  changed_when: false
-  failed_when: false
+- name: Remove hosts file entry of Omnia Infrastructure Manager
+  ansible.builtin.lineinfile:
+    path: "{{ hosts_file_path }}"
+    regexp: "^(.*){{ oim_hostname }}"
+    state: absent
 
 - name: Add hosts file entry
-  ansible.builtin.shell: echo "{{ pxe_nic_ip }} {{ oim_hostname }}" >> "{{ hosts_file_path }}"
-  changed_when: true
-  when: oim_hostname not in oim_hostname_entry_present.stdout
+  ansible.builtin.lineinfile:
+    path: "{{ hosts_file_path }}"
+    line: "{{ pxe_nic_ip }} {{ oim_hostname }}"
+    state: present
+    create: true
+    mode: "{{ hosts_file_mode }}"

@@ -26,18 +26,21 @@
       containers.podman.podman_container:
         name: "{{ pulp_container_name }}"
         state: stopped
+      failed_when: false
 
     - name: Remove Pulp container
       containers.podman.podman_container:
         name: "{{ pulp_container_name }}"
         state: absent
+        force_delete: true
 
-    - name: Remove Pulp Directory
+    - name: Remove Pulp and Offline repo Directory
       ansible.builtin.file:
         path: "{{ item }}"
         state: absent
       with_items:
         - "{{ pulp_cleanup_directory }}"
+
   rescue:
     - name: Pulp container removal failed
       ansible.builtin.fail:

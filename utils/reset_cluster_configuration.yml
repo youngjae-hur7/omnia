@@ -1,4 +1,4 @@
-#  Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+#  Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -13,9 +13,18 @@
 #  limitations under the License.
 ---
 
-- name: Check if virtual environment is active
-  ansible.builtin.import_playbook: check_venv.yml
-  when: not ( check_venv_executed | default(false) | bool )
+- name: Include input project directory
+  ansible.builtin.import_playbook: ../utils/include_input_dir.yml
+  tags: always
+
+- name: Create kubespray container group
+  ansible.builtin.import_playbook: ../utils/create_container_group.yml
+  vars:
+    omnia_kubespray_group: true
+    omnia_provision_group: true
+    omnia_provision_validation: true
+    omnia_kubespray_validation: true
+  tags: always
 
 - name: Warning and User confirmation for removing cluster
   hosts: localhost
@@ -23,8 +32,14 @@
   gather_facts: false
   roles:
     - { role: remove_cluster/user_confirmation } # noqa: role-name[path]
-    - { role: servicetag_host_mapping }
     - { role: common }
+  tags: always
+
+- name: Host Mapping
+  hosts: omnia_provision
+  connection: ssh
+  roles:
+    - servicetag_host_mapping
   tags: always
 
 - name: Proceeding to remove slurm cluster
@@ -43,9 +58,42 @@
   roles:
     - { role: remove_cluster/remove_k8s_cluster } # noqa: role-name[path]
 
-- name: Remove kubernetes cluster
+- name: Reset kubernetes cluster
   tags: k8s_cluster
-  ansible.builtin.import_playbook: "{{ playbook_dir }}/playbooks/reset_k8s_cluster.yml"
+  hosts: omnia_kubespray
+  vars:
+    kubespray_nfs_share: "/opt/omnia/kubespray"
+    kubespray_log_path: "/opt/omnia/log/kubespray/k8s_reset_cluster.log"
+    dir_mode: '0755'
+  tasks:
+    - name: Execute tasks for Reset kubernetes setup
+      block:
+        - name: Copy reset_k8s_cluste to kubespray nfs share
+          ansible.builtin.copy:
+            src: "{{ playbook_dir }}/playbooks/reset_k8s_cluster.yml"
+            dest: "{{ kubespray_nfs_share }}/reset_k8s_cluster.yml"
+            mode: "{{ dir_mode }}"
+
+        - name: Execute ansible-playbook for Kubernetes setup asynchronously
+          ansible.builtin.shell:
+            cmd: >-
+              set -o pipefail &&
+              /venv/bin/ansible-playbook {{ kubespray_nfs_share }}/reset_k8s_cluster.yml
+              -i {{ kubespray_nfs_share }}/inv_k8s
+              --extra-vars "@{{ kubespray_nfs_share }}/k8s_all_vars.yml" -vvv
+              | /usr/bin/tee {{ kubespray_log_path }}
+          async: 3600  # Set async timeout (e.g., 1 hour)
+          poll: 0  # Non-blocking (continue the playbook without waiting for completion)
+          register: k8s_reset_result  # Register the result to capture job ID
+          changed_when: false
+
+        - name: Wait for the Kubernetes reset cluster to finish. Logs can be checked at {{ kubespray_log_path }}
+          ansible.builtin.async_status:
+            jid: "{{ k8s_reset_result.ansible_job_id }}"  # Job ID from the previous task
+          register: job_result
+          until: job_result.finished
+          retries: 60  # Retry the task 60 times (10 min total)
+          delay: 10  # Wait 10 seconds between retries
 
 # manually removing kube service address from /etc/resolv.conf
 - name: Remove kube service address post kubernetes cluster removal

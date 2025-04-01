@@ -1,4 +1,4 @@
-#  Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+#  Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 ---
 
 # Usage: main.yml
+input_project_dir: "{{ hostvars['localhost']['input_project_dir'] }}"
 omnia_log_path: /var/log/omnia
 oim_path: "/root/.ansible/oim/"
 ansible_cfg_src: "{{ playbook_dir }}/ansible.cfg"
@@ -22,14 +23,15 @@ ansible_cfg_dest:
   - { path: "{{ playbook_dir }}/platforms/ansible.cfg", log_path: "/var/log/omnia/omnia_platforms.log", regexp: "/var/log/omnia.log" }
 
 # Usage: include_local_repo_config.yml
-local_repo_config_file: "{{ role_path }}/../../../input/local_repo_config.yml"
+local_repo_config_file: "{{ input_project_dir }}/local_repo_config.yml"
 local_repo_config_syntax_fail_msg: "Failed. Syntax errors present in local_repo_config.yml. Fix errors and re-run playbook again."
 
 # Usage: fetch_software_config.yml
-software_config_json_file: "{{ role_path }}/../../../input/software_config.json"
-local_repo_access_dest_path: "/opt/omnia/offline/local_repo_access.yml"
+software_config_json_file: "{{ input_project_dir }}/software_config.json"
+local_repo_access_dest_path: "/opt/omnia/provision/local_repo_access.yml"
+
 k8s_version_fail_msg: "Failed, Ensure version of k8s is mentioned in software_config.json"
-k8s_packages_file: "{{ role_path }}/../../../input/config/{{ software_config.cluster_os_type }}/{{ software_config.cluster_os_version }}/k8s.json"
+k8s_packages_file: "{{ input_project_dir }}/config/{{ software_config.cluster_os_type }}/{{ software_config.cluster_os_version }}/k8s.json"
 success_msg_ucx_version: "Success. ucx version is mentioned."
 fail_msg_ucx_version: "Failed. ucx version is not provided in software_config.json. Please include ucx version in input/software_config.json and rerun the playbook." # noqa: yaml[line-length]
 success_msg_openmpi_version: "Success. openmpi version is mentioned."
@@ -41,20 +43,28 @@ warning_time: 30
 offline_intel_directory: "{{ repo_store_path }}/cluster/apt"
 intelgaudi_version_warning_msg: "Failed, Intel Gaudi version not found."
 
+# Usage: validate_network_spec.yml
+network_spec: "{{ input_project_dir }}/network_spec.yml"
+network_spec_syntax_fail_msg: "Failed. Syntax errors present in network_spec.yml. Fix errors and re-run playbook again."
+admin_nic_ip_fail_msg: "IP '{{ admin_nic_ip }}' is not assigned to NIC '{{ admin_nic }}'. Please configure the admin IP in OIM and re-run the playbook."
+admin_nic_ip_success_msg: "IP '{{ admin_nic_ip }}' is assigned to NIC '{{ admin_nic }}'."
+
+# Usage: include_high_availability_config.yml
+ha_config_file: "{{ input_project_dir }}/high_availability_config.yml"
+ha_config_syntax_fail_msg: "Failed. Syntax errors present in high_availability_config.yml. Fix errors and re-run playbook again."
+
+# Usage: generate_k8s_vars.yml
+k8s_var_common_src: "../templates/common_vars_template.j2"
+k8s_var_final_src: "../templates/final_template.j2"
+k8s_var_dest: "/opt/omnia/kubespray/k8s_all_vars.yml"
+file_permission: "0644"
+pulp_registry_port: "2225"
+
 # Usage: fetch_omnia_inputs.yml
 config_filename: "omnia_config.yml"
-config_vaultname: .omnia_vault_key
-vault_key_permission: "0644"
 min_length: 8
 max_length: 30
-omnia17_k8s_version: '1.29.5'
-omnia161_k8s_version: '1.26.12'
 omnia_config_syntax_fail_msg: "Failed. Syntax errors present in omnia_config.yml. Fix errors and re-run playbook again."
-fail_msg_mariadb_password: "maria_db password not given in correct format."
-success_msg_mariadb_password: "mariadb_password validated"
-success_msg_k8s_version: "Kubernetes Version Validated"
-fail_msg_k8s_version: "Failed. Kubernetes Version is unsupported or incorrect in software_config.json for this virtual environment. Supported versions for omnia17_venv: 1.29.5, and for omnia161_venv: 1.26.12." # noqa: yaml[line-length]
-kube_version_on_unsupported_os: "Failed. On RHEL/Rocky 8.6 or 8.7 OS, supported kubernetes version is 1.26.12 and suppported virtual environment is omnia161_venv only"  # noqa: yaml[line-length]
 success_msg_k8s_cni: "Kubernetes CNI Validated"
 fail_msg_k8s_cni: "Kubernetes CNI not correct."
 supported_topology_manager_policy: ['none', 'best-effort', 'restricted', 'single-numa-node']
@@ -101,64 +111,9 @@ scheduler_type_fail_msg: "Failed. Invalid scheduler_type in omnia_config.yml. To
 To install k8s provide scheduler_type: k8s. To install slurm and k8s provide scheduler_type: slurm,k8s"
 install_scheduler_msg: "Installing job scheduler:"
 
-# Usage: validatios.yml
-empty_inventory_fail_msg: "Failed. inventory not provided. Re-run playbook with inventory by providing -i inventory.
-Inventory support groups are slurm_control_node, slurm_node, kube_control_plane, kube_node, etcd, auth_server, login"
-
-# Usage: k8s_validations.yml
-invalid_kube_inventory_fail_msg: "Failed. k8s software is present in software_config.json.
-Invalid inventory format, specify kube_control_plane, kube_node and etcd"
-kube_one_node_validation_fail_msg: "Failed. k8s software is present in software_config.json.
-There should be exactly one entry for kube_control_plane in the inventory"
-kube_one_node_validation_success_msg: "One kube_control_plane exists in the inventory"
-kube_node_validation_fail_msg: "Failed. k8s software is present in software_config.json.
-At least one kube_node should be present in the inventory."
-kube_node_validation_success_msg: " At least one kube_node exists in the inventory"
-etcd_node_validation_fail_msg: "Failed. k8s software is present in software_config.json.
-etcd group in inventory must have atleast one node and total node count must be odd."
-etcd_node_validation_success_msg: "etcd should have odd number of nodes in the inventory"
-unreachable_kube_control_plane_fail_msg: "Failed. Unreachable node mentioned in inventory for kube_control_plane.
-Re-run playbook with reachable kube_control_plane."
-ansible_collection_folder: "{{ omnia_collection_path[0] }}/ansible_collections/"
-kubespray_certificate_key_taskfile_path: "kubernetes_sigs/kubespray/roles/kubernetes/control-plane/tasks/kubeadm-setup.yml"
-max_retries: 5
-
-# Usage: slurm_validations.yml
-invalid_slurm_inventory_fail_msg: "Failed. slurm software is present in software_config.json.
-Invalid inventory format, specify slurm_control_node and slurm_node."
-slurm_one_node_validation_fail_msg: "Failed. slurm software is present in software_config.json.
-There should be exactly one entry for slurm_control_node in the inventory."
-slurm_one_node_validation_success_msg: "One slurm_control_node exists in the inventory"
-slurm_node_validation_fail_msg: "Failed. slurm software is present in software_config.json.
-At least one slurm_node should be present in the inventory."
-slurm_node_validation_success_msg: "At least one slurm_node exists in the inventory"
-unreachable_slurm_control_node_fail_msg: "Failed. Unreachable node mentioned in inventory for slurm_control_node.
-Re-run playbook with reachable slurm_control_node."
-slurm_control_node_in_login_fail_msg: "Failed. Node mentioned in slurm_control_node group should not be present in login group"
-slurm_control_node_in_node_fail_msg: "Failed. Node mentioned in slurm_control_node group should not be present in slurm_node group"
-
-# Usage: install_packages.yml
-ansible_base_version: '2.9'
-ipaddr_collection: ansible.utils:2.10.3
-ansible_collection_nfs: ansible.posix:1.4.0
-
-# Usage: fetch_ldap_client_inputs.yml
-ldap_client_config_failure_msg: "LDAP Client Input parameters cannot be empty when ldap_reqired is set to true"
-ldap_server_failure_msg: "LDAP server is not reachable. Please check the reachability from cluster"
-ping_msg: "100% packet loss"
-ldap_connection_type_success_msg: "LDAP Connection type successfully validated"
-ldap_connection_type_fail_msg: "Failed. LDAP Connection type must be: SSL, TLS, ssl or tls"
-ldap_ca_cert_path_failure_msg: "Failed. The mentioned certificate does not exist"
-
-# Usage: set_login_node_status.yml
-multiple_login_node_fail_msg: "Failed. Currently only one login node supported in inventory"
-warning_wait_time: 10
-login_node_warning_msg: "[WARNING] login group with ip for login node not present in the inventory.
-Proceeding execution with provided nodes"
-
-# Usage: Fetch_software_config.yml
-csi_driver_powerscale_packages_file: >-
-  {{ role_path }}/../../../input/config/{{ software_config.cluster_os_type }}/{{ software_config.cluster_os_version }}/csi_driver_powerscale.json
+# # Usage: Fetch_software_config.yml
+# csi_driver_powerscale_packages_file: >-
+#   {{ role_path }}/../../../input/config/{{ software_config.cluster_os_type }}/{{ software_config.cluster_os_version }}/csi_driver_powerscale.json
 
 # Usage: fetch_omnia_inputs.yml
 csi_driver_secret_file_path_success_msg: "Success. csi_driver_secret_file_path is valid in omnia_config.yml"
@@ -181,3 +136,4 @@ fail_msg_isipath: "isiPath must be a valid Unix absolute path in secret.yaml fil
 fail_msg_isi_volume_path_permissions: "isiVolumePathPermissions must be a valid directory permission (example: 0777) in secret.yaml file."
 fail_msg_api_call: "Please recheck powerscale username, password, endpoint and endpointPort details provided in secret.yaml and
   values.yaml (if endpointPort is provided only in values.yaml) file. API call to powerscale was not successful"
+vault_key_permission: "0644"

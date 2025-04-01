@@ -75,8 +75,8 @@ def create_connection_xcatdb():
     return conn
 
 
-def insert_node_info(service_tag, node, hostname, admin_mac, admin_ip, bmc_ip, discovery_mechanism, bmc_mode, switch_ip,
-                     switch_name, switch_port):
+def insert_node_info(service_tag, node, hostname, admin_mac, admin_ip, bmc_ip, group_name, role, parent, location_id,
+                     architecture, discovery_mechanism, bmc_mode, switch_ip, switch_name, switch_port):
     """
     Inserts node information into the cluster.nodeinfo table.
 
@@ -87,6 +87,10 @@ def insert_node_info(service_tag, node, hostname, admin_mac, admin_ip, bmc_ip, d
         admin_mac (str): The MAC address of the admin interface.
         admin_ip (Union[str, None]): The IP address of the admin interface.
         bmc_ip (Union[str, None]): The IP address of the BMC.
+        group_name (str): The group the node belongs to.
+        role (str): The role of the node.
+        location_id (str): The location ID of the node.
+        architecture (str): The architecture of the node.
         discovery_mechanism (str): The mechanism used to discover the node.
         bmc_mode (str): The mode of the BMC.
         switch_ip (Union[str, None]): The IP address of the switch.
@@ -98,12 +102,21 @@ def insert_node_info(service_tag, node, hostname, admin_mac, admin_ip, bmc_ip, d
     """
     conn = create_connection()
     cursor = conn.cursor()
-    sql = '''INSERT INTO cluster.nodeinfo(service_tag,node,hostname,admin_mac,admin_ip,bmc_ip,discovery_mechanism,bmc_mode,switch_ip,switch_name,switch_port)
-               VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+
+    sql = '''INSERT INTO cluster.nodeinfo(
+                service_tag, node, hostname, admin_mac, admin_ip, bmc_ip, group_name, role, parent, location_id, architecture,
+                discovery_mechanism, bmc_mode, switch_ip, switch_name, switch_port)
+             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
+
     params = (
-        service_tag, node, hostname, admin_mac, str(admin_ip) if admin_ip else None, str(bmc_ip) if bmc_ip else None,
-        discovery_mechanism, bmc_mode, str(switch_ip) if switch_ip else None, switch_name, switch_port)
+        service_tag, node, hostname, admin_mac, str(admin_ip) if admin_ip else None,
+        str(bmc_ip) if bmc_ip else None, group_name, role, parent, location_id, architecture,
+        discovery_mechanism, bmc_mode, str(switch_ip) if switch_ip else None, switch_name,
+        switch_port
+    )
+
     cursor.execute(sql, params)
+    conn.commit()
     conn.close()
 
 def insert_switch_info(cursor, switch_name, switch_ip):

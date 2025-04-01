@@ -21,7 +21,8 @@
     groups: "{{ oim_host_group }}"
   when:
     - oim_group | default(false) | bool or
-      omnia_provision_validation | default(false) | bool
+      omnia_provision_validation | default(false) | bool or
+      omnia_kubespray_validation | default(false) | bool
 
 - name: Create {{ provision_container_name }} group # noqa: name[template]
   ansible.builtin.add_host:
@@ -32,11 +33,11 @@
     ansible_python_interpreter: "{{ python_version }}"
   when: omnia_provision_group | default(false) | bool
 
-- name: Create {{ kubespray_container_name }} group # noqa: name[template]
+- name: Create {{ kubespray_container_hostname }} group # noqa: name[template]
   ansible.builtin.add_host:
-    hostname: "{{ kubespray_container_name }}"
+    hostname: "{{ kubespray_container_hostname }}"
     ansible_host: "localhost"
     ansible_port: "{{ kubespray_container_port }}"
-    groups: "{{ kubespray_container_name }}"
+    groups: "{{ kubespray_container_hostname }}"
     ansible_python_interpreter: "{{ python_version }}"
   when: omnia_kubespray_group | default(false) | bool

@@ -13,13 +13,29 @@
 # limitations under the License.
 ---
 
+- name: Set_fact for fetch omnia config credentials
+  hosts: localhost
+  tags: first_layer
+  connection: local
+  tasks:
+    - name: Set dynamic run tags including 'provision'
+      ansible.builtin.set_fact:
+        omnia_run_tags: "{{ (ansible_run_tags | default([]) + ['provision']) | unique }}"
+        cacheable: true
+
+- name: Invoke get_config_credentials.yml
+  tags: first_layer
+  ansible.builtin.import_playbook: utils/credential_utility/get_config_credentials.yml
+
 - name: Include input project directory
+  tags: first_layer
   ansible.builtin.import_playbook: utils/include_input_dir.yml
 
 - name: Validate inventory
   hosts: localhost
   connection: local
   gather_facts: false
+  tags: first_layer
   tasks:
     - name: Set inventory_status
       ansible.builtin.set_fact:
@@ -31,11 +47,12 @@
 
     - name: Validate inventory file
       ansible.builtin.include_role:
-        name: utils/server_spec_update/roles/server_spec_validation
+        name: utils/server_spec_update/roles/server_spec_validation  # noqa:role-name[path]
       when: inventory_status | default(false) | bool
 
 - name: Create provision container group
   ansible.builtin.import_playbook: utils/create_container_group.yml
+  tags: first_layer
   vars:
     omnia_provision_group: true
     omnia_provision_validation: true
@@ -44,19 +61,21 @@
   hosts: localhost
   connection: local
   gather_facts: false
+  tags: first_layer
   tasks:
     - name: Set provision_group_status and project_dir_status
       ansible.builtin.set_fact:
         provision_group_status: true
         project_dir_status: true
+        config_file_status: true
 
 - name: Discover the nodes
   ansible.builtin.import_playbook: discovery/discovery.yml       # noqa:role-name[path]
 
 - name: Server spec configuration
+  tags: first_layer
   ansible.builtin.import_playbook: utils/server_spec_update/server_spec_update.yml   # noqa:role-name[path]
   when: inventory_status | default(false) | bool
 
 - name: Provision nodes
   ansible.builtin.import_playbook: provision/provision.yml       # noqa:role-name[path]
-                                                                                           

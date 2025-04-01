@@ -17,6 +17,11 @@
   community.general.ini_file:
     path: "{{ dnf_conf_path }}"
     section: main
-    option: max_parallel_downloads
-    value: "{{ dnf_max_parallel }}"
+    option: "{{ item[0] }}"
+    value: "{{ item[1] }}"
     backup: true
+    no_extra_spaces: true
+    mode: "{{ dnf_max_mode }}"
+  loop:
+    - "{{ ['max_parallel_downloads', dnf_max_parallel] }}"
+    - "{{ ['strict', 'False'] }}"
