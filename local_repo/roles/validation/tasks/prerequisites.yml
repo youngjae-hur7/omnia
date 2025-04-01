@@ -23,5 +23,5 @@
     no_extra_spaces: true
     mode: "{{ dnf_max_mode }}"
   loop:
-   - "{{ ['max_parallel_downloads', dnf_max_parallel] }}"
-   - "{{ ['strict', 'False'] }}"
+    - "{{ ['max_parallel_downloads', dnf_max_parallel] }}"
+    - "{{ ['strict', 'False'] }}"
