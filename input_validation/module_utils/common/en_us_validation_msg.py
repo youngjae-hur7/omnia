@@ -70,6 +70,19 @@ intel_gaudi_fail_msg = "should not be false as intel_gaudi exists in software_co
 csi_driver_secret_fail_msg = "CSI Powerscale driver secret file path should not be empty."
 csi_driver_values_fail_msg = "CSI Powerscale driver values file path should not be empty."
 
+# provision_config_credentials.yml
+provision_password_fail_msg = "Incorrect provision_password format. Password must meet the specified requirements: should not be empty, must have a length of at least 8 characters, and should not contain the following characters: '-', '\', "'", or '"'"
+postgresdb_password_fail_msg = "Failed. postgresdb_password should contain only alphanumeric characters and minimum length 8"
+def bmc_username_fail_msg(min_username_length, max_length):
+    return f"bmc_username length must be between {min_username_length} and {max_length} characters. Must not contain '-', '\', "'", or '"'"
+bmc_password_fail_msg = "Incorrect bmc_password format. Password must meet the specified requirements: should not be empty, must have a length of at least 3 characters, and should not contain the following characters: '-', '\', "'", or '"'"
+docker_password_fail_msg = "Docker password must not be empty."
+switch_snmp3_username_empty_msg = "enabled_switch_based is set to true, switch_snmp3_username must not be empty"
+switch_snmp3_password_empty_msg = "enabled_switch_based is set to true, switch_snmp3_password must not be empty"
+def switch_snmp3_username_fail_msg(min_username_length, max_length):
+    return f"switch_snmp3_username length must be between {min_username_length} and {max_length} characters. Must not contain '-', '\\', "'", or '"'"
+switch_snmp3_password_fail_msg = "switch_snmp3_password must be at least 3 characters. Must not contain '-', '\\', "'", or '"'"
+
 # telemetry_config.yml
 def boolean_fail_msg(value):
     return f"{value} must be set to either true or false."
