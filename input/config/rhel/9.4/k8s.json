@@ -97,6 +97,16 @@
         "url": "https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner/releases/download/nfs-subdir-external-provisioner-4.0.18/nfs-subdir-external-provisioner-4.0.18.tgz"
       },
       {
+        "package": "registry.k8s.io/sig-storage/nfs-subdir-external-provisioner",
+        "tag": "v4.0.2",
+        "type": "image"
+      },
+      {
+        "package": "public.ecr.aws/xilinx_dcg/k8s-device-plugin",
+        "tag": "1.2.0",
+        "type": "image"
+      },
+      {
         "package": "docker.io/library/nginx",
         "tag": "1.25.2-alpine",
         "type": "image"
@@ -230,7 +240,33 @@
         "package": "registry.k8s.io/sig-storage/nfs-subdir-external-provisioner",
         "tag": "v4.0.2",
         "type": "image"
-      }
+      },
+      {
+        "package": "ghcr.io/k8snetworkplumbingwg/multus-cni",
+        "tag": "v4.1.4-thick",
+        "type": "image"
+      },
+      {
+        "package": "ghcr.io/k8snetworkplumbingwg/multus-cni",
+        "tag": "snapshot",
+        "type": "image"
+      },
+      {
+        "package": "ghcr.io/k8snetworkplumbingwg/whereabouts",
+        "tag": "latest",
+        "type": "image"
+      },
+      {
+      "package": "multus-daemonset",
+       "type": "manifest",
+       "url": "https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset.yml"
+      },
+      {
+           "package": "whereabouts",
+           "url": "https://github.com/k8snetworkplumbingwg/whereabouts.git",
+           "type": "git",
+           "version": "v0.8.0"
+        }
       ]
     }
   }

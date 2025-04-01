@@ -21,26 +21,6 @@ file_names = config.files
 create_error_msg = validation_utils.create_error_msg
 create_file_path = validation_utils.create_file_path
 
-def validate_provision_config_credentials(input_file_path, data, logger, module, omnia_base_dir, project_name):
-    errors = []
-    provision_config_file_path = create_file_path(input_file_path, file_names["provision_config"])
-    provision_config_json = validation_utils.load_yaml_as_json(provision_config_file_path, omnia_base_dir, project_name, logger, module)
-    enable_switch_based = provision_config_json["enable_switch_based"]
-
-    if enable_switch_based:
-        switch_snmp3_username = data["switch_snmp3_username"]
-        switch_snmp3_password = data["switch_snmp3_password"]
-        if validation_utils.is_string_empty(switch_snmp3_username):
-            errors.append(create_error_msg("switch_snmp3_username",switch_snmp3_username,en_us_validation_msg.switch_snmp3_username_empty_msg,))
-        if validation_utils.is_string_empty(switch_snmp3_password):
-            errors.append(create_error_msg("switch_snmp3_password", switch_snmp3_password, en_us_validation_msg.switch_snmp3_password_empty_msg))
-        if not (validation_utils.validate_username(switch_snmp3_username, 4, 30)):
-            errors.append(create_error_msg("switch_snmp3_username", switch_snmp3_username, en_us_validation_msg.switch_snmp3_username_fail_msg(4, 30)))
-        if not (validation_utils.is_valid_password(switch_snmp3_password)):
-            errors.append(create_error_msg("switch_snmp3_password", switch_snmp3_password, en_us_validation_msg.switch_snmp3_password_fail_msg))
-
-    return errors
-
 def validate_provision_config(input_file_path, data, logger, module, omnia_base_dir, project_name):
     errors = []
     software_config_file_path = create_file_path(input_file_path, file_names["software_config"])
@@ -64,7 +44,7 @@ def validate_provision_config(input_file_path, data, logger, module, omnia_base_
     ntp_support = data["ntp_support"]
     if ntp_support is None or ntp_support == "":
         errors.append(create_error_msg("ntp_support", ntp_support, en_us_validation_msg.ntp_support_empty_msg))
-        
+
     return errors
 
 def validate_network_spec(input_file_path, data, logger, module, omnia_base_dir, project_name):

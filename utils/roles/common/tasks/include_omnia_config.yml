@@ -13,19 +13,6 @@
 # limitations under the License.
 ---
 
-- name: Check omnia_config.yml file is encrypted
-  ansible.builtin.command: cat {{ omnia_config_filename }}
-  changed_when: false
-  register: omnia_config_content
-  no_log: true
-
-- name: Decrpyt omnia_config.yml
-  ansible.builtin.command: >-
-    ansible-vault decrypt {{ omnia_config_filename }}
-    --vault-password-file {{ omnia_vault_path }}
-  changed_when: false
-  when: ansible_vault_search_key in omnia_config_content.stdout
-
 - name: Include omnia_config.yml
   block:
     - name: Include omnia_config.yml
@@ -36,15 +23,3 @@
     - name: Failed to include omnia_config.yml
       ansible.builtin.fail:
         msg: "{{ omnia_config_syntax_fail_msg }} Error: {{ include_omnia_config.message }}"
-
-- name: Encrypt omnia_config.yml
-  ansible.builtin.command: >-
-    ansible-vault encrypt {{ omnia_config_filename }}
-    --vault-password-file {{ omnia_vault_path }}
-  changed_when: false
-  when: ansible_vault_search_key in omnia_config_content.stdout
-
-- name: Update omnia_config.yml permission
-  ansible.builtin.file:
-    path: "{{ omnia_config_filename }}"
-    mode: "{{ file_permission }}"

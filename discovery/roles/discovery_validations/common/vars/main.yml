@@ -19,6 +19,7 @@ provision_validation_vars:
   - "{{ role_path }}/../mtms/vars/main.yml"
   - "{{ role_path }}/../switch_based/vars/main.yml"
 provision_shared_library_path: /opt/omnia/shared_libraries/provision
+ansible_tag_fail_msg: "Please run the playbook with the tag 'first_layer' only. Other tags are not allowed."
 
 # Usage: validate_provision_container.yml
 xcatd_service: "xcatd.service"
@@ -43,15 +44,17 @@ spec_file:
   - "{{ hostvars['localhost']['input_project_dir'] }}/network_spec.yml"
   - "{{ hostvars['localhost']['input_project_dir'] }}/server_spec.yml"
 provision_config_filename: "{{ hostvars['localhost']['input_project_dir'] }}/provision_config.yml"
-provision_vault_path: "{{ hostvars['localhost']['input_project_dir'] }}/.provision_vault_key"
-ansible_vault_search_key: "$ANSIBLE_VAULT;"
 provision_config_syntax_fail_msg: "Failed. Syntax errors present in provision_config.yml. Fix errors and re-run playbook again."
 spec_syntax_fail_msg: "Failed. Syntax errors present in either network_spec.yml or server_spec.yml. Fix the errors and re-run."
-provision_config_cred_syntax_fail_msg: "Failed. Syntax errors present in provision_credentials_config.yml. Fix errors and re-run playbook again."
+
+# Usage: include_high_availability_config.yml
+high_availability_config_path: "{{ hostvars['localhost']['input_project_dir'] }}/high_availability_config.yml"
+high_availability_config_syntax_fail_msg: "Failed. Syntax errors present in high_availability_config.yml. Fix errors and re-run playbook again."
 
 # Usage: fetch_composable_roles_config.yml
 roles_config_path: "{{ hostvars['localhost']['input_project_dir'] }}/roles_config.yml"
 roles_config_syntax_fail_msg: "Failed. Syntax errors present in role_config.yml. Fix errors and re-run playbook again."
+omnia_metadata_file: "/opt/omnia/.data/oim_metadata.yml"
 
 # Usage: include_local_repo_config.yml
 local_repo_config_file: "{{ hostvars['localhost']['input_project_dir'] }}/local_repo_config.yml"
@@ -72,6 +75,7 @@ local_repo_fail_msg: "Failed! Please run local_repo.yml before running discovery
 softwares_warning_msg: "[WARNING] software_config.json does not have any softwares. Hence softwares will not be installed on the nodes post provisioning."
 repo_store_path_fail_msg: "Failed. {{ repo_store_path }} didn't exist. Please run local_repo.yml before running discovery_provision.yml/prepare_oim.yml"
 repo_config_metadata_fail_msg: "Failed: Cannot change repo_config in subsequent runs. Please use the repo_config:{{ md_repo_config }} in software_config.json"
+warning_wait_time: 30
 
 # Usage: assign_network_interface.yml
 network_interface_fail_msg: "Failed. Please provide a valid network interface type."
@@ -150,14 +154,6 @@ default_layer_discovery_mechanism_fail_msg: |
   For bmc dynamic discovery, please provide the bmc_network details in the network_spec.yml file.
   For switch_based discovery, provide bmc_details and switch_details in roles_config.yml"
 
-# Usage: validate_switch_vars.yml
-pxe_switch_ip_valid: "Valid switch ip provided"
-pxe_switch_ip_invalid: " Failed. Provide a valid switch ip in provision_config.yml"
-fail_switch_or_mapping_file: "Failed. python_version provide PXE switch details.
-If switch details are given,then provide proper node_name too."
-pxe_switch_unreachable: "Failed. Given switch is unreachable. Please provide correct switch IP in provision_config.yml."
-provision_option_fail_msg: "[WARNING]. Ignoring pxe_switch_ip when pxe_mapping_file_path provided"
-
 # Usage: validate_provision_vars.yml
 input_provision_fail_msg: |
   "Failed! Please provide all the required provision parameters in provision_config.yml, namely,
@@ -175,10 +171,6 @@ provision_os_success_msg: "cluster_os_type validated"
 provision_os_fail_msg: |
   "Failed. Incorrect cluster_os_type selected.
   If Omnia Infrastructure Manager OS RHEL, only cluster_os_type {{ os_supported_rhel }} is supported."
-ping_search_key: "100% packet loss"
-min_length: 8
-max_length: 30
-warning_wait_time: 30
 supported_rhel_os_version: ["9.4"]
 supported_ubuntu_os_version: ["20.04", "22.04", "24.04"]
 provision_os_version_fail_msg: |
@@ -208,8 +200,9 @@ server_domain_name_fail_msg: "Failed. domain_name set is not same as domain_name
 hosts_file_path: /opt/omnia/hosts
 hosts_file_mode: "0644"
 hostname_success_msg: "Hostname length successfully validated."
-hostname_fail_msg: "Failed. Hostname comprises of domain name, node name and 6 characters (00001 and .) that is used by omnia.
-All these inclusive, the total length should be less than 65 characters."
+hostname_fail_msg: "Failed. Hostname must not exceed 65 characters. The domain name and node name,
+dynamically generated based on the group used by omnia, contribute to the total length.
+The maximum length for the node name is 13 characters. Please set the domain name carefully to avoid any issues."
 
 # Usage: validate_ofed_cuda_repo.yml
 ofed_version_warning_msg: "[WARNING] software_config.json does not have the version for OFED.
@@ -244,6 +237,12 @@ service_node_repo_failed_msg: "[Failed] It seems you have not executed local_rep
 service_node package is required for service role provisioning."
 pulp_repo_fail_msg: "Failed. It seems pulp is not configured properly.
 Run local_repo/local_repo.yml with required packages in software_config.yml."
+
+# Usage: validate_racadm_repo.yml
+racadm_warning_msg: |
+  "[WARNING] local_repo.yml is not executed for downloading racadm packages.
+  Hence, racadm will not be installed on the nodes post provisioning."
+racadm_pulp_name: tarballracadm
 
 # Usage: validate_intelgaudi_repo.yml
 intelgaudi_version_warning_msg: "[WARNING] software_config.json does not have the version for 'intelgaudi'.

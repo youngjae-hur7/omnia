@@ -28,3 +28,9 @@
         name: create_container_group
         tasks_from: validate_provision_container.yml
       when: omnia_provision_validation | default(false) | bool
+
+    - name: Validate kubespray container is running
+      ansible.builtin.include_role:
+        name: create_container_group
+        tasks_from: validate_kubespray_container.yml
+      when: omnia_kubespray_validation | default(false) | bool

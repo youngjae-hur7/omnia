@@ -19,6 +19,7 @@
 # ***********************************************************************
 
 #### Mandatory
+# This Node name is used only for bmc dynamic discovered nodes
 # Nodes present in mapping file, won't be considered for this node_name.
 # Prefix for the node names, if needed to be dynamically allocated.
 # Hostname = node_name + '0000x' + domain_name
@@ -43,29 +44,6 @@ domain_name: ""
 # Format of csv: SERVICE_TAG,ADMIN_MAC,HOSTNAME,ADMIN_IP,BMC_IP
 pxe_mapping_file_path: ""
 
-#### Mandatory
-# Variable indicates whether switch based discovery should be enabled to discover the nodes
-# To enable switch based discovery, set enable_switch_based to true
-# If enable_switch_based is set to true, Following inputs should be provided:
-# switch_based_details should be provided in provision_config.yml
-# switch_snmp3_username and switch_snmp3_password should be provided in provision_config_credentials.yml
-# bmc_network details with oim_nic_name, netmask_bits, static_range and dynamic_range should be provided in network_spec.yml
-# Warning: If enable_switch_based is set to true, bmc discovery will be skipped.
-# For enabling bmc discovery, set enable_switch_based to false and provide bmc_network details in network_spec.yml
-# It accepts true and false values
-# Default: false
-enable_switch_based: false
-
-#### Mandatory, when enabled_switch_based is set to true
-# Ports indicates the port no. where the servers are connected on switch
-# If split port is needed, use colon (:) as shown in example below.
-# Example1:
-#   - { ip: 172.96.28.12, ports: '1-48,49:3,50' }
-# Example2 with 2 switches:
-#   - { ip: 172.96.28.12, ports: '1-48,49:3,50' }
-#   - { ip: 172.96.28.14, ports: '1,2,3,5' }
-switch_based_details:
-  - { ip: , ports: '' }
 
 #### Optional
 # User defined disk partition applied to remote servers

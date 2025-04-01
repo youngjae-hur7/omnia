@@ -14,4 +14,5 @@
 ---
 
 # Usage: validate_amd.yml
-offline_rocm_directory: "{{ repo_store_path }}/cluster/yum"
+# offline_rocm_directory: "{{ repo_store_path }}/cluster/yum"
+offline_rocm_directory: "/opt/omnia/offline_repo/cluster/yum"

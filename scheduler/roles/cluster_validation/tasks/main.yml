@@ -24,14 +24,8 @@
 - name: Fetch software_config.json and local repo access variables
   ansible.builtin.include_tasks: fetch_software_config.yml
 
-- name: Set login_node_required status
-  ansible.builtin.include_tasks: set_login_node_status.yml
-
 - name: Include high_availability variables
   ansible.builtin.include_tasks: include_high_availability_config.yml
-
-- name: Perform validations
-  ansible.builtin.include_tasks: validations.yml
 
 - name: Fetch omnia_config.yml inputs
   ansible.builtin.include_tasks: fetch_omnia_inputs.yml
@@ -45,8 +39,6 @@
 - name: Include gather_facts playbook
   ansible.builtin.include_tasks: gather_fact_resolution.yml
 
-- name: Include provision_config_credentials inputs
-  ansible.builtin.include_tasks: include_provision_config_credentials.yml
-
 - name: Generate k8s var file
   ansible.builtin.include_tasks: generate_k8s_vars.yml
+  when: hostvars['127.0.0.1']['k8s_support']

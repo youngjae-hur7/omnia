@@ -32,10 +32,11 @@ duplicate_switch_ip_port_msg = "Please remove duplicate ports."
 switch_details_incomplete_msg = "If providing switch details, please provide both the IP and Ports fields."
 switch_details_no_bmc_details_msg = "If switch details are provided then bmc_detail's static_range must also be provided."
 invalid_group_name_msg = "Groups must be defined in the form of grp<n> where n is 0-99."
-invalid_location_id_msg = "location_id must follow the format SU-<n>.RACK-<n> where n is 0-99."
+invalid_location_id_msg = "location_id must follow the format SU-<n>.RACK-<n> where n is 0-99. This input is case-sensitive. Please use uppercase letters only."
 no_groups_msg = "Outer Group object was probably not defined."
 no_roles_msg = "Outer Role object was probably not defined."
 invalid_switch_ports_msg = "Please provide any port ranges as start-end (example: 0-15,4:4,51-53)."
+duplicate_group_name_msg = "Duplicate group names are not allowed."
 
 # provision_config.yml
 default_lease_time_fail_msg = "Please provide a valid default_lease_time."
@@ -57,7 +58,6 @@ ubuntu_os_url_msg = "ubuntu_os_url is empty. Please provide a ubuntu_os_url valu
 #omnia_config.yml
 invalid_password_msg = "Provided password is invalid. Password must meet the specified requirements: should not be empty, must have a length of at least 8 characters, and should not contain the following characters: '-', '\', "'", or '"'"
 k8s_cni_fail_msg = "k8s_cni is empty or invalid. k8s_cni must be set to either calico or flannel. "
-ansible_config_file_path_fail_msg = "Please provide a valid ansible_config_file_path value."
 pod_external_ip_range_fail_msg = "pod_external_ip_range value is either empty or invalid. Please provide one of the following acceptable formats: '10.11.0.100-10.11.0.150' (range between start and end IP addresses) or '10.11.0.0/16' (CIDR notation)."
 slurm_installation_type_fail_msg = "slurm_installation_type is empty or invalid. slurm_installation_type_fail_msg must either be set to nfs_share or configless."
 restart_slurm_services_fail_msg = "restart_slurm_services is empty or invalid. restart_slurm_services must be set to either true or false."

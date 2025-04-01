@@ -1,4 +1,4 @@
-# Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,18 +18,7 @@
 # SIMPLY APPEND THE REQUIRD VALUES AGAINST THE PARAMETER OF YOUR CHOICE.
 # ***********************************************************************
 
-# Path to directory hosting ansible config file (ansible.cfg file)
-# Default value is "/etc/ansible"
-# This directory is on the host running ansible, if ansible is installed using dnf
-# If ansible is installed using pip, this path should be set
-ansible_config_file_path: "/etc/ansible"
-
 # -----------------------------SLURM------------------------------------------------
-
-# Password used for Slurm database.
-# The Length of the password should be at least 8.
-# The password must not contain -,\, ',"
-mariadb_password: "password"
 
 # This variable accepts whether slurm installation is supported in configless mode or slurm in nfs
 # Default value is "configless"
@@ -42,6 +31,15 @@ slurm_installation_type: "configless"
 # It accepts true and false values
 # Default value is true
 restart_slurm_services: true
+
+# Type of database to be used by Slurm.
+# Options are mysql or mariadb. Defaults to mariadb.
+slurm_db_type: mariadb
+
+# Host and port of the Slurm database.
+# If no database is intalled on the given node, one will be created.
+# Defaults to 3306 if no port is given.
+slurm_db_port: 3306
 
 # ----------------------------K8S------------------------------------------------------
 

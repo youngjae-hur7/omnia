@@ -25,7 +25,7 @@
 # This file contains Roles and Groups used by the omnia for cluster formation.
 # Groups: - Groups will contain the list of groups defined by the user. User must define atleast one group.
 #   grpN:                 - <Mandatory> "grpN" -  User defined name of the group. Range for N is 0-99
-#     location_id:        - <Mandatory> su-<n>.rack-<n> Scalable unit and rack number range is 0-99.
+#     location_id:        - <Mandatory> SU-<n>.RACK-<n> Scalable unit and rack number range is 0-99. This input is case-sensitive. Please use uppercase letters only.
 #     resource_mgr_id:    - <Conditional Mandatory> list of service tag of active head node(s).
 #                         - Set the value only for group of nodes belonging to kube_node and slurm_node roles,
 #                         - And empty for other roles.
@@ -43,7 +43,7 @@
 
 Groups:
   grp0:
-    location_id: su-1.rack-1
+    location_id: SU-1.RACK-1
     resource_mgr_id: ""
     parent: ""
     bmc_details:
@@ -53,16 +53,16 @@ Groups:
       ports: ""
     architecture: "x86"
 
-#  grp1:
-#    location_id: su-1.rack-2
-#    resource_mgr_id: ""
-#    parent: ""
-#    bmc_details:
-#      static_range: ""
-#    switch_details:
-#      ip: ""
-#      ports: ""
-#    architecture: "x86"
+  # grp1:
+  #   location_id: SU-1.RACK-2
+  #   resource_mgr_id: ""
+  #   parent: ""
+  #   bmc_details:
+  #     static_range: ""
+  #   switch_details:
+  #     ip: ""
+  #     ports: ""
+  #   architecture: "x86"
 
 #************************************************************************************************************************
 #  Roles
@@ -102,8 +102,8 @@ Groups:
 # This role belongs to the compute layer.
 #
 Roles:
-- name: "default"
-  groups:
+  - name: "default"
+    groups:
       - grp0
 
 #
@@ -117,10 +117,10 @@ Roles:
 #
 # The nodes in this role can be used to run service.
 #
-# - name: "service"
-#   groups:
-#     - grp0
-#     - grp1
+  # - name: "service"
+  #   groups:
+  #     - grp0
+  #     - grp1
 
 
 #
@@ -135,10 +135,10 @@ Roles:
 # The nodes in this role can be used to run Kubernetes master.
 #
 # k8s head Role: Kubernetes master groups to add into etcd role can be provided in this role
-# - name: "kube_control_plane"
-#   groups:
-#     - grp0
-#     - grp1
+  # - name: "kube_control_plane"
+  #   groups:
+  #     - grp0
+  #     - grp1
 
 #
 # K8s etcd Role: Kubernetes etcd node groups to add into k8s role can be provided in this role
@@ -152,10 +152,10 @@ Roles:
 # The nodes in this role can be used to run Kubernetes etcd.
 #
 # K8s etcd Role: Kubernetes etcd groups to add into k8s etcd role can be provided in this role
-# - name: "etcd"
-#   groups:
-#     - grp0
-#     - grp1
+  # - name: "etcd"
+  #   groups:
+  #     - grp0
+  #     - grp1
 
 #
 # K8s Worker Role: Kubernetes worker node groups to add into k8s role can be provided in this role
@@ -169,10 +169,10 @@ Roles:
 # The nodes in this role can be used to run Kubernetes worker.
 #
 # K8s Worker Role: Kubernetes worker groups to add into k8s worker role can be provided in this role
-# - name: "kube_node"
-#   groups:
-#     - grp0
-#     - grp1
+  # - name: "kube_node"
+  #   groups:
+  #     - grp0
+  #     - grp1
 
 #
 # Slurm Head Role: Slurm head node groups to add into Slurm role can be provided in this role
@@ -187,10 +187,10 @@ Roles:
 # This role belongs to the compute layer.
 #
 # Slurm Head Role: Slurm head groups to add into slurm_control_node role can be provided in this role
-# - name: "slurm_control_node"
-#   groups:
-#     - grp0
-#     - grp1
+  # - name: "slurm_control_node"
+  #   groups:
+  #     - grp0
+  #     - grp1
 
 #
 # Slurm DB Daemon Role: Slurm DB Daemon node groups to add into Slurm role can be provided in this role
@@ -204,10 +204,10 @@ Roles:
 # The nodes in this role can be used to run Slurm DB Daemon.
 #
 # Slurm DB Daemon Role: Slurm DB Daemon groups to add into Slurm role can be provided in this role
-# - name: "slurm_dbd"
-#   groups:
-#     - grp0
-#     - grp1
+  # - name: "slurm_dbd"
+  #   groups:
+  #     - grp0
+  #     - grp1
 
 #
 # Slurm Worker Role: Slurm worker node groups to add into Slurm role can be provided in this role
@@ -221,10 +221,10 @@ Roles:
 # The nodes in this role can be used to run Slurm worker.
 #
 # Slurm Worker Role: Slurm worker groups to add into Slurm role can be provided in this role
-# - name: "slurm_node"
-#   groups:
-#     - grp0
-#     - grp1
+  # - name: "slurm_node"
+  #   groups:
+  #     - grp0
+  #     - grp1
 
 #
 # Login Role:
@@ -237,10 +237,10 @@ Roles:
 #
 # The user is not allowed to change the name of this role.
 #
-# - name: "login"
-#   groups:
-#     - grp0
-#     - grp1
+  # - name: "login"
+  #   groups:
+  #     - grp0
+  #     - grp1
 
 #
 # Auth Server Role:
@@ -253,10 +253,10 @@ Roles:
 #
 # The user is not allowed to change the name of this role.
 #
-# - name: "auth_server"
-#   groups:
-#     - grp0
-#     - grp1
+  # - name: "auth_server"
+  #   groups:
+  #     - grp0
+  #     - grp1
 
 #
 # Compiler Role:
@@ -270,7 +270,7 @@ Roles:
 # The nodes in this role can be used to compile the code.
 #
 # Compiler Role: Compiler groups to add into compiler role can be provided in this role
-# - name: "compiler"
-#   groups:
-#     - grp0
-#     - grp1
+  # - name: "compiler"
+  #   groups:
+  #     - grp0
+  #     - grp1

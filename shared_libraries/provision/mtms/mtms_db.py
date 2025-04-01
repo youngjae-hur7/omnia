@@ -37,6 +37,10 @@ uncorrelated_admin_start_ip = ipaddress.IPv4Address(sys.argv[9])
 location_id = sys.argv[11]
 architecture = sys.argv[12]
 role = sys.argv[13]
+if len(sys.argv) == 15:
+    parent = sys.argv[14]
+else:
+    parent = None
 discovery_mechanism = "mtms"
 bmc_mode = "static"
 admin_static_start_range = ipaddress.IPv4Address(admin_static_range.split('-')[0])
@@ -82,21 +86,28 @@ def update_db():
             output = cursor.fetchone()[0]
             bmc_output = modify_network_details.check_presence_bmc_ip(cursor, bmc[key])
             if not bmc_output and not output:
-                sql = '''select id from cluster.nodeinfo ORDER BY id DESC LIMIT 1'''
-                cursor.execute(sql)
+                sql = '''SELECT node FROM cluster.nodeinfo
+                    WHERE group_name = %s ORDER BY node DESC LIMIT 1'''
+                cursor.execute(sql, (group_name,))
                 temp = cursor.fetchone()
+
                 if temp is None:
-                    temp = [0]
-                count = '%03d' % (int(temp[0]) + 1)
-                node = node_name + str(count)
-                host_name = node_name + str(count) + "." + domain_name
+                    count = '001'  # First node if none exist
+                else:
+                    last_node_name = temp[0]
+                    # Extract numeric part (assumes format: group + "node" + number)
+                    last_node_number = int(last_node_name.split('node')[-1])  # Extract number
+                    count = f"{last_node_number + 1:03d}"  # Increment and keep 3-digit format
+                node = node_name + count  # Final node name
+                host_name = node + "." + domain_name
+
                 modify_network_details.update_stanza_file(serial[key].lower(), node, static_stanza_path)
                 admin_ip = correlation_admin_bmc.correlation_bmc_to_admin(bmc[key], admin_subnet, netmask_bits)
                 if admin_static_start_range <= admin_ip <= admin_static_end_range:
                     output = modify_network_details.check_presence_admin_ip(cursor, admin_ip)
                     if not output:
                         omniadb_connection.insert_node_info(serial[key], node, host_name, None, admin_ip,
-                                                            bmc[key], group_name, role, location_id, architecture, discovery_mechanism, bmc_mode, None, None,
+                                                            bmc[key], group_name, role, parent, location_id, architecture, discovery_mechanism, bmc_mode, None, None,
                                                             None)
                     elif output:
                         admin_ip = modify_network_details.cal_uncorrelated_admin_ip(cursor,
@@ -105,7 +116,7 @@ def update_db():
                                                                                     admin_static_end_range,
                                                                                     discovery_mechanism)
                         omniadb_connection.insert_node_info(serial[key], node, host_name, None, admin_ip,
-                                                            bmc[key], group_name, role, location_id, architecture, discovery_mechanism, bmc_mode, None, None,
+                                                            bmc[key], group_name, role, parent, location_id, architecture, discovery_mechanism, bmc_mode, None, None,
                                                             None)
                 else:
                     admin_ip = modify_network_details.cal_uncorrelated_admin_ip(cursor, uncorrelated_admin_start_ip,
@@ -113,7 +124,7 @@ def update_db():
                                                                                 admin_static_end_range,
                                                                                 discovery_mechanism)
                     omniadb_connection.insert_node_info(serial[key], node, host_name, None, admin_ip,
-                                                        bmc[key], group_name, role, location_id, architecture, discovery_mechanism, bmc_mode, None, None,
+                                                        bmc[key], group_name, role, parent, location_id, architecture, discovery_mechanism, bmc_mode, None, None,
                                                         None)
             else:
                 warnings.warn('Node already present in the database')

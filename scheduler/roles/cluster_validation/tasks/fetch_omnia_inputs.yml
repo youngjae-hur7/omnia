@@ -13,38 +13,6 @@
 #  limitations under the License.
 ---
 
-- name: Check if omnia_vault_key exists
-  ansible.builtin.stat:
-    path: "{{ input_project_dir }}/{{ config_vaultname }}"
-  register: vault_key_result
-
-- name: Create ansible vault key if it does not exist
-  ansible.builtin.set_fact:
-    vault_key: "{{ lookup('password', '/dev/null chars=ascii_letters') }}"
-  when: not vault_key_result.stat.exists
-
-- name: Save vault key
-  ansible.builtin.lineinfile:
-    path: "{{ input_project_dir }}/{{ config_vaultname }}"
-    line: "{{ vault_key }}"
-    mode: "{{ vault_key_permission }}"
-    owner: root
-    create: true
-  when: not vault_key_result.stat.exists
-
-- name: Check if omnia config file is encrypted
-  ansible.builtin.command: cat {{ input_project_dir }}/{{ config_filename }}
-  changed_when: false
-  register: config_content
-  no_log: true
-
-- name: Decrpyt omnia_config.yml
-  ansible.builtin.command: >-
-    ansible-vault decrypt {{ input_project_dir }}/{{ config_filename }}
-    --vault-password-file {{ input_project_dir }}/{{ config_vaultname }}
-  when: "'$ANSIBLE_VAULT;' in config_content.stdout"
-  changed_when: true
-
 - name: Include variable file omnia_config.yml
   block:
     - name: Include variable file omnia_config.yml
@@ -55,13 +23,6 @@
     - name: Failed to include omnia_config.yml
       ansible.builtin.fail:
         msg: "{{ omnia_config_syntax_fail_msg }} Error: {{ include_omnia_config.message }}"
-
-- name: Validate input parameters are not empty
-  ansible.builtin.fail:
-    msg: "{{ input_config_failure_msg }}"
-  register: input_config_check
-  when:
-    - ansible_config_file_path | default("", true) | length < 1
 
 - name: Validate input parameters are not empty
   ansible.builtin.fail:
@@ -76,20 +37,6 @@
   register: input_config_check
   when:
     - slurm_installation_type | default("", true) not in ["nfs_share", "configless"]
-
-- name: Assert mariadb_password
-  ansible.builtin.assert:
-    that:
-      - mariadb_password | default("", true) | length > 1
-      - mariadb_password | length > min_length | int - 1
-      - mariadb_password | length < max_length | int + 1
-      - '"-" not in mariadb_password '
-      - '"\\" not in mariadb_password '
-      - '"\"" not in mariadb_password '
-      - " \"'\" not in mariadb_password "
-    success_msg: "{{ success_msg_mariadb_password }}"
-    fail_msg: "{{ fail_msg_mariadb_password }}"
-  when: slurm_support
 
 - name: Verify the value of restart_slurm_services
   ansible.builtin.assert:
@@ -182,14 +129,5 @@
 
 - name: Save input variables from file
   ansible.builtin.set_fact:
-    db_password: "{{ mariadb_password }}"
     k8s_cni: "{{ k8s_cni }}"
-    ansible_conf_file_path: "{{ ansible_config_file_path }}"
     slurm_installation_type: "{{ slurm_installation_type }}"
-  no_log: true
-
-- name: Encrypt input config file
-  ansible.builtin.command: >-
-    ansible-vault encrypt {{ input_project_dir }}/{{ config_filename }}
-    --vault-password-file {{ input_project_dir }}/{{ config_vaultname }}
-  changed_when: false

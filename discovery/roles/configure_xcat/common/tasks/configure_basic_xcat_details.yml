@@ -42,7 +42,7 @@
 - name: Configure site table
   ansible.builtin.shell: >
     {{ xcat_path }}/chdef -t site dhcpinterfaces="{{ pxe_nic }}" master="{{ pxe_nic_ip }}" dhcplease="{{ default_lease_time }}"
-    timezone="{{ timezone }}" forwarders="" nameservers=""
+    timezone="{{ timezone }}" forwarders="" nameservers="" SNsyncfiledir="/"
   changed_when: true
 
 
@@ -82,6 +82,11 @@
 - name: Configure service role related details
   ansible.builtin.include_tasks: configure_service_role_xcat_details.yml
   when: service_role_required | default(false)
+
+- name: Add setupdhcp attributes for service node group
+  ansible.builtin.command: "{{ xcat_path }}/chdef -t group -o service setupdhcp=1"
+  changed_when: true
+  when: hierarchical_provision_status | default(false)
 
 - name: Configure system password
   ansible.builtin.shell: >
