@@ -41,7 +41,6 @@
         recurse: true
       with_items:
         - "{{ pulp_cleanup_directory }}"
-        - "{{ offline_repo_path_dir }}"
 
   rescue:
     - name: Pulp container removal failed
