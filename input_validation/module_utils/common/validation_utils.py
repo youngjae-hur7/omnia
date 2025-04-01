@@ -34,11 +34,23 @@ def load_yaml_as_json(yaml_file, omnia_base_dir, project_name, logger, module):
         module.fail_json(msg=error_message)
         raise FileNotFoundError(error_message)
     except yaml.YAMLError as e:
-        error_message = f"Error loading YAML: {e}"
-        logger.error(error_message)
-        module.fail_json(msg=error_message)
-        raise Exception(error_message)
-    
+        error_parts = []
+        error_parts.append(f"Syntax error when loading YAML file '{yaml_file}'")
+
+        if hasattr(e, 'problem_mark'):
+            error_parts.append(f"at line {e.problem_mark.line + 1}, column {e.problem_mark.column + 1}")
+            if hasattr(e, 'problem'):
+                error_parts.append(f"Problem: {e.problem}")
+            if hasattr(e, 'context'):
+                error_parts.append(f"Context: {e.context}")
+        else:
+            error_parts.append(str(e))
+
+        error_context = " | ".join(error_parts)
+        logger.error(error_context)
+        # Instead of raising exception immediately, return None to indicate validation failure, in case there are other validations to perform
+        return None
+
 def create_error_msg(key, value, msg):
     return {"error_key": key, "error_value": value, "error_msg": msg}
 
@@ -55,7 +67,7 @@ def check_mandatory_fields(mandatory_fields, data, errors):
     for field in mandatory_fields:
         if is_string_empty(data[field]):
             errors.append(create_error_msg(field, data[field], en_us_validation_msg.mandatory_field_fail_msg))
-    
+
 # Below functions used to deal with encrypted files (Check if a file is encrypted, if yes then get the vault password, decrypt file, load data, encrypt file again)
 def is_file_encrypted(file_path):
     try:
@@ -64,7 +76,7 @@ def is_file_encrypted(file_path):
             return first_line.startswith('$ANSIBLE_VAULT')
     except (IOError, OSError):
         return False
-    
+
 def process_encrypted_file(yaml_file, omnia_base_dir, project_name, logger, module):
     vault_password_file = config.get_vault_password(yaml_file)
     decrypted_file = decrypt_file(omnia_base_dir, project_name, yaml_file, vault_password_file)
@@ -175,11 +187,11 @@ def is_valid_password(
 def validate_username(username, min_username_length, max_length):
     if not (min_username_length <= len(username) < max_length):
         return False
-    
+
     forbidden_characters = {"-", "\\", "'", '"'}
     if any(char in username for char in forbidden_characters):
         return False
-    
+
     return True
 
 
@@ -268,7 +280,7 @@ def check_bmc_static_range_overlap(static_range, static_range_group_mapping) -> 
         if overlap_exists:
             grp_overlaps.append(grp)
         ip_ranges.pop()
-    
+
     return grp_overlaps
 
 def check_port_overlap(port_ranges) -> bool:
@@ -314,5 +326,5 @@ def check_port_ranges(port_ranges) -> bool:
             start, end = map(int, port_range.split('-'))
             if start > end:
                 return False
-    
+
     return True

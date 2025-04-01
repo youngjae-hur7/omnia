@@ -89,10 +89,10 @@ def main():
     project_name = module.params["project_name"]
     tag_names = eval(module.params["tag_names"])
     single_files = module.params["files"]
-    
+
     schema_base_file_path = "./module_utils/schema/"
     directory_path = os.path.join(omnia_base_dir, project_name)
-    
+
     input_file_inventory = config.input_file_inventory
     passwords_set = config.passwords_set
     extensions = config.extensions
@@ -102,7 +102,7 @@ def main():
     schema_files_dic = {}
     validation_status = {}
     vstatus = []
-    
+
     logger = createLogger(project_name)
 
 ### Functions related to files, pathing, and verifying if they exist ###
@@ -123,7 +123,7 @@ def main():
             if os.path.isfile(file_path):
                 file_list.append(os.path.abspath(file_path))
         return file_list
-    
+
 # Function to verify if a file exists at the given path
     def verify_file_exists(file_path):
         """
@@ -144,7 +144,7 @@ def main():
             logger.error(message)
             module.fail_json(msg=message)
             return False
-        
+
 # Function to get the file name from a given file path
     def get_file_name_from_path(file_path):
         """
@@ -155,7 +155,7 @@ def main():
             str: The file name.
         """
         return os.path.basename(file_path)
-    
+
 # Function to verify if a directory exists at the given path
     def verify_directory_exists(directory_path):
         """
@@ -205,7 +205,7 @@ def main():
                 if json_path in line:
                     return lineno, is_line_num
         return None
-    
+
     # Function to get the line number of a specific yaml_path in a file
     def get_yml_line_number(file_path, yml_path):
         """
@@ -242,7 +242,7 @@ def main():
                     if line and not line.startswith('#') and yml_path in line:
                         return lineno, is_line_num
             return None
-    
+
     # Function to load input data from a file based on its extension
     def get_input_data(input_file_path):
         """
@@ -265,7 +265,7 @@ def main():
         else:
             message = f"Unsupported file extension: {extension}"
             raise ValueError(message)
-        
+
     # Main L1 Validation code. Get the JSON schema and input file to validate
     def validate_schema(input_file_path, schema_file_path):
         """
@@ -280,16 +280,21 @@ def main():
         """
         try:
             input_data, extension = get_input_data(input_file_path)
-            schema = json.load(open(schema_file_path, "r"))
 
+            # If input_data is None, it means there was a YAML syntax error
+            if input_data is None:
+                return False
+
+            # Load schema
+            schema = json.load(open(schema_file_path, "r"))
             logger.debug(en_us_validation_msg.get_validation_initiated(input_file_path))
-            
+
             # Validate the input file with the schema and output the errors
             validator = jsonschema.Draft7Validator(schema)
             errors = sorted(validator.iter_errors(input_data), key=lambda e: e.path)
 
             # if errors exist, then print an error with the line number
-            if errors:    
+            if errors:
                 for error in errors:
                     error_path = ".".join(map(str, error.path))
 
@@ -298,6 +303,10 @@ def main():
                         error.message = en_us_validation_msg.invalid_group_name_msg
                     elif 'location_id' in error_path:
                         error.message = en_us_validation_msg.invalid_location_id_msg
+                    elif 'ports' in error_path:
+                        error.message = en_us_validation_msg.invalid_switch_ports_msg
+                    elif 'is not of type' in error.message:
+                        error.message = en_us_validation_msg.invalid_attributes_role_msg
                     error_msg = f"Validation Error at {error_path}: {error.message}"
 
                     # For passwords, mask the value so that no password values are logged
@@ -333,7 +342,7 @@ def main():
         except Exception as e:
             message = f"An unexpected error occurred: {e}"
             logger.error(message)
-            
+
     # Code to run the L2 validation validate_input_logic function.
     def validate_logic(input_file_path, logger, module, omnia_base_dir, project_name):
         """
@@ -352,16 +361,16 @@ def main():
         Raises:
             ValueError: If a value error occurs.
             Exception: If an unexpected error occurs.
-        """ 
+        """
         try:
             input_data, extension = get_input_data(input_file_path)
-            
+
             # errors = [{error_msg: custom message, error_key: ex-node_name (to find line number), error_value: ex-6,"node" (to help find line #)}]
             errors = logical_validation.validate_input_logic(input_file_path, input_data, logger, module, omnia_base_dir, project_name)
 
             # Print errors, if the error value is None then send a separate message.
             # This is for values where it did not have a single key as the error
-            if errors:       
+            if errors:
                 for error in errors:
                     error_key = error['error_key']
                     error_value = error['error_value']
@@ -405,16 +414,16 @@ def main():
             message = f"An unexpected error occurred: {e}"
             logger.error(message, exc_info=True)
             return False
-            
-    # Start validation execution        
+
+    # Start validation execution
     logger.info(en_us_validation_msg.get_header())
-    
+
     # Check if the specified directory exists
     if not verify_directory_exists(directory_path):
         error_message = f"The directory {directory_path} does not exist."
         logger.info(error_message)
         raise FileNotFoundError(error_message)
-    
+
     json_files = get_files_recursively(omnia_base_dir + "/" + project_name, extensions['json'])
     yml_files = get_files_recursively(omnia_base_dir + "/" + project_name, extensions['yml'])
     schema_files = get_files_recursively(schema_base_file_path, extensions['json'])
@@ -442,8 +451,9 @@ def main():
             validation_status.update(project_data)
             fname = os.path.splitext(name)[0]
             schema_file_path = schema_base_file_path + fname + extensions['json']
+            logger.info(f"schema_file_path: {schema_file_path}")
             input_file_path = None
-            
+
             if not verify_file_exists(schema_file_path):
                 error_message = f"The file schema: {fname}.json does not exist in directory: {schema_base_file_path}."
                 logger.info(error_message)
@@ -453,22 +463,22 @@ def main():
                 input_file_path = json_files_dic[name]
             if name in yml_files_dic.keys():
                 input_file_path = yml_files_dic[name]
-                
+
             if input_file_path is None:
                 error_message = f"file not found in directory: {omnia_base_dir}/{project_name}"
                 logger.error(error_message)
                 module.fail_json(msg=error_message)
                 raise FileNotFoundError(error_message)
-            
+
             # Validate the schema of the input file (L1)
             schema_status = validate_schema(input_file_path, schema_file_path)
             # Append the validation status for the input file
             validation_status[project_name]["status"].append({input_file_path: "Passed" if schema_status else "Failed"})
             if len(tag_names) == 0:
                 validation_status[project_name]["tag"] = ['none']
-                
+
             vstatus.append(schema_status)
-    # Run L1 and L2 validation if user included a tag and extra var files. Or user only had tags and no extra var files.         
+    # Run L1 and L2 validation if user included a tag and extra var files. Or user only had tags and no extra var files.
     if (len(tag_names) > 0 and "all" not in tag_names and len(single_files) > 0) or (len(tag_names) > 0 and len(single_files) == 0):
         for tag_name in tag_names:
             for name in input_file_inventory[tag_name]:
@@ -498,21 +508,21 @@ def main():
                 schema_status = validate_schema(input_file_path, schema_file_path)
                 # Validate the logic of the input file (L2)
                 logic_status = validate_logic(input_file_path, logger, module, omnia_base_dir, project_name)
-                
+
                 # Append the validation status for the input file
                 validation_status[project_name]["status"].append({input_file_path: "Passed" if (schema_status and logic_status) else "Failed"})
-                
+
                 # vstatus contains boolean values. If False exists, that means validation failed and the module will result in failure
                 vstatus.append(schema_status)
                 vstatus.append(logic_status)
-    
+
     if not validation_status:
         message = "No validation has been performed. Please provide tags or include individual file names."
         module.fail_json(msg=message)
     validation_status[project_name]["status"].sort(key=lambda x: list(x.values())[0])
-    
+
     logger.error(en_us_validation_msg.get_footer())
-    
+
     # Ansible success/failure message
     if False in vstatus:
         status = validation_status[project_name]['status']
@@ -525,7 +535,7 @@ def main():
             % (failed_files, passed_files, tag, project_name)
         )
         module.fail_json(msg=message)
-    else: 
+    else:
         message = (
             "Input validation completed for project: %s input configs. Look at the logs for more details: filename=validation_omnia_%s.log"
             % (validation_status, project_name)

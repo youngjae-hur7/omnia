@@ -21,3 +21,6 @@
 
 - name: Update node objects for the group - "{{ item.key }}"
   ansible.builtin.include_tasks: update_node_obj.yml
+
+- name: Delete the stanzas file
+  ansible.builtin.include_tasks: delete_stanzas.yml

@@ -64,7 +64,7 @@ pulp_deployed_fail_msg:
   please run the utility/oim_cleanup.yml playbook to clean up any existing OIM resources.
   After the cleanup, you can re-run the original playbook to deploy the {{ pulp_container_name }} container successfully.
 pulp_port: "2225:80"
-retries_var: 3
+retries_var: 6
 delay_var: 20
 delay_var_five: 5
 delay_var_sixty: 20

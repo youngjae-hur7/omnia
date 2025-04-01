@@ -35,12 +35,14 @@ pulp_cleanup_directory:
   - "{{ omnia_nfs_share }}/pulp/pulp_ha/cli.toml"
   - "{{ omnia_nfs_share }}/log/pulp"
   - "{{ omnia_nfs_share }}/pulp/settings"
+  - "{{ omnia_nfs_share }}/offline_repo/"
 
 # Usage: cleanup_provision.yml
 provision_container_name: "omnia_provision"
 provision_cleanup_directory:
   - "{{ omnia_nfs_share }}/provision"
   - "{{ omnia_nfs_share }}/log/provision"
+  - "{{ omnia_nfs_share }}/.data/provision_metadata.yml"
 xcat_firewall_ports:
   - "3001/tcp"
   - "3001/udp"
