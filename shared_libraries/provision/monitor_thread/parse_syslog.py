@@ -307,7 +307,7 @@ def generate_inventory_for_node(node_info_db: tuple) -> None:
         # Read the inventory file
        if not os.path.exists(omnia_inventory_file):
        # Create a new file if it doesn't exist
-          with open(omnia_inventory_file, 'w') as file:
+          with open(omnia_inventory_file, 'w+') as file:
              existing_inventory = file.read()
        else:
           # Open the file in read mode if it exists
@@ -319,24 +319,24 @@ def generate_inventory_for_node(node_info_db: tuple) -> None:
        roles_list = roles_name.strip().split(",")
        for group in roles_list:
            group = group.strip()
-           if group not in existing_inventory:
+           if group in existing_inventory:
+                existing_inventory += f"{hostname}\n"
+           elif group not in existing_inventory:
                 existing_inventory += f"\n[{group}]\n"
-           existing_inventory += f"{hostname}\n"
+                existing_inventory += f"{hostname}\n"
 
         # Write the updated inventory back to the file
        with open(omnia_inventory_file, 'w') as file:
            file.write(existing_inventory)
 
-       print("Inventory file updated: inventory")
-    
     except FileNotFoundError:
         # Print an error message if the file is not found
-        syslog.syslog(syslog.LOG_ERR, f"parse_syslog:generate_inventory: File not found:", omnia_inventory_file)
+        syslog.syslog(syslog.LOG_ERR, f"parse_syslog:generate_inventory_for_node: File not found:", omnia_inventory_file)
     except PermissionError:
         # Print an error message if the file cannot be accessed due to insufficient permissions
-        syslog.syslog(syslog.LOG_ERR, f"parse_syslog:generate_inventory: Permission denied:", omnia_inventory_file)
+        syslog.syslog(syslog.LOG_ERR, f"parse_syslog:generate_inventory_for_node: Permission denied:", omnia_inventory_file)
     except Exception as e:
-        syslog.syslog(syslog.LOG_ERR, f"parse_syslog:generate_inventory: Exception occurred: {str(type(e))} {str(e)}")
+        syslog.syslog(syslog.LOG_ERR, f"parse_syslog:generate_inventory_for_node: Exception occurred: {str(type(e))} {str(e)}")
      
 def update_inventory(node_info_db: tuple, updated_node_info: tuple) -> None:
     """
