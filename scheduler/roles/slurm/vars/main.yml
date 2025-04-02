@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
+# TODO: categorize by files
 input_project_dir: "{{ hostvars['localhost']['input_project_dir'] }}"
 cluster_name: cluster # TODO: direct load vars omnia_config.yml
 slurm_uid: 6001
@@ -51,7 +52,7 @@ db_conf_file: "/etc/my.cnf"
 slurm_ctld_parameters: []
 partitions: {}
 _clean_before_install: false
-_force_install_nfs: false
+_force_install_nfs: true
 installroot: "/"
 conf_file_mode: "0644"
 slurm_mode: "0644"

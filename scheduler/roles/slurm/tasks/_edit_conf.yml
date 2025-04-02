@@ -36,6 +36,10 @@
   when: not item.changed
   loop: "{{ node_check.results }}"
 
+- name: Enable etc enviroment
+  ansible.builtin.shell: source {{ sys_env_path }} # noqa: command-instead-of-shell
+  changed_when: false
+
 - name: Get slurm info output slurm computes # Requires controller service running
   ansible.builtin.shell: >
     set -o pipefail &&
