@@ -15,18 +15,11 @@
 multus_config: "true"
 multus_deployment_template: "{{ role_path }}/templates/multus-daemonset.j2"
 multus_deployment_manifest: "{{ repo_store_path }}/cluster/manifest/multus-daemonset.yml"
-multus_deployment_manifest_path: "{{ hostvars['localhost']['offline_manifest_path'] }}/multus-daemonset.yaml"
+multus_deployment_manifest_path: "{{ hostvars['localhost']['offline_manifest_path'] }}/multus-daemonset.yml"
 multus_deployment_manifest_mode: "0644"
 multus_version: "v4.1.4-thick"
 memory_limit_kube_multus: "1Gi"
 memory_limit_multus_binary: "1Gi"
-multus_command:
-  - sh
-  - -c
-  - |
-    if [ ! -f /host/opt/cni/bin/multus-shim ]; then
-      cp /usr/src/multus-cni/bin/multus-shim /host/opt/cni/bin/multus-shim;
-    fi
 whereabouts_git_url: "{{ hostvars['localhost']['offline_git_path'] }}/whereabouts.tar.gz"
 whereabouts_dest_folder: "/tmp/whereabouts.tar.gz"
 whereabouts_folder: "/tmp/whereabouts"

@@ -200,10 +200,13 @@ spec:
       initContainers:
         - name: install-multus-binary
           image: ghcr.io/k8snetworkplumbingwg/multus-cni:{{ multus_version }}
-          command:
-            {% for cmd in multus_command %}
-            - "{{ cmd }}"
-            {% endfor %}
+          command: 
+            - sh
+            - -c
+            - |
+              if [ ! -f /host/opt/cni/bin/multus-shim ]; then
+               cp /usr/src/multus-cni/bin/multus-shim /host/opt/cni/bin/multus-shim;
+              fi
           resources:
             requests:
               cpu: "10m"
