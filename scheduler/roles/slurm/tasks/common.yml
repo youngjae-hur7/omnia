@@ -19,14 +19,15 @@
   register: refresh_mounts
   ignore_errors: true
   changed_when: refresh_mounts.rc == 0
+  when: slurm_installation_type == nfs_share_slurm
 
 - name: Update hosts file for all slurm groups
   block:
     - name: Update hosts file for all slurm groups
       ansible.builtin.lineinfile:
         dest: "{{ hosts_file_dest }}"
-        line: "{{ hostvars[item]['ansible_default_ipv4']['address'] }} {{ hostvars[item]['ansible_nodename'] | split('.') | first }}
-         {{ hostvars[item]['ansible_fqdn'] }}"
+        line: "{{ hostvars[item]['ansible_default_ipv4']['address'] }} {{ hostvars[item]['ansible_fqdn'] }}
+         {{ hostvars[item]['ansible_nodename'] | split('.') | first }}"
         state: present
         create: true
         mode: "{{ hosts_file_mode }}"
@@ -61,7 +62,7 @@
     owner: root
     group: root
     mode: "{{ common_mode }}"
-  when: (slurm_installation_type == 'nfs_share')
+  when: (slurm_installation_type == nfs_share_slurm)
   run_once: true
 
 - name: Install and configure munge
