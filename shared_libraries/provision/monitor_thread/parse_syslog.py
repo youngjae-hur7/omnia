@@ -277,7 +277,6 @@ def add_hostname_inventory(inventory_file: str, hostname: str) -> None:
         # Change the permission of the file
         os.chmod(inventory_file, 0o644)
 
-        config.
         # Set the hostname
         config.set(inventory_file, hostname)
 
