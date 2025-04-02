@@ -39,7 +39,7 @@
         regexp: '#   StrictHostKeyChecking ask'
         replace: 'StrictHostKeyChecking no'
       register: disable_host_key_checking
-      connection: local 
+      connection: local
 
     - name: Disable strict mode checking
       ansible.builtin.replace:
