@@ -60,10 +60,10 @@
           echo 'Acquire::http::proxy:{{ hostvars['localhost']['admin_nic_ip'] }} "DIRECT";' >> /etc/apt/apt.conf
           echo 'Acquire::http::proxy "{{ hostvars['localhost']['http_proxy'] }}";' >> /etc/apt/apt.conf
           echo 'Acquire::https::proxy "{{ hostvars['localhost']['https_proxy'] }}";' >> /etc/apt/apt.conf
-      become: true
+      changed_when: true  
       when:
         - hostvars['localhost']['k8s_proxy'] is true
-        - ansible_distribution == "Ubuntu"
+        - ansible_distribution | lower == "ubuntu"
 
 - name: Update Repositories/Registries on nodes
   ansible.builtin.import_playbook: utils/update_user_repo.yml
