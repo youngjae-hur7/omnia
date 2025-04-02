@@ -60,7 +60,7 @@
           echo 'Acquire::http::proxy:{{ hostvars['localhost']['admin_nic_ip'] }} "DIRECT";' >> /etc/apt/apt.conf
           echo 'Acquire::http::proxy "{{ hostvars['localhost']['http_proxy'] }}";' >> /etc/apt/apt.conf
           echo 'Acquire::https::proxy "{{ hostvars['localhost']['https_proxy'] }}";' >> /etc/apt/apt.conf
-      changed_when: true  
+      changed_when: true
       when:
         - hostvars['localhost']['k8s_proxy'] is true
         - ansible_distribution | lower == "ubuntu"

@@ -66,10 +66,10 @@
       connection: local
 
     - name: Verify and set passwordless ssh from manager to compute nodes
+      connection: local
       block:
         - name: Execute on individual hosts
           ansible.builtin.include_tasks: check_passwordless_ssh.yml
           with_items: "{{ ssh_to }}"
           loop_control:
             pause: 5
-      connection: local
