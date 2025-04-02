@@ -24,7 +24,7 @@
 - name: Adding the path in the bashrc files
   ansible.builtin.lineinfile:
     path: "{{ env_var_path }}"
-    line: "export PATH=/usr/local/openldap/sbin:/usr/local/openldap/bin:{{ env_path_list | | join(':') }}"
+    line: "export PATH=/usr/local/openldap/sbin:/usr/local/openldap/bin:{{ env_path_list | join(':') }}"
     insertafter: EOF
     state: present
 
