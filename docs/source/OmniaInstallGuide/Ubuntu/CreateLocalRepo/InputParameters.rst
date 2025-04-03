@@ -25,7 +25,7 @@ Input parameters for Local Repositories
             {"name": "openldap"},
             {"name": "secure_login_node"},
             {"name": "nfs"},
-            {"name": "beegfs", "version": "7.4.2"},
+            {"name": "beegfs", "version": "7.4.5"},
             {"name": "k8s", "version":"1.31.4"},
             {"name": "roce_plugin"},
             {"name": "jupyter"},

@@ -42,7 +42,7 @@ dellemc.os10,GNU-General Public License v3.0,It provides networking hardware abs
 dellemc.openmanage,GNU-General Public License v3.0,"It is a systems management and monitoring application that provides a comprehensive view of the Dell EMC servers, chassis, storage, and network switches on the enterprise network",9.6.0
 kubernetes.core,GNU-General Public License v3.0,"The collection includes a variety of Ansible content to help automate the management of applications in Kubernetes and OpenShift clusters, as well as the provisioning and maintenance of clusters themselves.",5.0.0
 rocm,MIT license,AMD ROCm™ Software,6.3.1
-beegfs,BeeGFS (formerly known as FhGFS) END USER LICENSE,Public repository for the BeeGFS Parallel File System,7.4.2
+beegfs,BeeGFS (formerly known as FhGFS) END USER LICENSE,Public repository for the BeeGFS Parallel File System,7.4.5
 csi powerscale driver ,Apache-2.0 license,CSI Driver for Dell PowerScale,2.13.0
 CUDA toolkit,NVIDIA Software License,"The NVIDIA® CUDA® Toolkit provides a development environment for creating high-performance, GPU-accelerated applications.",12.8
 Intel Gaudi3 driver,MIT license,Intel Gaudi3 drivers,1.19.2
@@ -82,7 +82,7 @@ idrac-telemetry-reference tools,Apache-2.0,Reference toolset for PowerEdge telem
 jansson,MIT License,"C library for encoding, decoding and manipulating JSON data",2.14
 389-ds (RHEL/Rocky),GPL,Light weight directory access protocol,1.4.3
 snoopy,GPL 2.0,Snoopy is a small library that logs all program executions on your Linux/BSD system,2.5.1
-Beegfs-Client,GPLv2,"BeeGFS is a parallel file system, developed and optimized for high-performance computing.",7.4.2
+Beegfs-Client,GPLv2,"BeeGFS is a parallel file system, developed and optimized for high-performance computing.",7.4.5
 Lua (RHEL/Rocky),MIT License,Lua is a powerful light-weight programming language designed for extending applications,5.3.4
 ansible posix,GNU General Public License ,An Ansible Collection of modules and plugins that target POSIX UNIX/Linux and derivative Operating Systems.,1.4.0
 xCAT,Eclipse Public License 1.0,"xCAT is an open-source tool for automating deployment, scaling, and management of bare metal servers and virtual machines",2.16.5
