@@ -49,20 +49,6 @@
         state: present
       when: ansible_distribution | lower == 'ubuntu'
 
-    - name: Ensure /etc/slurm path exists
-      ansible.builtin.file:
-        path: "{{ slurm_dir }}"
-        state: directory
-        mode: "{{ dir_permission }}"
-      when: slurm_installation_type == 'nfs_share'
-
-    - name: Create a symbolic link for slurm conf
-      ansible.builtin.file:
-        src: "{{ slurm_confpth }}"
-        dest: "{{ slurm_conf_file_pth }}"
-        state: link
-      when: slurm_installation_type == 'nfs_share'
-
     - name: Configure slurm pam for Slurm nodes
       ansible.builtin.include_tasks: slurm_pam_compute.yml
       when: inventory_hostname in groups['slurm_node']
