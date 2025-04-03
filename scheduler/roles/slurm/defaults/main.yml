@@ -15,6 +15,7 @@
 slurm_db_port_default: 3306
 slurm_db_type_default: mariadb
 slurm_db_username_default: root
+slurm_db_key_default: ""
 slurmctld_service_default_path: '/usr/lib/systemd/system/slurmctld.service'
 slurmd_service_default_path: '/usr/lib/systemd/system/slurmd.service'
 slurmdbd_service_default_path: '/usr/lib/systemd/system/slurmdbd.service'
