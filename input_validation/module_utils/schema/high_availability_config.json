@@ -360,7 +360,7 @@
       }
     },
     "k8s_head_node_ha": {
-      "type": "object",
+      "type": "array",
       "properties": {
         "enable_k8s_ha": {
           "type": "boolean"
