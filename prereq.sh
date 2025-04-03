@@ -80,8 +80,10 @@ compare_and_copy_config() {
 
     # Try to extract cluster_os_type from the input file
     local input_os_type
+    local input_os_version
     local jq_output
     jq_output=$(jq -r '.cluster_os_type' "$input_config" 2>&1)
+    osv_jq_output=$(jq -r '.cluster_os_version' "$input_config" 2>&1) 
 
     if [[ $? -ne 0 ]]; then
         echo -e "${RED}Error: Failed to parse ${YELLOW}${input_config}${NC}"
@@ -93,10 +95,11 @@ compare_and_copy_config() {
         exit 1
     else
         input_os_type="$jq_output"
+        input_os_version="$osv_jq_output"
     fi
 
     # Check against OS_ID
-    if [[ "$input_os_type" == "$OS_ID" ]]; then
+    if [[ "$input_os_type" == "$OS_ID" && "$input_os_version" == "$OS_VERSION" ]]; then
         echo -e "${GREEN}Existing software_config.json matches the current OS type. No changes made.${NC}"
     else
         echo -e "${RED}Updating software_config.json to match the current OS type and version.${NC}"
