@@ -8,16 +8,6 @@
         "version": "v1.5.2"
       },
       {
-        "package": "ghcr.io/k8snetworkplumbingwg/multus-cni",
-        "tag": "v4.1.4-thick",
-        "type": "image"
-      },
-      {
-        "package": "ghcr.io/k8snetworkplumbingwg/whereabouts",
-        "tag": "v0.8.0",
-        "type": "image"
-      },
-      {
         "package": "ghcr.io/mellanox/k8s-rdma-shared-dev-plugin",
         "tag": "v1.5.2",
         "type": "image"
