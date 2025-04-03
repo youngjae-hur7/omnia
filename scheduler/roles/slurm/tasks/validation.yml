@@ -17,7 +17,7 @@
   block:
     - name: Slurm not enabled in sofware_config.json
       ansible.builtin.debug:
-        msg: "Slurm is not added in software_config, hence skipping slurm deployment"
+        msg: "{{ slurm_support_msg }}"
 
     - name: Skip slurm deployment
       ansible.builtin.meta: end_play
@@ -27,7 +27,7 @@
   block:
     - name: Slurm install type is NFS but share path not available
       ansible.builtin.debug:
-        msg: "Slurm install type is nfs_share, but share_path not available, hence skipping slurm deployment"
+        msg: "{{ share_unavailable_msg }}"
 
     - name: Skip slurm deployment
       ansible.builtin.meta: end_play

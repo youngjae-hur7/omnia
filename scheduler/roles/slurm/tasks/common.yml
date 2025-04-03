@@ -87,7 +87,7 @@
   rescue:
     - name: Edit out the PATH failure
       ansible.builtin.debug:
-        msg: "Editing the bashrc failed, please manually source the /etc/environment for slurm"
+        msg: "{{ path_edit_msg }}"
 
 - name: Slurm dict ops
   ansible.builtin.set_fact:
