@@ -82,15 +82,6 @@
       ansible.builtin.include_role:
         name: discovery_mechanism/oim     # noqa: role-name[path]
 
-- name: Discovery from service nodes
-  hosts: service_nodes
-  connection: ssh
-  tasks:
-    - name: Discover all nodes
-      ansible.builtin.include_role:
-        name: discovery_mechanism/service     # noqa: role-name[path]
-      when: hostvars['omnia_provision']['hierarchical_provision_status'] | default(false)
-
 - name: Set facts for kernel parameters update
   hosts: all:!localhost:!omnia_provision:!service_nodes
   connection: local
@@ -121,6 +112,15 @@
     - role: postscripts/common             # noqa: role-name[path]
     - role: configure_os_image/common      # noqa: role-name[path]
     - role: monitor_thread
+
+- name: Discovery from service nodes
+  hosts: service_nodes
+  connection: ssh
+  tasks:
+    - name: Discover all nodes
+      ansible.builtin.include_role:
+        name: discovery_mechanism/service     # noqa: role-name[path]
+      when: hostvars['omnia_provision']['hierarchical_provision_status'] | default(false)
 
 - name: Update metadata
   hosts: localhost
