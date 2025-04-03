@@ -86,7 +86,7 @@
         backrefs: true
   rescue:
     - ansible.builtin.debug:
-      msg: "Editing the bashrc failed, please manually source the /etc/environment for slurm"
+        msg: "Editing the bashrc failed, please manually source the /etc/environment for slurm"
 
 - name: Slurm dict ops
   ansible.builtin.set_fact:
