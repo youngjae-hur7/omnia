@@ -1,25 +1,25 @@
 ---
 Categories:
-  - category-1:
-      - network:
-          - ensp0:
-              nicnetwork: "nic_network1"
-              nictypes: "ethernet"
-              metric: 
-          - ensp0.5:
-              nicnetwork: "nic_network2"
-              nictypes: "vlan"
-              nicdevices: "ensp0"
-              metric: 
-      - os:
-          - kernel:
-              - cmdline: ""
+#   - category-1:
+#       - network:
+#           - ensp0:
+#               nicnetwork: "nic_network1"
+#               nictypes: "ethernet"
+#               metric:
+#           - ensp0.5:
+#               nicnetwork: "nic_network2"
+#               nictypes: "vlan"
+#               nicdevices: "ensp0"
+#               metric:
+#       - os:
+#           - kernel:
+#               - cmdline: ""
 
-  - category-2:
-      - network:
-          - eno1:
-              nicnetwork: "nic_network1"
-              nictypes: "ethernet"
+#   - category-2:
+#       - network:
+#           - eno1:
+#               nicnetwork: "nic_network1"
+#               nictypes: "ethernet"
 
 # **********************************************************************
 # Following are the templates for providing additional network and OS details.

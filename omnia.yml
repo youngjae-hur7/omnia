@@ -47,6 +47,7 @@
   tasks:
     - name: Set flag to indicate check_package_lock.yml has been executed
       ansible.builtin.set_fact:
+        apt_lock_status: true
 
 - name: Update Inventory with ansible_host information
   ansible.builtin.import_playbook: utils/servicetag_host_mapping.yml
@@ -84,8 +85,8 @@
         project_dir_status: true
         config_file_status: true
 
-# - name: Import playbook to install ROCm on nodes
-#   ansible.builtin.import_playbook: utils/rocm_installation.yml
+- name: Import playbook to install ROCm on nodes
+  ansible.builtin.import_playbook: utils/rocm_installation.yml
 
 - name: Verify Gaudi nodes
   ansible.builtin.import_playbook: utils/verify_intel_gaudi/verify_intel_gaudi_installation.yml

@@ -49,11 +49,11 @@
       ansible.builtin.include_tasks: update_node_obj.yml
       when: dynamic_final_status
 
+    - name: Delete the stanzas file
+      ansible.builtin.include_tasks: delete_stanzas.yml
+
 - name: Common tasks for bmc static and dynamic discovery
   when: bmc_static_status or discovery_mech_dynamic_bmc
   block:
     - name: Configure dhcp
       ansible.builtin.include_tasks: "{{ role_path }}/../oim/tasks/configure_dhcp.yml"
-
-    - name: Delete the stanzas file
-      ansible.builtin.include_tasks: delete_stanzas.yml

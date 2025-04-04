@@ -13,14 +13,15 @@
 #  limitations under the License.
 ---
 
-- name: Perform bmc discover on static range for the group - "{{ item.key }}"
-  ansible.builtin.include_tasks: bmc_static_discovery.yml
+- name: Set virtual IP as admin IP if OIM high availability is enabled
+  when:
+    - hostvars['localhost']['enable_oim_ha'] | default(false)
+    - hostvars['localhost']['vip_status'] | default(false)
+  block:
+    - name: Set original_admin_nic_ip
+      ansible.builtin.set_fact:
+        original_admin_nic_ip: "{{ hostvars['localhost']['admin_nic_ip'] }}"
 
-- name: Update omniadb for the group - "{{ item.key }}"
-  ansible.builtin.include_tasks: update_db_static.yml
-
-- name: Update node objects for the group - "{{ item.key }}"
-  ansible.builtin.include_tasks: update_node_obj.yml
-
-- name: Delete the stanzas file
-  ansible.builtin.include_tasks: delete_stanzas.yml
+    - name: Set admin_nic_ip
+      ansible.builtin.set_fact:
+        admin_nic_ip: "{{ hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.virtual_ip_address }}"
