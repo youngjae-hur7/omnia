@@ -1,5 +1,5 @@
 ﻿OSS Title,License Name/Version #,Description,Version
-MariaDB(ubuntu 24.04),GPL 2.0,Open source relational database used by Slurm,10.5
+MariaDB,GPL 2.0,Open source relational database used by Slurm,10.5
 Kubernetes Controllers,Apache-2.0,Production-Grade Container Scheduling and Management,1.31.4
 kubelet,Apache-2.0,"Provides external, versioned ComponentConfig API types for configuring the kubelet",1.31.4
 kubeadm,Apache-2.0,"""fast paths"" for creating Kubernetes clusters",1.31.4
