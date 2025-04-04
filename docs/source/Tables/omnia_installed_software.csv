@@ -146,4 +146,4 @@ nvidia-container-toolkit,Apache License 2.0,NVIDIA container runtime library,1.1
 helm-charts,Apache-2.0 license,The source for Dell Helm charts.,csi-isilon-2.13.0,,,,
 csi-powerscale,Apache-2.0 license,CSI Driver for Dell PowerScale,2.13.0,,,,
 external-snapshotter,Apache-2.0 license,Sidecar container that watches Kubernetes Snapshot CRD objects and triggers CreateSnapshot/DeleteSnapshot against a CSI endpoint.,8.0.1,,,,
-NVIDIA GPU operator,NVIDIA Agreements | Enterprise Software | Product Specific Terms for AI Product,The NVIDIA GPU Operator uses the operator framework within Kubernetes to automate the management of all NVIDIA software components needed to provision GPU,24.9.2,,,,
+NVIDIA GPU operator,NVIDIA Agreements | Enterprise Software | Product Specific Terms for AI Product,The NVIDIA GPU Operator uses the operator framework within Kubernetes to automate the management of all NVIDIA software components needed to provision GPU,25.3.0,,,,
