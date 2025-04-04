@@ -15,7 +15,7 @@
 #!/usr/bin/python
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.omniadb_connection import get_data_from_db
+from ansible.module_utils.discovery.omniadb_connection import get_data_from_db
 
 FIRST_LAYER_ROLES = {"service", "login", "compiler", "kube_control_plane", "etcd", "slurm_control_node", "slurm_dbd", "auth_server"}
 SECOND_LAYER_ROLES = {"default", "kube_node", "slurm_node"}
