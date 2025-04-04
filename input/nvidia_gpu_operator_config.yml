@@ -1,7 +1,7 @@
 # GPU Operator Configuration File
 driver:
   enabled: true
-  version: 570.86.15
+  version: 570.124.06
   rdma:
     enabled: false
   env: # Mandatory - Refer /opt/omnia/offline/local_repo_access.yml for http_proxy and https_proxy values
@@ -17,11 +17,11 @@ migManager:
   enabled: true  # Enables the MIG Manager to configure and manage GPU instances.
 
 gdrcopy:
-  enabled: true
+  enabled: false
 
 toolkit:
   enabled: true  # Enables the NVIDIA Container Toolkit, required for running GPU-enabled containers.
-  #version: v1.17.4-ubuntu20.04
+  #version: v1.17.5-ubuntu20.04
 
 dcgm:
   enabled: true  # Enables NVIDIA Data Center GPU Manager (DCGM) for GPU monitoring and health checks.
@@ -29,7 +29,7 @@ dcgm:
 
 devicePlugin:
   enabled: true  # Enables the NVIDIA Device Plugin to manage GPU allocation for containers.
-  #version: v0.17.0
+  #version: v0.17.1
 
 gpuFeatureDiscovery:
   enabled: true  # Enables GPU Feature Discovery to expose GPU capabilities as node labels.
