@@ -15,7 +15,7 @@
 
 - name: Intialize provision_password_status
   ansible.builtin.set_fact:
-    provision_password_status: true
+    provision_password_status: false
 
 - name: Set provision_password_status to true
   ansible.builtin.set_fact:
@@ -35,7 +35,7 @@
 
     - name: Disable host key checking
       ansible.builtin.replace:
-        path: /etc/ssh/ssh_config
+        path: "{{ ssh_config_path }}"
         regexp: '#   StrictHostKeyChecking ask'
         replace: 'StrictHostKeyChecking no'
       register: disable_host_key_checking
@@ -43,7 +43,7 @@
 
     - name: Disable strict mode checking
       ansible.builtin.replace:
-        path: /etc/ssh/ssh_config
+        path: "{{ ssh_config_path }}"
         regexp: '^StrictModes\ '
         replace: 'StrictModes no'
       register: disable_strict_mode_checking

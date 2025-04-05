@@ -15,6 +15,7 @@
 
 # Usage: main.yml
 min_length: 8
+ssh_config_path: "/etc/ssh/ssh_config"
 
 # Usage: set_passwordless_ssh.yml
 rsa_id_file: "/root/.ssh/id_rsa"
@@ -29,3 +30,4 @@ This may be due to incorrect password in provision_password of provision_config.
 # Usage: fetch_provision_password.yml
 conf_file_mode: "0644"
 mandatory_password_fail_msg: "Failed. Please provide valid password for mandatory credential."
+no_inventory_file_provided_msg: "Failed. Inventory is not provided or is empty."

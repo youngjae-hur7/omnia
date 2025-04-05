@@ -18,7 +18,7 @@
     - hostvars['127.0.0.1']['k8s_support']
     - hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
     - hostvars[groups['kube_control_plane'][0]]['k8s_new_nodes'] != ''
-    - hostvars['localhost']['k8s_offline_install'] is true
+    - hostvars['localhost']['k8s_offline_install']
   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.facts
   vars:
     kube_version: "v{{ hostvars['localhost']['k8s_version'] }}"
@@ -49,7 +49,7 @@
     populate_inventory_to_hosts_file: false
     enable_nodelocaldns: false
     upstream_dns_servers:
-      - "{{ hostvars['localhost']['admin_nic_ip'] if hostvars['localhost']['k8s_proxy'] is true }}"
+      - "{{ hostvars['localhost']['admin_nic_ip'] }}"
     unsafe_show_logs: true
     kube_image_repo: "registry.k8s.io"
     docker_image_repo: "docker.io"
@@ -74,8 +74,8 @@
     etcd_download_url: "{{ hostvars['localhost']['offline_tarball_path'] }}/{{ hostvars['localhost']['etcd_package'] }}.tar.gz"
     containerd_download_url: "{{ hostvars['localhost']['offline_tarball_path'] }}/{{ hostvars['localhost']['containerd_package'] }}.tar.gz"
     helm_download_url: "{{ hostvars['localhost']['offline_tarball_path'] }}/{{ hostvars['localhost']['helm_package'] }}.tar.gz"
-    http_proxy: "{{ hostvars['localhost']['http_proxy'] if hostvars['localhost']['k8s_proxy'] is true }}"
-    https_proxy: "{{ hostvars['localhost']['https_proxy'] if hostvars['localhost']['k8s_proxy'] is true }}"
+    http_proxy: "{{ hostvars['localhost']['http_proxy'] }}"
+    https_proxy: "{{ hostvars['localhost']['https_proxy'] }}"
     no_proxy: "localhost,127.0.0.1,{{ hostvars['localhost']['admin_nic_ip'] }},{{ hostvars['localhost']['omnia_config']['k8s_service_addresses'] }},{{ hostvars['localhost']['omnia_config']['k8s_pod_network_cidr'] }},{{ hostvars['localhost']['omnia_config']['k8s_cni'] }},{{ hostvars['localhost']['oim_hostname'] }},{{ hostvars['localhost']['domain_name'] }}"   # noqa: yaml[line-length]
     additional_no_proxy: "{{ hostvars['localhost']['user_no_proxy'] if hostvars['localhost']['no_proxy_input_status'] else '' }}"   # noqa: yaml[line-length]
 
@@ -84,7 +84,7 @@
     - hostvars['127.0.0.1']['k8s_support']
     - hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
     - hostvars[groups['kube_control_plane'][0]]['k8s_new_nodes'] != ''
-    - hostvars['localhost']['k8s_offline_install'] is false
+    - not hostvars['localhost']['k8s_offline_install']
   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.facts
   vars:
     kube_version: "v{{ hostvars['localhost']['k8s_version'] }}"
@@ -114,8 +114,6 @@
     override_system_hostname: false
     populate_inventory_to_hosts_file: false
     enable_nodelocaldns: false
-    upstream_dns_servers:
-      - "{{ hostvars['localhost']['admin_nic_ip'] if hostvars['localhost']['k8s_proxy'] is true }}"
     unsafe_show_logs: true
     kube_image_repo: "registry.k8s.io"
     docker_image_repo: "docker.io"
@@ -128,8 +126,6 @@
             skip_verify: false
     docker_rh_repo_base_url: ""
     docker_rh_repo_gpgkey: ""
-    http_proxy: "{{ hostvars['localhost']['http_proxy'] if hostvars['localhost']['k8s_proxy'] is true }}"
-    https_proxy: "{{ hostvars['localhost']['https_proxy'] if hostvars['localhost']['k8s_proxy'] is true }}"
     no_proxy: "localhost,127.0.0.1,{{ hostvars['localhost']['admin_nic_ip'] }},{{ hostvars['localhost']['omnia_config']['k8s_service_addresses'] }},{{ hostvars['localhost']['omnia_config']['k8s_pod_network_cidr'] }},{{ hostvars['localhost']['omnia_config']['k8s_cni'] }},{{ hostvars['localhost']['oim_hostname'] }},{{ hostvars['localhost']['domain_name'] }}"   # noqa: yaml[line-length]
     additional_no_proxy: "{{ hostvars['localhost']['user_no_proxy'] if hostvars['localhost']['no_proxy_input_status'] else '' }}"   # noqa: yaml[line-length]
 
@@ -138,7 +134,7 @@
     - hostvars['127.0.0.1']['k8s_support']
     - hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
     - hostvars[groups['kube_control_plane'][0]]['k8s_new_nodes'] != ''
-    - hostvars['localhost']['k8s_offline_install'] is true
+    - hostvars['localhost']['k8s_offline_install']
   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.scale --limit="{{ hostvars[groups['kube_control_plane'][0]]['k8s_new_nodes'] }}"
   vars:
     kube_version: "v{{ hostvars['localhost']['k8s_version'] }}"
@@ -168,7 +164,7 @@
     populate_inventory_to_hosts_file: false
     enable_nodelocaldns: false
     upstream_dns_servers:
-      - "{{ hostvars['localhost']['admin_nic_ip'] if hostvars['localhost']['k8s_proxy'] is true }}"
+      - "{{ hostvars['localhost']['admin_nic_ip'] }}"
     unsafe_show_logs: true
     kube_image_repo: "registry.k8s.io"
     docker_image_repo: "docker.io"
@@ -203,7 +199,7 @@
     - hostvars['127.0.0.1']['k8s_support']
     - hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
     - hostvars[groups['kube_control_plane'][0]]['k8s_new_nodes'] != ''
-    - hostvars['localhost']['k8s_offline_install'] is false
+    - not hostvars['localhost']['k8s_offline_install']
   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.scale --limit="{{ hostvars[groups['kube_control_plane'][0]]['k8s_new_nodes'] }}"
   vars:
     kube_version: "v{{ hostvars['localhost']['k8s_version'] }}"
@@ -232,8 +228,6 @@
     override_system_hostname: false
     populate_inventory_to_hosts_file: false
     enable_nodelocaldns: false
-    upstream_dns_servers:
-      - "{{ hostvars['localhost']['admin_nic_ip'] if hostvars['localhost']['k8s_proxy'] is true }}"
     unsafe_show_logs: true
     kube_image_repo: "registry.k8s.io"
     docker_image_repo: "docker.io"
@@ -246,7 +240,5 @@
             skip_verify: false
     docker_rh_repo_base_url: ""
     docker_rh_repo_gpgkey: ""
-    http_proxy: "{{ hostvars['localhost']['http_proxy'] }}"
-    https_proxy: "{{ hostvars['localhost']['https_proxy'] }}"
     no_proxy: "localhost,127.0.0.1,{{ hostvars['localhost']['admin_nic_ip'] }},{{ hostvars['localhost']['omnia_config']['k8s_service_addresses'] }},{{ hostvars['localhost']['omnia_config']['k8s_pod_network_cidr'] }},{{ hostvars['localhost']['oim_hostname'] }},{{ hostvars['localhost']['domain_name'] }}"   # noqa: yaml[line-length]
     additional_no_proxy: "{{ hostvars['localhost']['user_no_proxy'] if hostvars['localhost']['no_proxy_input_status'] else '' }}"   # noqa: yaml[line-length]

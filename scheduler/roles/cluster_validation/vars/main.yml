@@ -125,6 +125,8 @@ Re-run playbook with reachable kube_control_plane."
 ansible_collection_folder: "{{ omnia_collection_path[0] }}/ansible_collections/"
 kubespray_certificate_key_taskfile_path: "kubernetes_sigs/kubespray/roles/kubernetes/control-plane/tasks/kubeadm-setup.yml"
 max_retries: 5
+k8s_offline_install_success_msg: "K8s offline installation successfully validated"
+k8s_offline_install_failure_msg: "Failed. k8s_offline_install accepts true or false in omnia_config.yml"
 
 # Usage: slurm_validations.yml
 invalid_slurm_inventory_fail_msg: "Failed. slurm software is present in software_config.json.
