@@ -61,4 +61,4 @@ Steps to Integrate External Nodes
    
 7. Run the ``omnia.yml`` to deploy a Kubernetes cluster with the new nodes, where ``<inventory>`` is the path to your inventory file consisting of the external nodes:
    ::
-	ansible-playbook omnia.yml -i <inventory>
+	ansible-playbook omnia.yml -i <inventory> 
