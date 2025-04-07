@@ -1,4 +1,4 @@
-GPU Operator
+NVIDIA GPU Operator
 =====================
 
 Kubernetes provides access to special hardware resources such as NVIDIA GPUs, NICs, Infiniband adapters and other devices through the device plugin framework.
@@ -11,10 +11,11 @@ Prerequisite
 
 Ensure that the ``input/software_config.json`` file contains the following line under ``softwares``: ::
 
-    {"name": "nvidia_gpu_operator", "version":"24.9.2"}
+    {"name": "nvidia_gpu_operator", "version":"25.3.0"}
 
 A sample version of the ``input/software_config.json`` is located `here <../../../samplefiles.html>`_.
 
+.. note:: Currently, Omnia only supports the ``25.3.0`` version of the NVIDIA GPU operator.
 
 Configurations
 ----------------
@@ -27,7 +28,7 @@ Follow the below provided steps to set up the NVIDIA GPU operator for your clust
         * ``http_proxy``: This value can be found in the ``/opt/omnia/offline/local_repo_access.yml`` file.
         * ``https_proxy``: This value can be found in the ``/opt/omnia/offline/local_repo_access.yml`` file.
 
-.. note:: All other parameters in the ``input/nvidia_gpu_operator_config.yml`` comes pre-filled for a basic configuration, but can be edited for a more customised installation.
+.. note:: Omnia supports the successful deployment of the NVIDIA GPU Operator for the pre-filled basic configuration, under ``input/nvidia_gpu_operator``. For a more customized installation, the configuration file can be edited as per the user's requirements. However, users must check and verify the compatibility of supported tools and driver versions before proceeding. Omnia does not claim responsibility for any issues arising from custom modifications or compatibility checks.
 
 2. Once the ``nvidia_gpu_operator_config.yml`` file is ready, by default the filepath is added to the ``nvidia_gpu_operator_value_file_path`` parameter in ``input/omnia_config.yml`` file.
 

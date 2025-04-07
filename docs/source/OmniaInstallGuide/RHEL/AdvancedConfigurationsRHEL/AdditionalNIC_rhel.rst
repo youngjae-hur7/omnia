@@ -146,10 +146,7 @@ The ``server_spec_update.yml`` playbook can be used to do the following tasks:
             * intel_idle.max_cstate=0
             * intel_pstate=disable
 
-.. caution::
-
-    * If duplicate entries of the same command line parameter is provided but with different values, then the playbook picks up to the last provided value overwriting any previous entries. For example, if the user provides ``"intel_iommu=on intel_iommu=off"`` as the parameters, the configuration will ultimately be set to ``"intel_iommu=off"``, as this is the last value provided.
-    * Similarly, if the ``server_spec_update.yml`` playbook is executed with a command line parameter, such as ``"intel_iommu=off"``, and is later rerun with the same parameter but an updated value, such as ``"intel_iommu=on"``, the playbook will assign the latest value for that parameter. As a result, it will ultimately set ``"intel_iommu=on"`` for the configuration. This behavior ensures that the most recent configuration is applied during execution.
+.. caution:: If duplicate entries of the same command line parameter is provided but with different values, then the playbook picks up to the last provided value overwriting any previous entries. For example, if the user provides ``"intel_iommu=on intel_iommu=off"`` as the parameters, the configuration will ultimately be set to ``"intel_iommu=off"``, as this is the last value provided.
 
 **Executing the playbook**
 

@@ -6,6 +6,8 @@ Releases
 
 * Kubernetes version upgraded to 1.31.4 (Previously 1.29.5)
 * Ubuntu 24.04 OS support
+* Support for NVIDIA GPU operator
+* Support for adding external nodes to an existing cluster
 
 1.7
 -----

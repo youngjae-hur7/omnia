@@ -4,8 +4,6 @@ Deploy CSI drivers for Dell PowerScale storage solutions
 Dell PowerScale is a flexible and secure scale-out NAS (network attached storage) solution designed to simplify storage requirements for AI and HPC workloads. To enable the PowerScale storage solution on the Kubernetes clusters, Omnia installs the Dell CSI PowerScale driver (version 2.13.0) on the nodes using helm charts. Once the PowerScale CSI driver is installed, the PowerScale nodes can be connected to the Kubernetes clusters for storage requirements.
 To know more about the CSI PowerScale driver, `click here <https://dell.github.io/csm-docs/docs/deployment/helm/drivers/installation/isilon/>`_.
 
-.. caution:: PowerScale CSI driver installation is only supported on RHEL 8.8 and Rocky Linux 8.8 clusters.
-
 .. note:: Omnia doesn't configure any PowerScale device via OneFS (operating system for PowerScale). Omnia configures the deployed Kubernetes cluster to interact with the PowerScale storage.
 
 PowerScale SmartConnect [Optional]
@@ -80,8 +78,17 @@ Prerequisites
 
     * isiPath: /ifs/data/csi
 
+5. Enable ``auth_basic`` for the PowerScale devices: Omnia authenticates and connects with PowerScale devices using basic authentication. To check and enable basic authentication from PowerScale's end, do the following:
 
-.. note:: In order to integrate PowerScale solution to the deployed Kubernetes cluster, Omnia 1.7 requires the following fixed parameter values in ``values.yaml`` file:
+    i. Establish an SSH connection with the PowerScale node.
+    ii. Execute the following command: 
+        ::
+            cat /usr/local/apache2/conf/webui_httpd.conf | grep -A 20 "# Platform API"
+    iii. Check the response and see if ``IsiAuthTypeBasic Off`` is displayed. If yes, it means that basic auth is not enabled from PowerScale. Use the following command to activate it:
+         ::
+            isi_gconfig -t web-config auth_basic=true
+    
+.. note:: In order to integrate PowerScale solution to the deployed Kubernetes cluster, Omnia requires the following fixed parameter values in ``values.yaml`` file:
 
     * controllerCount: 1
     * Replication: false

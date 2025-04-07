@@ -12,3 +12,4 @@ Omnia provides an array of utilities as separate playbooks. Using these playbook
     timescaledb_utility
     freeipa_installation
     tuneD
+    external_nodes

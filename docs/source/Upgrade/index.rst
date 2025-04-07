@@ -10,6 +10,8 @@ To upgrade the Omnia version 1.7 to version 1.7.1 on your OIM, you can use the `
     * After upgrading your OIM, ensure that the jinja2 version on the login nodes is also updated to 3.1.5. To update the jinja2 software version, run the following command: ::
 
         pip install jinja2==3.1.5
+    
+    * As part of the upgrade process, Omnia upgrades the grafana version on the cluster to 11.4.1 from 8.3.2.
 
 **Tasks performed by the** ``upgrade_oim.yml`` **playbook**
 
@@ -64,11 +66,13 @@ To upgrade the Omnia OIM, do the following:
 
 .. caution::
 
-    If ``upgrade_oim.yml`` execution fails, you can rollback to Kubernetes version 1.29.5 and restore the old backed-up data using the ``restore_oim.yml`` playbook. To restore, do the following:
+    If ``upgrade_oim.yml`` execution fails while upgrading Kubernetes, you can rollback to Kubernetes version 1.29.5 and restore the old backed-up data using the ``restore_oim.yml`` playbook. To restore, do the following:
 
-        1. Activate the Omnia virtual environment using the ``source /opt/omnia/omnia171_venv/bin/activate`` command.
+        1. Deactivate the Omnia 1.7.1 virtual environment using the ``deactivate`` command.
+        
+        2. Activate the 1.7 Omnia virtual environment using the ``source /opt/omnia/omnia17_venv/bin/activate`` command.
 
-        2. Execute the ``restore_oim.yml`` playbook using the following command: ::
+        3. Execute the ``restore_oim.yml`` playbook using the following command: ::
 
             cd upgrade
             ansible-playbook restore_oim.yml

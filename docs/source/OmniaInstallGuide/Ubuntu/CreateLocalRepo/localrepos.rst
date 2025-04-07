@@ -158,9 +158,9 @@ Configure specific local repositories
 
     To install BeeGFS, include the following line under ``softwares`` in ``input/software_config.json``: ::
 
-            {"name": "beegfs", "version": "7.4.2"},
+            {"name": "beegfs", "version": "7.4.5"},
 
-    .. note:: For clusters running on Ubuntu 24.04 OS, the supported BeeGFS version is ``7.4.5``.
+    .. note:: Omnia supports version ``7.4.5`` for BeeGFS. Earlier versions might not work with Omnia.
 
     For information on deploying BeeGFS after setting up the cluster, `click here <../OmniaCluster/BuildingCluster/Storage/BeeGFS.html>`_.
 
