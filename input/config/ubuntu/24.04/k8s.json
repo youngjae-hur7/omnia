@@ -113,6 +113,16 @@
       "url": "https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner/releases/download/nfs-subdir-external-provisioner-4.0.18/nfs-subdir-external-provisioner-4.0.18.tgz"
     },
     {
+        "package": "ghcr.io/k8snetworkplumbingwg/multus-cni",
+        "tag": "v4.1.4-thick",
+        "type": "image"
+    },
+    {
+        "package": "ghcr.io/k8snetworkplumbingwg/whereabouts",
+        "tag": "latest",
+        "type": "image"
+    },
+    {
       "package": "docker.io/library/nginx",
       "tag": "1.25.2-alpine",
       "type": "image"

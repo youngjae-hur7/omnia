@@ -205,7 +205,7 @@
   when: oim_os in oim_os_redhat or
           oim_os in oim_os_rocky
 
-- name: Remove squid package - Ubuntu
+- name: Remove Squid package - Ubuntu
   ansible.builtin.apt:
     name: squid
     state: absent

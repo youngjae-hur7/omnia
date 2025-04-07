@@ -52,7 +52,8 @@ copy_permission: "0755"
 # grafana_deployment.yml
 grafan_pod_status_msg: "The Grafana pod status is {{ grafana_pod_status.stdout }}. Image version will be updated only if pod is in Running state."
 grafana_pod_failure_msg: "Pod '{{ grafana_pod_name.stdout }}' is not running. Current status: {{ grafana_pod_status.stdout }}."
-grafana_timeout: 300
+grafana_timeout: 300s
+grafana_namespace: "grafana"
 
 # upgrade_k8s.yml
 access_file_path: "/opt/omnia/offline/local_repo_access.yml"

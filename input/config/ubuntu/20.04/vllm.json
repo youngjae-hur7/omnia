@@ -2,7 +2,18 @@
 
   "vllm": { 
 
-    "cluster": []
+    "cluster": [
+      {
+        "package": "docker-ce-cli=5:20.10.20~3-0~ubuntu-focal",
+        "type": "deb",
+        "repo_name": "docker-ce-repo"
+      },
+      {
+        "package": "docker-ce=5:20.10.20~3-0~ubuntu-focal",
+        "type": "deb",
+        "repo_name": "docker-ce-repo"
+      }
+    ]
 
   },
   "vllm_amd": { 

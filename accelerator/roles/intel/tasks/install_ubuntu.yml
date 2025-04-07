@@ -58,6 +58,12 @@
         - compute_os == "ubuntu"
         - compute_os_version == "24.04"
 
+    - name: Enable lldpad systemd service
+      ansible.builtin.systemd:
+        name: lldpad
+        enabled: true
+        state: started
+
     - name: Remove (old) Gaudi kernel modules if present
       community.general.modprobe:
         name: "{{ item }}"
@@ -74,5 +80,5 @@
         state: present
       loop: "{{ intel_gaudi_kernel_module_to_load }}"
 
-    - name: Set cron job for scale out interfaces
+    - name: Set systemd service for scale out interfaces
       ansible.builtin.include_tasks: make_sure_scale_out_interfaces_up.yml
