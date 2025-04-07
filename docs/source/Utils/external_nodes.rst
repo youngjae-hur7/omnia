@@ -3,7 +3,7 @@ Integrate External Nodes with Omnia Kubernetes Cluster
 
 Omnia provides you a way to integrate external nodes (with pre-installed Ubuntu OS) into an existing Omnia Kubernetes (K8s) cluster. The integration supports both x86 and ARM architecture nodes.
 
-.. note:: Currently, this feature is only supported on nodes running Ubuntu 24.04.01 OS.
+.. note:: Currently, this feature is only supported on nodes running Ubuntu 24.04 OS.
 
 Prerequisites
 --------------
@@ -21,7 +21,7 @@ Before integrating external nodes, ensure the following requirements are met:
 Steps to Integrate External Nodes
 ----------------------------------
 
-1. Ensure that the OIM server is set up and running with Ubuntu 24.04.01 OS.
+1. Ensure that the OIM server is set up and running with Ubuntu 24.04 OS.
 
 2. Activate the Omnia Python virtual environment using the following command:
    ::
