@@ -138,9 +138,8 @@ if [[ -n $thor_check ]] then
         sudo sh -c "echo bnxt_re >> /etc/initramfs-tools/modules"
         if [[ $nvidia_check == *"NVIDIA"* ]]; then
 	        sudo sh -c "echo nvidia_peermem >> /etc/initramfs-tools/modules"
-        else
-            sudo sh -c "echo ib_peer_mem >> /etc/initramfs-tools/modules"
         fi
+        sudo sh -c "echo ib_peer_mem >> /etc/initramfs-tools/modules"
         sudo sh -c "echo br_netfilter >> /etc/initramfs-tools/modules"
         sudo sh -c "echo ib_umad >> /etc/initramfs-tools/modules"
         echo "Executing dkms autoinstall for all in /lib/modules"
