@@ -98,7 +98,7 @@ urllib3,MIT License,"urllib3 is a powerful, user-friendly HTTP client for python
 pyarrow,"Apache Software License (Apache License, Version 2.0)",Apache Arrow is a multi-language toolbox for accelerated data interchange and in-memory processing,19.0.1
 vllm (AMD),Apache License 2.0,A high-throughput and memory-efficient inference and serving engine for LLMs,0.2.4
 vllm (NVIDIA),Apache License 2.0,A high-throughput and memory-efficient inference and serving engine for LLMs,0.7.2
-ucx,BSD 3 Clause License,Unified Communication X ,1.15.0
+UCX,BSD 3 Clause License,Unified Communication X ,1.15.0
 OpenMPI, 3-clause BSD license,Open MPI main development repository,4.1.6
 pytorch CPU,BSD License (BSD-3),Tensors and Dynamic neural networks in Python with strong GPU acceleration,latest
 Pytorch AMD,BSD License (BSD-3),Tensors and Dynamic neural networks in Python with strong GPU acceleration,latest
