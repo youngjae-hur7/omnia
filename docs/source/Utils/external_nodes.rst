@@ -14,9 +14,9 @@ Before integrating external nodes, ensure the following requirements are met:
 * **Enable root user**: Edit the ``/etc/ssh/sshd_config`` file and set ``PermitRootLogin yes`` (instead of ``PermitRootLogin prohibit-password``). 
 * **Fully Qualified Domain Name (FQDN)**: Set the FQDN for each node (for example; ``armcompute.omnia.test``) for ARM-based nodes.
 * **IP Configuration**: Assign either a static or dynamic IP from the PXE network (for example; ``10.5.0.x``).
-* **Internet Access**: The node should have internet access. To test the internet connection, execute:
-  ::
-  wget https://github.com/opencontainers/runc/releases/download/v1.2.3/runc.amd64  
+* **Internet Access**: The node should have internet access. To test the internet connection, execute: ::
+
+    wget https://github.com/opencontainers/runc/releases/download/v1.2.3/runc.amd64
 
 Steps to Integrate External Nodes
 ----------------------------------
@@ -28,11 +28,13 @@ Steps to Integrate External Nodes
 	source /opt/omnia/omnia171_venv/bin/activate
 
 3. Create an inventory file in the following format:
-   ::
-	[compute]
-   10.5.0.213
-   10.5.0.203
    
+   ::
+
+    [compute]
+    10.3.0.101
+    10.3.0.102
+ 
    .. note:: Only IP addresses are supported in the inventory file. Ensure that these IPs align with the PXE subnet.
 
 4. Run the ``connect-external-server.yml`` playbook using the following command to connect the external servers, where ``<inventory>`` is the path to your inventory file:
