@@ -83,7 +83,7 @@
         - name: Inventory provided ,copy user inventory to nfs share
           ansible.builtin.copy:
             src: "{{ user_inventory_path }}"
-            dest: "{{ kubespray_nfs_share }}/inv_k8s"
+            dest: "{{ kubespray_nfs_share }}/inv_reset_k8s"
             mode: "{{ dir_mode }}"
           when:
             - user_inventory_path is defined
@@ -94,7 +94,7 @@
             cmd: >-
               set -o pipefail &&
               /venv/bin/ansible-playbook {{ kubespray_nfs_share }}/reset_k8s_cluster.yml
-              -i {{ kubespray_nfs_share }}/inv_k8s
+              -i {{ kubespray_nfs_share }}/inv_reset_k8s
               --extra-vars "@{{ kubespray_nfs_share }}/k8s_all_vars.yml" -vvv
               | /usr/bin/tee {{ kubespray_log_path }}
           async: 3600  # Set async timeout (e.g., 1 hour)
