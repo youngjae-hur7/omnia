@@ -15,9 +15,8 @@ Before integrating external nodes, ensure the following requirements are met:
 * **Fully Qualified Domain Name (FQDN)**: Set the FQDN for each node (for example; ``armcompute.omnia.test``) for ARM-based nodes.
 * **IP Configuration**: Assign either a static or dynamic IP from the PXE network (for example; ``10.5.0.x``).
 * **Internet Access**: The node should have internet access. To test the internet connection, execute:
-  
-   ::
-      wget https://github.com/opencontainers/runc/releases/download/v1.2.3/runc.amd64  
+  ::
+  wget https://github.com/opencontainers/runc/releases/download/v1.2.3/runc.amd64  
 
 Steps to Integrate External Nodes
 ----------------------------------
@@ -30,9 +29,9 @@ Steps to Integrate External Nodes
 
 3. Create an inventory file in the following format:
    ::
-	   [compute]
-      10.5.0.213
-  	   10.5.0.203
+	[compute]
+   10.5.0.213
+   10.5.0.203
    
    .. note:: Only IP addresses are supported in the inventory file. Ensure that these IPs align with the PXE subnet.
 
@@ -49,13 +48,13 @@ Steps to Integrate External Nodes
  	::
 	   ansible-vault edit omnia_config.yml --vault-password-file .omnia_vault_key
    
-   +-----------------------------+-------------------------------------------------------------------------------------------------------------------------------+
-   | Parameter                   | Details                                                                                                                       |
-   +=============================+===============================================================================================================================+
-   | ``k8s_offline_install``     | * **Type**: ``boolean``                                                                                                       |
-   |                             | * **Default value**: ``true``.                                                                                                |
-   |                             | * Set it to `false` if you want to pull Kubernetes packages and images from the internet instead of the OIM local repository. |
-   +-----------------------------+-------------------------------------------------------------------------------------------------------------------------------+
+   +-----------------------------+---------------------------------------------------------------------------------------------------------------------------------+
+   | Parameter                   | Details                                                                                                                         |
+   +=============================+=================================================================================================================================+
+   | ``k8s_offline_install``     | * **Type**: ``boolean``                                                                                                         |
+   |                             | * **Default value**: ``true``.                                                                                                  |
+   |                             | * Set it to ``false`` if you want to pull Kubernetes packages and images from the internet instead of the OIM local repository. |
+   +-----------------------------+---------------------------------------------------------------------------------------------------------------------------------+
    
 7. Run the ``omnia.yml`` to deploy a Kubernetes cluster with the new nodes, where ``<inventory>`` is the path to your inventory file consisting of the external nodes:
    ::
