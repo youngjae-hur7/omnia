@@ -12,8 +12,9 @@ Before integrating external nodes, ensure the following requirements are met:
 
 * **OpenSSH**: Ensure OpenSSH is enabled during the Ubuntu OS installation process.
 * **Enable root user**: Edit the ``/etc/ssh/sshd_config`` file and set ``PermitRootLogin yes`` (instead of ``PermitRootLogin prohibit-password``). 
-* **Fully Qualified Domain Name (FQDN)**: Set the FQDN for each node (for example; ``armcompute.omnia.test``) for ARM-based nodes.
-* **IP Configuration**: Assign either a static or dynamic IP from the PXE network (for example; ``10.5.0.x``).
+* **Root password**: Ensure that all servers use the same root password.
+* **Fully Qualified Domain Name (FQDN)**: Set the FQDN for each ARM-based node (Eexample: ``armcompute.omnia.test``).
+* **IP Configuration**: Assign either a static or dynamic IP from the PXE network (Example: ``10.5.0.x``).
 * **Internet Access**: The node should have internet access. To test the internet connection, execute: ::
 
     wget https://github.com/opencontainers/runc/releases/download/v1.2.3/runc.amd64
@@ -42,7 +43,7 @@ Steps to Integrate External Nodes
 	cd utils
 	ansible-playbook connect-external-server.yml -i <inventory>
 
-5. While execution, the playbook will prompt for the root password. Enter the root password that has been configured on all servers. Ensure that all servers use the same root password.
+5. While execution, the playbook will prompt for the root password. Enter the root password that has been configured on all servers.
 
 6. Navigate to the ``input/omnia_config.yml`` file and modify the ``k8s_offline_install`` variable:
    
