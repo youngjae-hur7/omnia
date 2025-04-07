@@ -1,7 +1,7 @@
 Integrate External Nodes with Omnia Kubernetes Cluster
 ========================================================
 
-Omnia provides you a way to integrate external nodes (with pre-installed Ubuntu OS) into an existing Omnia Kubernetes (K8s) cluster. The integration supports both x86 and ARM architecture nodes.
+Omnia provides you a way to integrate external nodes (with pre-installed Ubuntu OS) into an existing Omnia Kubernetes (K8s) cluster.
 
 .. note:: Currently, this feature is only supported on nodes running Ubuntu 24.04 OS.
 
@@ -13,7 +13,7 @@ Before integrating external nodes, ensure the following requirements are met:
 * **OpenSSH**: Ensure OpenSSH is enabled during the Ubuntu OS installation process.
 * **Enable root user**: Edit the ``/etc/ssh/sshd_config`` file and set ``PermitRootLogin yes`` (instead of ``PermitRootLogin prohibit-password``). 
 * **Root password**: Ensure that all servers use the same root password.
-* **Fully Qualified Domain Name (FQDN)**: Set the FQDN for each ARM-based node (Eexample: ``armcompute.omnia.test``).
+* **Fully Qualified Domain Name (FQDN)**: Set the FQDN for each node (Eexample: ``compute1.omnia.test``).
 * **IP Configuration**: Assign either a static or dynamic IP from the PXE network (Example: ``10.5.0.x``).
 * **Internet Access**: The node should have internet access. To test the internet connection, execute: ::
 
@@ -58,8 +58,6 @@ Steps to Integrate External Nodes
    |                             | * **Default value**: ``true``.                                                                                                         |
    |                             | * Keep it ``true`` if you want to install the necessary packages from the local repository.                                            |
    |                             | * Set it to ``false`` if you want to pull Kubernetes packages and images from the internet instead of the OIM local repository.        |
-   |                             |                                                                                                                                        |
-   |                             | .. note:: Offline installation is not supported on ARM-based nodes. For such nodes, ``k8s_offline_install`` must be kept as ``false``. |
    +-----------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
    
 7. Run the ``omnia.yml`` to deploy a Kubernetes cluster with the new nodes, where ``<inventory>`` is the path to your inventory file consisting of the external nodes:
