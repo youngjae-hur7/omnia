@@ -2,7 +2,18 @@
 
   "vllm": { 
 
-    "cluster": []
+    "cluster": [
+      {
+        "package": "docker-ce-cli=5:27.3.1-1~ubuntu.24.04~noble",
+        "type": "deb",
+        "repo_name": "docker-ce-repo"
+      },
+      {
+        "package": "docker-ce=5:27.3.1-1~ubuntu.24.04~noble",
+        "type": "deb",
+        "repo_name": "docker-ce-repo"
+      }
+    ]
 
   },
   "vllm_amd": { 

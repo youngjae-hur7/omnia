@@ -144,6 +144,21 @@ if [[ -n $thor_check ]] then
         echo "Executing update-initramfs"
         sudo update-initramfs -u -k `uname -r`
 
+        echo -e "\n\n=================== Checking and updating /etc/security/limit.conf file=================== \n\n"
+
+        if [[ $(grep '^* soft memlock unlimited$' /etc/security/limits.conf) ]]; then
+            echo "Soft MemLock ok"
+        else
+            echo "Adding soft memlock unlimited to  /etc/security/limits.conf"
+            sudo sh -c "echo '* soft memlock unlimited' >> /etc/security/limits.conf"
+        fi
+
+        if [[ $(grep '^* hard memlock unlimited$' /etc/security/limits.conf) ]]; then
+            echo "Hard MemLock ok"
+        else
+            echo "Adding hard memlock unlimited to  /etc/security/limits.conf"
+            sudo sh -c "echo '* hard memlock unlimited' >> /etc/security/limits.conf"
+        fi
     fi
     echo "RoCE Installation completed" >> $LOG_FILE
 else
