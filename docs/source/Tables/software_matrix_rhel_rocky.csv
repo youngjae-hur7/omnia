@@ -45,7 +45,6 @@ rocm,MIT license,AMD ROCm™ Software,6.3.1
 beeGFS,BeeGFS (formerly known as FhGFS) END USER LICENSE,Public repository for the BeeGFS Parallel File System,7.4.5
 beeGFS-Client,GPLv2,"BeeGFS is a parallel file system, developed and optimized for high-performance computing.",7.4.5
 CUDA toolkit,NVIDIA Software License,"The NVIDIA® CUDA® Toolkit provides a development environment for creating high-performance, GPU-accelerated applications.",12.8
-Intel Gaudi3 driver,MIT license,Intel Gaudi3 drivers,1.19.2
 FreeIPA,GNU-General Public License v3.0," FreeIPA, an integrated security information management solution",4.9.11
 NVIDIA device plugin,Apache License 2.0,NVIDIA device plugin for Kubernetes,0.14.4
 rocm device plugin,Apache License 2.0,Kubernetes (k8s) device plugin to enable registration of AMD GPU to a container cluster,0.19.0
@@ -105,13 +104,11 @@ openmpi, 3-clause BSD license,Open MPI main development repository,4.1.6
 pytorch CPU,BSD License (BSD-3),Tensors and Dynamic neural networks in Python with strong GPU acceleration,latest
 Pytorch AMD,BSD License (BSD-3),Tensors and Dynamic neural networks in Python with strong GPU acceleration,latest
 Pytorch NVIDIA,NVIDIA DEEP LEARNING CONTAINER LICENSE,"The PyTorch NGC Container is optimized for GPU acceleration, and contains a validated set of libraries that enable and optimize GPU performance",23.12-py3
-Pytorch Gaudi,Apache License 2.0,"The PyTorch NGC Container is optimized for GPU acceleration, and contains a validated set of libraries that enable and optimize GPU performance",2.5.1
 Tensorflow CPU,Apache-2.0 license,An Open Source Machine Learning Framework for Everyone,latest
 Tensorflow AMD,Apache-2.0 license,An Open Source Machine Learning Framework for Everyone,latest
 Tensorflow NVIDIA,Apache-2.0 license,An Open Source Machine Learning Framework for Everyone,23.12-tf2-py3
 Kustomize,Apache License 2.0,Customization of kubernetes YAML configurations,5.0.3
 nfs-subdir-external-provisioner,Apache License 2.0,Dynamic sub-dir volume provisioner on a remote NFS server.,4.0.18
-habana-container-runtime,Apache License 2.0,Habana container runtime,1.19.2
 nvidia-container-toolkit,Apache License 2.0,NVIDIA container runtime library,1.17.5
 helm-charts,Apache-2.0 license,The source for Dell Helm charts.,csi-isilon-2.13.0
 csi-powerscale driver,Apache-2.0 license,CSI Driver for Dell PowerScale,2.13.0
