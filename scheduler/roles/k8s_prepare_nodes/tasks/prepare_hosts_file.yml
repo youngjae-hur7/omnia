@@ -39,7 +39,7 @@
     - name: Update hosts file for all k8s groups
       ansible.builtin.lineinfile:
         dest: "{{ hosts_file_dest }}"
-        line: "{{ ansible_host }} {{ machine_hostname.stdout }} {{ short_hostname.stdout }}"
+        line: "{{ hostvars[item].node_ip }} {{ hostvars[item].node_hostname }} {{ hostvars[item].node_name }}"
         state: present
         create: true
         mode: "{{ hosts_file_mode }}"
