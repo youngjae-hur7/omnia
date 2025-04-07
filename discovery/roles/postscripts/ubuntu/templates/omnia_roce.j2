@@ -27,6 +27,8 @@ echo "Checking for Intel Gaudi cards" >> $LOG_FILE
 gaudi_check_processing_xlr8r=`lspci | grep "Processing accelerators: Habana Labs Ltd"`
 echo "Checking for Broadcom NetXtreme-E cards" >> $LOG_FILE
 thor_check=$(lspci -vvv 2>/dev/null | grep -i -E "BCM5750|BCM5760")
+echo "Checking for NVIDIA cards" >> "$LOG_FILE"
+nvidia_check=$(lspci | grep -i nvidia)
 if [[ -n $thor_check ]] then
     if [[ $gaudi_check_processing_xlr8r == *"Habana Labs Ltd"* ]]
     then
@@ -134,6 +136,9 @@ if [[ -n $thor_check ]] then
         find /usr/lib64/ /usr/lib -name "libbnxt_re-rdmav*.so" -exec mv {} {}.inbox \;
         sudo sh -c "echo bnxt_en >> /etc/initramfs-tools/modules"
         sudo sh -c "echo bnxt_re >> /etc/initramfs-tools/modules"
+        if [[ $nvidia_check == *"NVIDIA"* ]]; then
+	        sudo sh -c "echo nvidia_peermem >> /etc/initramfs-tools/modules"
+        fi
         sudo sh -c "echo ib_peer_mem >> /etc/initramfs-tools/modules"
         sudo sh -c "echo br_netfilter >> /etc/initramfs-tools/modules"
         sudo sh -c "echo ib_umad >> /etc/initramfs-tools/modules"
