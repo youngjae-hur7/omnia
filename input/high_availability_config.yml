@@ -39,8 +39,7 @@ oim_ha:
   virtual_ip_address: ""
   active_node_service_tag: ""
   passive_nodes:
-    node_details:
-      - {SERVICE_TAG : "",HOSTNAME: "",ADMIN_MAC: "",ADMIN_IP: "",BMC_IP: ""}
+    - node_service_tags: [] # List of service tags, separated by commas. e.g. ["ABC","DEF"]
 
 
 # ***********************************************************************

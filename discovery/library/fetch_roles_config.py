@@ -17,7 +17,7 @@
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.omniadb_connection import get_data_from_db
 
-FIRST_LAYER_ROLES = {"service", "login", "compiler", "kube_control_plane", "etcd", "slurm_control_node", "slurm_dbd", "auth_server"}
+FIRST_LAYER_ROLES = {"oim_ha_node", "service", "login", "compiler", "kube_control_plane", "etcd", "slurm_control_node", "slurm_dbd", "auth_server"}
 SECOND_LAYER_ROLES = {"default", "kube_node", "slurm_node"}
 NON_SERVICE_ROLES = (FIRST_LAYER_ROLES | SECOND_LAYER_ROLES) - {"service"}
 

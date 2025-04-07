@@ -13,6 +13,11 @@
 # limitations under the License.
 ---
 
+- name: Register default variables
+  ansible.builtin.set_fact:
+    prepare_oim: true
+    oim_passive_node_mapping: false
+
 - name: Validate passwordless ssh host
   ansible.builtin.include_tasks: validate_passwordless_ssh_oim.yml
 
@@ -24,6 +29,37 @@
 
 - name: Validate high availability config
   ansible.builtin.include_tasks: validate_high_availability.yml
+
+- name: Include composable role data
+  ansible.builtin.include_tasks: include_composable_roles_config.yml
+  when: enable_oim_ha | default(false)
+
+- name: Include mapping details if OIM HA mapping is used
+  when: 
+    - enable_oim_ha | default(false)
+    - oim_ha_group | length > 1
+    - oim_passive_node_mapping
+  block:
+    - name: Include discovery mapping vars
+      ansible.builtin.include_vars: "{{ role_path }}/../../../discovery/roles/discovery_validations/mapping/vars/main.yml"
+
+    - name: Include discovery common vars
+      ansible.builtin.include_vars: "{{ role_path }}/../../../discovery/roles/discovery_validations/common/vars/main.yml"
+
+    - name: Include provision config
+      ansible.builtin.include_tasks: "{{ role_path }}/../../../discovery/roles/discovery_validations/common/tasks/include_provision_config.yml"
+    
+    - name: Validate network interface type
+      ansible.builtin.include_tasks: "{{ role_path }}/../../../discovery/roles/discovery_validations/common/tasks/assign_network_interface.yml"
+
+    - name: Validate the nic parameters
+      ansible.builtin.include_tasks: "{{ role_path }}/../../../discovery/roles/discovery_validations/common/tasks/validate_oim_nic.yml"
+    
+    - name: Validate network spec
+      ansible.builtin.include_tasks: "{{ role_path }}/../../../discovery/roles/discovery_validations/common/tasks/validate_network_spec.yml"
+
+    - name: Include mapping config
+      ansible.builtin.include_tasks: "{{ role_path }}/../../../discovery/roles/discovery_validations/mapping/tasks/main.yml"
 
 - name: Check k8s support
   ansible.builtin.include_tasks: check_k8s_support.yml
