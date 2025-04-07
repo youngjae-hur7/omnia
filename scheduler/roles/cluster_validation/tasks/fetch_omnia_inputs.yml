@@ -170,6 +170,13 @@
         success_msg: "{{ success_msg_k8s_toplogy_manager_scope }}"
         fail_msg: "{{ fail_msg_k8s_toplogy_manager_scope }}"
 
+    - name: Assert k8s_offline_install
+      ansible.builtin.assert:
+        that:
+          - omnia_config.k8s_offline_install == true or omnia_config.k8s_offline_install == false
+        success_msg: "{{ k8s_offline_install_success_msg }}"
+        fail_msg: "{{ k8s_offline_install_failure_msg }}"
+
     - name: Set facts for k8s_support variables
       ansible.builtin.set_fact:
         topology_manager_scope: "{{ omnia_config.topology_manager_scope }}"
