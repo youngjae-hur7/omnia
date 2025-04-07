@@ -55,7 +55,6 @@ kubeflow,Apache-2.0,A repository for Kustomize manifests,1.9.1
 tensorflow,Apache-2.0,Machine Learning Framework,2.1.0
 OFED,NVIDIA Software License,OFED driver,24.01-0.3.3.1
 LDAP ToolBox,GNU General Public License v3.0 ,OpenLDAP server installation,2.5.16
-OpenMPI, 3-clause BSD license,OpenMPI main development repository,5.0.4
 Docker CE,Apache-2.0,Docker Service,24.0.4
 NVIDIA container runtime,Apache-2.0,Nvidia container runtime library,3.4.2
 helm,Apache-2.0,Kubernetes Package Manager,3.16.4
