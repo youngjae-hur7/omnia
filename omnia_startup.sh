@@ -505,6 +505,8 @@ setup_container() {
         echo -e "${GREEN} Omnia core container has been started.${NC}"
     else
         echo -e "${RED} Failed to start Omnia core container.${NC}"
+        echo -e "${RED} Make sure the Omnia core image is present.${NC}"
+        exit 1
     fi
 }
 
