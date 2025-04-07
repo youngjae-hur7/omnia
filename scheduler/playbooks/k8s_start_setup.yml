@@ -17,7 +17,7 @@
   when:
     - hostvars['127.0.0.1']['k8s_support']
     - not hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
-    - hostvars['localhost']['k8s_offline_install']
+    - hostvars['localhost']['omnia_config']['k8s_offline_install']
 
   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
   vars:
@@ -28,9 +28,9 @@
     kube_network_plugin: "{{ hostvars['localhost']['omnia_config']['k8s_cni'] }}"
     kube_service_addresses: "{{ hostvars['localhost']['omnia_config']['k8s_service_addresses'] }}"
     kube_pods_subnet: "{{ hostvars['localhost']['omnia_config']['k8s_pod_network_cidr'] }}"
-    kubelet_custom_flags: "{% if hostvars['localhost']['topology_manager_policy'] != 'none' %}
-      --topology-manager-policy={{ hostvars['localhost']['topology_manager_policy'] }}
-      --topology-manager-scope={{ hostvars['localhost']['topology_manager_scope'] }}
+    kubelet_custom_flags: "{% if hostvars['localhost']['omnia_config']['topology_manager_policy'] != 'none' %}
+      --topology-manager-policy={{ hostvars['localhost']['omnia_config']['topology_manager_policy'] }}
+      --topology-manager-scope={{ hostvars['localhost']['omnia_config']['topology_manager_scope'] }}
                           {% endif %}"
     kube_proxy_strict_arp: true
     kube_proxy_mode: 'iptables'
@@ -84,7 +84,7 @@
   when:
     - hostvars['127.0.0.1']['k8s_support']
     - not hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
-    - not hostvars['localhost']['k8s_offline_install']
+    - not hostvars['localhost']['omnia_config']['k8s_offline_install']
 
   ansible.builtin.import_playbook: kubernetes_sigs.kubespray.cluster
   vars:
@@ -95,9 +95,9 @@
     kube_network_plugin: "{{ hostvars['localhost']['omnia_config']['k8s_cni'] }}"
     kube_service_addresses: "{{ hostvars['localhost']['omnia_config']['k8s_service_addresses'] }}"
     kube_pods_subnet: "{{ hostvars['localhost']['omnia_config']['k8s_pod_network_cidr'] }}"
-    kubelet_custom_flags: "{% if hostvars['localhost']['topology_manager_policy'] != 'none' %}
-      --topology-manager-policy={{ hostvars['localhost']['topology_manager_policy'] }}
-      --topology-manager-scope={{ hostvars['localhost']['topology_manager_scope'] }}
+    kubelet_custom_flags: "{% if hostvars['localhost']['omnia_config']['topology_manager_policy'] != 'none' %}
+      --topology-manager-policy={{ hostvars['localhost']['omnia_config']['topology_manager_policy'] }}
+      --topology-manager-scope={{ hostvars['localhost']['omnia_config']['topology_manager_scope'] }}
                           {% endif %}"
     kube_proxy_strict_arp: true
     kube_proxy_mode: 'iptables'
