@@ -5,7 +5,6 @@ Omnia provides you a way to integrate external nodes (with pre-installed Ubuntu 
 
 .. note:: Currently, this feature is only supported on nodes running Ubuntu 24.04.01 OS.
 
-
 Prerequisites
 --------------
 
@@ -32,10 +31,10 @@ Steps to Integrate External Nodes
 3. Create an inventory file in the following format:
    ::
 	[compute]
-   	10.5.0.213
+   10.5.0.213
   	10.5.0.203
    
-   .. note:: Only IP addresses are supported in the inventory file. Ensure that these IPs align with the PXE subnet.
+.. note:: Only IP addresses are supported in the inventory file. Ensure that these IPs align with the PXE subnet.
 
 4. Run the ``connect-external-server.yml`` playbook using the following command to connect the external servers, where ``<inventory>`` is the path to your inventory file:
    ::
@@ -50,7 +49,6 @@ Steps to Integrate External Nodes
  	::
 	     ansible-vault edit omnia_config.yml --vault-password-file .omnia_vault_key
    
-
    +-----------------------------+-------------------------------------------------------------------------------------------------------------------------------+
    | Parameter                   | Details                                                                                                                       |
    +=============================+===============================================================================================================================+
