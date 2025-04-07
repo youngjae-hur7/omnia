@@ -10,6 +10,8 @@
 #              - 'nicnetwork': The network to which the interface belongs.
 #              - 'nictypes': The type of the interface.
 #              - 'metric': The metric of the interface.
+#   Note: When using VLAN, the interface name should be in the format `interface.vlan_id` (e.g. enp2s0.10) or `vlan.id` (e.g. vlan.10)
+#
 # - 'os': This section is used to specify the OS specific settings.
 #         The OS specifications should include the following keys:
 #         - 'kernel': The kernel specific parameters. The value should be
