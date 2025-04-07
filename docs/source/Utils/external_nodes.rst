@@ -51,13 +51,16 @@ Steps to Integrate External Nodes
  	::
 	   ansible-vault edit omnia_config.yml --vault-password-file .omnia_vault_key
    
-   +-----------------------------+---------------------------------------------------------------------------------------------------------------------------------+
-   | Parameter                   | Details                                                                                                                         |
-   +=============================+=================================================================================================================================+
-   | ``k8s_offline_install``     | * **Type**: ``boolean``                                                                                                         |
-   |                             | * **Default value**: ``true``.                                                                                                  |
-   |                             | * Set it to ``false`` if you want to pull Kubernetes packages and images from the internet instead of the OIM local repository. |
-   +-----------------------------+---------------------------------------------------------------------------------------------------------------------------------+
+   +-----------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
+   | Parameter                   | Details                                                                                                                                |
+   +=============================+========================================================================================================================================+
+   | ``k8s_offline_install``     | * **Type**: ``boolean``                                                                                                                |
+   |                             | * **Default value**: ``true``.                                                                                                         |
+   |                             | * Keep it ``true`` if you want to install the necessary packages from the local repository.                                            |
+   |                             | * Set it to ``false`` if you want to pull Kubernetes packages and images from the internet instead of the OIM local repository.        |
+   |                             |                                                                                                                                        |
+   |                             | .. note:: Offline installation is not supported on ARM-based nodes. For such nodes, ``k8s_offline_install`` must be kept as ``false``. |
+   +-----------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
    
 7. Run the ``omnia.yml`` to deploy a Kubernetes cluster with the new nodes, where ``<inventory>`` is the path to your inventory file consisting of the external nodes:
    ::
