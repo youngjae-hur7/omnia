@@ -1,8 +1,8 @@
 ---
 # This file is used to specify the server configuration.
 #
-# The categories are defined as follows:
-# - 'network': This category is used to specify the network configuration of the
+# The categories are defined as following sections:
+# - 'network': This section is used to specify the network configuration of the
 #              server. The value should be a dictionary, where the key is the
 #              interface name and the value is a dictionary of the interface
 #              specifications. The interface specifications should include the
@@ -10,7 +10,7 @@
 #              - 'nicnetwork': The network to which the interface belongs.
 #              - 'nictypes': The type of the interface.
 #              - 'metric': The metric of the interface.
-# - 'os': This category is used to specify the OS specific settings.
+# - 'os': This section is used to specify the OS specific settings.
 #         The OS specifications should include the following keys:
 #         - 'kernel': The kernel specific parameters. The value should be
 #                     a dictionary, where the key is 'cmdline' and the
@@ -18,6 +18,7 @@
 #                     The kernel parameters should be provided as a
 #                     string and each parameter should be separated by a
 #                     space (' ').
+#
 # Following are the templates for providing additional network and OS details.
 # Users may include the `os` or `network` sections individually if only one
 # of them needs to be configured, or both together as well.
