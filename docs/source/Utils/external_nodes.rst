@@ -33,8 +33,8 @@ Steps to Integrate External Nodes
    ::
 
     [compute]
-    10.3.0.101
-    10.3.0.102
+    10.5.0.101
+    10.5.0.102
  
    .. note:: Only IP addresses are supported in the inventory file. Ensure that these IPs align with the PXE subnet.
 
