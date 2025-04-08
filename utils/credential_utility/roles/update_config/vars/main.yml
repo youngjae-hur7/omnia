@@ -42,13 +42,6 @@ omnia_credentials:
         - provision_password
         - bmc_password
         - switch_snmp3_password
-    # optional:
-    #   username:
-    #     - bmc_username
-    #     - switch_snmp3_username
-    #   password:
-    #     - bmc_password
-    #     - switch_snmp3_password
   prepare_oim:
     mandatory:
       password:
