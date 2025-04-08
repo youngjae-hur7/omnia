@@ -51,7 +51,7 @@
 
 # **********************************************************************
 # Additional network configurations:
-# The following variables are applicable for addtional networks:
+# The following variables are applicable for additional networks:
 # - 'netmask_bits': The number of bits in the subnet mask.
 # - 'CIDR': Classless Inter-Domain Routing (CIDR) address and range. If this is provided, 'static_range' is not required.
 # - 'static_range': The range of static IP addresses available on the network. If this is provided, 'CIDR' is not required.

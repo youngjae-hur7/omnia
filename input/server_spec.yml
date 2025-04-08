@@ -7,9 +7,9 @@
 #              interface name and the value is a dictionary of the interface
 #              specifications. The interface specifications should include the
 #              following keys:
-#              - 'nicnetwork': The network to which the interface belongs.
-#              - 'nictypes': The type of the interface.
-#              - 'metric': The metric of the interface.
+#              - 'nicnetwork': The network associated with this interface, which must be pre-defined in network_spec.yml
+#              - 'nictypes': Specify the interface type, which can be one of the following: ethernet, vlan, or infiniband.
+#              - 'metric': The interface metric. To use this configuration, ensure the gateway for the network is specified in network_spec.yml.
 #   Note: When using VLAN, the interface name should be in the format `interface.vlan_id` (e.g. enp2s0.10) or `vlan.id` (e.g. vlan.10)
 #
 # - 'os': This section is used to specify the OS specific settings.
