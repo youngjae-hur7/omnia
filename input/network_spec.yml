@@ -15,7 +15,7 @@
 # - 'correlation_to_admin': Whether the OIM server's BMC IP is correlated with the admin IP.
 # - 'admin_uncorrelated_node_start_ip': The IP address of the first node when correlation not generated for admin IP from static ranges.
 # - 'network_gateway': The gateway IP address of the admin network.
-# - 'DNS': The DNS server IP address for the admin network.
+# - 'DNS': The external DNS server IP address for the admin network. 
 # - 'MTU': Maximum Transmission Unit for the admin network.
 #
 # The 'bmc_network' section contains the following variables:
