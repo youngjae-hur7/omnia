@@ -35,6 +35,7 @@
 #           - kernel:
 #               - cmdline: "iommu=pt intel_iommu=off pci=realloc=off processor.max_cstate=0 intel_idle.max_cstate=0 intel_pstate=disable"
 #
+# Note: To apply the specified configuration to the server, use the inventory format provided in examples/inventory/server_spec_inv.
 
 Categories:
 #   - category-1:
