@@ -14,7 +14,7 @@
 ---
 
 - name: Configure IPMI config
-  when: bmc_username | len > 0 and bmc_password | len > 0
+  when: ( bmc_username | length > 0) and (bmc_password | length > 0)
   block:
     - name: Update IPMI table
       ansible.builtin.command: "{{ xcat_sbin_path }}/chtab key=ipmi passwd.username={{ bmc_username }} passwd.password={{ bmc_password }}"
