@@ -19,19 +19,11 @@ import tarfile
 import shutil
 from jinja2 import Template
 from ansible.module_utils.standard_logger import setup_standard_logger
-from ansible.module_utils.parse_and_download import write_status_to_file,execute_command
- 
-# Pulp command templates
-pulp_file_commands = {
-    "create_repository": "pulp file repository create --name %s",
-    "show_repository": "pulp file repository show --name %s",
-    "download_content": "wget -c -O %s %s",
-    "content_upload": "pulp file content upload --repository %s --file %s --relative-path %s",
-    "publication_create": "pulp file publication create --repository %s",
-    "show_distribution": "pulp file distribution show --name %s",
-    "distribution_create": "pulp file distribution create --name %s --base-path %s --repository %s",
-    "distribution_update": "pulp file distribution update --name %s --base-path %s --repository %s",
-}
+from ansible.module_utils.common_functions import write_status_to_file,execute_command
+from ansible.module_utils.config import (
+    pulp_file_commands
+)
+
  
 def process_file(repository_name, output_file, relative_path, base_path, distribution_name, url, file_path, logger):
     """
@@ -771,3 +763,4 @@ def process_pip(package, repo_store_path, status_file_path, logger):
  
         logger.info("#" * 30 + f" {process_pip.__name__} end " + "#" * 30)
         return status
+

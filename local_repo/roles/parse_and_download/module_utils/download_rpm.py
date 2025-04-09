@@ -14,7 +14,7 @@
 
 import subprocess
 import os
-from ansible.module_utils.parse_and_download import write_status_to_file
+from ansible.module_utils.common_functions import write_status_to_file
  
 def process_rpm(package, repo_store_path, status_file_path, cluster_os_type, cluster_os_version, logger):
     """
@@ -60,3 +60,4 @@ def process_rpm(package, repo_store_path, status_file_path, cluster_os_type, clu
         write_status_to_file(status_file_path, package["package"], "rpm", status, logger)
         logger.info("#" * 30 + f" {process_rpm.__name__} end " + "#" * 30)
         return status
+
