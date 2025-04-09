@@ -77,14 +77,14 @@
               "default",
               "oim_ha_node",
               "service_node",
-              "kube_control_node",
+              "kube_control_plane",
               "kube_node",
-              "etcd_node",
+              "etcd",
               "slurm_control_node",
               "slurm_node",
-              "slurm_dbd_node",
+              "slurm_dbd",
               "login_node",
-              "auth_server_node",
+              "auth_server",
               "compiler_node"
             ]
           },
