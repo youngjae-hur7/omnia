@@ -30,6 +30,6 @@
   when: enable_oim_ha
 
 - name: Configure pcs container setup postbootscripts
-  ansible.builtin.command: "{{ xcat_path }}/chdef oim_ha -p postbootscripts=\"omnia_pcs_setup\""
+  ansible.builtin.command: "{{ xcat_path }}/chdef oim_ha_node -p postbootscripts=\"omnia_pcs_setup\""
   changed_when: true
   when: enable_oim_ha

@@ -13,6 +13,11 @@
 # limitations under the License.
 ---
 
+- name: Include metadata vars
+  ansible.builtin.include_vars: "{{ omnia_metadata_file }}"
+  register: include_metadata
+  no_log: true
+
 - name: Include high_availability_config.yml
   block:
     - name: Include high_availability_config.yml
@@ -36,3 +41,11 @@
 - name: Register NFS Check
   ansible.builtin.set_fact:
     nfs_used: "{{ omnia_share_option == 'NFS' }}"
+
+- name: Get OIM node name
+  ansible.builtin.command: hostname -s
+  register: oim_node_name
+
+- name: Register OIM node name
+  ansible.builtin.set_fact:
+    oim_node_name: "{{ oim_node_name.stdout }}"

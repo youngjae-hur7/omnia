@@ -38,7 +38,6 @@
     - item.bmc_ip == ""
     - item.admin_mac | lower not in node_mac_list.stdout | lower
 
-
 - name: Create node object from mapping_details JSON
   ansible.builtin.shell: >
     {{ xcat_path }}/mkdef -t node "{{ item.hostname.split('.')[0] }}"
@@ -53,25 +52,3 @@
   when:
     - item.bmc_ip != ""
     - item.admin_mac | lower not in node_mac_list.stdout | lower
-    - item.group_name != oim_ha_group
-
-- name: Register passive node(s) list
-  ansible.builtin.set_fact:
-    passive_node_details: "{{ mapping_details | default([]) }}"
-  when: enable_oim_ha and oim_passive_node_mapping | default(false)
-
-- name: Create high availability node object(s) from passive nodes provided by user
-  ansible.builtin.shell: >
-    {{ xcat_path }}/mkdef -t node "{{ item.hostname.split('.')[0] }}"
-    groups=oim_ha,{{ item.roles }},{{ item.group_name }},all
-    ip="{{ item.admin_ip | trim }}" bmc="{{ item.bmc_ip | trim }}" mgt=ipmi
-    mac="{{ item.admin_mac | trim }}" serial="{{ item.service_tag | trim }}"
-    hostnames="{{ item.hostname | trim }}" netboot=xnba arch={{ item.architecture }} -f
-  loop: "{{ mapping_details }}"
-  changed_when: true
-  loop_control:
-    label: "{{ item.hostname }}"
-  when:
-    - item.bmc_ip != ""
-    - item.admin_mac | lower not in node_mac_list.stdout | lower
-    - item.group_name == oim_ha_group

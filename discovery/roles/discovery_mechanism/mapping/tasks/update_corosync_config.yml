@@ -13,17 +13,9 @@
 # limitations under the License.
 ---
 
-- name: Validate passwordless ssh host
-  ansible.builtin.include_tasks: validate_passwordless_ssh_oim.yml
-
-- name: Include provision_validation_vars role vars
-  ansible.builtin.include_tasks: pre_requisite.yml
-
-- name: Validate network spec
-  ansible.builtin.include_tasks: validate_network_spec.yml
-
-- name: Validate high availability config
-  ansible.builtin.include_tasks: validate_high_availability.yml
-
-- name: Check k8s support
-  ansible.builtin.include_tasks: check_k8s_support.yml
+- name: Update corosync config
+  ansible.builtin.template:
+    src: "{{ item.template }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  loop: "{{ corosync_conf }}"

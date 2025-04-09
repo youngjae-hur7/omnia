@@ -13,11 +13,6 @@
 #  limitations under the License.
 ---
 
-- name: Include metadata vars
-  ansible.builtin.include_vars: "{{ omnia_metadata_file }}"
-  register: include_metadata
-  no_log: true
-
 - name: Include roles_config.yml
   block:
     - name: Include roles_config.yml
@@ -55,17 +50,22 @@
   ansible.builtin.set_fact:
     service_role_required: "{{ 'true' if 'service' in roles_groups_data else 'false' }}"
 
-- name: Get the group for OIM HA
+- name: Get the group(s) for OIM HA
   when: 
     - "'oim_ha_node' in roles_data"
     - enable_oim_ha | default(False)
   ansible.builtin.set_fact:
-    oim_ha_group: "{{ roles_data['oim_ha_node']['groups'][0] | default('') }}"
+    oim_ha_groups: "{{ roles_data['oim_ha_node']['groups'] | default([]) }}"
+
+- name: Register passive OIM node mapping variable
+  ansible.builtin.set_fact:
+    oim_passive_node_mapping: false
 
 - name: Set passive node mapping variable
-  when: not groups_data.get('oim_ha_node', {}).get('bmc_details', {}).get("static_range")
+  when: not groups_roles_info.get('item', {}).get('bmc_static_status', false)
   ansible.builtin.set_fact:
     oim_passive_node_mapping: true
+  loop: "{{ oim_ha_groups }}"
 
 - name: Display filtered group wise details
   ansible.builtin.debug:

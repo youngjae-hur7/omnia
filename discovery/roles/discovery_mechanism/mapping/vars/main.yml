@@ -30,3 +30,7 @@ file_mode: "0644"
 # Usage: check_nodes_mapping.yml
 mapping_nodes_warning_msg: "[WARNING] Nodes provided in mapping file were already provisioned by omnia using other discovery mechanism."
 warning_wait_time: 10
+
+# Usage: update_corosync_config.yml
+corosync_conf:
+  - {template: "corosync.conf.j2", dest: "/opt/omnia/pcs/corosync.conf", mode: "{{ read_write_mode }}" }

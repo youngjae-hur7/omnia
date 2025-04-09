@@ -77,19 +77,19 @@ Groups:
 
 # This table lists the roles and the layers they belong to in the cluster.
 
-# +---------------------+----------------+    +-------------+----------------+
-# | Role Name          | Layer           |    | Role Name   | Layer          |
-# +---------------------+----------------+    +-------------+----------------+
-# | service            | front end       |    | kube_node   | compute        |
-# | login              | front end       |    | slurm_node  | compute        |
-# | auth_server        | front end       |    | default     | compute        |
-# | compiler           | front end       |    |             |                |
-# | kube_control_plane | front end       |    |             |                |
-# | etcd               | front end       |    |             |                |
-# | slurm_control_node | front end       |    |             |                |
-# | slurm_dbd          | front end       |    |             |                |
-# | oim_ha_node        | management_layer|    |             |                |
-# +---------------------+----------------+    +-------------+----------------+
+# +---------------------+-----------------+     +-------------+----------------+
+# | Role Name          | Layer            |     | Role Name   | Layer          |
+# +---------------------+-----------------+     +-------------+----------------+
+# | oim_ha_node        | management_layer |     |             |                |
+# | service            | management_layer |     | kube_node   | compute_layer  |
+# | login              | management_layer |     | slurm_node  | compute_layer  |
+# | auth_server        | management_layer |     | default     | compute_layer  |
+# | compiler           | management_layer |     |             |                |
+# | kube_control_plane | management_layer |     |             |                |
+# | etcd               | management_layer |     |             |                |
+# | slurm_control_node | management_layer |     |             |                |
+# | slurm_dbd          | management_layer |     |             |                |
+# +---------------------+-----------------+     +-------------+----------------+
 
 # Default Role:
 # -------------

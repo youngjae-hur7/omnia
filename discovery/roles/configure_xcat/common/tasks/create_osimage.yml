@@ -40,14 +40,33 @@
 - name: Create diskful osimage on NFS
   when: nfs_used
   block:
+    - name: Get iso architecture
+      ansible.builtin.shell: >
+        ls {{ iso_file_path }} | grep "x86_64"
+      changed_when: false
+      failed_when: false
+      register: iso_architecture
+
+    - name: Set iso architecture to x86
+      ansible.builtin.set_fact:
+        iso_architecture: x86_64
+      when:
+        - iso_architecture is defined
+
+    - name: Set iso architecture to ARM
+      ansible.builtin.set_fact:
+        iso_architecture: ARM
+      when:
+        - iso_architecture is not defined
+
     - name: Create tmp osimage directory
       ansible.builtin.file:
-        path: "{{ tmp_dir }}"
+        path: "{{ tmp_dir }}/{{ provision_os }}{{ provision_os_version }}/{{ iso_architecture }}"
         state: directory
         mode: "{{ mode }}"
 
     - name: Create diskful osimage
-      ansible.builtin.command: "{{ xcat_sbin_path }}/copycds -p {{ tmp_dir }} {{ iso_file_path }}"
+      ansible.builtin.command: "{{ xcat_sbin_path }}/copycds -p {{ tmp_dir }}/{{ provision_os }}{{ provision_os_version }}/{{ iso_architecture }} {{ iso_file_path }}"
       changed_when: true
 
     - name: Copy osimages to xCAT install directory
@@ -62,10 +81,26 @@
         path: "{{ tmp_dir }}"
         state: absent
 
-    - name: Get osimage name
+    - name: Set osimage pkgdir
+      ansible.builtin.set_fact:
+        xcat_install_dir: "{{ xcat_install_dir }}/{{ provision_os }}{{ provision_os_version }}/{{ iso_architecture }}"
+
+    - name: Get compute osimage name
       ansible.builtin.shell: >
         set -o pipefail && \
         {{ xcat_path }}/lsdef -t osimage | grep "{{ osimage_search_key }}" | grep "{{ provision_os }}" | grep "{{ provision_os_version }}" | cut -d' ' -f1
+      changed_when: false
+      register: fetch_osimage
+
+    - name: Modify osimages to xCAT install directory
+      ansible.builtin.command: "{{ xcat_path }}/chdef -t osimage {{ fetch_osimage.stdout }} pkgdir={{ xcat_install_dir }}"
+      changed_when: true
+      when: fetch_osimage.stdout is defined
+    
+    - name: Get service osimage name
+      ansible.builtin.shell: >
+        set -o pipefail && \
+        {{ xcat_path }}/lsdef -t osimage | grep "{{ service_osimage_search_key }}" | grep "{{ provision_os }}" | grep "{{ provision_os_version }}" | cut -d' ' -f1
       changed_when: false
       register: fetch_osimage
 
