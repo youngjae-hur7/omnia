@@ -200,8 +200,30 @@ def parse_repo_urls(local_repo_config_path, version_variables):
     local_yaml = load_yaml(local_repo_config_path)
     repo_entries = local_yaml.get(OMNIA_REPO_KEY, [])
     rhel_repo_entry = local_yaml.get(RHEL_OS_URL,[])
+    user_repo_entry = local_yaml.get(USER_REPO_URL,[])
     parsed_repos = []
 
+    if len(user_repo_entry) > 0:
+        for url_ in user_repo_entry:
+            name = url_.get("name","unknown")
+            url = url_.get("url","")
+            gpgkey = url_.get("gpgkey")
+            ca_cert = url_.get("sslcacert")
+            client_key = url_.get("sslclientkey")
+            client_cert = url_.get("sslclientcert")
+            # if not is_remote_url_reachable(url):
+            #     return url, False
+
+            parsed_repos.append({
+                "package": name,
+                "url": url,
+                "gpgkey": gpgkey if gpgkey else "null",
+                "version": "null",
+                "ca_cert": ca_cert,
+                "client_key": client_key,
+                "client_cert": client_cert
+            })        
+        
     for url_ in rhel_repo_entry:
         name = url_.get("name","unknown")
         url = url_.get("url","")
