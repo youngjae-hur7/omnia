@@ -25,12 +25,12 @@ import ansible.module_utils.common.data_verification as verify
 import ansible.module_utils.common.data_fetch as get
 import ansible.module_utils.common.data_validation as validate
 import sys
-sys.path.append("module_utils/common")
+# sys.path.append("module_utils/common")
 
-import logical_validation
-import validation_utils
-import config
-import en_us_validation_msg
+import ansible.module_utils.common.logical_validation
+import ansible.module_utils.common.validation_utils
+import ansible.module_utils.common.config
+import ansible.module_utils.common.en_us_validation_msg
 
 def createLogger(project_name, tag_name=None):
     """
