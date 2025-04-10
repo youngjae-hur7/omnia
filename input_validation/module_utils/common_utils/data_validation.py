@@ -2,9 +2,9 @@
 
 import json
 import ansible.module_utils.common_utils.data_fetch as get
-import ansible.module_utils.common_utils.en_us_validation_msg
+from ansible.module_utils.common_utils import en_us_validation_msg
 import jsonschema
-import ansible.module_utils.common_utils.logical_validation
+from ansible.module_utils.common_utils import logical_validation
 
 
 def schema(input_file_path, schema_file_path, passwords_set, omnia_base_dir, project_name, logger, module):
