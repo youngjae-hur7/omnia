@@ -19,7 +19,7 @@ import tarfile
 import shutil
 from jinja2 import Template
 from ansible.module_utils.standard_logger import setup_standard_logger
-from ansible.module_utils.common_functions import write_status_to_file,execute_command
+from ansible.module_utils.parse_and_download import write_status_to_file,execute_command
 from ansible.module_utils.config import (
     pulp_file_commands
 )

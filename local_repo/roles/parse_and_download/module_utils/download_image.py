@@ -15,7 +15,7 @@
 import re
 from jinja2 import Template
 from ansible.module_utils.standard_logger import setup_standard_logger
-from ansible.module_utils.common_functions import execute_command,write_status_to_file
+from ansible.module_utils.parse_and_download import execute_command,write_status_to_file
 import json
 import multiprocessing
 from ansible.module_utils.config import (
