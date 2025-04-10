@@ -80,10 +80,10 @@ Groups:
 # +---------------------+-----------------+     +-------------+----------------+
 # | Role Name          | Layer            |     | Role Name   | Layer          |
 # +---------------------+-----------------+     +-------------+----------------+
-# | oim_ha_node        | management_layer |     |             |                |
-# | service            | management_layer |     | kube_node   | compute_layer  |
-# | login              | management_layer |     | slurm_node  | compute_layer  |
-# | auth_server        | management_layer |     | default     | compute_layer  |
+# | oim_ha_node        | management_layer |     | kube_node   | compute_layer  |
+# | service            | management_layer |     | slurm_node  | compute_layer  |
+# | login              | management_layer |     | default     | compute_layer  |
+# | auth_server        | management_layer |     |             |                |
 # | compiler           | management_layer |     |             |                |
 # | kube_control_plane | management_layer |     |             |                |
 # | etcd               | management_layer |     |             |                |
