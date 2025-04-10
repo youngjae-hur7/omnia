@@ -189,16 +189,16 @@ def create_rpm_remote(repo,log):
     remote_name = repo_name
     repo_keys = repo.keys()
     if "ca_cert" in repo_keys:
-        ca-cert = f"@{repo['ca_cert']}"
-        client-cert = f"@{repo['client_cert']}"
-        client-key = f"@{repo['client_key']}"
+        ca_cert = f"@{repo['ca_cert']}"
+        client_cert = f"@{repo['client_cert']}"
+        client_key = f"@{repo['client_key']}"
         if not show_rpm_remote(remote_name,log):
-            command = pulp_rpm_commands["create_remote_cert"] % (remote_name, remote_url, policy_type, ca-cert, client-cert, client-key)
+            command = pulp_rpm_commands["create_remote_cert"] % (remote_name, remote_url, policy_type, ca_cert, client_cert, client_key)
             result = execute_command(command,log)
             log.info("Remote %s created.", remote_name)
             return result
         else:
-            command = pulp_rpm_commands["update_remote_cert"] % (remote_name, remote_url, policy_type, ca-cert, client-cert, client-key)
+            command = pulp_rpm_commands["update_remote_cert"] % (remote_name, remote_url, policy_type, ca_cert, client_cert, client_key)
             log.info("Remote %s already exists.", remote_name)
             result = execute_command(command,log)
             return result

@@ -30,7 +30,8 @@ from ansible.module_utils.config import (
     RPM_LABEL_TEMPLATE,
     OMNIA_REPO_KEY,
     RHEL_OS_URL,
-    SOFTWARES_KEY
+    SOFTWARES_KEY,
+    USER_REPO_URL
 )
 
 def load_json(file_path):
@@ -219,7 +220,8 @@ def parse_repo_urls(local_repo_config_path, version_variables):
             ca_cert = url_.get("sslcacert")
             client_key = url_.get("sslclientkey")
             client_cert = url_.get("sslclientcert")
-            if not is_remote_url_reachable(url, client_cert, client_key, ca_cert):
+
+            if not is_remote_url_reachable(url, client_cert=client_cert, client_key=client_key, ca_cert=ca_cert):
                 return url, False
 
             parsed_repos.append({
