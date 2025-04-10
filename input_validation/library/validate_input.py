@@ -27,10 +27,10 @@ import ansible.module_utils.common_utils.data_validation as validate
 import sys
 # sys.path.append("module_utils/common")
 
-import ansible.module_utils.common_utils.logical_validation
-import ansible.module_utils.common_utils.validation_utils
-import ansible.module_utils.common_utils.config
-import ansible.module_utils.common_utils.en_us_validation_msg
+from ansible.module_utils.common_utils import logical_validation
+from ansible.module_utils.common_utils import validation_utils
+from ansible.module_utils.common_utils import config
+from ansible.module_utils.common_utils import en_us_validation_msg
 
 def createLogger(project_name, tag_name=None):
     """
