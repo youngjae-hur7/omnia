@@ -84,75 +84,75 @@ def schema(input_file_path, schema_file_path, passwords_set, omnia_base_dir, pro
         message = f"An unexpected error occurred: {e}"
         logger.error(message)
 
-    # Code to run the L2 validation validate_input_logic function.
-    def logic(input_file_path, logger, module, omnia_base_dir, project_name):
-        """
-        Validates the logic of the input file.
+# Code to run the L2 validation validate_input_logic function.
+def logic(input_file_path, logger, module, omnia_base_dir, project_name):
+    """
+    Validates the logic of the input file.
 
-        Args:
-            input_file_path (str): The path to the input file.
-            logger (logging.Logger): The logger object.
-            module (AnsibleModule): The Ansible module.
-            omnia_base_dir (str): The base directory of Omnia.
-            project_name (str): The name of the project.
+    Args:
+        input_file_path (str): The path to the input file.
+        logger (logging.Logger): The logger object.
+        module (AnsibleModule): The Ansible module.
+        omnia_base_dir (str): The base directory of Omnia.
+        project_name (str): The name of the project.
 
-        Returns:
-            bool: True if the logic validation is successful, False otherwise.
+    Returns:
+        bool: True if the logic validation is successful, False otherwise.
 
-        Raises:
-            ValueError: If a value error occurs.
-            Exception: If an unexpected error occurs.
-        """
-        try:
-            input_data, extension = get.input_data(input_file_path, omnia_base_dir, project_name, logger, module)
+    Raises:
+        ValueError: If a value error occurs.
+        Exception: If an unexpected error occurs.
+    """
+    try:
+        input_data, extension = get.input_data(input_file_path, omnia_base_dir, project_name, logger, module)
 
-            # errors = [{error_msg: custom message, error_key: ex-node_name (to find line number), error_value: ex-6,"node" (to help find line #)}]
-            errors = logical_validation.validate_input_logic(input_file_path, input_data, logger, module, omnia_base_dir, project_name)
+        # errors = [{error_msg: custom message, error_key: ex-node_name (to find line number), error_value: ex-6,"node" (to help find line #)}]
+        errors = logical_validation.validate_input_logic(input_file_path, input_data, logger, module, omnia_base_dir, project_name)
 
-            # Print errors, if the error value is None then send a separate message.
-            # This is for values where it did not have a single key as the error
-            if errors:
-                for error in errors:
-                    error_key = error['error_key']
-                    error_value = error['error_value']
-                    error_msg = error['error_msg']
+        # Print errors, if the error value is None then send a separate message.
+        # This is for values where it did not have a single key as the error
+        if errors:
+            for error in errors:
+                error_key = error['error_key']
+                error_value = error['error_value']
+                error_msg = error['error_msg']
 
-                    # Log the error message based on the error value
+                # Log the error message based on the error value
+                if error_value is None:
+                    message = f"Validation Error at {error_key} {error_msg}"
+                    logger.error(message)
+                elif isinstance(error_value, str):
+                    message = f"Validation Error at {error_key}: '{error_value}' {error_msg}"
+                    logger.error(message)
+                else:
+                    message = f"Validation Error at {error_key}: {error_value} {error_msg}"
+                    logger.error(message)
+
+                # log the line number based off of the input config file extension
+                if "json" in extension:
+                    line_number, is_line_num = get.json_line_number(input_file_path, error_key, module)
+                    if line_number:
+                        message = f"Error occurs on line {line_number}" if is_line_num else f"Error occurs on object or list entry on line {line_number}"
+                        logger.error(message)
+                if "yml" in extension:
                     if error_value is None:
-                        message = f"Validation Error at {error_key} {error_msg}"
-                        logger.error(message)
-                    elif isinstance(error_value, str):
-                        message = f"Validation Error at {error_key}: '{error_value}' {error_msg}"
-                        logger.error(message)
-                    else:
-                        message = f"Validation Error at {error_key}: {error_value} {error_msg}"
+                        continue
+                    line_number, is_line_num = get.yml_line_number(input_file_path, error_key, omnia_base_dir, project_name)
+                    if line_number:
+                        message = f"Error occurs on line {line_number}" if is_line_num else f"Error occurs on object or list entry on line {line_number}"
                         logger.error(message)
 
-                    # log the line number based off of the input config file extension
-                    if "json" in extension:
-                        line_number, is_line_num = get.json_line_number(input_file_path, error_key, module)
-                        if line_number:
-                            message = f"Error occurs on line {line_number}" if is_line_num else f"Error occurs on object or list entry on line {line_number}"
-                            logger.error(message)
-                    if "yml" in extension:
-                        if error_value is None:
-                            continue
-                        line_number, is_line_num = get.yml_line_number(input_file_path, error_key, omnia_base_dir, project_name)
-                        if line_number:
-                            message = f"Error occurs on line {line_number}" if is_line_num else f"Error occurs on object or list entry on line {line_number}"
-                            logger.error(message)
-
-                logger.error(en_us_validation_msg.get_logic_failed(input_file_path))
-                return False
-            else:
-                logger.info(en_us_validation_msg.get_logic_success(input_file_path))
-                return True
-        except ValueError as ve:
-            message = f"Value error: {ve}"
-            logger.error(message, exc_info=True)
+            logger.error(en_us_validation_msg.get_logic_failed(input_file_path))
             return False
-        except Exception as e:
-            message = f"An unexpected error occurred: {e}"
-            logger.error(message, exc_info=True)
-            return False
+        else:
+            logger.info(en_us_validation_msg.get_logic_success(input_file_path))
+            return True
+    except ValueError as ve:
+        message = f"Value error: {ve}"
+        logger.error(message, exc_info=True)
+        return False
+    except Exception as e:
+        message = f"An unexpected error occurred: {e}"
+        logger.error(message, exc_info=True)
+        return False
 
