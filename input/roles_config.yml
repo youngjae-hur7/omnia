@@ -107,6 +107,21 @@ Roles:
     groups:
       - grp0
 
+
+# OIM HA Node Role:
+# -------------
+#
+# This role is used to configure passive OIM nodes
+#
+# The nodes included in this role will have the necessary tools and
+# configurations needed to be passive OIM nodes.
+#
+# The nodes in this role can be used in case of OIM failure. 
+#
+  # - name: "oim_ha_node"
+  #   groups:
+  #     - grp0
+
 #
 # Service Role: Service node groups to add into service role can be provided in this role
 # ------------------------------------------------------------------------------------
@@ -122,7 +137,6 @@ Roles:
   #   groups:
   #     - grp0
   #     - grp1
-
 
 #
 # k8s head Role: Kubernetes master node groups to add into kube_control_plane role can be provided in this role

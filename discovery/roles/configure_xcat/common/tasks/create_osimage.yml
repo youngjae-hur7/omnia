@@ -42,6 +42,7 @@
   block:
     - name: Get iso architecture
       ansible.builtin.shell: >
+        set -o pipefail && \
         ls {{ iso_file_path }} | grep "x86_64"
       changed_when: false
       failed_when: false
@@ -59,14 +60,18 @@
       when:
         - iso_architecture is not defined
 
+    - name: Set OS architecture tmp directory
+      ansible.builtin.set_fact:
+        tmp_dir: "{{ tmp_dir }}/{{ provision_os }}{{ provision_os_version }}/{{ iso_architecture }}"
+
     - name: Create tmp osimage directory
       ansible.builtin.file:
-        path: "{{ tmp_dir }}/{{ provision_os }}{{ provision_os_version }}/{{ iso_architecture }}"
+        path: "{{ tmp_dir }}"
         state: directory
         mode: "{{ mode }}"
 
     - name: Create diskful osimage
-      ansible.builtin.command: "{{ xcat_sbin_path }}/copycds -p {{ tmp_dir }}/{{ provision_os }}{{ provision_os_version }}/{{ iso_architecture }} {{ iso_file_path }}"
+      ansible.builtin.command: "{{ xcat_sbin_path }}/copycds -p {{ tmp_dir }}"
       changed_when: true
 
     - name: Copy osimages to xCAT install directory
@@ -96,11 +101,12 @@
       ansible.builtin.command: "{{ xcat_path }}/chdef -t osimage {{ fetch_osimage.stdout }} pkgdir={{ xcat_install_dir }}"
       changed_when: true
       when: fetch_osimage.stdout is defined
-    
+
     - name: Get service osimage name
       ansible.builtin.shell: >
         set -o pipefail && \
-        {{ xcat_path }}/lsdef -t osimage | grep "{{ service_osimage_search_key }}" | grep "{{ provision_os }}" | grep "{{ provision_os_version }}" | cut -d' ' -f1
+        {{ xcat_path }}/lsdef -t osimage | grep "{{ service_osimage_search_key }}" | grep "{{ provision_os }}" \
+        | grep "{{ provision_os_version }}" | cut -d' ' -f1
       changed_when: false
       register: fetch_osimage
 

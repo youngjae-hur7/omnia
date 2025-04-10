@@ -33,7 +33,7 @@
     service_role_required: "{{ 'true' if 'service' in roles_groups_data else 'false' }}"
 
 - name: Get the group(s) for OIM HA
-  when: 
+  when:
     - "'oim_ha_node' in roles_data"
     - enable_oim_ha | default(False)
   ansible.builtin.set_fact:

@@ -45,6 +45,7 @@
 - name: Get OIM node name
   ansible.builtin.command: hostname -s
   register: oim_node_name
+  changed_when: false
 
 - name: Register OIM node name
   ansible.builtin.set_fact:

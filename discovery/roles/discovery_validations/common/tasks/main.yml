@@ -49,7 +49,7 @@
 
 - name: Include high_availabiliity variables
   ansible.builtin.include_tasks: include_high_availability_config.yml
-  
+
 - name: Include composable role data
   ansible.builtin.include_tasks: include_composable_roles_config.yml
 
