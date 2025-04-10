@@ -13,12 +13,13 @@
 #  limitations under the License.
 
 ---
-- name: Copy Pulp server certificate to host
-  ansible.builtin.copy:
-    src: "{{ pulp_cert_src }}"
-    dest: "{{ ca_trust_path }}"
-    mode: "{{ logs_dir_permission }}"
-    remote_src: true
+# Task to enable pulp https endpoint access from the OIM
+# - name: Copy Pulp server certificate to host
+#  ansible.builtin.copy:
+#    src: "{{ pulp_cert_src }}"
+#    dest: "{{ ca_trust_path }}"
+#    mode: "{{ logs_dir_permission }}"
+#    remote_src: true
 
 - name: Run nginx reload command on Pulp container
   containers.podman.podman_container_exec:
@@ -29,10 +30,11 @@
   register: nginx_reload_result
   until: nginx_reload_result.rc == 0
 
-- name: Add Pulp Certificate to TrustStore
-  ansible.builtin.command:
-    cmd: update-ca-trust
-  changed_when: false
+# Task to enable pulp https endpoint access from the OIM
+# - name: Add Pulp Certificate to TrustStore
+#  ansible.builtin.command:
+#    cmd: update-ca-trust
+#  changed_when: false
 
 - name: Check if Pulp endpoint is up
   ansible.builtin.uri:

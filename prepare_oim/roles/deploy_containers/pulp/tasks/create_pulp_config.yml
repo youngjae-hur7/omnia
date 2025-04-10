@@ -53,7 +53,7 @@
 
 - name: Set cert_san fact based on hostname
   ansible.builtin.set_fact:
-    cert_san: subjectAltName=IP:0.0.0.0,DNS:{{ pulp_server_ip }},DNS:pulp,DNS:localhost
+    cert_san: subjectAltName=IP:{{ cert_san_ip }},DNS:{{ pulp_server_ip }},DNS:pulp,DNS:localhost
   when: hostvars['oim']['hostname_enabled']
   no_log: true
 

@@ -114,11 +114,11 @@
         name: deploy_containers/pulp
         tasks_from: create_pulp_config.yml
 
-- name: Add Pulp Certificates on OIM
+- name: Reload pulp nginx
   hosts: oim
   connection: ssh
   tasks:
-    - name: Add Pulp Certificates to OIM tasks # noqa:role-name[path]
+    - name: Reload pulp nginx # noqa:role-name[path]
       ansible.builtin.include_role:
         name: deploy_containers/pulp
         tasks_from: reload_pulp_nginx.yml

@@ -89,6 +89,7 @@ pulp_config_cmd_overwrite: "pulp config create --username admin  --base-url http
 pulp_config_filepath: "{{ pulp_ha_dir }}/cli.toml"
 config_default_dir: "/root/.config/pulp/"
 config_default_loc: "{{ config_default_dir }}/cli.toml"
+cert_san_ip: 0.0.0.0
 cert_validity_days: 365
 cert_items:
   crt_path: "{{ certs_dir }}/pulp_webserver.crt"
@@ -106,8 +107,8 @@ hosts_file_mode: "0644"
 hosts_update_fail_msg: "Failed to update hosts file. Ensure the file is writable and rerun the playbook."
 
 # Usage: reload_pulp_nginx.yml
-pulp_cert_src: "{{ oim_shared_path }}/omnia/pulp/settings/certs/pulp_webserver.crt"
-ca_trust_path: "/etc/pki/ca-trust/source/anchors/"
+# pulp_cert_src: "{{ oim_shared_path }}/omnia/pulp/settings/certs/pulp_webserver.crt"
+# ca_trust_path: "/etc/pki/ca-trust/source/anchors/"
 nginx_reload_cmd: "nginx -s reload"
 nginx_retries_var: 10
 omnia_container_name: "omnia_core"
