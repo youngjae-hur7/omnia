@@ -126,23 +126,31 @@ def get_csv_file_path(software_name, user_csv_dir):
     status_csv_file_path = os.path.join(user_csv_dir, software_name, DEFAULT_STATUS_FILENAME)
     return status_csv_file_path
  
-def is_remote_url_reachable(remote_url, timeout=10):
+def is_remote_url_reachable(remote_url, timeout=10, client_cert=None, client_key=None, ca_cert=None):
     """
-    Check if a remote URL is reachable.
-
-    This function sends an HTTP GET request to the specified remote URL with a given timeout.
-    If the response status code is 200, the URL is considered reachable and the function returns True.
-    In case of any exception (e.g., connection issues or timeouts), the function returns False.
-
+    Check if a remote URL is reachable with or without SSL client certs.
+    If SSL certs are provided, the function will attempt to use them; otherwise, it defaults to a standard HTTP request.
     Args:
         remote_url (str): The URL to check for reachability.
         timeout (int, optional): The maximum number of seconds to wait for a response. Defaults to 10.
-
+        client_cert (str, optional): Path to the client certificate file. Defaults to None.
+        client_key (str, optional): Path to the client key file. Defaults to None.
+        ca_cert (str, optional): Path to the CA certificate file. Defaults to None.
     Returns:
         bool: True if the URL is reachable (HTTP status 200), False otherwise.
     """
     try:
-        response = requests.get(remote_url, timeout=timeout)
+        # Check if SSL certs are provided and handle accordingly
+        if client_cert and client_key and ca_cert:
+            response = requests.get(
+                remote_url,
+                cert=(client_cert, client_key),
+                verify=ca_cert,
+                timeout=timeout
+            )
+        else:
+            # Proceed with a regular HTTP request if no SSL certs are provided
+            response = requests.get(remote_url, timeout=timeout)
         return response.status_code == 200
     except Exception:
         return False
@@ -211,8 +219,8 @@ def parse_repo_urls(local_repo_config_path, version_variables):
             ca_cert = url_.get("sslcacert")
             client_key = url_.get("sslclientkey")
             client_cert = url_.get("sslclientcert")
-            # if not is_remote_url_reachable(url):
-            #     return url, False
+            if not is_remote_url_reachable(url, client_cert, client_key, ca_cert):
+                return url, False
 
             parsed_repos.append({
                 "package": name,
