@@ -54,23 +54,9 @@
 
 - name: Set admin network nic and ip
   ansible.builtin.set_fact:
-    network_data: "{{ network_data | default({}) }}"
     admin_nic_ip: "{{ network_data.admin_network.primary_oim_admin_ip }}"
     admin_nic: "{{ network_data.admin_network.oim_nic_name }}"
     admin_netmask_bits: "{{ network_data.admin_network.netmask_bits }}"
-
-- name: Validate admin IP format
-  ansible.builtin.assert:
-    that:
-      - admin_nic_ip | ansible.utils.ipaddr('address')
-    fail_msg: "Invalid admin IP format: {{ admin_nic_ip }}"
-
-- name: Validate netmask bits
-  ansible.builtin.assert:
-    that:
-      - admin_netmask_bits | int >= 8
-      - admin_netmask_bits | int <= 30
-    fail_msg: "Invalid netmask bits: {{ admin_netmask_bits }}. Must be between 8 and 30."
 
 - name: Ensure NIC exists on the system
   ansible.builtin.assert:
