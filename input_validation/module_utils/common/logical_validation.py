@@ -15,9 +15,9 @@
 import sys
 sys.path.append("module_utils/validation_flows")
 
-import provision_validation
-import common_validation
-import roles_validation
+import ansible.module_utils.validation_flows.provision_validation
+import ansible.module_utils.validation_flows.common_validation
+import ansible.module_utils.validation_flows.roles_validation
 
 # L2 Validation Code - validate anything that could not have been validated with JSON schema
 # Main validation code that calls one of the validation functions based on the tag(s) used. input_file_inventory in validate_input.py contains dict of the tags being called.

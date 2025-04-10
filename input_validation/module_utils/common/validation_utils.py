@@ -17,8 +17,8 @@ import re
 import ipaddress
 import subprocess
 import yaml
-import en_us_validation_msg
-import config
+import ansible.module_utils.common.en_us_validation_msg
+import ansible.module_utils.common.config
 
 def load_yaml_as_json(yaml_file, omnia_base_dir, project_name, logger, module):
     try:
