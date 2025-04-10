@@ -13,11 +13,6 @@
 # limitations under the License.
 ---
 
-- name: Include metadata vars
-  ansible.builtin.include_vars: "{{ omnia_metadata_file }}"
-  register: include_metadata
-  no_log: true
-
 - name: Load software_config.json as software_config
   block:
     - name: Load software_config.json as user_config
