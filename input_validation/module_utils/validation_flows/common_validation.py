@@ -14,7 +14,7 @@
 
 import json
 import ansible.module_utils.common.validation_utils
-import ansible.module_utils.common.config
+from ansible.module_utils.common import config
 import ansible.module_utils.common.en_us_validation_msg
 
 file_names = config.files
