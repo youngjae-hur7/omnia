@@ -53,6 +53,7 @@ RPM_LABEL_TEMPLATE = "RPMs for {key}"
 OMNIA_REPO_KEY = "omnia_repo_url_rhel"
 RHEL_OS_URL = "rhel_os_url"
 SOFTWARES_KEY = "softwares"
+USER_REPO_URL = "user_repo_url"
 
 # ----------------------------
 # Used by download_common.py
