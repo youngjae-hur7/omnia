@@ -2,8 +2,8 @@
 import glob
 import os
 import json
-import ansible.module_utils.common.validation_utils
-import ansible.module_utils.common.config
+import ansible.module_utils.common_utils.validation_utils
+import ansible.module_utils.common_utils.config
 
 # Function to get all files of a specific type recursively from a directory
 def files_recursively(directory, file_type):

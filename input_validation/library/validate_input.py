@@ -21,16 +21,16 @@ import logging
 import jsonschema
 import subprocess
 from ansible.module_utils.basic import AnsibleModule
-import ansible.module_utils.common.data_verification as verify
-import ansible.module_utils.common.data_fetch as get
-import ansible.module_utils.common.data_validation as validate
+import ansible.module_utils.common_utils.data_verification as verify
+import ansible.module_utils.common_utils.data_fetch as get
+import ansible.module_utils.common_utils.data_validation as validate
 import sys
 # sys.path.append("module_utils/common")
 
-import ansible.module_utils.common.logical_validation
-import ansible.module_utils.common.validation_utils
-import ansible.module_utils.common.config
-import ansible.module_utils.common.en_us_validation_msg
+import ansible.module_utils.common_utils.logical_validation
+import ansible.module_utils.common_utils.validation_utils
+import ansible.module_utils.common_utils.config
+import ansible.module_utils.common_utils.en_us_validation_msg
 
 def createLogger(project_name, tag_name=None):
     """
