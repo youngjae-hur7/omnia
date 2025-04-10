@@ -13,16 +13,27 @@
 # limitations under the License.
 ---
 
-# Validate network_spec.yml schema first
-- name: Validate network specification schema
-  ansible.builtin.command:
-    cmd: "ansible-playbook validate_config.yml --extra-vars 'files=network_spec.yml'"
-  args:
-    chdir: "/opt/omnia/input_validation"
-  register: validation_result
-  changed_when: false
-  delegate_to: localhost
-  failed_when: validation_result.rc != 0
+- name: Validate network specification
+  block:
+    - name: Run network specification schema validation
+      ansible.builtin.command:
+        cmd: "ansible-playbook validate_config.yml --extra-vars 'files=network_spec.yml'"
+      args:
+        chdir: "/opt/omnia/input_validation"
+      register: validation_result
+      changed_when: false
+      delegate_to: localhost
+      failed_when: validation_result.rc != 0
+      no_log: true
+
+    - name: Show validation success
+      ansible.builtin.debug:
+        msg: "Network specification validation successful"
+      when: validation_result.rc == 0
+  rescue:
+    - name: Network specification input validation failed
+      ansible.builtin.fail:
+        msg: "{{ validation_result.stdout | regex_search('FAILED! => {[^}]+}') }}"
 
 - name: Include network_spec.yml
   block:
