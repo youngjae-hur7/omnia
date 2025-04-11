@@ -25,6 +25,13 @@ Software Installed by Omnia
       :keepspace:
       :class: longtable
 
+.. dropdown:: Unsupported packages based on cluster OS
+
+   .. csv-table:: Unsupported packages based on cluster OS
+      :file: ../../Tables/unsupported_packages.csv
+      :header-rows: 1
+      :keepspace:
+      :class: longtable
 
 
 
