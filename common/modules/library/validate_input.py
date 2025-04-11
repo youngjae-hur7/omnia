@@ -20,10 +20,6 @@ from ansible.module_utils.basic import AnsibleModule
 import ansible.module_utils.input_validation.common_utils.data_verification as verify # type: ignore
 import ansible.module_utils.input_validation.common_utils.data_fetch as get # type: ignore
 import ansible.module_utils.input_validation.common_utils.data_validation as validate # type: ignore
-# sys.path.append("module_utils/common")
-
-from ansible.module_utils.input_validation.common_utils import logical_validation # type: ignore
-from ansible.module_utils.input_validation.common_utils import validation_utils # type: ignore
 from ansible.module_utils.input_validation.common_utils import config # type: ignore
 from ansible.module_utils.input_validation.common_utils import en_us_validation_msg # type: ignore
 
@@ -86,8 +82,9 @@ def main():
     project_name = module.params["project_name"]
     tag_names = eval(module.params["tag_names"])
     single_files = module.params["files"]
-
-    schema_base_file_path = "./module_utils/input_validation/schema/"
+    base_dir = os.path.dirname(__file__)
+    schema_base_file_path = os.path.join(base_dir, "..", "schema")
+    # schema_base_file_path = "./module_utils/input_validation/schema/"
     directory_path = os.path.join(omnia_base_dir, project_name)
 
     input_file_inventory = config.input_file_inventory
