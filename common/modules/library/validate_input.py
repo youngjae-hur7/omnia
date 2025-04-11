@@ -13,24 +13,19 @@
 # limitations under the License.
 
 #!/usr/bin/python
-import json
-import yaml
-import glob
 import os
 import logging
-import jsonschema
-import subprocess
+
 from ansible.module_utils.basic import AnsibleModule
-import ansible.module_utils.input_validation.common_utils.data_verification as verify
-import ansible.module_utils.input_validation.common_utils.data_fetch as get
-import ansible.module_utils.input_validation.common_utils.data_validation as validate
-import sys
+import ansible.module_utils.input_validation.common_utils.data_verification as verify # type: ignore
+import ansible.module_utils.input_validation.common_utils.data_fetch as get # type: ignore
+import ansible.module_utils.input_validation.common_utils.data_validation as validate # type: ignore
 # sys.path.append("module_utils/common")
 
-from ansible.module_utils.input_validation.common_utils import logical_validation
-from ansible.module_utils.input_validation.common_utils import validation_utils
-from ansible.module_utils.input_validation.common_utils import config
-from ansible.module_utils.input_validation.common_utils import en_us_validation_msg
+from ansible.module_utils.input_validation.common_utils import logical_validation # type: ignore
+from ansible.module_utils.input_validation.common_utils import validation_utils # type: ignore
+from ansible.module_utils.input_validation.common_utils import config # type: ignore
+from ansible.module_utils.input_validation.common_utils import en_us_validation_msg # type: ignore
 
 def createLogger(project_name, tag_name=None):
     """
