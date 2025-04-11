@@ -72,6 +72,6 @@
 
       ``boolean``
 
-        Optional","* **Default value**: ``true``.
+      Optional","* **Default value**: ``true``.
 * Keep it ``true`` if you want to install the necessary packages from the local repository.
 * Set it to ``false`` if you want to pull Kubernetes packages and images from the internet instead of the OIM local repository."
