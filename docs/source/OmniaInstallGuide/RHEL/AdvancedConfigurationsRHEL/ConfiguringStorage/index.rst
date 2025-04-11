@@ -109,12 +109,12 @@ Run the playbook: ::
 Configuring NFS server connected to PowerVault
 ------------------------------------------------------
 
-To configure an NFS server, enter the following parameters in ``storage/nfs_server_input.yml``
+1. To configure an NFS server, enter the following parameters in ``storage/nfs_server_input.yml``
 
 +--------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Parameter          | Details                                                                                                                                                                                                                                                                        |
 +====================+================================================================================================================================================================================================================================================================================+
-| powervault_ip      | * Mandatory field when nfs group is defined with an IP and omnia is required to configure nfs server.                                                                                                                                                                          |
+| powervault_ip      | * Mandatory field when nfs group is defined with an IP and Omnia is required to configure nfs server.                                                                                                                                                                          |
 |      ``string``    | * IP of the Powervault storage connected to the NFS server should be provided.                                                                                                                                                                                                 |
 |      Optional      | * In a single run of Omnia, only one NFS server is configured. To configure multiple NFS Servers, add one IP in nfs group in a single run of ``omnia.yml`` and give variable values accordingly. To configure another nfs node, update variables and run ``nfs_sas.yml``.      |
 +--------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -128,19 +128,13 @@ To configure an NFS server, enter the following parameters in ``storage/nfs_serv
 |                    |                                                                                                                                                                                                                                                                                |
 |                    | Must specify at least 1 volume                                                                                                                                                                                                                                                 |
 |                    |                                                                                                                                                                                                                                                                                |
-|                    |          * **Default values**: ``{ name: omnia_home, server_share_path: /home/omnia_home, server_export_options: }``                                                                                                                                                           |
+|                    |          * **Default value**: ``{ name: omnia_home, server_share_path: /home/omnia_home, server_export_options: }``                                                                                                                                                            |
 +--------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-Run the playbook: ::
+2. Run the playbook: ::
 
     cd storage
     ansible-playbook nfs_sas.yml -i /root/inventory -e powervault_username="xxxxx" -e powervault_password="xxxxxx"
 
 * Where the ``inventory`` refers to a list of all nodes separated by a newline.
 * To set up NFS client services, `click here <../../OmniaCluster/BuildingCluster/Storage/NFS.html>`_
-
-
-
-
-
-
