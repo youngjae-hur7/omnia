@@ -83,7 +83,7 @@ def main():
     tag_names = eval(module.params["tag_names"])
     single_files = module.params["files"]
     base_dir = os.path.dirname(__file__)
-    schema_base_file_path = os.path.join(base_dir, '..', 'module_utils', 'input_validation', 'schema')
+    schema_base_file_path = os.path.join(base_dir, '..', 'module_utils', 'input_validation', 'schema') + os.sep
     schema_base_file_path = os.path.abspath(schema_base_file_path)
     # schema_base_file_path = "./module_utils/input_validation/schema/"
     directory_path = os.path.join(omnia_base_dir, project_name)
