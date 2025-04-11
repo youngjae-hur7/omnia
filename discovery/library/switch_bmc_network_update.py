@@ -31,7 +31,7 @@ def main():
     update_network_msg = ""
     failed_networks = []
     created_networks = []
-    for group, details in groups_roles_info.items():
+    for idx, (group, details) in enumerate(groups_roles_info.items()):
         if not details.get("switch_status"):
             continue
 
@@ -58,7 +58,7 @@ def main():
         result = subprocess.run([
             "/opt/xcat/bin/chdef",
             "-t", "network",
-            "-o", f"{group}_network",
+            "-o", f"bmc_network_{idx}",
             f"net={bmc_network}",
             f"mask={netmask}",
             f"mgtifname={bmc_interface_name}",
@@ -67,9 +67,9 @@ def main():
             f"tftpserver={bmc_nic_ip}"
         ], capture_output=True, text=True)
         if result.returncode != 0:
-            failed_networks.append((f"{group}_network", result.stderr.strip()))
+            failed_networks.append((f"bmc_network_{idx}", result.stderr.strip()))
         else:
-            created_networks.append(f"{group}_network")
+            created_networks.append(f"bmc_network_{idx}")
             update_network_msg += f"\n Network created for group {group}"
 
     msg = ""

@@ -46,7 +46,7 @@ def get_matching_interface_ip(ip_range: str, interface: str, netmask_bits: int):
     for line in result.stdout.splitlines():
         line = line.strip()
         if line.startswith("inet "):
-            ip_with_prefix = line.split()[1]  # e.g., 10.3.255.254/16
+            ip_with_prefix = line.split()[1]
             ip_net = ipaddress.ip_interface(ip_with_prefix)
             if ip_net.ip in network_obj:
                 return {

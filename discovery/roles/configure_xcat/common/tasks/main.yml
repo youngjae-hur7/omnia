@@ -40,7 +40,7 @@
 
     - name: Update networks table
       ansible.builtin.include_tasks: update_xcat_network.yml
-      when: bmc_nic != ""
+      when: bmc_details_status
 
     - name: Create xcat osimage
       ansible.builtin.include_tasks: create_osimage.yml
