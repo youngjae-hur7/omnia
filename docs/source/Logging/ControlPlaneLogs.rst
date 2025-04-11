@@ -55,7 +55,7 @@ After `telemetry.yml <../Telemetry/index.html>`_ is run, Grafana services are in
 
     iii. In the Explore page, select **oim-node-loki**.
 
-    .. image:: ../images/oim_grafana_loki.png
+        .. image:: ../images/oim_grafana_loki.png
 
     iv. The log browser allows users to filter logs by job, node, user, etc.
         Example ::
