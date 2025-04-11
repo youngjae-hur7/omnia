@@ -1,11 +1,11 @@
-metallb_enabled: {{ metallb_enabled | default(true) | lower | regex_replace('["\']', '') }}
-metallb_speaker_enabled: {{ metallb_speaker_enabled | default(true) | lower | regex_replace('["\']', '') }}
+metallb_enabled: true
+metallb_speaker_enabled: true
 metallb_namespace: "{{ metallb_namespace | default('metallb-system') }}"
 metallb_config:
   address_pools:
     primary:
       ip_range:
         - "{{ hostvars['localhost']['pod_external_ip_range'] }}"
-      auto_assign: {{ metallb_auto_assign | default(true) | lower | regex_replace('["\']', '') }}
+      auto_assign: true
   layer2:
     - primary
