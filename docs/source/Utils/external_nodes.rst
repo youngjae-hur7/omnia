@@ -13,8 +13,8 @@ Before integrating external nodes, ensure the following requirements are met:
 * **OpenSSH**: Ensure OpenSSH is enabled during the Ubuntu OS installation process.
 * **Enable root user**: Edit the ``/etc/ssh/sshd_config`` file and set ``PermitRootLogin yes`` (instead of ``PermitRootLogin prohibit-password``). 
 * **Root password**: Ensure that all servers use the same root password.
-* **Fully Qualified Domain Name (FQDN)**: Set the FQDN for each node (Example: ``compute1.omnia.test``).
-* **IP Configuration**: Assign either a static or dynamic IP from the PXE network (Example: ``10.5.0.x``).
+* **Fully Qualified Domain Name (FQDN)**: Set the FQDN for each node (Example: ``compute1.omnia.test``). Ensure that the same is also updated in the ``etc/hosts`` file on the OIM.
+* **IP Configuration**: Assign either a static or dynamic IP from the PXE network (Example: ``10.5.0.x``). Ensure that the same is also updated in the ``etc/hosts`` file on the OIM.
 * **Internet Access**: The node should have internet access. To test the internet connection, execute: ::
 
     wget https://github.com/opencontainers/runc/releases/download/v1.2.3/runc.amd64
