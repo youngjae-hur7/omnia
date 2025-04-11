@@ -45,20 +45,11 @@ Steps to Integrate External Nodes
 
 5. While execution, the playbook will prompt for the root password. Enter the root password that has been configured on all servers.
 
-6. Navigate to the ``input/omnia_config.yml`` file and modify the ``k8s_offline_install`` variable:
+6. Navigate to the ``input/omnia_config.yml`` file and set the ``k8s_offline_install`` variable to ``false``. For more information, `click here <../OmniaInstallGuide/Ubuntu/OmniaCluster/schedulerinputparams.html#id1>`_.
    
    .. note:: If the file is encrypted, run the following command to decrypt it:
  	::
 	   ansible-vault edit omnia_config.yml --vault-password-file .omnia_vault_key
-   
-   +-----------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
-   | Parameter                   | Details                                                                                                                                |
-   +=============================+========================================================================================================================================+
-   | ``k8s_offline_install``     | * **Type**: ``boolean``                                                                                                                |
-   |                             | * **Default value**: ``true``.                                                                                                         |
-   |                             | * Keep it ``true`` if you want to install the necessary packages from the local repository.                                            |
-   |                             | * Set it to ``false`` if you want to pull Kubernetes packages and images from the internet instead of the OIM local repository.        |
-   +-----------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
    
 7. Run the ``omnia.yml`` to deploy a Kubernetes cluster with the new nodes, where ``<inventory>`` is the path to your inventory file consisting of the external nodes:
    ::
