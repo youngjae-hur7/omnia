@@ -1,4 +1,4 @@
-#  Copyright 2023 Dell Inc. or its subsidiaries. All Rights Reserved.
+#  Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,11 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 ---
+- name: Fetch latest service facts
+  ansible.builtin.service_facts:
+  no_log: true
 
-# Usage: main.yml
-os_supported_redhat: "redhat"
-os_supported_rocky: "rocky"
-
-# Usage: fetch_k8s_nodes.yml
-docker_login_fail_msg: "If repo_config: never, please check the credentials and re-execute playbook. Skip otherwise."
-k8s_version: "{{ hostvars['localhost']['k8s_version'] }}"
+- name: Stop and disable firewalld
+  ansible.builtin.service:
+    name: firewalld
+    state: stopped
+    enabled: false
+  when: "'firewalld.service' in ansible_facts['services'].keys()"
