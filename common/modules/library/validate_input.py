@@ -21,16 +21,16 @@ import logging
 import jsonschema
 import subprocess
 from ansible.module_utils.basic import AnsibleModule
-import ansible.module_utils.common_utils.data_verification as verify
-import ansible.module_utils.common_utils.data_fetch as get
-import ansible.module_utils.common_utils.data_validation as validate
+import ansible.module_utils.input_validation.common_utils.data_verification as verify
+import ansible.module_utils.input_validation.common_utils.data_fetch as get
+import ansible.module_utils.input_validation.common_utils.data_validation as validate
 import sys
 # sys.path.append("module_utils/common")
 
-from ansible.module_utils.common_utils import logical_validation
-from ansible.module_utils.common_utils import validation_utils
-from ansible.module_utils.common_utils import config
-from ansible.module_utils.common_utils import en_us_validation_msg
+from ansible.module_utils.input_validation.common_utils import logical_validation
+from ansible.module_utils.input_validation.common_utils import validation_utils
+from ansible.module_utils.input_validation.common_utils import config
+from ansible.module_utils.input_validation.common_utils import en_us_validation_msg
 
 def createLogger(project_name, tag_name=None):
     """
@@ -92,7 +92,7 @@ def main():
     tag_names = eval(module.params["tag_names"])
     single_files = module.params["files"]
 
-    schema_base_file_path = "./module_utils/schema/"
+    schema_base_file_path = "./module_utils/input_validation/schema/"
     directory_path = os.path.join(omnia_base_dir, project_name)
 
     input_file_inventory = config.input_file_inventory

@@ -1,10 +1,10 @@
     # Main L1 Validation code. Get the JSON schema and input file to validate
 
 import json
-import ansible.module_utils.common_utils.data_fetch as get
-from ansible.module_utils.common_utils import en_us_validation_msg
+import ansible.module_utils.input_validation.common_utils.data_fetch as get
+from ansible.module_utils.input_validation.common_utils import en_us_validation_msg
 import jsonschema
-from ansible.module_utils.common_utils import logical_validation
+from ansible.module_utils.input_validation.common_utils import logical_validation
 
 
 def schema(input_file_path, schema_file_path, passwords_set, omnia_base_dir, project_name, logger, module):

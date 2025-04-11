@@ -14,9 +14,9 @@
 
 import json
 import ipaddress
-from ansible.module_utils.common_utils import validation_utils
-from ansible.module_utils.common_utils import config
-from ansible.module_utils.common_utils import en_us_validation_msg
+from ansible.module_utils.input_validation.common_utils import validation_utils
+from ansible.module_utils.input_validation.common_utils import config
+from ansible.module_utils.input_validation.common_utils import en_us_validation_msg
 
 file_names = config.files
 create_error_msg = validation_utils.create_error_msg
