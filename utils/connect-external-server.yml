@@ -32,13 +32,3 @@
         ssh_to: "{{ groups['compute'] }}"
   roles:
     - cluster_preperation
-
-- name: Prepare the cluster with passwordless ssh from compute to OIM
-  hosts: compute
-  gather_facts: false
-  pre_tasks:
-    - name: Set ssh_to to manager group
-      ansible.builtin.set_fact:
-        ssh_to: localhost
-  roles:
-    - cluster_preperation
