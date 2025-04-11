@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 ---
+input_project_dir: "{{ hostvars['localhost']['input_project_dir'] }}"
 
 # Usage: docker_login.yml
 docker_auth_file: "/root/.docker/config.json"
@@ -37,3 +38,5 @@ k8s_version: "{{ hostvars['localhost']['k8s_version'] }}"
 k8s_var_final_src: "final_template.j2"
 k8s_var_dest: "/opt/omnia/kubespray/k8s_all_vars.yml"
 pulp_registry_port: "2225"
+enable_k8s_ha: "{{ hostvars['localhost']['enable_k8s_ha'] }}"
+k8s_vip: "{{ hostvars['localhost']['k8s_vip'] }}"
