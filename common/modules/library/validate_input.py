@@ -83,7 +83,7 @@ def main():
     tag_names = eval(module.params["tag_names"])
     single_files = module.params["files"]
     base_dir = os.path.dirname(__file__)
-    schema_base_file_path = os.path.join(base_dir, '..', 'module_utils', 'input_validation', 'schema') + os.sep
+    schema_base_file_path = os.path.join(base_dir, '..', 'module_utils', 'input_validation', 'schema')
     schema_base_file_path = os.path.abspath(schema_base_file_path)
     # schema_base_file_path = "./module_utils/input_validation/schema/"
     directory_path = os.path.join(omnia_base_dir, project_name)
@@ -134,7 +134,7 @@ def main():
                 continue
             validation_status.update(project_data)
             fname = os.path.splitext(name)[0]
-            schema_file_path = schema_base_file_path + fname + extensions['json']
+            schema_file_path = schema_base_file_path + '/' + fname + extensions['json']
             logger.info(f"schema_file_path: {schema_file_path}")
             input_file_path = None
 
@@ -168,7 +168,7 @@ def main():
             for name in input_file_inventory[tag_name]:
                 validation_status.update(project_data)
                 fname, _ = os.path.splitext(name)
-                schema_file_path = schema_base_file_path + fname + extensions['json']
+                schema_file_path = schema_base_file_path + '/' + fname + extensions['json']
                 input_file_path = None
 
                 if not verify.file_exists(schema_file_path, module, logger):
