@@ -24,14 +24,14 @@
 - name: Fetch software_config.json and local repo access variables
   ansible.builtin.include_tasks: fetch_software_config.yml
 
-- name: Include high_availability variables
-  ansible.builtin.include_tasks: include_high_availability_config.yml
-
 - name: Fetch omnia_config.yml inputs
   ansible.builtin.include_tasks: fetch_omnia_inputs.yml
 
 - name: Fetch and Validate network_spec.yml inputs
   ansible.builtin.include_tasks: validate_network_spec.yml
+
+- name: Include high_availability variables
+  ansible.builtin.include_tasks: include_high_availability_config.yml
 
 - name: Fetch storage_config.yml inputs
   ansible.builtin.include_tasks: fetch_storage_config.yml

@@ -266,7 +266,12 @@
            "url": "https://github.com/k8snetworkplumbingwg/whereabouts.git",
            "type": "git",
            "version": "v0.8.0"
-        }
+      },
+      {
+        "package": "ghcr.io/kube-vip/kube-vip",
+        "tag": "v0.8.0",
+        "type": "image"
+      }
       ]
     }
   }
