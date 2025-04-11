@@ -44,7 +44,7 @@ def create_node_object():
             command = [
                 "/opt/xcat/bin/chdef", row_output['node'], f"groups={groups_switch_based}", "mgt=ipmi", "cons=ipmi",
                 f"ip={row_output['admin_ip']}", f"bmc={row_output['bmc_ip']}", "netboot=xnba", "installnic=mac", "primarynic=mac",
-                f"switch={row_output['switch_ip']}", f"switchport={row_output['switch_port']}"
+                f"switch={row_output['switch_name']}", f"switchport={row_output['switch_port']}"
             ]
             result = subprocess.run(command, capture_output=True, text=True)
             msg += f"Created node object {row_output['node']} for switch details - ip: {row_output['switch_ip']}, port: {row_output['switch_port']}, name: {row_output['switch_name']}\n"

@@ -14,20 +14,23 @@
 ---
 
 - name: Check switch reachability
-  ping_switch:
+  verify_switch:
     groups_roles_info: "{{ groups_roles_info }}"
-  register: switch_ping_status
+    netmask_bits: "{{ pxe_nic_netmask }}"
+    oim_nic_name: "{{ pxe_nic }}"
+  register: verify_switch_status
 
 - name: Show reachable switches
   ansible.builtin.debug:
-    var: switch_ping_status.reachable_switch_groups
+    var: verify_switch_status.reachable_switch_groups
 
 - name: Set fact for reachable and unreachable switches
   ansible.builtin.set_fact:
-    reachable_switch_ip_groups: "{{ switch_ping_status.reachable_switch_groups }}"
-    unreachable_switch_ip_groups: "{{ switch_ping_status.unreachable_switch_groups }}"
-    discovery_mech_switch_based: "{{ switch_ping_status.switch_status }}"
-    switch_status: "{{ switch_ping_status.switch_status }}"
+    reachable_switch_ip_groups: "{{ verify_switch_status.reachable_switch_groups }}"
+    unreachable_switch_ip_groups: "{{ verify_switch_status.unreachable_switch_groups }}"
+    discovery_mech_switch_based: "{{ verify_switch_status.switch_status }}"
+    switch_status: "{{ verify_switch_status.switch_status }}"
+    groups_roles_info: "{{ verify_switch_status.reachable_switch_groups }}"
 
 - name: Warning for unreachable switches
   when: unreachable_switch_ip_groups | length > 0
