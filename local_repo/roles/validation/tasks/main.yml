@@ -20,11 +20,24 @@
 - name: Install prerequisites
   ansible.builtin.include_tasks: prerequisites.yml
 
-- name: Validate software_config.json
-  ansible.builtin.include_tasks: validate_software_config_json.yml
-
 - name: Validate local_repo_config.yml
   ansible.builtin.include_tasks: validate_local_repo_config.yml
 
-- name: Validate software json files present in config directory
-  ansible.builtin.include_tasks: validate_json_path.yml
+- name: Validate user_repo certificates
+  validate_user_repo:
+    certs_path: "{{ user_repo_cert_dir }}"
+    local_repo_config_path: "{{ local_repo_config_file }}"
+    repo_key: "user_repo_url"
+  register: cert_check_result
+  failed_when: cert_check_result.failed | default(false)
+
+- name: Run custom module to check user registry reachability
+  check_user_registry:
+    config_file: "{{ local_repo_config_file }}"
+    timeout: "{{ time_out }}"
+  register: registry_check_result
+
+- name: Display unreachable registries
+  ansible.builtin.debug:
+    msg: "Unreachable registries: {{ registry_check_result.unreachable_registries }}"
+  when: registry_check_result.unreachable_count > 0
