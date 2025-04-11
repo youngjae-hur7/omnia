@@ -33,7 +33,7 @@ def validate_provision_config(input_file_path, data, logger, module, omnia_base_
         errors.append(create_error_msg("pxe_mapping_file_path", pxe_mapping_file_path, en_us_validation_msg.pxe_mapping_file_path_fail_msg))
 
     timezone = data["timezone"]
-    if not (validation_utils.validate_timezone(timezone, "module_utils/common_utils/timezone.txt")):
+    if not (validation_utils.validate_timezone(timezone, "module_utils/input_validation/common_utils/timezone.txt")):
         errors.append(create_error_msg("timezone", timezone, en_us_validation_msg.timezone_fail_msg))
 
     default_lease_time = data["default_lease_time"]
