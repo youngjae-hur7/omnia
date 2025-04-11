@@ -3,20 +3,23 @@ import yaml
 from ansible.module_utils.common_functions import (
     load_yaml_file,
     get_repo_list,
-    is_file_exists
 )
 
-def check_cert_files_exist(repo_name, cert_fields):
-    """Check if all given cert files exist in the expected path."""
-    missing_files = []
-    for cert in cert_fields:
-        if not is_file_exists(cert):
-            missing_files.append(os.path.basename(cert))
-    return missing_files
+def get_pem_files(repo_cert_path):
+    """
+    Return a list of .pem files in the given repository certificate path.
+    If the directory doesn't exist, return an empty list.
+    """
+    if not os.path.isdir(repo_cert_path):
+        return None  # Explicitly indicate missing directory
+    return [f for f in os.listdir(repo_cert_path) if f.endswith(".pem")]
 
 def validate_repo_certificates(repo_list, certs_path):
-    """Validate certificates for repositories where certs are defined."""
-    missing_certs = []
+    """
+    Validate that each repo has exactly 3 .pem files,
+    and optionally at most 1 .key and 1 .crt file in its certs path.
+    """
+    cert_issues = []
 
     for repo in repo_list:
         repo_name = repo.get("name", "unnamed_repo")
@@ -29,28 +32,42 @@ def validate_repo_certificates(repo_list, certs_path):
         if all(value is None for value in cert_values.values()):
             continue
 
-        # Find keys that have None values
-        missing_keys = [key for key, value in cert_values.items() if value is None]
-        if missing_keys:
-            missing_certs.append(f"{repo_name} (missing keys: {missing_keys})")
+        if not os.path.isdir(repo_cert_path):
+            cert_issues.append(f"{repo_name} (certificate path not found)")
             continue
 
-        missing_files = check_cert_files_exist(repo_name, list(cert_values.values()))
-        if missing_files:
-            missing_certs.append(f"{repo_name} (missing files: {missing_files})")
+        all_files = os.listdir(repo_cert_path)
+        pem_files = [f for f in all_files if f.endswith(".pem")]
+        key_files = [f for f in all_files if f.endswith(".key")]
+        crt_files = [f for f in all_files if f.endswith(".crt")]
 
+        issues = []
 
-    return missing_certs
+        if len(pem_files) != 3:
+            issues.append(f"{len(pem_files)} .pem files found: {pem_files}")
+        if len(key_files) > 1:
+            issues.append(f"{len(key_files)} .key files found: {key_files}")
+        if len(crt_files) > 1:
+            issues.append(f"{len(crt_files)} .crt files found: {crt_files}")
+
+        if issues:
+            cert_issues.append(f"{repo_name} ({'; '.join(issues)})")
+
+    return cert_issues
+
 
 def validate_certificates(local_repo_config_path, certs_path, repo_key="user_repo_url"):
-    """Main function to load config and validate certs if any are defined."""
+    """
+    Main entry point to validate certificates for repositories.
+    Reads YAML config, extracts the repository list, and validates each.
+    """
     config_file = load_yaml_file(local_repo_config_path)
     repo_list = get_repo_list(config_file, repo_key)
 
-    missing = validate_repo_certificates(repo_list, certs_path)
-    if missing:
-        return {"status": "error", "missing": missing}
+    issues = validate_repo_certificates(repo_list, certs_path)
+
+    if issues:
+        return {"status": "error", "missing": issues}
 
     return {"status": "ok"}
-
 

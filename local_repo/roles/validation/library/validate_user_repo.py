@@ -30,11 +30,14 @@ def main():
 
         if validation_result.get("status") == "error":
             result["failed"] = True
-            result["msg"] = "Missing certificate keys or files detected:"
+            result["msg"] = "Certificate validation failed for the following repositories:\n"
             for item in validation_result.get("missing", []):
                 repo_name = item.split(" ")[0]
-                # Append each missing repo and path
-                result["msg"] += f"  - {item}. Expected certificate files should exist under: {module.params['certs_path']}/{repo_name}/"
+                result["msg"] += (
+                    f"  - {item}\n"
+                    f"    Expected certificate files should exist under: "
+                    f"{module.params['certs_path']}/{repo_name}/\n"
+                )
         else:
             result["msg"] = f"All certificate checks passed for '{module.params['repo_key']}'."
 
@@ -45,5 +48,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 
