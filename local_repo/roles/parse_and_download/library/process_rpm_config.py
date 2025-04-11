@@ -25,23 +25,9 @@ import os
 import requests
 from datetime import datetime
 from functools import partial
-
-# Define pulp_rpm_commands and rpm_config here as in your existing code
-pulp_rpm_commands = {
-    "create_repository": "pulp rpm repository create --name %s",
-    "pulp_cleanup": "pulp orphan cleanup",
-    "show_repository": "pulp rpm repository show --name %s",
-    "create_remote": "pulp rpm remote create --name %s --url %s --policy %s",
-    "show_remote": "pulp rpm remote show --name %s",
-    "update_remote": "pulp rpm remote update --name %s --url %s --policy %s",
-    "sync_repository": "pulp rpm repository sync --name %s --remote %s",
-    "publish_repository": "pulp rpm publication create --repository %s",
-    "distribute_repository": "pulp rpm distribution create --name %s  --base-path %s  --repository %s",
-    "update_distribution": "pulp rpm distribution update --name %s  --base-path %s  --repository %s",
-    "create_remote_cert": "pulp rpm remote create --name %s --url %s --policy %s --ca-cert %s --client-cert %s --client-key %s",
-    "update_remote_cert": "pulp rpm remote update --name %s --url %s --policy %s --ca-cert %s --client-cert %s --client-key %s",
-    "check_distribution": "pulp rpm distribution show --name %s"
-}
+from ansible.module_utils.config import (
+    pulp_rpm_commands
+)
 
 
 def execute_command(cmd_string, log,type_json=None, seconds=None):

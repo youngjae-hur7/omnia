@@ -89,3 +89,24 @@ pulp_container_commands = {
     "update_container_distribution": "pulp container distribution update --name %s --repository %s --base-path %s",
     "list_container_remote_tags": "pulp container remote list --name %s --field include_tags"
 }
+
+# ----------------------------
+# Used by process_rpm_config.py
+# ----------------------------
+
+pulp_rpm_commands = {
+    "create_repository": "pulp rpm repository create --name %s",
+    "pulp_cleanup": "pulp orphan cleanup",
+    "show_repository": "pulp rpm repository show --name %s",
+    "create_remote": "pulp rpm remote create --name %s --url %s --policy %s",
+    "show_remote": "pulp rpm remote show --name %s",
+    "update_remote": "pulp rpm remote update --name %s --url %s --policy %s",
+    "sync_repository": "pulp rpm repository sync --name %s --remote %s",
+    "publish_repository": "pulp rpm publication create --repository %s",
+    "distribute_repository": "pulp rpm distribution create --name %s  --base-path %s  --repository %s",
+    "update_distribution": "pulp rpm distribution update --name %s  --base-path %s  --repository %s",
+    "create_remote_cert": "pulp rpm remote create --name %s --url %s --policy %s --ca-cert %s --client-cert %s --client-key %s",
+    "update_remote_cert": "pulp rpm remote update --name %s --url %s --policy %s --ca-cert %s --client-cert %s --client-key %s",
+    "check_distribution": "pulp rpm distribution show --name %s"
+}
+
