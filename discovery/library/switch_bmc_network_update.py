@@ -28,53 +28,6 @@ def main():
 
     groups_roles_info = module.params['groups_roles_info']
     bmc_interface_name = module.params['oim_nic_name']
-#     bmc_interface_name = "eno8303"
-#     # bmc_nic_subnet = "16"
-#     groups_roles_info = {
-#     "grp0": {
-#         "architecture": "x86",
-#         "bmc_details": {
-#             "interface_ip": "10.3.255.254",
-#             "netmask": "255.255.0.0",
-#             "network": "10.3.0.0",
-#             "static_range": "10.3.0.2-10.3.0.10"
-#         },
-#         "bmc_static_status": false,
-#         "hierarchical_provision_status": true,
-#         "location_id": "SU-1.RACK-2",
-#         "parent": "JLQY933",
-#         "resource_mgr_id": "",
-#         "roles": [
-#             "default"
-#         ],
-#         "switch_details": {
-#             "ip": "100.96.28.206",
-#             "ports": "9"
-#         },
-#         "switch_status": true
-#     },
-#     "grp1": {
-#       "roles": [
-#         "default"
-#       ],
-#       "location_id": "SU-1.RACK-2",
-#       "resource_mgr_id": "",
-#       "parent": "JLQY933",
-#       "bmc_details": {
-#         "static_range": "100.96.24.243-100.96.24.243"
-#       },
-#       "switch_details": {
-#         "ip": "100.96.28.206",
-#         "ports": "11"
-#       },
-#       "architecture": "x86",
-#       "switch_status": True,
-#       "bmc_static_status": True,
-#       "hierarchical_provision_status": False
-#     }
-
-#   }
-
     update_network_msg = ""
     failed_networks = []
     created_networks = []
@@ -132,7 +85,6 @@ def main():
         msg = msg,
         updated_groups_roles_info=groups_roles_info
     )
-    # print(msg)
 
 if __name__ == '__main__':
     main()
