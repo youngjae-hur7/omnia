@@ -26,10 +26,6 @@
     - name: Create node object for mapping file
       ansible.builtin.include_tasks: node_object_creation_mapping.yml
 
-    - name: Update corosync config if OIM HA is enabled
-      when: enable_oim_ha
-      ansible.builtin.include_tasks: update_corosync_config.yml
-
     - name: Check mapping node group status
       ansible.builtin.include_tasks: check_nodes_mapping.yml
 

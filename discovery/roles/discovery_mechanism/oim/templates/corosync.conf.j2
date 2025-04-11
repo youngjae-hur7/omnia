@@ -17,14 +17,12 @@ nodelist {
     nodeid: 1
   }
 {% if enable_oim_ha and oim_passive_node_mapping %}
-{%- for node_details in mapping_details %}
-{% if node_details.group_name in oim_ha_groups %}
+{%- for node_details in passive_oim_nodes.query_result %}
   node {
     ring0_addr: {{ node_details.admin_ip }}
-    name: {{ node_details.hostname }}
+    name: {{ node_details.node }}
     nodeid: {{ loop.index + 1 }}
   }
-{% endif %}
 {%- endfor %}
 {% endif %}
 

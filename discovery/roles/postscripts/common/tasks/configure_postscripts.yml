@@ -89,14 +89,14 @@
 - name: Configure postscripts for ROCm
   ansible.builtin.command: "{{ xcat_path }}/chdef all -p postscripts=omnia_rocm"
   changed_when: true
-  when: 
+  when:
     - amdgpu_config_status
     - not enable_oim_ha
 
 - name: Configure postscripts for ROCm
   ansible.builtin.command: "{{ xcat_path }}/chdef all -p postscripts=omnia_racadm"
   changed_when: true
-  when: 
+  when:
     - racadm_config_status
     - not enable_oim_ha
 
