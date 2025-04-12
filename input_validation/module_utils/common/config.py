@@ -47,10 +47,10 @@ input_file_inventory = {
     "provision": [
         files["provision_config"],
         files["network_spec"],
-        files["server_spec"],
         files["software_config"],
         files["roles_config"]
     ],
+    "server_spec": [files["server_spec"]],
     "security": [
         files["security_config"],
         files["login_node_security_config"],
