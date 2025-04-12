@@ -15,7 +15,16 @@
 
 - name: Update corosync config
   ansible.builtin.template:
-    src: "{{ item.template }}"
-    dest: "{{ item.dest }}"
-    mode: "{{ item.mode }}"
-  loop: "{{ corosync_conf }}"
+    src: "{{ shared_corosync_conf.template }}"
+    dest: "{{ shared_corosync_conf.dest }}"
+    mode: "{{ shared_corosync_conf.mode }}"
+
+- name: Update corosync config in the PCS container
+  containers.podman.podman_container_exec:
+    name: "{{ pcs_container_name }}"
+    command: "cp {{ shared_corosync_conf.dest }} {{ corosync_conf_path }}"
+
+- name: Reload PCS cluster config on active OIM node
+  containers.podman.podman_container_exec:
+    name: "{{ pcs_container_name }}"
+    command: "pcs cluster reload corosync"
