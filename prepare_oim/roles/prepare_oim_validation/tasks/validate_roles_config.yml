@@ -31,6 +31,6 @@
         msg: "roles configuration validation successful"
       when: validation_result.rc == 0
   rescue:
-    - name: roles configuration input validation failed
+    - name: Roles configuration input validation failed
       ansible.builtin.fail:
         msg: "{{ validation_result.stdout | regex_search('FAILED! => {[^}]+}') }}"

@@ -32,7 +32,7 @@
         msg: "high availability configuration validation successful"
       when: validation_result.rc == 0
   rescue:
-    - name: high availability configuration input validation failed
+    - name: High availability configuration input validation failed
       ansible.builtin.fail:
         msg: "{{ validation_result.stdout | regex_search('FAILED! => {[^}]+}') }}"
 
