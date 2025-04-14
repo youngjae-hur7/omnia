@@ -227,9 +227,9 @@ def parse_repo_urls(local_repo_config_path, version_variables):
             name = url_.get("name","unknown")
             url = url_.get("url","")
             gpgkey = url_.get("gpgkey")
-            ca_cert = url_.get("sslcacert")
-            client_key = url_.get("sslclientkey")
-            client_cert = url_.get("sslclientcert")
+            ca_cert = url_.get("sslcacert", "")
+            client_key = url_.get("sslclientkey", "")
+            client_cert = url_.get("sslclientcert", "")
 
             if not is_remote_url_reachable(url, client_cert=client_cert, client_key=client_key, ca_cert=ca_cert):
                 return url, False
