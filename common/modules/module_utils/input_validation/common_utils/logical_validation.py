@@ -21,7 +21,7 @@ from ansible.module_utils.input_validation.validation_flows import roles_validat
 
 # L2 Validation Code - validate anything that could not have been validated with JSON schema
 # Main validation code that calls one of the validation functions based on the tag(s) used. input_file_inventory in validate_input.py contains dict of the tags being called.
-def validate_input_logic(input_file_path, data, logger, module, omnia_base_dir, project_name):
+def validate_input_logic(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
     # Based on the file_name, run validation function
     validation_functions = {
         "provision_config.yml": provision_validation.validate_provision_config,
@@ -49,7 +49,7 @@ def validate_input_logic(input_file_path, data, logger, module, omnia_base_dir, 
     print("validation_function", validation_function)
     if validation_function:
         return validation_function(
-            input_file_path, data, logger, module, omnia_base_dir, project_name
+            input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name
         )
     else:
         message = f"Unsupported file: {input_file_path, data}"

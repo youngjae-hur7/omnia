@@ -196,7 +196,7 @@ def main():
                 # Validate the schema of the input file (L1)
                 schema_status = validate.schema(input_file_path, schema_file_path, passwords_set, omnia_base_dir, project_name, logger, module)
                 # Validate the logic of the input file (L2)
-                logic_status = validate.logic(input_file_path, logger, module, omnia_base_dir, project_name)
+                logic_status = validate.logic(input_file_path, logger, module, omnia_base_dir, module_utils_base, project_name)
 
                 # Append the validation status for the input file
                 validation_status[project_name]["status"].append({input_file_path: "Passed" if (schema_status and logic_status) else "Failed"})
