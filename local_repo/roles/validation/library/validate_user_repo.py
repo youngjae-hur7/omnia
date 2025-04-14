@@ -4,6 +4,18 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.validate_utils import validate_certificates
 
 def main():
+    """
+    Ansible module to validate certificates for a repository.
+
+    This module takes in the path to a local repository configuration file,
+    the path to a directory containing certificates, and an optional key to
+    specify which repository to validate. It then checks if the expected
+    certificate files exist for the specified repository.
+
+    :return: A dictionary with the result of the validation, including a
+             boolean indicating whether the validation failed, and a message
+             describing the result.
+    """
     module_args = dict(
         local_repo_config_path=dict(type='str', required=True),
         certs_path=dict(type='str', required=True),
@@ -48,4 +60,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

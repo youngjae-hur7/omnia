@@ -9,6 +9,14 @@ from ansible.module_utils.registry_utils import (
 )
 
 def main():
+    """
+    Ansible module to validate user registry entries.
+
+    This module loads a YAML configuration file, validates the user registry entries,
+    checks their reachability, and verifies the cert paths.
+
+    :return: A dictionary with the results of the validation and reachability checks.
+    """
     module = AnsibleModule(
         argument_spec=dict(
             timeout=dict(type='int', default=5),

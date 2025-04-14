@@ -212,7 +212,7 @@ def parse_repo_urls(local_repo_config_path, version_variables):
     user_repo_entry = local_yaml.get(USER_REPO_URL,[])
     parsed_repos = []
 
-    if len(user_repo_entry) > 0:
+    if user_repo_entry:
         for url_ in user_repo_entry:
             name = url_.get("name","unknown")
             url = url_.get("url","")

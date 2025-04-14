@@ -7,19 +7,34 @@ from ansible.module_utils.common_functions import (
 
 def get_pem_files(repo_cert_path):
     """
-    Return a list of .pem files in the given repository certificate path.
-    If the directory doesn't exist, return an empty list.
-    """
+	Retrieves a list of .pem files from a specified repository certificate path.
+
+	Parameters:
+		repo_cert_path (str): The path to the repository certificates.
+
+	Returns:
+		list: A list of .pem file names if the directory exists, otherwise None.
+	"""
     if not os.path.isdir(repo_cert_path):
         return None  # Explicitly indicate missing directory
     return [f for f in os.listdir(repo_cert_path) if f.endswith(".pem")]
 
 def validate_repo_certificates(repo_list, certs_path):
     """
-    Validate that each repo has exactly 3 .pem files,
-    and optionally at most 1 .key and 1 .crt file in its certs path.
-    """
+	Validates the repository certificates based on the provided repository list and certificate path.
+
+	Parameters:
+		repo_list (list): A list of dictionaries containing repository information.
+		certs_path (str): The path to the repository certificates.
+
+	Returns:
+		list: A list of strings describing certificate issues for each repository.
+	"""
+
     cert_issues = []
+
+    if not repo_list:
+        return cert_issues
 
     for repo in repo_list:
         repo_name = repo.get("name", "unnamed_repo")
@@ -58,9 +73,17 @@ def validate_repo_certificates(repo_list, certs_path):
 
 def validate_certificates(local_repo_config_path, certs_path, repo_key="user_repo_url"):
     """
-    Main entry point to validate certificates for repositories.
-    Reads YAML config, extracts the repository list, and validates each.
-    """
+	Validates the repository certificates based on the provided repository list and certificate path.
+
+	Parameters:
+		local_repo_config_path (str): The path to the local repository configuration file.
+		certs_path (str): The path to the repository certificates.
+		repo_key (str): The key to access the repository list in the configuration file (default: "user_repo_url").
+
+	Returns:
+		dict: A dictionary containing the validation status and a list of issues if any.
+	"""
+
     config_file = load_yaml_file(local_repo_config_path)
     repo_list = get_repo_list(config_file, repo_key)
 
@@ -70,4 +93,5 @@ def validate_certificates(local_repo_config_path, certs_path, repo_key="user_rep
         return {"status": "error", "missing": issues}
 
     return {"status": "ok"}
+
 
