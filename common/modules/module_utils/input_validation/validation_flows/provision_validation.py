@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import json
+import os
 from ansible.module_utils.input_validation.common_utils import validation_utils
 from ansible.module_utils.input_validation.common_utils import config
 from ansible.module_utils.input_validation.common_utils import en_us_validation_msg
@@ -21,7 +22,7 @@ file_names = config.files
 create_error_msg = validation_utils.create_error_msg
 create_file_path = validation_utils.create_file_path
 
-def validate_provision_config(input_file_path, data, logger, module, module_utils_base,  omnia_base_dir, project_name):
+def validate_provision_config(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
     errors = []
     software_config_file_path = create_file_path(input_file_path, file_names["software_config"])
     software_config_json = json.load(open(software_config_file_path, "r"))
@@ -47,6 +48,6 @@ def validate_provision_config(input_file_path, data, logger, module, module_util
 
     return errors
 
-def validate_network_spec(input_file_path, data, logger, module, omnia_base_dir, project_name):
+def validate_network_spec(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
     errors = []
     return errors
