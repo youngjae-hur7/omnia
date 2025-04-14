@@ -134,7 +134,7 @@ def main():
                 continue
             validation_status.update(project_data)
             fname = os.path.splitext(name)[0]
-            schema_file_path = schema_base_file_path + fname + extensions['json']
+            schema_file_path = schema_base_file_path + "/" + fname + extensions['json']
             logger.info(f"schema_file_path: {schema_file_path}")
             input_file_path = None
 
@@ -168,7 +168,7 @@ def main():
             for name in input_file_inventory[tag_name]:
                 validation_status.update(project_data)
                 fname, _ = os.path.splitext(name)
-                schema_file_path = schema_base_file_path + fname + extensions['json']
+                schema_file_path = schema_base_file_path + "/" + fname + extensions['json']
                 input_file_path = None
 
                 if not verify.file_exists(schema_file_path, module, logger):
