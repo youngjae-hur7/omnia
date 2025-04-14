@@ -40,9 +40,9 @@ def main():
         bmc_nic_ip = bmc_info.get("interface_ip")
         netmask = bmc_info.get("netmask")
 
-        if not all([bmc_network, bmc_nic_ip, netmask]):
-            failed_networks.append((group, "Missing BMC network info"))
-            continue
+        # if not all([bmc_network, bmc_nic_ip, netmask]):
+        #     failed_networks.append((group, "Missing BMC network info"))
+        #     continue
   
         # Check if this network already exists in xCAT's networks table
         grep_check = subprocess.run(

@@ -24,3 +24,12 @@ warning_switch_unreachable_message: |
   Nodes associated with unreachable switch groups will not be provisioned.
   Please update the switch details in input/roles_config.yml and rerun the discovery_provision.yml playbook.
 switch_based_skip_msg: "None of groups have reachable switch ip, so switch based discovery will be skipped"
+invalid_bmc_static_range_message: |
+  [Warning] Could not find bmc_ip for given groups bmc static_range details :
+  {% for group, details in invalid_switch_groups.items() %}
+    - Group: {{ group }}, Range: {{ details.bmc_details.static_range }}
+  {% endfor %}
+warning_invalid_bmc_static_range_message: |
+  Nodes associated with invalid bmc details static_range switch groups will not be provisioned.
+  Please update the bmc details static_range in input/roles_config.yml and rerun the discovery_provision.yml playbook.
+

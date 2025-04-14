@@ -80,7 +80,7 @@ def main():
     groups_roles_info = module.params['groups_roles_info']
     netmask_bits = module.params['netmask_bits']
     oim_nic_name = module.params['oim_nic_name']
-    reachable_switch_groups = {}
+    verified_switch_groups = {}
     unreachable_switch_groups = {}
     invalid_switch_groups = {}
     switch_status = False
@@ -101,7 +101,7 @@ def main():
             if ping_status:
                 if bmc_interface_data:
                     details["bmc_details"].update(bmc_interface_data)
-                    reachable_switch_groups[group] = details
+                    verified_switch_groups[group] = details
                 else:
                     details['switch_status'] = False
                     invalid_switch_groups[group] = details
@@ -113,10 +113,11 @@ def main():
 
     module.exit_json(
         changed=False,
-        reachable_switch_groups=reachable_switch_groups,
+        verified_switch_groups=verified_switch_groups,
         invalid_switch_groups=invalid_switch_groups,
         unreachable_switch_groups=unreachable_switch_groups,
         switch_status=switch_status,
+        groups_roles_info=groups_roles_info,
     )
 
 if __name__ == '__main__':
