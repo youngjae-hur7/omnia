@@ -97,6 +97,6 @@ Storage
 
 ⦾ **What to do if the mounted BeeGFS storage is not accessible with the following error?**
 
-.. image:: ../../../beegfs_issue.png
+.. image:: ../../../images/beegfs_issue.png
 
 **Resolution**: Re-deploy the BeeGFS storage using the ``storage.yml`` playbook. For more information, `click here <../../../OmniaInstallGuide/Ubuntu/OmniaCluster/BuildingCluster/Storage/BeeGFS.html>`_.
