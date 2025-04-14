@@ -17,13 +17,27 @@
   ansible.builtin.set_fact:
     provision_password_status: false
 
+- name: Assert given root password
+  block:
+    - name: Assert given root password
+      ansible.builtin.assert:
+        that:
+          - provision_password | length > min_length | int - 1
+          - provision_password | length < max_length | int + 1
+          - '"-" not in provision_password '
+          - '"\\" not in provision_password '
+          - '"\"" not in provision_password '
+          - " \"'\" not in provision_password "
+      no_log: true
+  rescue:
+    - name: root password validation check
+      ansible.builtin.fail:
+        msg: "{{ provision_password_fail_msg }}"
+
 - name: Set provision_password_status to true
   ansible.builtin.set_fact:
     provision_password_status: true
     provision_password: "{{ hostvars['127.0.0.1']['provision_password'] }}"
-  when:
-    - hostvars['127.0.0.1']['provision_password'] is defined
-    - hostvars['127.0.0.1']['provision_password'] | length > min_length | int - 1
 
 - name: Set passwordless SSH
   when: provision_password_status
