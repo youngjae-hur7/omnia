@@ -1,7 +1,7 @@
 Integrate External Nodes with Omnia Kubernetes Cluster
 ========================================================
 
-Omnia provides you a way to integrate external nodes (with pre-installed Ubuntu OS) into an existing Omnia Kubernetes (K8s) cluster.
+Omnia provides you a way to integrate external nodes (with pre-installed OS) into an existing Omnia Kubernetes (K8s) cluster.
 
 .. note:: This feature is currently validated only on nodes running Ubuntu 24.04 OS.
 
