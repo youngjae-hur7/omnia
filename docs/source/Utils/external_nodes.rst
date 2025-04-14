@@ -51,7 +51,17 @@ Steps to Integrate External Nodes
  	::
 	   ansible-vault edit omnia_config.yml --vault-password-file .omnia_vault_key
    
-7. Navigate to the ``input/software_config.json`` and remove all software entries except ``k8s`` and ``nfs``. Omnia supports adding external nodes with only these two entries in the ``input/software_config.json``. 
+7. Navigate to the ``input/software_config.json`` and remove all software entries except ``k8s`` and ``nfs``. Omnia supports adding external nodes with only these two entries in the ``input/software_config.json``. Here's a sample:
+   ::
+      {
+        "cluster_os_type": "ubuntu",
+        "cluster_os_version": "24.04",
+        "repo_config": "always",
+        "softwares": [
+            {"name": "nfs"},
+            {"name": "k8s", "version":"1.31.4"}
+        ]
+      }
 
 8. Run the ``omnia.yml`` to deploy a Kubernetes cluster with the new nodes, where ``<inventory>`` is the path to your inventory file consisting of the external nodes:
    ::
