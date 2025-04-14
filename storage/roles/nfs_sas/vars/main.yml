@@ -54,7 +54,6 @@ nfs_utilities:
     - nfs-kernel-server
   rhel:
     - nfs-utils
-    - nfs-kernel-server
     - firewalld
 
 nfs_services:
