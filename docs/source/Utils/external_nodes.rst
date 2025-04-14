@@ -69,6 +69,6 @@ Steps to Integrate External Nodes
 
 .. note:: To build a Kubernetes cluster with a mix of Omnia-provisioned nodes and external nodes (with a pre-loaded OS), do the following:  
    
-      1. First, deploy the Omnia-provisioned nodes by running ``omnia.yml`` with ``k8s_offline_install: true``. 
+      1. First, deploy Kubernetes on the Omnia-provisioned nodes by running ``omnia.yml`` with ``k8s_offline_install: true``. 
       2. Once that's complete, add the pre-loaded OS nodes by re-running ``omnia.yml`` with ``k8s_offline_install: false``.
 
