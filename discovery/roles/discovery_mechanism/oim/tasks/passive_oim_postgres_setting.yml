@@ -26,13 +26,13 @@
   no_log: true
 
 - name: Fail if no passive OIM nodes are found
-  ansible.builtin.debug:
+  ansible.builtin.fail:
     msg: "No passive OIM nodes found in the database."
   when:
     - passive_oim_nodes.query_result is defined
     - passive_oim_nodes.query_result | length < 1
 
-- name: Update PostgreSQL configuration filr and restart PostgreSQL
+- name: Update PostgreSQL configuration file and restart PostgreSQL
   when: passive_oim_nodes.query_result | length > 0
   block:
     - name: Update PostgreSQL configuration file with passive oim node IPs

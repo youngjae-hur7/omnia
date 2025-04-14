@@ -43,7 +43,7 @@
     - name: Create service node groups
       ansible.builtin.include_tasks: create_service_node_groups.yml
       when: hierarchical_provision_status | default(false)
-      
+
     - name: Update postgres config for passive OIM nodes
       when: enable_oim_ha | default(false)
       ansible.builtin.include_tasks: passive_oim_postgres_setting.yml

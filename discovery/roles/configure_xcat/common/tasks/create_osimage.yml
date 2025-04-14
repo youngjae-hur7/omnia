@@ -58,14 +58,15 @@
       changed_when: false
       register: fetch_osimage
       failed_when: fetch_osimage.stdout is not defined
-    
+
     - name: Get os arch and os version
       ansible.builtin.shell: >
         set -o pipefail && \
         {{ xcat_path }}/lsdef -t osimage {{ fetch_osimage.stdout }} | grep -E "osarch|osvers" | cut -d'=' -f2
+      changed_when: false
       register: osimage_info
       failed_when: osimage_info.stdout_lines | length != 2
-    
+
     - name: Set os arch and os version
       ansible.builtin.set_fact:
         osarch: "{{ osimage_info.stdout_lines[0] }}"
@@ -78,7 +79,7 @@
     - name: Set install directory
       ansible.builtin.set_fact:
         xcat_install_dir: "{{ xcat_install_dir }}/{{ osversion }}/{{ osarch }}"
-    
+
     - name: Create osimage install directory
       ansible.builtin.file:
         path: "{{ xcat_install_dir }}"

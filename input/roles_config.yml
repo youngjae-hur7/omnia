@@ -111,7 +111,7 @@ Roles:
 # OIM HA Node Role:
 # -------------
 #
-# This role is used to configure passive OIM nodes
+# This role is used to configure passive OIM nodes.
 #
 # The nodes included in this role will have the necessary tools and
 # configurations needed to be passive OIM nodes.
