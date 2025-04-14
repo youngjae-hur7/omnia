@@ -42,4 +42,3 @@
     config_file: "{{ local_repo_config_file }}"
     timeout: "{{ time_out }}"
   register: registry_check_result
-
