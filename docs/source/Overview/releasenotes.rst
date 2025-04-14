@@ -6,7 +6,7 @@ Releases
 
 * Support for Ubuntu 24.04 OS
 * Support for upgrading Omnia version on the OIM, from 1.7 to 1.7.1
-* Support for NVIDIA GPU operator (25.3.0)
+* Support for NVIDIA GPU operator (25.3.0) on nodes running ubuntu 24.04 OS
 * Support for adding external nodes (with pre-loaded OS and internet connectivity) to a Kubernetes cluster
 * Support for configuring additional NICs and updating kernel parameters during the provisioning of the cluster nodes
 * Support for NVIDIA Collective Communications Library (NCCL) 2.25.1 on nodes with NVIDIA GPUs running ubuntu 24.04 OS
