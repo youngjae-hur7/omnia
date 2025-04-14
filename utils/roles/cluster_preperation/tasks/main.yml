@@ -22,15 +22,15 @@
     - name: Assert given root password
       ansible.builtin.assert:
         that:
-          - provision_password | length > min_length | int - 1
-          - provision_password | length < max_length | int + 1
+          - provision_password | length >= min_length
+          - provision_password | length <= max_length
           - '"-" not in provision_password '
           - '"\\" not in provision_password '
           - '"\"" not in provision_password '
           - " \"'\" not in provision_password "
       no_log: true
   rescue:
-    - name: root password validation check
+    - name: Root password validation check
       ansible.builtin.fail:
         msg: "{{ provision_password_fail_msg }}"
 
