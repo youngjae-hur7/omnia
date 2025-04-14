@@ -107,7 +107,7 @@ def logic(input_file_path, logger, module, omnia_base_dir, module_utils_base, pr
         input_data, extension = get.input_data(input_file_path, omnia_base_dir, project_name, logger, module)
 
         # errors = [{error_msg: custom message, error_key: ex-node_name (to find line number), error_value: ex-6,"node" (to help find line #)}]
-        errors = logical_validation.validate_input_logic(input_file_path, input_data, logger, module, omnia_base_dir, project_name)
+        errors = logical_validation.validate_input_logic(input_file_path, input_data, logger, module, omnia_base_dir, module_utils_base, project_name)
 
         # Print errors, if the error value is None then send a separate message.
         # This is for values where it did not have a single key as the error
