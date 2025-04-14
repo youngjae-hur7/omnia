@@ -87,7 +87,8 @@ def main():
     parser = ConfigParser()
     cfg_path = os.path.join(os.getcwd(), 'ansible.cfg')
     parser.read(cfg_path)
-    schema_base_file_path = parser.get('defaults', 'module_utils', fallback=None)
+    module_utils_base = parser.get('defaults', 'module_utils', fallback=None)
+    schema_base_file_path = os.path.join(module_utils_base,'input_validation','schema')
     # module_utils_base = module._module_utils_path
     # schema_base_file_path = os.path.join(module_utils_base,'input_validation','schema')
     directory_path = os.path.join(omnia_base_dir, project_name)
