@@ -47,10 +47,15 @@ Steps to Integrate External Nodes
 
 6. Navigate to the ``input/omnia_config.yml`` file and set the ``k8s_offline_install`` variable to ``false``. For more information, `click here <../OmniaInstallGuide/Ubuntu/OmniaCluster/schedulerinputparams.html#id1>`_.
    
-   .. note:: If the file is encrypted, run the following command to decrypt it:
+   .. note:: If the ``input/omnia_config.yml`` file is encrypted, run the following command to decrypt it:
  	::
 	   ansible-vault edit omnia_config.yml --vault-password-file .omnia_vault_key
    
-7. Run the ``omnia.yml`` to deploy a Kubernetes cluster with the new nodes, where ``<inventory>`` is the path to your inventory file consisting of the external nodes:
+7. Navigate to the ``input/software_config.json`` and remove all software entries except ``k8s`` and ``nfs``. Omnia supports adding external nodes with only these two entries in the ``input/software_config.json``. 
+
+8. Run the ``omnia.yml`` to deploy a Kubernetes cluster with the new nodes, where ``<inventory>`` is the path to your inventory file consisting of the external nodes:
    ::
-	ansible-playbook omnia.yml -i <inventory> 
+	ansible-playbook omnia.yml -i <inventory>
+
+.. note:: A fresh Kubernetes cluster deployment does not support a mix of Omnia-provisioned nodes and external nodes with a pre-loaded OS. To build such a cluster, first deploy the Omnia-provisioned nodes by running ``omnia.yml`` with ``k8s_offline_install: true``. Once that's complete, add the pre-loaded OS nodes by re-running ``omnia.yml`` with ``k8s_offline_install: false``.
+

@@ -73,5 +73,5 @@
       ``boolean``
 
       Optional","* **Default value**: ``true``.
-* Keep it ``true`` if you want to install the necessary packages from the local repository.
-* Set it to ``false`` if you want to pull Kubernetes packages and images from the internet instead of the OIM local repository."
+* Keep it ``true`` when you want Omnia to provision OS on the cluster nodes. With the variable set to ``true``,  all packages and images necessary to set up a Kubernetes cluster are pulled from the OIM local repository.
+* Set it to ``false`` only when you want to add external nodes (with pre-loaded OS) to a kubernetes cluster. With the variable set to ``false``,  all packages and images necessary to set up a Kubernetes cluster are pulled from the internet instead of the OIM local repository."
