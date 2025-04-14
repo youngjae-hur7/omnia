@@ -15,7 +15,9 @@
 
 # Usage: main.yml
 min_length: 8
+max_length: 64
 ssh_config_path: "/etc/ssh/ssh_config"
+provision_password_fail_msg: "Failed. Incorrect root password format! Root password should have minimum 8 character and must not contain -,\\, \"'\",\". "
 
 # Usage: set_passwordless_ssh.yml
 rsa_id_file: "/root/.ssh/id_rsa"
