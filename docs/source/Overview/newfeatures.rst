@@ -1,6 +1,9 @@
 New Features
 ============
 
+* Enablement for AMD 17G servers - R6725, R7725, R6715, R7715
+* Enablement for Intel Gaudi 3 GPU
+* Enablement for NVIDIA GPUs - L40s, H100 NVL, H200 SXM
 * Support for Ubuntu 24.04 OS
 * Support for upgrading Omnia version on the OIM, from 1.7 to 1.7.1
 * Support for NVIDIA GPU operator (25.3.0) on nodes running ubuntu 24.04 OS
@@ -9,6 +12,7 @@ New Features
 * Support for NVIDIA Collective Communications Library (NCCL) 2.25.1 on nodes with NVIDIA GPUs running ubuntu 24.04 OS
 * Support for ROCm Communication Collectives Library (RCCL) on nodes with AMD GPUs
 * Support for multus plugin (4.1.4) and whereabouts plugin (0.8.0) for Kubernetes (K8s)
+* Support for BCM RoCE with calico network plugin
 * Updated software packages for Omnia 1.7.1 (compared to 1.7):
 
 
