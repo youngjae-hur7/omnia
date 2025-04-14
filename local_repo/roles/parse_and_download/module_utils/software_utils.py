@@ -37,17 +37,17 @@ from ansible.module_utils.config import (
 def load_json(file_path):
     """
     Load JSON data from a file.
- 
+
     Args:
         file_path (str): The path to the JSON file.
- 
+
     Returns:
         dict: The loaded JSON data.
- 
+
     Raises:
         FileNotFoundError: If the file is not found.
         ValueError: If the JSON parsing fails.
-    """ 
+    """
     try:
         with open(file_path, 'r') as file:
             return json.load(file)
@@ -59,13 +59,13 @@ def load_json(file_path):
 def load_yaml(file_path):
     """
     Load YAML data from a file.
- 
+
     Args:
         file_path (str): The path to the YAML file.
- 
+
     Returns:
         dict: The loaded YAML data.
- 
+
     Raises:
         FileNotFoundError: If the file is not found.
         yaml.YAMLError: If the YAML parsing fails.
@@ -74,6 +74,16 @@ def load_yaml(file_path):
         return yaml.safe_load(file)
 
 def validate_repo_mappings(yaml_data, json_data):
+    """
+    Validates the repository mappings in the given JSON data against the YAML data.
+
+    Args:
+        yaml_data (dict): The YAML data containing the repository mappings.
+        json_data (str): The path to the JSON file or the JSON data containing the package information.
+
+    Returns:
+        list: A list of error messages for invalid repository mappings.
+    """
     valid_repos = [repo["name"] for repo in yaml_data.get("omnia_repo_url_rhel", [])]
     valid_repos.extend(['baseos' , 'appstream', 'codeready-builder'])
     data = load_json(json_data)
@@ -97,13 +107,13 @@ def validate_repo_mappings(yaml_data, json_data):
 def get_json_file_path(software_name, cluster_os_type, cluster_os_version, user_json_path):
     """
     Generate the file path for a JSON file based on the provided software name, cluster OS type, cluster OS version, and user JSON path.
- 
+
     Parameters:
         software_name (str): The name of the software.
         cluster_os_type (str): The type of the cluster operating system.
         cluster_os_version (str): The version of the cluster operating system.
         user_json_path (str): The path to the user JSON file.
- 
+
     Returns:
         str or None: The file path for the JSON file if it exists, otherwise None.
     """
@@ -116,17 +126,17 @@ def get_json_file_path(software_name, cluster_os_type, cluster_os_version, user_
 def get_csv_file_path(software_name, user_csv_dir):
     """
     Generates the absolute path of the CSV file based on the software name and the user-provided CSV directory.
-    
+
     Parameters:
         software_name (str): The name of the software.
         user_csv_dir (str): The directory path where the CSV file is located.
-    
+
     Returns:
         str: The absolute path of the CSV file if it exists, otherwise None.
     """
     status_csv_file_path = os.path.join(user_csv_dir, software_name, DEFAULT_STATUS_FILENAME)
     return status_csv_file_path
- 
+
 def is_remote_url_reachable(remote_url, timeout=10, client_cert=None, client_key=None, ca_cert=None):
     """
     Check if a remote URL is reachable with or without SSL client certs.
@@ -201,8 +211,8 @@ def parse_repo_urls(local_repo_config_path, version_variables):
         local_repo_config_path (str): The path to the local repository configuration file.
         version_variables (dict): A dictionary of version variables.
     Returns:
-        tuple: A tuple where the first element is either the parsed repository URLs as a JSON string 
-               (on success) or the rendered URL (if unreachable), and the second element is a boolean 
+        tuple: A tuple where the first element is either the parsed repository URLs as a JSON string
+               (on success) or the rendered URL (if unreachable), and the second element is a boolean
                indicating success (True) or failure (False).
         str: The parsed repository URLs as a JSON string.
     """
@@ -232,8 +242,8 @@ def parse_repo_urls(local_repo_config_path, version_variables):
                 "ca_cert": ca_cert,
                 "client_key": client_key,
                 "client_cert": client_cert
-            })        
-        
+            })
+
     for url_ in rhel_repo_entry:
         name = url_.get("name","unknown")
         url = url_.get("url","")
@@ -321,6 +331,12 @@ def get_subgroup_dict(user_data):
 def get_csv_software(file_name):
     """
     Retrieves a list of software names from a CSV file.
+
+    Parameters:
+        file_name (str): The name of the CSV file.
+
+    Returns:
+        list: A list of software names.
     """
     csv_software = []
 
@@ -336,6 +352,12 @@ def get_csv_software(file_name):
 def get_failed_software(file_name):
     """
     Retrieves a list of failed software from a CSV file.
+
+    Parameters:
+        file_name (str): The name of the CSV file.
+
+    Returns:
+        list: A list of software names that failed.
     """
     failed_software = []
 
@@ -391,20 +413,26 @@ def parse_json_data(file_path, package_types, failed_list=None, subgroup_list=No
 def check_csv_existence(path):
     """
     Checks if a CSV file exists at the given path.
+
+    Parameters:
+        path (str): The path to the CSV file.
+
+    Returns:
+        bool: True if the CSV file exists, False otherwise.
     """
     return os.path.isfile(path)
 
 def process_software(software, fresh_installation, json_path, csv_path, subgroup_list):
     """
     Processes the given software by parsing JSON data and returning a filtered list of items.
- 
+
     Parameters:
         software (str): The name of the software.
         fresh_installation (bool): Indicates whether it is a fresh installation.
         json_path (str): The path to the JSON file.
         csv_path (str): The path to the CSV file.
         subgroup_list (list, optional): A list of subgroups to filter. Defaults to None.
- 
+
     Returns:
         list: The filtered list of items.
     """
@@ -420,7 +448,12 @@ def process_software(software, fresh_installation, json_path, csv_path, subgroup
 def get_software_names(data_path):
     """
     Retrieves a list of software names from a given data file.
+
+    Parameters:
+        data_path (str): The path to the data file.
+
+    Returns:
+        list: A list of software names.
     """
     data = load_json(data_path)
     return [software['name'] for software in data.get(SOFTWARES_KEY, [])]
-

@@ -4,17 +4,42 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common_functions import decrypt_certificate, encrypt_certificate
 
 def run_module():
-    module_args = dict(
-        action=dict(type='str', required=True, choices=['encrypt', 'decrypt']),
-        cert_path=dict(type='str', required=True),
-        vault_password_file=dict(type='str', required=True, no_log=True),
-    )
+    """
+    Runs the Ansible module for certificate encryption and decryption.
 
-    result = dict(
-        changed=False,
-        message='',
-        status=0
-    )
+    This function takes in three parameters: action, cert_path, and vault_password_file.
+    The 'action' parameter specifies whether to encrypt or decrypt the certificate.
+    The 'cert_path' parameter is the path to the certificate file.
+    The 'vault_password_file' parameter is the path to the vault password file.
+
+    The function returns a dictionary containing the result of the operation.
+    The dictionary includes the following keys:
+    - changed: A boolean indicating whether the operation was successful.
+    - message: A string describing the result of the operation.
+    - status: An integer indicating the status of the operation.
+    """
+    module_args = {
+        "action": {
+            "type": "str",
+            "required": True,
+            "choices": ["encrypt", "decrypt"]
+        },
+        "cert_path": {
+            "type": "str",
+            "required": True
+        },
+        "vault_password_file": {
+            "type": "str",
+            "required": True,
+            "no_log": True
+        }
+    }
+
+    result = {
+        "changed": False,
+        "message": "",
+        "status": 0
+    }
 
     module = AnsibleModule(
         argument_spec=module_args,
@@ -42,6 +67,10 @@ def run_module():
     module.exit_json(**result)
 
 def main():
+    """
+    This is the main entry point of the module, responsible for calling the run_module function.
+    It does not take any parameters and does not return any values.
+    """
     run_module()
 
 if __name__ == '__main__':
