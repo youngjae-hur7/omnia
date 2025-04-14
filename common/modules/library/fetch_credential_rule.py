@@ -14,8 +14,13 @@
 
 #!/usr/bin/python
 
-from ansible.module_utils.basic import AnsibleModule
+"""This module is used to fetch credential rules."""
+
 import json
+import os
+from configparser import ConfigParser
+
+from ansible.module_utils.basic import AnsibleModule
 
 def load_rules(file_path):
     """Loads validation rules from JSON file."""
@@ -32,9 +37,15 @@ def fetch_rule(field, rules):
 
 def main():
     """Main function."""
+    parser = ConfigParser()
+    cfg_path = os.path.join(os.getcwd(), 'ansible.cfg')
+    parser.read(cfg_path)
+    module_utils_base = parser.get('defaults', 'module_utils', fallback=None)
+    credentials_schema = os.path.join(module_utils_base,\
+                                      'input_validation','schema','credential_rules.json')
     module_args = dict(
         credential_field=dict(type="str", required=True),
-        rules_file=dict(type="str", required=False, default="./module_utils/input_validation/schema/credential_rules.json")
+        rules_file=dict(type="str", required=False, default=credentials_schema)
     )
 
     module = AnsibleModule(argument_spec=module_args, supports_check_mode=True)

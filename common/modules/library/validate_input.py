@@ -13,19 +13,31 @@
 # limitations under the License.
 
 #!/usr/bin/python
-import os
+
+"""
+This module is used to validate input data.
+
+It provides functions for verifying and validating input data, and also includes
+functions for fetching and validating data.
+
+Functions:
+    validate_input
+    get_data
+    verify
+"""
+
 import logging
-
-from ansible.module_utils.basic import AnsibleModule
-import ansible.module_utils.input_validation.common_utils.data_verification as verify # type: ignore
-import ansible.module_utils.input_validation.common_utils.data_fetch as get # type: ignore
-import ansible.module_utils.input_validation.common_utils.data_validation as validate # type: ignore
-from ansible.module_utils.input_validation.common_utils import config # type: ignore
-from ansible.module_utils.input_validation.common_utils import en_us_validation_msg # type: ignore
+import os
 from configparser import ConfigParser
+# pylint: disable=no-name-in-module,E0401
+import ansible.module_utils.input_validation.common_utils.data_fetch as get
+import ansible.module_utils.input_validation.common_utils.data_validation as validate
+import ansible.module_utils.input_validation.common_utils.data_verification as verify
+from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils.input_validation.common_utils import config
+from ansible.module_utils.input_validation.common_utils import en_us_validation_msg
 
-
-def createLogger(project_name, tag_name=None):
+def createlogger(project_name, tag_name=None):
     """
     Creates a logger object for the given project name and tag name.
 
@@ -102,7 +114,7 @@ def main():
     validation_status = {}
     vstatus = []
 
-    logger = createLogger(project_name)
+    logger = createlogger(project_name)
 
     # Start validation execution
     logger.info(en_us_validation_msg.get_header())
@@ -133,9 +145,9 @@ def main():
     # For each file from the tag names, run schema validation (L1) and logic validation (L2)
     project_data = {project_name: {"status": [], "tag": tag_names}}
 
-    if (len(single_files) > 0):
+    if len(single_files) > 0:
         for name in single_files:
-            if not (name):
+            if not name:
                 continue
             validation_status.update(project_data)
             fname = os.path.splitext(name)[0]
@@ -144,7 +156,8 @@ def main():
             input_file_path = None
 
             if not verify.file_exists(schema_file_path, module, logger):
-                error_message = f"The file schema: {fname}.json does not exist in directory: {schema_base_file_path}."
+                error_message = f"The file schema: {fname}.json does not exist in directory: \
+                    {schema_base_file_path}."
                 logger.info(error_message)
                 module.fail_json(msg=error_message)
                 raise FileNotFoundError(error_message)
@@ -160,15 +173,19 @@ def main():
                 raise FileNotFoundError(error_message)
 
             # Validate the schema of the input file (L1)
-            schema_status = validate.schema(input_file_path, schema_file_path, passwords_set, omnia_base_dir, project_name, logger, module)
+            schema_status = validate.schema(input_file_path, schema_file_path, passwords_set, \
+                                            omnia_base_dir, project_name, logger, module)
             # Append the validation status for the input file
-            validation_status[project_name]["status"].append({input_file_path: "Passed" if schema_status else "Failed"})
+            validation_status[project_name]["status"].append(
+                {input_file_path: "Passed" if schema_status else "Failed"})
             if len(tag_names) == 0:
                 validation_status[project_name]["tag"] = ['none']
 
             vstatus.append(schema_status)
-    # Run L1 and L2 validation if user included a tag and extra var files. Or user only had tags and no extra var files.
-    if (len(tag_names) > 0 and "all" not in tag_names and len(single_files) > 0) or (len(tag_names) > 0 and len(single_files) == 0):
+    # Run L1 and L2 validation if user included a tag and extra var files.
+    # Or user only had tags and no extra var files.
+    if (len(tag_names) > 0 and "all" not in tag_names and len(single_files) > 0) or \
+        (len(tag_names) > 0 and len(single_files) == 0):
         for tag_name in tag_names:
             for name in input_file_inventory[tag_name]:
                 validation_status.update(project_data)
@@ -177,7 +194,8 @@ def main():
                 input_file_path = None
 
                 if not verify.file_exists(schema_file_path, module, logger):
-                    error_message = f"The file schema: {fname}.json does not exist in directory: {schema_base_file_path}."
+                    error_message = f"The file schema: {fname}.json does not exist in directory: \
+                        {schema_base_file_path}."
                     logger.info(error_message)
                     module.fail_json(msg=error_message)
                     raise FileNotFoundError(error_message)
@@ -194,19 +212,24 @@ def main():
                     raise FileNotFoundError(error_message)
 
                 # Validate the schema of the input file (L1)
-                schema_status = validate.schema(input_file_path, schema_file_path, passwords_set, omnia_base_dir, project_name, logger, module)
+                schema_status = validate.schema(input_file_path, schema_file_path, passwords_set, \
+                                                omnia_base_dir, project_name, logger, module)
                 # Validate the logic of the input file (L2)
-                logic_status = validate.logic(input_file_path, logger, module, omnia_base_dir, module_utils_base, project_name)
+                logic_status = validate.logic(input_file_path, logger, module, omnia_base_dir, \
+                                              module_utils_base, project_name)
 
                 # Append the validation status for the input file
-                validation_status[project_name]["status"].append({input_file_path: "Passed" if (schema_status and logic_status) else "Failed"})
+                validation_status[project_name]["status"].append({input_file_path: "Passed" \
+                    if (schema_status and logic_status) else "Failed"})
 
-                # vstatus contains boolean values. If False exists, that means validation failed and the module will result in failure
+                # vstatus contains boolean values.If False exists,
+                # that means validation failed and the module will result in failure
                 vstatus.append(schema_status)
                 vstatus.append(logic_status)
 
     if not validation_status:
-        message = "No validation has been performed. Please provide tags or include individual file names."
+        message = "No validation has been performed. \
+            Please provide tags or include individual file names."
         module.fail_json(msg=message)
     validation_status[project_name]["status"].sort(key=lambda x: list(x.values())[0])
 
@@ -216,20 +239,20 @@ def main():
     if False in vstatus:
         status = validation_status[project_name]['status']
         tag = validation_status[project_name]['tag']
-        failed_files = [file for item in status for file, result in item.items() if result == 'Failed']
-        passed_files = [file.split("/")[-1] for item in status for file, result in item.items() if result == 'Passed']
+        failed_files = [file for item in status for file, result in item.items() \
+                        if result == 'Failed']
+        passed_files = [file.split("/")[-1] for item in status for file, result in item.items() \
+                        if result == 'Passed']
         message = (
-            "Input validation failed for: %s input configuration(s). Validation passed for %s. "
-            "Tag(s) run: %s. Look at the logs for more details: filename=validation_omnia_%s.log"
-            % (failed_files, passed_files, tag, project_name)
-        )
+            f"Input validation failed for: {failed_files} input configuration(s). \
+                Validation passed for {passed_files}. "
+            f"Tag(s) run: {tag}. Look at the logs for more details: \
+                filename=validation_omnia_{project_name}.log"
+            )
         module.fail_json(msg=message)
     else:
-        message = (
-            "Input validation completed for project: %s input configs. Look at the logs for more details: filename=validation_omnia_%s.log"
-            % (validation_status, project_name)
-            + "s"
-        )
+        message = f"Input validation completed for project: {validation_status} input configs. \
+            Look at the logs for more details: filename=validation_omnia_{project_name}.logs"
         module.exit_json(msg=message)
 
 
