@@ -22,6 +22,8 @@ import ansible.module_utils.input_validation.common_utils.data_fetch as get # ty
 import ansible.module_utils.input_validation.common_utils.data_validation as validate # type: ignore
 from ansible.module_utils.input_validation.common_utils import config # type: ignore
 from ansible.module_utils.input_validation.common_utils import en_us_validation_msg # type: ignore
+from configparser import ConfigParser
+
 
 def createLogger(project_name, tag_name=None):
     """
@@ -82,12 +84,12 @@ def main():
     project_name = module.params["project_name"]
     tag_names = eval(module.params["tag_names"])
     single_files = module.params["files"]
-    # schema_base_file_path = os.path.join(os.getcwd(),'')
-    # schema_base_file_path = "./module_utils/input_validation/schema/"
-    # schema_base_file_path = '../module_utils/input_validation/schema/'
-    # schema_base_file_path = os.path.join(os.getcwd(), 'module_utils', 'input_validation', 'schema')
-    module_utils_base = module._module_utils_path
-    schema_base_file_path = os.path.join(module_utils_base,'input_validation','schema')
+    parser = ConfigParser()
+    cfg_path = os.path.join(os.getcwd(), 'ansible.cfg')
+    parser.read(cfg_path)
+    schema_base_file_path = parser.get('defaults', 'module_utils', fallback=None)
+    # module_utils_base = module._module_utils_path
+    # schema_base_file_path = os.path.join(module_utils_base,'input_validation','schema')
     directory_path = os.path.join(omnia_base_dir, project_name)
     input_file_inventory = config.input_file_inventory
     passwords_set = config.passwords_set
