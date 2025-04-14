@@ -3,7 +3,7 @@ Integrate External Nodes with Omnia Kubernetes Cluster
 
 Omnia provides you a way to integrate external nodes (with pre-installed Ubuntu OS) into an existing Omnia Kubernetes (K8s) cluster.
 
-.. note:: Currently, this feature is only supported on nodes running Ubuntu 24.04 OS.
+.. note:: This feature is currently validated only on nodes running Ubuntu 24.04 OS.
 
 Prerequisites
 --------------
@@ -38,10 +38,10 @@ Steps to Integrate External Nodes
  
    .. note:: Only IP addresses are supported in the inventory file. Ensure that these IPs align with the PXE subnet.
 
-4. Run the ``connect-external-server.yml`` playbook using the following command to connect the external servers, where ``<inventory>`` is the path to your inventory file:
+4. Run the ``connect_external_server.yml`` playbook using the following command to connect the external servers, where ``<inventory>`` is the path to your inventory file:
    ::
 	cd utils
-	ansible-playbook connect-external-server.yml -i <inventory>
+	ansible-playbook connect_external_server.yml -i <inventory>
 
 5. While execution, the playbook will prompt for the root password. Enter the root password that has been configured on all servers.
 
@@ -67,5 +67,8 @@ Steps to Integrate External Nodes
    ::
 	ansible-playbook omnia.yml -i <inventory>
 
-.. note:: A fresh Kubernetes cluster deployment does not support a mix of Omnia-provisioned nodes and external nodes with a pre-loaded OS. To build such a cluster, first deploy the Omnia-provisioned nodes by running ``omnia.yml`` with ``k8s_offline_install: true``. Once that's complete, add the pre-loaded OS nodes by re-running ``omnia.yml`` with ``k8s_offline_install: false``.
+.. note:: To build a Kubernetes cluster with a mix of Omnia-provisioned nodes and external nodes (with a pre-loaded OS), do the following:  
+   
+      1. First, deploy the Omnia-provisioned nodes by running ``omnia.yml`` with ``k8s_offline_install: true``. 
+      2. Once that's complete, add the pre-loaded OS nodes by re-running ``omnia.yml`` with ``k8s_offline_install: false``.
 
