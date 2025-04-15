@@ -19,7 +19,7 @@
     state: started
     enabled: true
 
-- name: Add Multus and Whereabouts Ports
+- name: Add Ports to Firewall for K8s
   ansible.posix.firewalld:
     port: "{{ item }}"
     state: enabled
