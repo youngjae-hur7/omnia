@@ -7,7 +7,7 @@ To upgrade the Omnia version 1.7 to version 1.7.1 on your OIM, you can use the `
 
     * Before initiating upgrade, ensure that the OIM has a stable internet connection to avoid intermittent issues caused by poor network connectivity.
     * After upgrading the Omnia OIM running on a `supported OS <../Overview/SupportMatrix/OperatingSystems/index.html>`_, the ``input/software_config.json`` file remains in its default state. This enables users to install the default software versions on a new cluster.
-    * After upgrading your OIM, ensure that the jinja2 version on the login nodes is also updated to 3.1.5. To update the jinja2 software version, run the following command: ::
+    * After upgrading your OIM, ensure that the jinja2 version on the login nodes is also updated to 3.1.6. To update the jinja2 software version, run the following command: ::
 
         pip install jinja2==3.1.6
     
