@@ -17,8 +17,18 @@
   ansible.builtin.assert:
     that:
       - network_data.admin_network.oim_nic_name | default("", true) | length > 0
+      - network_data.admin_network.netmask_bits | default("", true) | length > 0
+      - network_data.admin_network.static_range | default("", true) | length > 0
+      - network_data.admin_network.dynamic_range | default("", true) | length > 0
     success_msg: "{{ success_msg_admin_nic_details }}"
     fail_msg: "{{ fail_msg_admin_nic_details }}"
+
+- name: Validate admin network netmask bits
+  ansible.builtin.assert:
+    that:
+      - network_data.admin_network.netmask_bits | int >= 1
+      - network_data.admin_network.netmask_bits | int <= 32
+    fail_msg: "{{ fail_msg_admin_netmask_bits }}"
 
 - name: Set pxe nic static, dynamic ranges and forwarders
   ansible.builtin.set_fact:
@@ -27,6 +37,28 @@
     pxe_nic_dynamic_start_range: "{{ network_data.admin_network.dynamic_range | split('-') | first }}"
     pxe_nic_dynamic_end_range: "{{ network_data.admin_network.dynamic_range | split('-') | last }}"
     pxe_nic_forwarders: "{{ network_data.admin_network.DNS | default('', true) }}"
+
+- name: Validate if admin static ranges are valid
+  ansible.builtin.assert:
+    that:
+      - pxe_nic_start_range.split('.') | map('int') | list | length == 4
+      - pxe_nic_end_range.split('.') | map('int') | list | length == 4
+      - pxe_nic_start_range | default("", true) | ansible.utils.ipaddr
+      - pxe_nic_end_range | default("", true) | ansible.utils.ipaddr
+    success_msg: "{{ admin_params_success_msg }}"
+    fail_msg: "{{ admin_params_failure_msg }}"
+
+- name: Validate if admin dynamic ranges are valid
+  ansible.builtin.assert:
+    that:
+      - pxe_nic_dynamic_start_range | default("", true) | length > 1
+      - pxe_nic_dynamic_end_range | default("", true) | length > 1
+      - pxe_nic_dynamic_start_range.split('.') | map('int') | list | length == 4
+      - pxe_nic_dynamic_end_range.split('.') | map('int') | list | length == 4
+      - pxe_nic_dynamic_start_range | default("", true) | ansible.utils.ipaddr
+      - pxe_nic_dynamic_end_range | default("", true) | ansible.utils.ipaddr
+    success_msg: "{{ admin_params_success_msg }}"
+    fail_msg: "{{ admin_params_failure_msg }}"
 
 - name: Check Admin network static/dynamic range ip format
   ansible.builtin.assert:
