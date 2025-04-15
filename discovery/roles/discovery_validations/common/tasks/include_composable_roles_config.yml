@@ -39,16 +39,6 @@
   ansible.builtin.set_fact:
     oim_ha_groups: "{{ roles_data['oim_ha_node']['groups'] | default([]) }}"
 
-- name: Register passive OIM node mapping variable
-  ansible.builtin.set_fact:
-    oim_passive_node_mapping: false
-
-- name: Set passive node mapping variable
-  when: not groups_roles_info.get('item', {}).get('bmc_static_status', false)
-  ansible.builtin.set_fact:
-    oim_passive_node_mapping: true
-  loop: "{{ oim_ha_groups }}"
-
 - name: Display filtered group wise details
   ansible.builtin.debug:
     msg: "{{ groups_roles_info }}"

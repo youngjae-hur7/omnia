@@ -16,7 +16,7 @@ nodelist {
     name: {{ hostvars['omnia_provision']['oim_node_name'] }}
     nodeid: 1
   }
-{% if hostvars['omnia_provision']['enable_oim_ha'] and hostvars['omnia_provision']['oim_passive_node_mapping'] %}
+{% if hostvars['omnia_provision']['enable_oim_ha'] %}
 {%- for node_details in hostvars['omnia_provision']['passive_oim_nodes'].query_result %}
   node {
     ring0_addr: {{ node_details.admin_ip }}

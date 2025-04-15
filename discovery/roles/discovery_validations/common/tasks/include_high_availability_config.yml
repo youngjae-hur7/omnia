@@ -42,6 +42,11 @@
   ansible.builtin.set_fact:
     nfs_used: "{{ omnia_share_option == 'NFS' }}"
 
+- name: Fail if enable OIM is true, but NFS is not configured
+  when: enable_oim_ha and not nfs_used
+  ansible.builtin.fail:
+    msg: "{{ nfs_not_configured }}"
+
 - name: Get OIM node name
   ansible.builtin.command: hostname -s
   register: oim_node_name
