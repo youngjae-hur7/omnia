@@ -29,17 +29,17 @@
     groups_roles_info: "{{ verify_switch_status.groups_roles_info }}"
     invalid_switch_groups: "{{ verify_switch_status.invalid_switch_groups }}"
 
+- name: Display verified switch groups details
+  ansible.builtin.debug:
+    var: verified_switch_groups
+  when: verified_switch_groups | length > 0
+
 - name: Warning for unreachable switches
   when: unreachable_switch_ip_groups | length > 0
   block:
     - name: Display warning if there are unreachable switches
       ansible.builtin.debug:
         msg: "{{ switch_unreachable_message }}"
-
-    - name: Warning for unreachable switches
-      ansible.builtin.pause:
-        seconds: "{{ warning_wait_time }}"
-        prompt: "{{ warning_switch_unreachable_message }}"
 
 - name: Warning for invalid bmc details static_range for switch_based
   when: invalid_switch_groups | length > 0
@@ -48,19 +48,9 @@
       ansible.builtin.debug:
         msg: "{{ invalid_bmc_static_range_message }}"
 
-    - name: Warning for invalid bmc details static_range switches
-      ansible.builtin.pause:
-        seconds: "{{ warning_wait_time }}"
-        prompt: "{{ warning_invalid_bmc_static_range_message }}"
-
-- name: Show verified switch groups for which switch_based discovery will be applied further
-  ansible.builtin.debug:
-    var: verified_switch_groups
-  when: verified_switch_groups | length > 0
-
-- name: Warning none of groups have reachable switch ip
-  when: verified_switch_groups | length == 0
-  block:
-    - name: Switch based discovery will be skipped
-      ansible.builtin.debug:
-        msg: "{{ switch_based_skip_msg }}"
+- name: Fail switch based discovery when no verified switch based groups founds
+  ansible.builtin.fail:
+    msg: "{{ switch_based_failed_msg }}"        
+  when:
+    - invalid_switch_groups | length > 0
+    - unreachable_switch_ip_groups | length > 0

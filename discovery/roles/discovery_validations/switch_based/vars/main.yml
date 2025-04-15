@@ -20,15 +20,12 @@ switch_unreachable_message: |
   {% for group, details in unreachable_switch_ip_groups.items() %}
     - Group: {{ group }}, IP: {{ details.switch_details.ip }}
   {% endfor %}
-warning_switch_unreachable_message: |
-  Nodes associated with unreachable switch groups will not be provisioned.
-  Please update the switch details in input/roles_config.yml and rerun the discovery_provision.yml playbook.
-switch_based_skip_msg: "None of groups have reachable switch ip, so switch based discovery will be skipped"
+switch_based_failed_msg: |
+  "One or more groups have unreachable switch IPs or invalid BMC static_range values.
+  Make sure that bmc static_range details provided belongs to lom setup
+  Please verify that the inputs in 'input/roles_config.yml' are correct, and re-run the playbook after updating the input file."
 invalid_bmc_static_range_message: |
-  [Warning] Could not find bmc_ip for given groups bmc static_range details :
+  [Warning] Given bmc static_range details for particular groups are not configured:
   {% for group, details in invalid_switch_groups.items() %}
     - Group: {{ group }}, Range: {{ details.bmc_details.static_range }}
   {% endfor %}
-warning_invalid_bmc_static_range_message: |
-  Nodes associated with invalid bmc details static_range switch groups will not be provisioned.
-  Please update the bmc details static_range in input/roles_config.yml and rerun the discovery_provision.yml playbook.

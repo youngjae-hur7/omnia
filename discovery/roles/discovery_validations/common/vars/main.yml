@@ -51,8 +51,15 @@ spec_syntax_fail_msg: "Failed. Syntax errors present in either network_spec.yml 
 high_availability_config_path: "{{ hostvars['localhost']['input_project_dir'] }}/high_availability_config.yml"
 high_availability_config_syntax_fail_msg: "Failed. Syntax errors present in high_availability_config.yml. Fix errors and re-run playbook again."
 
-# Usage: fetch_composable_roles_config.yml
+# Usage: include_composable_roles_config.yml
 omnia_metadata_file: "/opt/omnia/.data/oim_metadata.yml"
+invalid_share_option_msg: |
+  [ERROR] Invalid value \"{{ omnia_share_option }}\" provided for 'omnia_share_option'.
+  For hierarchical-based discovery and provisioning, this must be set to \"NFS\".
+  Please rerun 'omnia_startup.sh' with the correct value:
+    omnia_share_option: \"NFS\"
+  to continue with hierarchical-based discovery and provisioning.
+
 
 # Usage: include_local_repo_config.yml
 local_repo_config_file: "{{ hostvars['localhost']['input_project_dir'] }}/local_repo_config.yml"
