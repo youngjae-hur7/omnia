@@ -17,8 +17,6 @@
 from ansible.module_utils.basic import AnsibleModule
 import json
 import re
-import os
-from configparser import ConfigParser
 
 def load_rules(file_path):
     """Loads validation rules from a JSON file."""
@@ -40,15 +38,10 @@ def validate_input(field, value, rules):
 
 def main():
     """Main module function."""
-    parser = ConfigParser()
-    cfg_path = os.path.join(os.getcwd(), 'ansible.cfg')
-    parser.read(cfg_path)
-    module_utils_base = parser.get('defaults', 'module_utils', fallback=None)
-    credentials_schema = os.path.join(module_utils_base,'input_validation','schema','credential_rules.json')
     module_args = dict(
         credential_field=dict(type="str", required=True),
         credential_input=dict(type="str", required=True),
-        rules_file=dict(type="str", required=False, default=credentials_schema)
+        rules_file=dict(type="str", required=False, default="../../input_validation/module_utils/schema/credential_rules.json")
     )
 
     module = AnsibleModule(argument_spec=module_args, supports_check_mode=True)
