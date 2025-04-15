@@ -17,8 +17,8 @@
   ansible.builtin.set_fact:
     omnia_oim_status: false
 
-- name: Fetch nodes with group oim_ha
-  ansible.builtin.command: "{{ xcat_path }}/lsdef oim_ha"
+- name: Fetch nodes with group oim_ha_node
+  ansible.builtin.command: "{{ xcat_path }}/lsdef oim_ha_node"
   changed_when: false
   register: check_omnia_oim
   failed_when: false
