@@ -26,7 +26,3 @@
 - name: Debug network update message for groups names
   ansible.builtin.debug:
     var: msg
-
-- name: Debug group_roles_info for which switch_based discovery will be applied
-  ansible.builtin.debug:
-    var: groups_roles_info
