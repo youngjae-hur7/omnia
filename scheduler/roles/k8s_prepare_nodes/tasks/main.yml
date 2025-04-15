@@ -16,6 +16,9 @@
 - name: Perform nerdctl login
   when: hostvars['127.0.0.1']['k8s_support']
   block:
+    - name: Add ports to firewall
+      ansible.builtin.include_tasks: add_firewall_ports.yml
+
     - name: Copy docker login file
       ansible.builtin.include_tasks: docker_login.yml
 
