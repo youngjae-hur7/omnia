@@ -16,28 +16,17 @@
   switch_bmc_network_update:
     groups_roles_info: "{{ groups_roles_info }}"
     oim_nic_name: "{{ pxe_nic }}"
-  register: switch_bmc_ip_status  
+  register: switch_bmc_ip_status
 
 - name: Set fact for invalid switch grp bmc details
   ansible.builtin.set_fact:
     groups_roles_info: "{{ switch_bmc_ip_status.updated_groups_roles_info }}"
     msg: "{{ switch_bmc_ip_status.msg }}"
 
-- name: Debug network update message
+- name: Debug network update message for groups names
   ansible.builtin.debug:
     var: msg
 
-# - name: Debug invalid switch grp details
-#   ansible.builtin.debug:
-#     msg: "Invalid switch details for bmc ip {{ invalid_switch_groups }}"
-#   when: invalid_switch_groups | length > 0
-
-- name: Debug group_roles_info after updating the tabdump 
+- name: Debug group_roles_info for which switch_based discovery will be applied
   ansible.builtin.debug:
     var: groups_roles_info
-
-# - name: Warning for invalid switch group bmc_static details
-#   ansible.builtin.pause:
-#     seconds: "{{ warning_wait_time }}"
-#     prompt: "{{ warning_invalid_switch_group }}"
-#   when: invalid_switch_groups | length > 0
