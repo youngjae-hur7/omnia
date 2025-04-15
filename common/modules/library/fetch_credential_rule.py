@@ -14,8 +14,6 @@
 
 #!/usr/bin/python
 
-"""This module is used to fetch credential rules."""
-
 import json
 import os
 from configparser import ConfigParser
@@ -41,8 +39,7 @@ def main():
     cfg_path = os.path.join(os.getcwd(), 'ansible.cfg')
     parser.read(cfg_path)
     module_utils_base = parser.get('defaults', 'module_utils', fallback=None)
-    credentials_schema = os.path.join(module_utils_base,\
-                                      'input_validation','schema','credential_rules.json')
+    credentials_schema = os.path.join(module_utils_base,'input_validation','schema','credential_rules.json')
     module_args = dict(
         credential_field=dict(type="str", required=True),
         rules_file=dict(type="str", required=False, default=credentials_schema)
