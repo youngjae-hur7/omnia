@@ -14,9 +14,15 @@
 
 #!/usr/bin/python
 
-from ansible.module_utils.basic import AnsibleModule
+""" This module is used to validate credentials"""
+
 import json
+import os
 import re
+from configparser import ConfigParser
+
+from ansible.module_utils.basic import AnsibleModule
+
 
 def load_rules(file_path):
     """Loads validation rules from a JSON file."""
@@ -29,8 +35,9 @@ def validate_input(field, value, rules):
         return (False, f"Validation rules not found for '{field}'")
 
     rule = rules[field]
-    if not (rule["minLength"] <= len(value) <= rule["maxLength"]):
-        return (False, f"'{field}' length must be between {rule['minLength']} and {rule['maxLength']} characters")
+    if not rule["minLength"] <= len(value) <= rule["maxLength"]:
+        return (False, f"'{field}' length must be between {rule['minLength']} and \
+                {rule['maxLength']} characters")
 
     if "pattern" in rule and not re.match(rule["pattern"], value):
         return (False, f"'{field}' format is invalid. Expected pattern: {rule['pattern']}")
@@ -38,10 +45,16 @@ def validate_input(field, value, rules):
 
 def main():
     """Main module function."""
+    parser = ConfigParser()
+    cfg_path = os.path.join(os.getcwd(), 'ansible.cfg')
+    parser.read(cfg_path)
+    module_utils_base = parser.get('defaults', 'module_utils', fallback=None)
+    credentials_schema = os.path.join(module_utils_base,'input_validation','schema',\
+                                      'credential_rules.json')
     module_args = dict(
         credential_field=dict(type="str", required=True),
         credential_input=dict(type="str", required=True),
-        rules_file=dict(type="str", required=False, default="../../input_validation/module_utils/schema/credential_rules.json")
+        rules_file=dict(type="str", required=False, default=credentials_schema)
     )
 
     module = AnsibleModule(argument_spec=module_args, supports_check_mode=True)
@@ -50,11 +63,12 @@ def main():
     # Load validation rules
     try:
         rules = load_rules(params["rules_file"])
-    except Exception as e:
+    except ValueError as e:
         module.fail_json(msg=f"Failed to load rules: {e}")
 
     # Validate credential
-    credential_valid, credential_msg = validate_input(params["credential_field"], params["credential_input"], rules)
+    credential_valid, credential_msg = validate_input(params["credential_field"], \
+                                                      params["credential_input"], rules)
 
     if credential_valid:
         module.exit_json(changed=False, msg=f"{credential_msg}")
