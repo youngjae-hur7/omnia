@@ -14,28 +14,6 @@
 
 ---
 
-- name: Validate high availability configuration
-  block:
-    - name: Run high availability configuration schema validation
-      ansible.builtin.command:
-        cmd: "ansible-playbook validate_config.yml --extra-vars 'files=high_availability_config.yml'"
-      args:
-        chdir: "/opt/omnia/input_validation"
-      register: validation_result
-      changed_when: false
-      delegate_to: localhost
-      failed_when: validation_result.rc != 0
-      no_log: true
-
-    - name: Show validation success
-      ansible.builtin.debug:
-        msg: "high availability configuration validation successful"
-      when: validation_result.rc == 0
-  rescue:
-    - name: High availability configuration input validation failed
-      ansible.builtin.fail:
-        msg: "{{ validation_result.stdout | regex_search('FAILED! => {[^}]+}') }}"
-
 - name: Include high_availability_config.yml
   block:
     - name: Include high_availability_config.yml
@@ -55,22 +33,6 @@
 - name: Set high_availability_status
   ansible.builtin.set_fact:
     enable_oim_ha: "{{ high_availability_config.ansible_facts.oim_ha.enable_oim_ha | default(false) }}"
-
-- name: Include metadata vars
-  ansible.builtin.include_vars: "{{ omnia_metadata_file }}"
-  register: include_metadata
-  no_log: true
-
-- name: Set omnia_share_option from metadata
-  ansible.builtin.set_fact:
-    omnia_share_option: "{{ include_metadata.ansible_facts.omnia_share_option }}"
-
-- name: Validate NFS requirement for HA
-  ansible.builtin.fail:
-    msg: "NFS share is required for OIM High Availability. Current share option is: {{ omnia_share_option }}"
-  when:
-    - enable_oim_ha | bool
-    - omnia_share_option != "NFS"
 
 - name: Set vip_status
   ansible.builtin.set_fact:

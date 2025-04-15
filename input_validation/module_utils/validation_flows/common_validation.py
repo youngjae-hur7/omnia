@@ -137,18 +137,10 @@ def validate_high_availability_config(input_file_path, data, logger, module, omn
 
             # Special handling for OIM HA
             if config_type == "oim_ha":
-                # Validate NFS share
-                if 'nfs_share' in ha_data:
-                    nfs_data = ha_data['nfs_share'][0] if isinstance(ha_data['nfs_share'], list) else ha_data['nfs_share']
-                    check_mandatory_fields(["server_ip", "server_share_path"], nfs_data, errors)
-
-                # Validate passive nodes with detailed node information
+                # Validate passive nodes with node_service_tags
                 if 'passive_nodes' in ha_data:
-                    node_details_fields = ["SERVICE_TAG", "HOSTNAME", "ADMIN_MAC", "ADMIN_IP", "BMC_IP"]
                     for node in ha_data['passive_nodes']:
-                        if 'node_details' in node:
-                            for detail in node['node_details']:
-                                check_mandatory_fields(node_details_fields, detail, errors)
+                        check_mandatory_fields(["node_service_tags"], node, errors)
             # Standard passive nodes validation for other HA types
             elif 'passive_nodes' in ha_data:
                 for passive_node in ha_data['passive_nodes']:
@@ -159,7 +151,7 @@ def validate_high_availability_config(input_file_path, data, logger, module, omn
             errors.append(f"Missing key in HA data: {e}")
 
     ha_configs = [
-        ("oim_ha", ["virtual_ip_address", "active_node_service_tag", "passive_nodes", "nfs_share"]),
+        ("oim_ha", ["virtual_ip_address", "active_node_service_tag", "passive_nodes"]),
         ("service_node_ha", ["service_nodes"]),
         ("slurm_head_node_ha", ["virtual_ip_address", "active_node_service_tags", "passive_nodes"]),
         ("k8s_head_node_ha", ["virtual_ip_address", "active_node_service_tags"])

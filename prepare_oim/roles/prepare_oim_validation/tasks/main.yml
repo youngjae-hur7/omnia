@@ -25,8 +25,5 @@
 - name: Validate high availability config
   ansible.builtin.include_tasks: validate_high_availability.yml
 
-- name: Validate roles config
-  ansible.builtin.include_tasks: validate_roles_config.yml
-
 - name: Check k8s support
   ansible.builtin.include_tasks: check_k8s_support.yml
