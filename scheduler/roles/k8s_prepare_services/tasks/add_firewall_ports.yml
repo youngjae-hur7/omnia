@@ -26,4 +26,3 @@
     state: enabled
     permanent: true
   loop: "{{ firewall_services }}"
-
