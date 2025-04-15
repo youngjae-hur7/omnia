@@ -12,7 +12,9 @@
 
 #### Ansible playbook-based deployment of Slurm and Kubernetes on servers running an RPM-based Linux OS
 
-Omnia (Latin: all or everything) is a deployment tool to turn servers with RPM-based Linux images into functioning Slurm/Kubernetes clusters.
+Omnia is an open-source deployment toolkit that helps customers efficiently manage compute servers, storage, and networking within complex environments.
+ 
+Omnia utilizes Ansible playbook-based deployment to automate OS provisioning, driver installation and configuration, deployment of schedulers like Slurm and Kubernetes, as well as optimization libraries, machine learning frameworks/platforms, and AI models.
 
 
 ## Omnia Documentation

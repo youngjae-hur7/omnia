@@ -10,7 +10,7 @@ Omnia: Everything at once!
 
 Ansible playbook-based deployment of Slurm and Kubernetes on servers running on Linux OS.
 
-Omnia is an Open Source deployment toolkit that helps customers efficiently manage compute servers, storage, and networking within complex environments.
+Omnia is an open-source deployment toolkit that helps customers efficiently manage compute servers, storage, and networking within complex environments.
  
 Omnia utilizes Ansible playbook-based deployment to automate OS provisioning, driver installation and configuration, deployment of schedulers like Slurm and Kubernetes, as well as optimization libraries, machine learning frameworks/platforms, and AI models.
 
