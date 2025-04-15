@@ -11,3 +11,4 @@ GPUs a.k.a. Accelerators
     | Intel          | Gaudi 3                                                     | Gaudi 3                                        |
     +----------------+-------------------------------------------------------------+------------------------------------------------+
 
+.. note:: Intel Gaudi 3 accelerators are not supported on RHEL and Rocky OS clusters.

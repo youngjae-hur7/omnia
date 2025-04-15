@@ -8,11 +8,13 @@ Omnia: Everything at once!
 
 |Omnia version| |Downloads| |Last Commit| |Contributors| |Forks| |License|
 
-Ansible playbook-based deployment of Slurm and Kubernetes on servers running an RPM or DEB-based Linux OS.
+Ansible playbook-based deployment of Slurm and Kubernetes on servers running on Linux OS.
 
-The Omnia software stack from Dell Technologies aims to provide an open-source solution to manage compute servers, storage, and networking within complex environments.
+Omnia is an open-source deployment toolkit that helps customers efficiently manage compute servers, storage, and networking within complex environments.
+ 
+Omnia utilizes Ansible playbook-based deployment to automate OS provisioning, driver installation and configuration, deployment of schedulers like Slurm and Kubernetes, as well as optimization libraries, machine learning frameworks/platforms, and AI models.
 
-**Omnia** is an open source project hosted on `GitHub <https://github.com/dell/omnia>`_. Go to `GitHub <https://github.com/dell/omnia>`_ to view the source, open issues, ask questions, and participate in the project.
+**Omnia** is hosted an open source project on `GitHub <https://github.com/dell/omnia>`_. Go to `GitHub <https://github.com/dell/omnia>`_ to view the source, open issues, ask questions, and participate in the project.
 
 **Licensing**
 
