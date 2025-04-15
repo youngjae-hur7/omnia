@@ -41,6 +41,7 @@ dellemc.os10,GNU-General Public License v3.0,It provides networking hardware abs
 dellemc.openmanage,GNU-General Public License v3.0,"It is a systems management and monitoring application that provides a comprehensive view of the Dell EMC servers, chassis, storage, and network switches on the enterprise network",9.6.0
 kubernetes.core,GNU-General Public License v3.0,"The collection includes a variety of Ansible content to help automate the management of applications in Kubernetes and OpenShift clusters, as well as the provisioning and maintenance of clusters themselves.",5.0.0
 rocm,MIT license,AMD ROCm™ Software,6.3.1
+rccl,MIT License,The ROCm Communication Collectives Library (RCCL) is a stand-alone library that provides multi-GPU and multi-node collective communication primitives optimized for AMD GPUs. It uses PCIe and xGMI high-speed interconnects.,2.21.5
 beegfs,BeeGFS (formerly known as FhGFS) END USER LICENSE,Public repository for the BeeGFS Parallel File System,7.4.5
 Beegfs-Client,GPLv2,"BeeGFS is a parallel file system, developed and optimized for high-performance computing.",7.4.5
 CUDA toolkit,NVIDIA Software License,"The NVIDIA® CUDA® Toolkit provides a development environment for creating high-performance, GPU-accelerated applications.",12.8
@@ -109,8 +110,10 @@ Tensorflow NVIDIA,Apache-2.0 license,An Open Source Machine Learning Framework f
 Kustomize,Apache License 2.0,Customization of kubernetes YAML configurations,5.4.3
 nfs-subdir-external-provisioner,Apache License 2.0,Dynamic sub-dir volume provisioner on a remote NFS server.,4.0.18
 habana-container-runtime,Apache License 2.0,Habana container runtime,1.19.2
+hccl,Habana Outbound Software License Agreement,The Habana Collective Communications Library (HCCL) is Intel® Gaudi®’s emulation layer of the NVIDIA Collective Communication Library (NCCL) and is included in the Intel Gaudi software suite.,1.19.2
 nvidia-container-toolkit,Apache License 2.0,NVIDIA container runtime library,1.17.5
 helm-charts,Apache-2.0 license,The source for Dell Helm charts.,csi-isilon-2.13.0
 csi-powerscale driver,Apache-2.0 license,CSI Driver for Dell PowerScale,2.13.0
 external-snapshotter,Apache-2.0 license,Sidecar container that watches Kubernetes Snapshot CRD objects and triggers CreateSnapshot/DeleteSnapshot against a CSI endpoint.,8.0.1
 NVIDIA GPU operator,NVIDIA Agreements | Enterprise Software | Product Specific Terms for AI Product,The NVIDIA GPU Operator uses the operator framework within Kubernetes to automate the management of all NVIDIA software components needed to provision GPU,25.3.0
+nccl,Apache-2.0 license,"The NVIDIA Collective Communication Library (NCCL) implements multi-GPU and multi-node communication primitives optimized for NVIDIA GPUs and Networking. NCCL provides routines such as all-gather, all-reduce, broadcast, reduce, reduce-scatter as well as point-to-point send and receive that are optimized to achieve high bandwidth and low latency over PCIe and NVLink high-speed interconnects within a node and over NVIDIA Mellanox Network across nodes.",2.25.1

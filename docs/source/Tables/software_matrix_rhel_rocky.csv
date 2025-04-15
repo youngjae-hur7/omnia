@@ -42,6 +42,7 @@ dellemc.os10,GNU-General Public License v3.0,It provides networking hardware abs
 dellemc.openmanage,GNU-General Public License v3.0,"It is a systems management and monitoring application that provides a comprehensive view of the Dell EMC servers, chassis, storage, and network switches on the enterprise network",9.6.0
 kubernetes.core,GNU-General Public License v3.0,"The collection includes a variety of Ansible content to help automate the management of applications in Kubernetes and OpenShift clusters, as well as the provisioning and maintenance of clusters themselves.",5.0.0
 rocm,MIT license,AMD ROCm™ Software,6.3.1
+rccl,MIT License,The ROCm Communication Collectives Library (RCCL) is a stand-alone library that provides multi-GPU and multi-node collective communication primitives optimized for AMD GPUs. It uses PCIe and xGMI high-speed interconnects.,2.21.5
 beeGFS,BeeGFS (formerly known as FhGFS) END USER LICENSE,Public repository for the BeeGFS Parallel File System,7.4.5
 beeGFS-Client,GPLv2,"BeeGFS is a parallel file system, developed and optimized for high-performance computing.",7.4.5
 CUDA toolkit,NVIDIA Software License,"The NVIDIA® CUDA® Toolkit provides a development environment for creating high-performance, GPU-accelerated applications.",12.8
