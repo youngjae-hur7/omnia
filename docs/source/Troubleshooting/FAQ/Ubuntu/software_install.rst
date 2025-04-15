@@ -8,8 +8,8 @@ Software package installation
 **Resolution**: To ensure the correct package is installed, set a higher priority for the user-repository by creating a preference file. Use the template below to create a ``customrepo.pref`` file. Once created, place it in the ``/etc/apt/preferences.d/`` directory on the OIM node.
 
 **Template**:
-
-::
-    Package: <package name>
-    Pin: origin <user repo URL>
-    Pin-Priority: "650"
+  
+  ::
+     Package: <package name>
+     Pin: origin <user repo URL>
+     Pin-Priority: "650"
