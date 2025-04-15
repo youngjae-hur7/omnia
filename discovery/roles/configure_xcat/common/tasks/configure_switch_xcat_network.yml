@@ -21,4 +21,4 @@
 
 - name: Debug network update message for groups names
   ansible.builtin.debug:
-    var: msg
+    var: switch_bmc_ip_status.msg

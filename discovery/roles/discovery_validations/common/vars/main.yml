@@ -56,7 +56,7 @@ omnia_metadata_file: "/opt/omnia/.data/oim_metadata.yml"
 invalid_share_option_msg: |
   [ERROR] Invalid value \"{{ omnia_share_option }}\" provided for omnia share path type.
   For hierarchical-based discovery and provisioning, this must be set to \"NFS\".
-  Please rerun 'omnia_startup.sh' with the correct omnia share path type as \"NFS\"
+  Please rerun 'omnia_startup.sh' and enter correct omnia share path type as \"NFS\"
   to continue with hierarchical-based discovery and provisioning.
 
 # Usage: include_local_repo_config.yml
