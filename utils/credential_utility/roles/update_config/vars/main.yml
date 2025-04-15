@@ -43,19 +43,19 @@ omnia_credentials:
         - bmc_password
         - switch_snmp3_password
   prepare_oim:
-    mandatory:
-      password:
-        - postgresdb_password
-        - pulp_password
     optional:
       username:
         - docker_username
+    mandatory:
       password:
         - docker_password
+        - postgresdb_password
+        - pulp_password
   local_repo:
     optional:
       username:
         - docker_username
+    mandatory:
       password:
         - docker_password
   slurm:
