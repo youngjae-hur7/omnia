@@ -318,11 +318,14 @@ def generate_inventory_for_node(node_info_db: tuple) -> None:
        roles_list = roles_name.strip().split(",")
        for group in roles_list:
            group = group.strip()
-           if group in existing_inventory:
-                existing_inventory += f"{hostname}\n"
-           elif group not in existing_inventory:
-                existing_inventory += f"\n[{group}]\n"
-                existing_inventory += f"{hostname}\n"
+           if 'default' in group:
+                continue
+           else:
+                if group in existing_inventory:
+                    existing_inventory += f"{hostname}\n"
+                elif group not in existing_inventory:
+                    existing_inventory += f"\n[{group}]\n"
+                    existing_inventory += f"{hostname}\n"
 
         # Write the updated inventory back to the file
        with open(omnia_inventory_file, 'w') as file:
