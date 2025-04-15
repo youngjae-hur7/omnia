@@ -38,11 +38,11 @@
   when:
     - jinja2_info.stdout is defined
 
-- name: Install jinja2 version 3.1.5 if needed
+- name: Install jinja2 version 3.1.6 if needed
   ansible.builtin.pip:
-    name: jinja2==3.1.5
+    name: jinja2==3.1.6
   when:
-    - jinja2_version is not defined or (jinja2_version < '3.1.5')
+    - jinja2_version is not defined or (jinja2_version < '3.1.6')
 
 - name: Create telemetry binary with upgrad version
   ansible.builtin.include_role:
