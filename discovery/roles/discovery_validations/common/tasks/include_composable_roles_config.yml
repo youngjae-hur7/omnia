@@ -13,11 +13,6 @@
 #  limitations under the License.
 ---
 
-- name: Include metadata vars
-  ansible.builtin.include_vars: "{{ omnia_metadata_file }}"
-  register: include_metadata
-  no_log: true
-
 - name: Set Facts for composable roles data
   ansible.builtin.set_fact:
     composable_roles_output: "{{ hostvars['localhost']['composable_roles_output'] }}"
@@ -43,6 +38,13 @@
 - name: Set fact for service role required
   ansible.builtin.set_fact:
     service_role_required: "{{ 'true' if 'service' in roles_groups_data else 'false' }}"
+
+- name: Get the group(s) for OIM HA
+  when:
+    - "'oim_ha_node' in roles_data"
+    - enable_oim_ha | default(False)
+  ansible.builtin.set_fact:
+    oim_ha_groups: "{{ roles_data['oim_ha_node']['groups'] | default([]) }}"
 
 - name: Display filtered group wise details
   ansible.builtin.debug:

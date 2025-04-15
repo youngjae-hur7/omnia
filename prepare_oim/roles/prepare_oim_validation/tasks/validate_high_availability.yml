@@ -34,6 +34,15 @@
   ansible.builtin.set_fact:
     enable_oim_ha: "{{ high_availability_config.ansible_facts.oim_ha.enable_oim_ha | default(false) }}"
 
+- name: Register NFS Check
+  ansible.builtin.set_fact:
+    nfs_used: "{{ omnia_share_option == 'NFS' }}"
+
+- name: Fail if enable OIM is true, but NFS is not configured
+  when: enable_oim_ha and not nfs_used
+  ansible.builtin.fail:
+    msg: "{{ nfs_not_configured }}"
+
 - name: Set vip_status
   ansible.builtin.set_fact:
     vip_status: >-
