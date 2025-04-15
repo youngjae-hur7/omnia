@@ -32,15 +32,14 @@
     - name: Create bmc passwd in xcat passwd table
       ansible.builtin.include_tasks: configure_xcat_passwd.yml
 
+    - name: Update networks table
+      ansible.builtin.include_tasks: update_xcat_network.yml
+      when: bmc_details_status
+
     - name: Update networks table for switch discovery
       ansible.builtin.include_tasks: configure_switch_xcat_network.yml
       when:
         - switch_status | default(false)
-        - not bmc_details_status
-
-    - name: Update networks table
-      ansible.builtin.include_tasks: update_xcat_network.yml
-      when: bmc_details_status
 
     - name: Create xcat osimage
       ansible.builtin.include_tasks: create_osimage.yml

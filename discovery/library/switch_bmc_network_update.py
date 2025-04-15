@@ -78,8 +78,7 @@ def main():
  
     module.exit_json(
         changed=True,
-        msg = msg,
-        updated_groups_roles_info=groups_roles_info
+        msg = msg
     )
 
 if __name__ == '__main__':

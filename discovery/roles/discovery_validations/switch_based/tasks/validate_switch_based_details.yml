@@ -50,6 +50,6 @@
 
 - name: Fail switch based discovery when no verified switch based groups founds
   ansible.builtin.fail:
-    msg: "{{ switch_based_failed_msg }}"        
+    msg: "{{ switch_based_failed_msg }}"
   when:
     - invalid_switch_groups | length > 0 or unreachable_switch_ip_groups | length > 0
