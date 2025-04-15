@@ -147,7 +147,7 @@ if [[ -n $thor_check ]] then
         echo "Executing depmod -a"
         sudo depmod -a
         echo "Executing update-initramfs"
-        sudo update-initramfs -u -k `uname -r`
+        sudo update-initramfs -u 
 
         echo -e "\n\n=================== Checking and updating /etc/security/limit.conf file=================== \n\n"
 
