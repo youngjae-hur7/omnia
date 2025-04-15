@@ -54,12 +54,11 @@ high_availability_config_syntax_fail_msg: "Failed. Syntax errors present in high
 # Usage: include_composable_roles_config.yml
 omnia_metadata_file: "/opt/omnia/.data/oim_metadata.yml"
 invalid_share_option_msg: |
-  [ERROR] Invalid value \"{{ omnia_share_option }}\" provided for 'omnia_share_option'.
+  [ERROR] Invalid value \"{{ omnia_share_option }}\" provided for omnia share path type.
   For hierarchical-based discovery and provisioning, this must be set to \"NFS\".
   Please rerun 'omnia_startup.sh' with the correct value:
     omnia_share_option: \"NFS\"
   to continue with hierarchical-based discovery and provisioning.
-
 
 # Usage: include_local_repo_config.yml
 local_repo_config_file: "{{ hostvars['localhost']['input_project_dir'] }}/local_repo_config.yml"

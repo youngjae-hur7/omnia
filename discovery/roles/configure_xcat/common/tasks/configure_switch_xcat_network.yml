@@ -11,17 +11,13 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+---
 
 - name: Configure bmc_details networks for switch_based
   switch_bmc_network_update:
     groups_roles_info: "{{ groups_roles_info }}"
     oim_nic_name: "{{ pxe_nic }}"
   register: switch_bmc_ip_status
-
-- name: Set fact for invalid switch grp bmc details
-  ansible.builtin.set_fact:
-    groups_roles_info: "{{ switch_bmc_ip_status.updated_groups_roles_info }}"
-    msg: "{{ switch_bmc_ip_status.msg }}"
 
 - name: Debug network update message for groups names
   ansible.builtin.debug:
