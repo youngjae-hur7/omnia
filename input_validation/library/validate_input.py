@@ -337,12 +337,15 @@ def main():
         except jsonschema.exceptions.SchemaError as se:
             message = f"Internal schema validation error: {se.message}"
             logger.error(message)
+            return False
         except ValueError as ve:
             message = f"Value error: {ve}"
             logger.error(message)
+            return False
         except Exception as e:
             message = f"An unexpected error occurred: {e}"
             logger.error(message)
+            return False
 
     # Code to run the L2 validation validate_input_logic function.
     def validate_logic(input_file_path, logger, module, omnia_base_dir, project_name):

@@ -51,16 +51,20 @@
   ansible.builtin.include_tasks: _create_db.yml
   when: new_install
 
-- name: Add db user - shortname
+- name: Add db users
   community.mysql.mysql_user:
     login_user: "{{ slurm_db_username }}"
     login_password: "{{ slurm_db_password }}"
     name: "{{ slurm_dbd_db_username }}"
     password: "{{ slurm_db_password }}"
-    host: "{{ hostvars[groups['slurm_dbd'][0]]['ansible_nodename'] | split('.') | first }}"
+    host: "{{ item }}"
     priv: "{{ slurm_dbd_conf_dict['StorageLoc'] }}.*:ALL,GRANT"
     login_unix_socket: "{{ slurm_db_login_unix_socket }}"
     state: present
+  loop:
+    - "{{ hostvars[groups['slurm_dbd'][0]]['ansible_nodename'] | split('.') | first }}"
+    - "{{ hostvars[groups['slurm_dbd'][0]]['ansible_nodename'] }}"
+    - "{{ hostvars[groups['slurm_dbd'][0]]['ansible_default_ipv4']['address'] }}"
   notify:
     - Restart slurmctld
     - Restart slurmdbd

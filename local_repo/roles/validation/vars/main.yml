@@ -23,6 +23,7 @@ var_mount_overuse_msg: |
   This could result in failures when downloading large packages or images.
 
   For OMNIA disk spaces requirements follow : https://omnia-doc.readthedocs.io/en/latest
+user_repo_cert_dir: "{{ nfs_shared_path }}/user_repo_certs"
 
 # Usage: prerequisites_redhat.yml, prerequisites_ubuntu.yml
 max_retries: 10

@@ -18,24 +18,15 @@ from ansible.module_utils.standard_logger import setup_standard_logger
 from ansible.module_utils.parse_and_download import execute_command,write_status_to_file
 import json
 import multiprocessing
+from ansible.module_utils.config import (
+    pulp_container_commands
+)
+
+
 # Global lock for synchronizing `create_container_remote`
 remote_creation_lock = multiprocessing.Lock()
 repository_creation_lock = multiprocessing.Lock()
 
-pulp_container_commands = {
-    "create_container_repo": "pulp container repository create --name %s",
-    "show_container_repo": "pulp container repository show --name %s",
-    "create_container_remote": "pulp container remote create --name %s --url %s --upstream-name %s --policy %s --include-tags '[\"%s\"]'",
-    "create_container_remote_for_digest": "pulp container remote create --name %s --url %s --upstream-name %s --policy %s",
-    "update_remote_for_digest": "pulp container remote update --name %s --url %s --upstream-name %s --policy %s",
-    "update_container_remote": "pulp container remote update --name %s --url %s --upstream-name %s --policy %s --include-tags '%s'",
-    "show_container_remote": "pulp container remote show --name %s",
-    "show_container_distribution": "pulp container distribution show --name %s",
-    "sync_container_repository": "pulp container repository sync --name %s --remote %s",
-    "distribute_container_repository": "pulp container distribution create --name %s --repository %s --base-path %s",
-    "update_container_distribution": "pulp container distribution update --name %s --repository %s --base-path %s",
-    "list_container_remote_tags": "pulp container remote list --name %s --field include_tags"
-}
 
 def create_container_repository(repo_name,logger):
     """
@@ -332,3 +323,4 @@ def process_image(package, repo_store_path, status_file_path, cluster_os_type, c
         write_status_to_file(status_file_path, package_identifier, package['type'], status, logger)
         logger.info("#" * 30 + f" {process_image.__name__} end " + "#" * 30)
         return status
+
