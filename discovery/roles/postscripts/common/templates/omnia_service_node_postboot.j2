@@ -1,0 +1,25 @@
+#!/bin/bash
+################################################################################################################
+#  omnia_service_node_postboot:
+#      Configure Omnia's service nodes
+#
+#################################################################################################################
+# Define log file
+LOGFILE="/var/log/omnia/service_node.log"
+
+echo "--------------------------" >> "$LOGFILE"
+echo "$(date) - INFO - Starting Omnia Service node postboot configuration" >> "$LOGFILE"
+
+# Get node serial
+nodeid=$(dmidecode -s system-serial-number)
+echo "[DEBUG] Current node serial: $nodeid" >> "$LOGFILE"
+
+ln -sf {{ oim_shared_path }}/omnia/service_nodes/$nodeid/{{ pcs_container_name }}.container \
+       {{ container_systemd_dir }}/{{ pcs_container_name }}.container
+
+# Start the pcs container
+systemctl daemon-reload
+sudo systemctl start omnia_pcs
+
+echo "$(date) - INFO - Finished Omnia Service node postboot configuration" >> "$LOGFILE"
+echo "---------------------------"

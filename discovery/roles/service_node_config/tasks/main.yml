@@ -1,0 +1,46 @@
+# Copyright 2023 Dell Inc. or its subsidiaries. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+
+- name: Generate service node HA config file
+  ansible.builtin.command: >
+    {{ python_version }} {{ service_ha_config }} {{ db_operations_file_path }} {{ high_availability_config_path }}
+  changed_when: true
+
+- name: Load service HA data
+  ansible.builtin.set_fact:
+    service_ha_data: "{{ lookup('file', service_ha_config_json) | from_json }}"
+
+- name: Generate service node configuration for non-HA nodes  
+  ansible.builtin.include_tasks: generate_non_ha_servicenode_config.yml
+  
+- name: Generate service node configuration for active nodes
+  ansible.builtin.include_tasks: generate_active_servicenode_config.yml
+  loop: "{{ service_ha_data | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  vars:
+    group_key: "{{ item.key }}"
+    group_value: "{{ item.value }}"
+  when: enable_service_ha | default(false) | bool
+
+- name: Generate service node configuration for passive nodes
+  ansible.builtin.include_tasks: generate_passive_servicenode_config.yml
+  loop: "{{ service_ha_data | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  vars:
+    group_key: "{{ item.key }}"
+    group_value: "{{ item.value }}"
+  when: enable_service_ha | default(false) | bool
