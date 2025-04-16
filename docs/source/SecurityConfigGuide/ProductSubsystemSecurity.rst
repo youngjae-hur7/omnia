@@ -186,15 +186,15 @@ Omnia configures the following ports for use by third-party tools installed by O
 
 **Slurm port requirements**
 
-        +------+---------+----------------+--------------+
-        | Port | Number  | Layer 4        | Type of Node |
-        +======+=========+================+==============+
-        | 6817 | TCP/UDP | Slurmctld Port | Manager      |
-        +------+---------+----------------+--------------+
-        | 6818 | TCP/UDP | Slurmd Port    | Compute      |
-        +------+---------+----------------+--------------+
-        | 6819 | TCP/UDP | Slurmdbd Port  | Manager      |
-        +------+---------+----------------+--------------+
+        +------+---------+----------------+-------------------------+
+        | Port | Number  | Layer 4        | Type of Node            |
+        +======+=========+================+=========================+
+        | 6817 | TCP/UDP | Slurmctld Port | Slurm_control_node      |
+        +------+---------+----------------+-------------------------+
+        | 6818 | TCP/UDP | Slurmd Port    | Slurm_node              |
+        +------+---------+----------------+-------------------------+
+        | 6819 | TCP/UDP | Slurmdbd Port  | Slurm_control_node      |
+        +------+---------+----------------+-------------------------+
 
 **BeeGFS port requirements**
 
