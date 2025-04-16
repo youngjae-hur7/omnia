@@ -15,7 +15,7 @@
 - name: Get Upgrade config variables
   ansible.builtin.include_vars: "{{ upgrade_config_path }}"
 
-- name: Revert xCAT patch
+- name: Revert xCAT patch - confignetwork
   ansible.builtin.command:
     cmd: patch -R /install/postscripts/confignetwork {{ role_path }}/../../../prepare_oim/roles/install_xcat/common/files/confignetwork.patch
   register: patch_result
@@ -23,10 +23,23 @@
   changed_when: patch_result.rc == 0
 # noqa: command-instead-of-module noqa: line-length
 
-- name: Validate patch revert status
+- name: Validate patch revert status - confignetwork
   ansible.builtin.fail:
     msg: "{{ revert_xcat_patch_failed }}"
   when: patch_result.failed is defined and patch_result.failed
+
+- name: Revert xCAT patch - ddns.pm
+  ansible.builtin.command:
+    cmd: patch -R /opt/xcat/lib/perl/xCAT_plugin/ddns.pm {{ role_path }}/../../../prepare_oim/roles/install_xcat/common/files/ddns.patch
+  register: patch_result
+  failed_when: patch_result_ddns.rc not in [0, 1]  # 0 for success, 1 for already reverted
+  changed_when: patch_result_ddns.rc == 0
+# noqa: command-instead-of-module noqa: line-length
+
+- name: Validate patch revert status - ddns.pm
+  ansible.builtin.fail:
+    msg: "{{ revert_xcat_patch_failed }}"
+  when: patch_result_ddns.failed is defined and patch_result_ddns.failed
 
 - name: Apply xcat patch
   ansible.builtin.include_tasks: apply_xcat_patch.yml
