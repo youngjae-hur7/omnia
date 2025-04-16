@@ -13,26 +13,33 @@
 # limitations under the License.
 
 ---
-- name: Start and enable firewalld
-  ansible.builtin.service:
-    name: firewalld
-    state: started
-    enabled: true
+- name: Saving distribution of os
+  ansible.builtin.set_fact:
+    compute_os: "{{ ansible_facts['distribution'] | lower }}"
 
-- name: Add Ports to Firewall for K8s
-  ansible.posix.firewalld:
-    port: "{{ item }}"
-    state: enabled
-    permanent: true
-  loop: "{{ k8s_firewall_ports_list }}"
+- name: Firewall config for K8s Deployment
+  when: ubuntu_os not in compute_os
+  block:
+    - name: Start and enable firewalld
+      ansible.builtin.service:
+        name: firewalld
+        state: started
+        enabled: true
 
-- name: Enable http/https services
-  ansible.posix.firewalld:
-    service: "{{ item }}"
-    state: enabled
-    permanent: true
-  loop: "{{ firewall_services }}"
+    - name: Add Ports to Firewall for K8s
+      ansible.posix.firewalld:
+        port: "{{ item }}"
+        state: enabled
+        permanent: true
+      loop: "{{ k8s_firewall_ports_list }}"
 
-- name: Reload firewalld
-  ansible.builtin.command: firewall-cmd --reload
-  changed_when: true
+    - name: Enable http/https services
+      ansible.posix.firewalld:
+        service: "{{ item }}"
+        state: enabled
+        permanent: true
+      loop: "{{ firewall_services }}"
+
+    - name: Reload firewalld
+      ansible.builtin.command: firewall-cmd --reload
+      changed_when: true
