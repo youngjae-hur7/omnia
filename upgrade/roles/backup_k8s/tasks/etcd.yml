@@ -99,6 +99,10 @@
       spec:
         replicas: 0
 
+- name: Waiting 30 seconds for TimescaleDB pod to scale down
+  ansible.builtin.pause:
+    seconds: 30
+
 - name: Copy mount location data to k8s_backup_location folder
   ansible.builtin.copy:
     src: "{{ mount_location.rstrip('/') }}"
