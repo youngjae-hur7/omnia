@@ -63,6 +63,11 @@ input_file_inventory = {
     "roce": [files["roce_plugin_config"]],
     "storage": [files["storage_config"]],
     "proxy": [files["site_config"]],
+    "prepare_oim": [
+        files["high_availability_config"],
+        files["roles_config"],
+        files["network_spec"]
+    ],
     "high_availability": [files["high_availability_config"]],
     "all": [
         files["passwordless_ssh_config"],
@@ -111,8 +116,8 @@ extensions = {
 
 os_version_ranges = {
     "rhel": ["9.4"],
-    "rocky": ["9.4"],  
-    "ubuntu": ["20.04", "22.04", "24.04"] 
+    "rocky": ["9.4"],
+    "ubuntu": ["20.04", "22.04", "24.04"]
 }
 
 # Dict of the file that can be encrypted and it's ansible vault key

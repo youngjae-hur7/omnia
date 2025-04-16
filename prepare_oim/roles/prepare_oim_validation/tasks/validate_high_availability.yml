@@ -43,6 +43,7 @@
   ansible.builtin.fail:
     msg: "{{ nfs_not_configured }}"
 
+
 - name: Set vip_status
   ansible.builtin.set_fact:
     vip_status: >-

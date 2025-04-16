@@ -75,16 +75,17 @@
             "description": "Name of the role, can be any of the following Omnia defined roles.",
             "enum": [
               "default",
-              "service",
+              "oim_ha_node",
+              "service_node",
               "kube_control_plane",
               "kube_node",
               "etcd",
               "slurm_control_node",
               "slurm_node",
               "slurm_dbd",
-              "login",
+              "login_node",
               "auth_server",
-              "compiler"
+              "compiler_node"
             ]
           },
           "groups": {
