@@ -106,7 +106,7 @@ Kubernetes
        
     * Run the following command on ``kube_control_plane``: ::
         
-         kubectl edit svc <svc_name> -n <namespace> and within the definition file, change the type: LoadBalancer to ClusterIP (change all loadbalancer service types to clusterIP)
+         kubectl edit svc <svc_name> -n <namespace>
  
     * Run the following command on ``kube_control_plane``: ::
 
