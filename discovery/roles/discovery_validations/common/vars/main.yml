@@ -55,11 +55,11 @@ nfs_not_configured: "When enabling OIM HA an NFS server must be configured.
 
 # Usage: include_composable_roles_config.yml
 omnia_metadata_file: "/opt/omnia/.data/oim_metadata.yml"
-invalid_share_option_msg: |
-  [ERROR] Invalid value \"{{ omnia_share_option }}\" provided for omnia share path type.
-  For hierarchical-based discovery and provisioning, this must be set to \"NFS\".
-  Please rerun 'omnia_startup.sh' and enter correct omnia share path type as \"NFS\"
-  to continue with hierarchical-based discovery and provisioning.
+# invalid_share_option_msg: |
+#   [ERROR] Invalid value \"{{ omnia_share_option }}\" provided for omnia share path type.
+#   For hierarchical-based discovery and provisioning, this must be set to \"NFS\".
+#   Please rerun 'omnia_startup.sh' and enter correct omnia share path type as \"NFS\"
+#   to continue with hierarchical-based discovery and provisioning.
 
 # Usage: include_local_repo_config.yml
 local_repo_config_file: "{{ hostvars['localhost']['input_project_dir'] }}/local_repo_config.yml"
