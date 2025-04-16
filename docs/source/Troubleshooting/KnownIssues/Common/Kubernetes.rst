@@ -137,19 +137,19 @@ Kubernetes
 
 1. Open the TCP/UDP ports manually.
 
-    For **TCP** ports, use the following command:
+For **TCP** ports, use the following command:
         
-        ::
-            sudo firewall-cmd --permanent --add-port=<port_number>/tcp
+::
+    sudo firewall-cmd --permanent --add-port=<port_number>/tcp
 
-    For **UDP** ports, use the following command:
+For **UDP** ports, use the following command:
         
-        ::
-            sudo firewall-cmd --permanent --add-port=<port_number>/udp
+::
+    sudo firewall-cmd --permanent --add-port=<port_number>/udp
 
 2. Reload the firewalld service using the below command to apply the changes.
 
-    ::
-        sudo firewall-cmd --reload
+::
+    sudo firewall-cmd --reload
 
 3. Try accessing the service again. Ensure that the correct ports are open and the service is running. To know more about the ports, `click here <../../../SecurityConfigGuide/ProductSubsystemSecurity.html#firewall-settings>`_.
