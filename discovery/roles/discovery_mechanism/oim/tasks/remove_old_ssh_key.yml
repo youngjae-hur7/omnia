@@ -35,7 +35,7 @@
     - query_status.query_result is defined
     - query_status.query_result | length < 1
 
-- name: Set fact discovered_nodes for task on service node
+- name: Set fact discovered_nodes for task on service nodes
   ansible.builtin.set_fact:
     discovered_nodes: "{{ query_status.query_result | list }}"
 

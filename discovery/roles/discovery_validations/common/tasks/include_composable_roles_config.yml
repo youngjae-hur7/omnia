@@ -33,12 +33,12 @@
 #   ansible.builtin.fail:
 #     msg: "{{ invalid_share_option_msg | replace('\n', ' ') }}"
 #   when:
-#     - "'service' in roles_data"
+#     - "'service_node' in roles_data"
 #     - omnia_share_option != 'NFS'
 
-- name: Set fact for service role required
+- name: Set fact for service_node role required
   ansible.builtin.set_fact:
-    service_role_required: "{{ 'true' if 'service' in roles_groups_data else 'false' }}"
+    service_role_required: "{{ 'true' if 'service_node' in roles_groups_data else 'false' }}"
 
 - name: Get the group(s) for OIM HA
   when:

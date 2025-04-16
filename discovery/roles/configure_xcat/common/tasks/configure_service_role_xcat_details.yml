@@ -13,9 +13,9 @@
 # limitations under the License.
 ---
 
-- name: Add some common service node attributes to the service nodegroup
+- name: Add some common service_node node attributes to the service nodegroup
   ansible.builtin.command: >
-    {{ xcat_path }}/chdef -t group -o service
+    {{ xcat_path }}/chdef -t group -o service_node
     'setupnfs=1' 'setuptftp=1' 'setupnameserver=1' 'setupconserver=2' 'setupdhcp=0'
   changed_when: true
 

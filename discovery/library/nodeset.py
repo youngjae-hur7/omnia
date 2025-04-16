@@ -54,7 +54,7 @@ def nodeset_mapping_nodes(install_osimage, service_osimage, discovery_mechanism)
         output = cursor_x.fetchone()[0]
 
         if output:
-            if service_osimage != "None" and 'service' in node[1]:
+            if service_osimage != "None" and 'service_node' in node[1]:
                 osimage = service_osimage
             else:
                 osimage = install_osimage
