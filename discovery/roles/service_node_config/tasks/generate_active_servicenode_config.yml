@@ -1,42 +1,44 @@
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
 
-# roles/service_node_config/tasks/generate_servicenode_config.yml
-# - name: Debug current group key
-#   debug:
-#     msg: "Currently processing HA group: {{ item.key }}"
 - name: Set variables for active and passive nodes
-  set_fact:
+  ansible.builtin.set_fact:
     group_nodes: "{{ group_value }}"
     active_node: "{{ group_value | selectattr('active', 'equalto', true) | first }}"
     passive_nodes: "{{ group_value | selectattr('active', 'equalto', false) | list }}"
 
 - name: Create directory for service node
-  file:
+  ansible.builtin.file:
     path: "{{ active_service_node_dir }}"
     state: directory
     mode: "{{ file_permissions }}"
     
 - name: Generate corosync.conf
-  template:
+  ansible.builtin.template:
     src: "{{ corosync_tmpl }}"
     dest: "{{ active_node_corosync_dest }}"
-  # vars:
-  #   active_node: "{{ active_node }}"
-  #   passive_nodes: "{{ passive_nodes }}"
     
 - name: Generate pcs container file
-  template:
+  ansible.builtin.template:
     src: "{{ pcs_container_tmpl }}"
     dest: "{{ active_pcs_container_dest}}"
   vars:
     node_info: "{{ active_node }}"
 
-# - name: debug enable_service_ha
-#   debug:
-#     msg: "enable_service_ha: {{ enable_service_ha }}"
-#   when: enable_service_ha | default(false) | bool
-
 - name: Generate pcs-start.sh
-  template:
+  ansible.builtin.template:
     src: "{{ pcs_start_tmpl }}"
     dest: "{{ service_node_base_dir }}/{{ active_node.service_tag }}/pcs-start.sh"
     mode: '0755'

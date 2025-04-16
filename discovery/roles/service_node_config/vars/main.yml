@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-#provision_shared_library_path: /opt/omnia/shared_libraries/provision
 
 # Usage: configure_passive_servicenode_config.yml
 pcs_container_name: "omnia_pcs"

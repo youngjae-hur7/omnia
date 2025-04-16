@@ -1,4 +1,4 @@
-# Copyright 2023 Dell Inc. or its subsidiaries. All Rights Reserved.
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,18 +13,6 @@
 # limitations under the License.
 ---
 
-# # 1. Create map of node_service_tag to node info
-# - name: Create map of node_service_tag to full node info
-#   set_fact:
-#     node_info_map: >-
-#       {{
-#         dict(service_nodes.query_result | map(attribute='service_tag') | zip(service_nodes.query_result))
-#       }}
-
-# - name: Debug node_info_map to verify data structure
-#   debug:
-#     msg: "{{ node_info_map }}"
-
 - name: Create directories for each service tag 
   ansible.builtin.file:
     path: "{{ service_node_dir }}"
@@ -33,16 +21,6 @@
   loop: "{{ service_nodes.query_result }}"
   loop_control:
     label: "{{ item.service_tag }}"
-
-# # 3. Debug service_admin_nic_ip
-# - name: Debug service_admin_nic_ip
-#   debug:
-#     msg: "{{ service_admin_nic_ip }}"
-#   loop: "{{ service_nodes.query_result }}"
-#   loop_control::
-#     loop_var: node
-#   vars:
-#     service_admin_nic_ip: "{{ node.admin_ip }}"
 
 - name: Render corosync.conf for non-HA nodes
   loop: "{{ service_nodes.query_result }}"
@@ -54,7 +32,7 @@
     dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/corosync.conf"
 
 - name: Generate {{ pcs_container_name }}.container for non-HA nodes
-  template:
+  ansible.builtin.template:
     src: "{{ pcs_container_tmpl }}"
     dest: "{{ pcs_container_tmpl_nonha_dest }}"
   loop: "{{ service_nodes.query_result }}"
@@ -65,7 +43,7 @@
     node_info: "{{ node }}"  
 
 - name: Generate pcs-start.sh for non-HA nodes
-  template:
+  ansible.builtin.template:
     src: "{{ pcs_start_tmpl }}"
     dest: "{{ pcs_start_tmpl_nonha_dest }}"
     mode: "{{ file_permissions }}"
