@@ -128,38 +128,27 @@ Omnia configures the following ports for use by third-party tools installed by O
         +----------------+--------+-------------------------+-------------------------------+
         | Port           | Number | Layer 4                 | Protocol Purpose Type of Node |
         +================+========+=========================+===============================+
-        |                | TCP    | Kubernetes API          | server Manager                |
-        | 6443           |        |                         |                               |
+        | 6443           | TCP    | Kubernetes API          | Server Manager                |
         +----------------+--------+-------------------------+-------------------------------+
-        |                | TCP    | etcd server             | client API Manager            |
-        | 2379-2380      |        |                         |                               |
+        | 2379-2380      | TCP    | etcd server             | Client API Manager            |
         +----------------+--------+-------------------------+-------------------------------+
-        |                | TCP    | Kube-scheduler Manager  |                               |
-        | 10251          |        |                         |                               |
+        | 10251          | TCP    | Kube-scheduler Manager  |                               |
         +----------------+--------+-------------------------+-------------------------------+
-        |                | TCP    | Kube-controller manager | Manager                       |
-        | 10252          |        |                         |                               |
+        | 10252          | TCP    | Kube-controller manager | Manager                       |
         +----------------+--------+-------------------------+-------------------------------+
-        |                | TCP    | Kubelet API             | Compute                       |
-        | 10250          |        |                         |                               |
+        | 10250          | TCP    | Kubelet API             | Compute                       |
         +----------------+--------+-------------------------+-------------------------------+
-        |                | TCP    | Nodeport services       | Compute                       |
-        | 30000-32767    |        |                         |                               |
+        | 30000-32767    | TCP    | Nodeport services       | Compute                       |
         +----------------+--------+-------------------------+-------------------------------+
-        |                | TCP    | Calico services         | Manager/Compute               |
-        | 5473           |        |                         |                               |
+        | 5473           | TCP    | Calico services         | Manager/Compute               |
         +----------------+--------+-------------------------+-------------------------------+
-        |                | TCP    | Calico services         | Manager/Compute               |
-        | 179            |        |                         |                               |
+        | 179            | TCP    | Calico services         | Manager/Compute               |
         +----------------+--------+-------------------------+-------------------------------+
-        |                | UDP    | Calico services         | Manager/Compute               |
-        | 4789           |        |                         |                               |
+        | 4789           | UDP    | Calico services         | Manager/Compute               |
         +----------------+--------+-------------------------+-------------------------------+
-        |                | UDP    | Flannel services        | Manager/Compute               |
-        | 8285           |        |                         |                               |
+        | 8285           | UDP    | Flannel services        | Manager/Compute               |
         +----------------+--------+-------------------------+-------------------------------+
-        |                | UDP    | Flannel services        | Manager/Compute               |
-        | 8472           |        |                         |                               |
+        | 8472           | UDP    | Flannel services        | Manager/Compute               |
         +----------------+--------+-------------------------+-------------------------------+
 
 
@@ -290,41 +279,41 @@ Omnia configures the following ports for use by third-party tools installed by O
 
 **FreeIPA port requirements**
 
-        +---------------+---------+----------------------+----------------------+
-        | Port   Number | Layer 4 | Purpose              | Node                 |
-        +===============+=========+======================+======================+
-        | 80            | TCP     | HTTP/HTTPS           | Manager/ Login_Node  |
-        +---------------+---------+----------------------+----------------------+
-        | 443           | TCP     | HTTP/HTTPS           | Manager/ Login_Node  |
-        +---------------+---------+----------------------+----------------------+
-        | 389           | TCP     | LDAP/LDAPS           | Manager/ Login_Node  |
-        +---------------+---------+----------------------+----------------------+
-        | 636           | TCP     | LDAP/LDAPS           | Manager/ Login_Node  |
-        +---------------+---------+----------------------+----------------------+
-        | 88            | TCP/UDP | Kerberos             | Manager/ Login_Node  |
-        +---------------+---------+----------------------+----------------------+
-        | 464           | TCP/UDP | Kerberos             | Manager/ Login_Node  |
-        +---------------+---------+----------------------+----------------------+
-        | 53            | TCP/UDP | DNS                  | Manager/ Login_Node  |
-        +---------------+---------+----------------------+----------------------+
-        | 7389          | TCP     | Dogtag's LDAP server | Manager/ Login_Node  |
-        +---------------+---------+----------------------+----------------------+
-        | 123           | UDP     | NTP                  | Manager/ Login_Node  |
-        +---------------+---------+----------------------+----------------------+
+        +---------------+---------+----------------------+---------------------+
+        | Port   Number | Layer 4 | Purpose              | Node                |
+        +===============+=========+======================+=====================+
+        | 80            | TCP     | HTTP/HTTPS           | Manager/Login_Node  |
+        +---------------+---------+----------------------+---------------------+
+        | 443           | TCP     | HTTP/HTTPS           | Manager/Login_Node  |
+        +---------------+---------+----------------------+---------------------+
+        | 389           | TCP     | LDAP/LDAPS           | Manager/Login_Node  |
+        +---------------+---------+----------------------+---------------------+
+        | 636           | TCP     | LDAP/LDAPS           | Manager/Login_Node  |
+        +---------------+---------+----------------------+---------------------+
+        | 88            | TCP/UDP | Kerberos             | Manager/Login_Node  |
+        +---------------+---------+----------------------+---------------------+
+        | 464           | TCP/UDP | Kerberos             | Manager/Login_Node  |
+        +---------------+---------+----------------------+---------------------+
+        | 53            | TCP/UDP | DNS                  | Manager/Login_Node  |
+        +---------------+---------+----------------------+---------------------+
+        | 7389          | TCP     | Dogtag's LDAP server | Manager/Login_Node  |
+        +---------------+---------+----------------------+---------------------+
+        | 123           | UDP     | NTP                  | Manager/Login_Node  |
+        +---------------+---------+----------------------+---------------------+
 
 **OpenLDAP port requirements**
 
-        +---------------+---------+----------------------+----------------------+
-        | Port   Number | Layer 4 | Purpose              | Node                 |
-        +===============+=========+======================+======================+
-        | 80            | TCP     | HTTP/HTTPS           | Manager/ Login_Node  |
-        +---------------+---------+----------------------+----------------------+
-        | 443           | TCP     | HTTP/HTTPS           | Manager/ Login_Node  |
-        +---------------+---------+----------------------+----------------------+
-        | 389           | TCP     | LDAP/LDAPS           | Manager/ Login_Node  |
-        +---------------+---------+----------------------+----------------------+
-        | 636           | TCP     | LDAP/LDAPS           | Manager/ Login_Node  |
-        +---------------+---------+----------------------+----------------------+
+        +---------------+---------+----------------------+---------------------+
+        | Port   Number | Layer 4 | Purpose              | Node                |
+        +===============+=========+======================+=====================+
+        | 80            | TCP     | HTTP/HTTPS           | Manager/Login_Node  |
+        +---------------+---------+----------------------+---------------------+
+        | 443           | TCP     | HTTP/HTTPS           | Manager/Login_Node  |
+        +---------------+---------+----------------------+---------------------+
+        | 389           | TCP     | LDAP/LDAPS           | Manager/Login_Node  |
+        +---------------+---------+----------------------+---------------------+
+        | 636           | TCP     | LDAP/LDAPS           | Manager/Login_Node  |
+        +---------------+---------+----------------------+---------------------+
 
 .. note:: To avoid security vulnerabilities, protocols can be restricted on the network using the parameters ``restrict_program_support`` and ``restrict_softwares`` in ``input/login_node_security_config.yml``. However, certain protocols are essential to Omnia's functioning and cannot be disabled. These protocols are: ftp, smbd, nmbd, automount, portmap.
 
