@@ -13,29 +13,6 @@
 # limitations under the License.
 ---
 
-- name: Include metadata vars
-  ansible.builtin.include_vars: "{{ omnia_metadata_file }}"
-  register: include_metadata
-  no_log: true
-
-# Include network_spec
-- name: Include network_spec.yml
-  block:
-    - name: Include network_spec file
-      ansible.builtin.include_vars: "{{ network_spec }}"
-      register: include_network_spec
-      no_log: true
-      tags: init
-  rescue:
-    - name: Failed to include network_spec.yml
-      ansible.builtin.fail:
-        msg: "{{ network_spec_syntax_fail_msg }} Error: {{ include_network_spec.message }}"
-
-- name: Parse network_spec data
-  ansible.builtin.set_fact:
-    network_data: "{{ network_data | default({}) | combine({item.key: item.value}) }}"
-  with_dict: "{{ Networks }}"
-
 - name: Load software_config.json as software_config
   block:
     - name: Load software_config.json as user_config

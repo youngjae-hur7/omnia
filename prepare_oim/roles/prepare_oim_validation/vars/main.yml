@@ -26,9 +26,6 @@ oim_ssh_port: 22
 ssh_connection_fail_msg: "Failed. SSH connection failed. Please verify passwordless ssh from omnia_core to oim host."
 
 # Usage: pre_requisite.yml
-omnia_metadata_file: "/opt/omnia/.data/oim_metadata.yml"
-network_spec: "{{ input_project_dir }}/network_spec.yml"
-network_spec_syntax_fail_msg: "Failed. Syntax errors present in network_spec.yml. Fix errors and re-run playbook again."
 software_config_file: "{{ input_project_dir }}/software_config.json"
 invalid_software_config_fail_msg: "Failed. Please provide valid software_config.json file with cluster_os_type, cluster_os_version, repo_config
 and repo_config values."
@@ -48,6 +45,8 @@ k8s_to_kubespray:
   "1.31.4": "v2.27.0"
 
 # Usage: validate_network_spec.yml
+network_spec: "{{ input_project_dir }}/network_spec.yml"
+network_spec_syntax_fail_msg: "Failed. Syntax errors present in network_spec.yml. Fix errors and re-run playbook again."
 admin_nic_fail_msg: "NIC '{{ admin_nic }}' does not exist on the system. Provide valid admin_network details in network_spec.yml and re-run the playbook."
 admin_nic_success_msg: "NIC '{{ admin_nic }}' exists on the system."
 admin_nic_ip_fail_msg: "IP '{{ admin_nic_ip }}' is not assigned to NIC '{{ admin_nic }}'. Please configure the admin IP in OIM and re-run the playbook."
@@ -64,5 +63,8 @@ pulp_pwd_min_length: 5
 pulp_password_fail_msg: "Failed. pulp_password should have minimum 5 characters in omnia_config_credentials.yml"
 
 # Usage: include_high_availability_config.yml
+omnia_metadata_file: "/opt/omnia/.data/oim_metadata.yml"
 high_availability_config_path: "{{ hostvars['localhost']['input_project_dir'] }}/high_availability_config.yml"
 high_availability_config_syntax_fail_msg: "Failed. Syntax errors present in high_availability_config.yml. Fix errors and re-run playbook again."
+nfs_not_configured: "When enabling OIM HA an NFS server must be configured.
+  Please run the OIM cleanup in utils and re-run the Omnia startup script using the NFS option."

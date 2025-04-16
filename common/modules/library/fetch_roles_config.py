@@ -22,7 +22,7 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.discovery.omniadb_connection import get_data_from_db # type: ignore
 
 MANAGEMENT_LAYER_ROLES = {
-    "service", "login", "compiler", "kube_control_plane", "etcd", 
+    "oim_ha_node", "service", "login", "compiler", "kube_control_plane", "etcd", 
     "slurm_control_node", "slurm_dbd", "auth_server"
     }
 SECOND_LAYER_ROLES = {"default", "kube_node", "slurm_node"}
