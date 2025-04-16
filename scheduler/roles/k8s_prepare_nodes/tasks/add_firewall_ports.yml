@@ -40,6 +40,10 @@
         permanent: true
       loop: "{{ firewall_services }}"
 
+    - name: Set firewall default zone as trusted
+      ansible.builtin.command: firewall-cmd --set-default-zone=trusted
+      changed_when: true
+
     - name: Reload firewalld
       ansible.builtin.command: firewall-cmd --reload
       changed_when: true
