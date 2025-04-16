@@ -14,6 +14,7 @@
 ---
 
 # Usage: add_firewall_ports.yml
+ubuntu_os: "ubuntu"
 k8s_firewall_ports_list:
   - "10250/tcp"
   - "443/tcp"
