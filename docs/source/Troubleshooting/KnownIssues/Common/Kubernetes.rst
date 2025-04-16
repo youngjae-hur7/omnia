@@ -128,3 +128,28 @@ Kubernetes
 **Potential Cause**: When ``reset_cluster_configuration.yml`` is executed on a Kubernetes cluster, it triggers the Kubespray playbook ``kubernetes_sigs.kubespray.reset`` internally, which is responsible for removing Kubernetes configuration and services from the cluster. However, this Kubespray playbook doesn't delete all Kubernetes services and files, resulting in some files being left behind on the ``kube_control_plane``.
 
 **Workaround**: After running the ``reset_cluster_configuration.yml`` playbook on a Kubernetes cluster, users can choose to remove the files from the directories mentioned above if they wish to do so.
+
+⦾ **Why are Kubernetes services not accessible?**
+
+**Potential Cause**: When firewalld is enabled on compute nodes, it blocks incoming traffic unless the appropriate ports are explicitly opened. This can prevent access to services exposed by Kubernetes (such as those using NodePort, LoadBalancer, or Ingress).
+
+**Resolution**: You need to manually open the required firewalld ports in order to allow traffic through the ports used by the Kubernetes services. Perform the following steps:
+
+1. Open the TCP/UDP ports manually.
+
+    For **TCP** ports, use the following command:
+        
+        ::
+            sudo firewall-cmd --permanent --add-port=<port_number>/tcp
+
+    For **UDP** ports, use the following command:
+        
+        ::
+            sudo firewall-cmd --permanent --add-port=<port_number>/udp
+
+2. Reload the firewalld service using the below command to apply the changes.
+
+    ::
+        sudo firewall-cmd --reload
+
+3. Try accessing the service again. Ensure that the correct ports are open and the service is running. To know more about the ports, `click here <../../../SecurityConfigGuide/ProductSubsystemSecurity.html#firewall-settings>`_.
