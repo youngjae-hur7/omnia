@@ -13,7 +13,7 @@ Releases
 * Support for adding external nodes (with pre-loaded OS and internet connectivity) to a Kubernetes cluster
 * Support for configuring additional NICs and updating kernel parameters during the provisioning of the cluster nodes
 * Support for NVIDIA Collective Communications Library (NCCL) 2.25.1 on nodes with NVIDIA accelerators running Ubuntu 24.04 OS
-* Support for ROCm Communication Collectives Library (RCCL) on nodes with AMD accelerators
+* Support for ROCm Communication Collectives Library (RCCL) 2.21.5 on nodes with AMD accelerators
 * Support for Multus-CNI plugin (4.1.4) and Whereabouts plugin (0.8.0) for Kubernetes (K8s)
 * Support for RoCE configuration with Calico network plugin 
 * Updated software packages for Omnia 1.7.1:
