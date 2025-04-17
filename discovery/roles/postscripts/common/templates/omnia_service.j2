@@ -1,7 +1,7 @@
 #!/bin/bash
 ################################################################################################################
 #  omnia_servie_role:
-#      Install packages required for service node
+#      Install packages required for service node and configure the environment
 #
 #################################################################################################################
 
@@ -9,7 +9,7 @@
 LOGFILE="/var/log/xcat/xcat.log"
 
 echo "--------------------------" >> "$LOGFILE"
-echo "Starting service node required packages installation" >> "$LOGFILE"
+echo "Starting service node setup" >> "$LOGFILE"
 
 # List of required packages
 PACKAGES=(
@@ -45,6 +45,22 @@ if [ $genesis_url_status -eq 0 ]; then
     mknb x86_64
 fi
 
+echo "Install and configure podman" >> "$LOGFILE"
+
+if [ -f "/etc/debian_version" ];then
+  str_os_type="debian"
+else
+  str_os_type="redhat"
+fi
+
+# Install and configure podman
+if [ "$str_os_type" = "redhat" ]; then
+    sudo dnf install -y podman
+fi
+
+sudo systemctl enable podman.socket
+sudo systemctl start podman.socket
+
 {% if omnia_share_option == "NFS" %}
 # Create omnia_path directory if it does not exist
 echo "Creating omnia shared path directory if it does not exist" >> "$LOGFILE"
@@ -75,5 +91,9 @@ fi
 echo "{{ nfs_server_ip }}:{{ nfs_server_share_path }} {{ oim_shared_path }} nfs nosuid,rw,sync,hard,intr" >> /etc/fstab
 {% endif %}
 
+# Load container images
+echo "Loading container images" >> "$LOGFILE"
+podman load -i {{ container_images_path }}
+
 echo "--------------------------" >> "$LOGFILE"
-echo "All service node packages installed successfully." >> "$LOGFILE"
+echo "Service node setup completed successfully." >> "$LOGFILE"

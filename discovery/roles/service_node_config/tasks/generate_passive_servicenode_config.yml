@@ -1,0 +1,62 @@
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+
+- name: Set variables for passive nodes
+  ansible.builtin.set_fact:
+    group_nodes: "{{ group_value }}"
+    active_node: "{{ group_value | selectattr('active', 'equalto', true) | first }}"
+    passive_nodes: "{{ group_value | selectattr('active', 'equalto', false) | list }}"
+
+- name: Create directory for passive nodes
+  ansible.builtin.file:
+    path: "{{ service_node_base_dir }}/{{ node.service_tag }}"
+    state: directory
+    mode: "{{ file_permissions }}"
+  loop: "{{ passive_nodes }}"
+  loop_control:
+    label: "{{ node.service_tag }}"
+    loop_var: node
+
+- name: Generate corosync.conf for passive nodes (same as active)
+  ansible.builtin.template:
+    src: "{{ corosync_tmpl }}"
+    dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/corosync.conf"
+    mode: "{{ file_permissions }}"
+  loop: "{{ passive_nodes }}"
+  loop_control:
+    label: "{{ node.service_tag }}"
+    loop_var: node
+
+- name: Generate pcs container file for passive nodes
+  ansible.builtin.template:
+    src: "{{ pcs_container_tmpl }}"
+    dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/{{ pcs_container_name }}.container"
+    mode: "{{ file_permissions }}"
+  vars:
+    node_info: "{{ node }}"
+  loop: "{{ passive_nodes }}"
+  loop_control:
+    label: "{{ node.service_tag }}"
+    loop_var: node
+
+- name: Generate pcs-start.sh for passive nodes
+  ansible.builtin.template:
+    src: "{{ pcs_start_tmpl }}"
+    dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/pcs-start.sh"
+    mode: "{{ file_permissions }}"
+  loop: "{{ passive_nodes }}"
+  loop_control:
+    label: "{{ node.service_tag }}"
+    loop_var: node

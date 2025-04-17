@@ -82,6 +82,10 @@
       ansible.builtin.include_role:
         name: discovery_mechanism/oim     # noqa: role-name[path]
 
+    - name: Generate service node configuration
+      ansible.builtin.include_role:
+        name: service_node_config      # noqa: role-name[path]
+
 - name: Update corosync config in PCS container
   hosts: oim
   connection: ssh

@@ -29,7 +29,20 @@
   with_items: "{{ pcs_postbootscript_path }}"
   when: enable_oim_ha
 
+- name: Copy service node postboot script to postscripts
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  with_items: "{{ service_node_postbootscript_path }}"
+  when: service_role_required
+
 - name: Configure pcs container setup postbootscripts
   ansible.builtin.command: "{{ xcat_path }}/chdef oim_ha_node -p postbootscripts=\"omnia_pcs_setup\""
   changed_when: true
   when: enable_oim_ha
+
+- name: Configure service node postboot script to postscripts
+  ansible.builtin.command: "{{ xcat_path }}/chdef service -p postbootscripts=\"omnia_service_node_postboot\""
+  changed_when: true
+  when: service_role_required
