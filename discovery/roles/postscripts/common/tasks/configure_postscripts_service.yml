@@ -13,13 +13,6 @@
 # limitations under the License.
 ---
 
-- name: Copy service node script to postscripts
-  ansible.builtin.template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    mode: "{{ item.mode }}"
-  with_items: "{{ servive_node_postscripts_path }}"
-
 - name: Remove NTP postscript from service_node group
   ansible.builtin.command: "{{ xcat_path }}/chdef service_node -m postscripts=setupntp"
   changed_when: true

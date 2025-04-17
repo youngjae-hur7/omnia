@@ -63,8 +63,6 @@ supported_roles:
   - slurm_node
 
 # Usage: configure_service_node.yml
-servive_node_postscripts_path:
-  - { src: "{{ role_path }}/templates/omnia_service.j2", dest: "/install/postscripts/omnia_service", mode: "755" }
 genesis_package_path:
   - { src: "{{ role_path }}/../rhel/files/xcat-genesis-base-x86_64.tar.gz", dest: "/install/xcat-genesis-base-x86_64.tar.gz", mode: "755" }
 
