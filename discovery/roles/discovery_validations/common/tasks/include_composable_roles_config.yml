@@ -28,12 +28,13 @@
     groups_roles_info: "{{ composable_roles_output.groups_roles_info }}"
     hierarchical_service_node_data: "{{ composable_roles_output.hierarchical_service_node_data }}"
 
-- name: Fail if omnia_share_option is not "NFS" during hierarchical-based discovery and provisioning
-  ansible.builtin.fail:
-    msg: "{{ invalid_share_option_msg | replace('\n', ' ') }}"
-  when:
-    - "'service' in roles_data"
-    - omnia_share_option != 'NFS'
+# Will uncomment once NFS supported for hierarchical-based discovery
+# - name: Fail if omnia_share_option is not "NFS" during hierarchical-based discovery and provisioning
+#   ansible.builtin.fail:
+#     msg: "{{ invalid_share_option_msg | replace('\n', ' ') }}"
+#   when:
+#     - "'service' in roles_data"
+#     - omnia_share_option != 'NFS'
 
 - name: Set fact for service role required
   ansible.builtin.set_fact:
