@@ -13,9 +13,9 @@
 # limitations under the License.
 
 import json
-import validation_utils
-import config
-import en_us_validation_msg
+from ansible.module_utils.input_validation.common_utils import validation_utils
+from ansible.module_utils.input_validation.common_utils import config
+from ansible.module_utils.input_validation.common_utils import en_us_validation_msg
 
 file_names = config.files
 create_error_msg = validation_utils.create_error_msg
@@ -23,7 +23,7 @@ create_file_path = validation_utils.create_file_path
 contains_software = validation_utils.contains_software
 check_mandatory_fields = validation_utils.check_mandatory_fields
 
-def validate_software_config(input_file_path, data, logger, module, omnia_base_dir, project_name):
+def validate_software_config(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
     errors = []
     cluster_os_type = data["cluster_os_type"]
     cluster_os_version = data["cluster_os_version"]
@@ -54,7 +54,7 @@ def validate_software_config(input_file_path, data, logger, module, omnia_base_d
     return errors
 
 # Below is a validation function for each file in the input folder
-def validate_local_repo_config(input_file_path, data, logger, module, omnia_base_dir, project_name):
+def validate_local_repo_config(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
     # check to make sure associated os info is filled out
     errors = []
     software_config_file_path = create_file_path(input_file_path, file_names["software_config"])
@@ -73,10 +73,10 @@ def validate_local_repo_config(input_file_path, data, logger, module, omnia_base
 
     return errors
 
-def validate_security_config(input_file_path, data, logger, module, omnia_base_dir, project_name):
+def validate_security_config(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
     errors = []
     passwordless_ssh_config_file_path = create_file_path(input_file_path, file_names["passwordless_ssh_config"])
-    passwordless_ssh_config_json = validation_utils.load_yaml_as_json(passwordless_ssh_config_file_path, omnia_base_dir, project_name, logger, module)
+    passwordless_ssh_config_json = validation_utils.load_yaml_as_json(passwordless_ssh_config_file_path, omnia_base_dir, module_utils_base, project_name, logger, module)
 
     authentication_type = passwordless_ssh_config_json["authentication_type"]
 
@@ -101,7 +101,7 @@ def validate_security_config(input_file_path, data, logger, module, omnia_base_d
 
     return errors
 
-def validate_network_config(input_file_path, data, logger, module, omnia_base_dir, project_name):
+def validate_network_config(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
     errors = []
     mlnx_ofed_offline_path = data["mlnx_ofed_offline_path"]
     if mlnx_ofed_offline_path and not validation_utils.verify_path(mlnx_ofed_offline_path):
@@ -109,7 +109,7 @@ def validate_network_config(input_file_path, data, logger, module, omnia_base_di
 
     return errors
 
-def validate_storage_config(input_file_path, data, logger, module, omnia_base_dir, project_name):
+def validate_storage_config(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
     errors = []
     nfs_client_params = data["nfs_client_params"][0]
     client_mount_options = nfs_client_params["client_mount_options"]
@@ -128,7 +128,7 @@ def validate_storage_config(input_file_path, data, logger, module, omnia_base_di
 
     return errors
 
-def validate_high_availability_config(input_file_path, data, logger, module, omnia_base_dir, project_name):
+def validate_high_availability_config(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
     errors = []
 
     def validate_ha_config(ha_data, mandatory_fields, errors, config_type=None):
@@ -174,13 +174,13 @@ def validate_high_availability_config(input_file_path, data, logger, module, omn
     return errors
 
 # for k8s_access_config.yml and passwordless_ssh_config.yml this is run
-def validate_usernames(input_file_path, data, logger, module, omnia_base_dir, project_name):
+def validate_usernames(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
     errors = []
 
     k8s_access_config_file_path = create_file_path(input_file_path, file_names["k8s_access_config"])
-    k8s_access_config_json = validation_utils.load_yaml_as_json(k8s_access_config_file_path, omnia_base_dir, project_name, logger, module)
+    k8s_access_config_json = validation_utils.load_yaml_as_json(k8s_access_config_file_path, omnia_base_dir, module_utils_base, project_name, logger, module)
     passwordless_ssh_config_file_path = create_file_path(input_file_path, file_names["passwordless_ssh_config"])
-    passwordless_ssh_config_json = validation_utils.load_yaml_as_json(passwordless_ssh_config_file_path, omnia_base_dir, project_name, logger, module)
+    passwordless_ssh_config_json = validation_utils.load_yaml_as_json(passwordless_ssh_config_file_path, omnia_base_dir, module_utils_base, project_name, logger, module)
 
     k8s_user_name = k8s_access_config_json["user_name"]
     pw_ssh_user_name = passwordless_ssh_config_json["user_name"]
@@ -208,11 +208,11 @@ def validate_usernames(input_file_path, data, logger, module, omnia_base_dir, pr
 
     return errors
 
-def validate_roce_plugin_config(input_file_path, data, logger, module, omnia_base_dir, project_name):
+def validate_roce_plugin_config(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
     errors = []
     return errors
 
-def validate_login_node_security_config(input_file_path, data, logger, module, omnia_base_dir, project_name):
+def validate_login_node_security_config(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
     errors = []
     allowed_services = ["telnet", "lpd", "bluetooth", "rlogin", "rexec"]
     restrict_softwares = data["restrict_softwares"].split(",")
@@ -221,11 +221,11 @@ def validate_login_node_security_config(input_file_path, data, logger, module, o
             errors.append(create_error_msg("restrict_softwares", data["restrict_softwares"], en_us_validation_msg.restrict_softwares_fail_msg(software)))
     return errors
 
-def validate_site_config(input_file_path, data, logger, module, omnia_base_dir, project_name):
+def validate_site_config(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
     errors = []
     return errors
 
-def validate_server_spec(input_file_path, data, logger, module, omnia_base_dir, project_name):
+def validate_server_spec(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
     errors = []
     server_groups = data["Categories"]
     server_spec_nicnetworks = []
@@ -236,7 +236,7 @@ def validate_server_spec(input_file_path, data, logger, module, omnia_base_dir, 
         return errors
 
     network_spec_file_path = create_file_path(input_file_path, file_names["network_spec"])
-    network_spec_json = validation_utils.load_yaml_as_json(network_spec_file_path, omnia_base_dir, project_name, logger, module)
+    network_spec_json = validation_utils.load_yaml_as_json(network_spec_file_path, omnia_base_dir, module_utils_base, project_name, logger, module)
 
     for server in server_groups:
         for key, value in server.items():
@@ -265,9 +265,9 @@ def validate_server_spec(input_file_path, data, logger, module, omnia_base_dir, 
 
     return errors
 
-def get_admin_bmc_networks(input_file_path, logger, module, omnia_base_dir, project_name):
+def get_admin_bmc_networks(input_file_path, logger, module, omnia_base_dir, module_utils_base, project_name):
     network_spec_file_path = create_file_path(input_file_path, file_names["network_spec"])
-    network_spec_json = validation_utils.load_yaml_as_json(network_spec_file_path, omnia_base_dir, project_name, logger, module)
+    network_spec_json = validation_utils.load_yaml_as_json(network_spec_file_path, omnia_base_dir, module_utils_base, project_name, logger, module)
     admin_bmc_networks = {}
 
     for network in network_spec_json["Networks"]:
@@ -281,9 +281,9 @@ def get_admin_bmc_networks(input_file_path, logger, module, omnia_base_dir, proj
                 }
     return admin_bmc_networks
 
-def validate_omnia_config(input_file_path, data, logger, module, omnia_base_dir, project_name):
+def validate_omnia_config(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
     errors = []
-    admin_bmc_networks = get_admin_bmc_networks(input_file_path, logger, module, omnia_base_dir, project_name)
+    admin_bmc_networks = get_admin_bmc_networks(input_file_path, logger, module, omnia_base_dir, module_utils_base, project_name)
     admin_static_range = admin_bmc_networks["admin_network"]["static_range"]
     admin_dynamic_range = admin_bmc_networks["admin_network"]["dynamic_range"]
     bmc_static_range = admin_bmc_networks["bmc_network"]["static_range"]
@@ -325,7 +325,7 @@ def validate_omnia_config(input_file_path, data, logger, module, omnia_base_dir,
 
     return errors
 
-def validate_telemetry_config(input_file_path, data, logger, module, omnia_base_dir, project_name):
+def validate_telemetry_config(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
     errors = []
     idrac_telemetry_support = data["idrac_telemetry_support"]
     omnia_telemetry_support = data["omnia_telemetry_support"]
@@ -397,7 +397,7 @@ def validate_telemetry_config(input_file_path, data, logger, module, omnia_base_
             errors.append(create_error_msg("prometheus_scrape_interval", prometheus_scrape_interval, en_us_validation_msg.prometheus_scrape_interval_fail_msg))
 
     # Check that IP addresses do not overlap with admin network
-    admin_bmc_networks = get_admin_bmc_networks(input_file_path, logger, module, omnia_base_dir, project_name)
+    admin_bmc_networks = get_admin_bmc_networks(input_file_path, logger, module, omnia_base_dir, module_utils_base, project_name)
     admin_static_range = admin_bmc_networks["admin_network"]["static_range"]
     admin_dynamic_range = admin_bmc_networks["admin_network"]["dynamic_range"]
     pod_external_ip_range = data["pod_external_ip_range"]

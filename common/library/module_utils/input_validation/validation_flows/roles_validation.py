@@ -14,9 +14,9 @@
 
 import json
 import ipaddress
-import validation_utils
-import config
-import en_us_validation_msg
+from ansible.module_utils.input_validation.common_utils import validation_utils
+from ansible.module_utils.input_validation.common_utils import config
+from ansible.module_utils.input_validation.common_utils import en_us_validation_msg
 
 file_names = config.files
 create_error_msg = validation_utils.create_error_msg
@@ -130,7 +130,7 @@ def validate_layer_group_separation(logger, roles):
 
     return errors
 
-def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir, project_name):
+def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
     """
     Validates the L2 logic of the roles_config.yaml file.
 
