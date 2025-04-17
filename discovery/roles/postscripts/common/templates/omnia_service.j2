@@ -62,7 +62,6 @@ sudo systemctl enable podman.socket
 sudo systemctl start podman.socket
 
 {% if omnia_share_option == "NFS" %}
-echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf 
 # Create omnia_path directory if it does not exist
 echo "Creating omnia shared path directory if it does not exist" >> "$LOGFILE"
 mkdir -p {{ oim_shared_path }}
