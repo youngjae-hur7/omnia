@@ -16,11 +16,14 @@
 - name: Generate service node HA config file
   ansible.builtin.command: >
     {{ python_version }} {{ service_ha_config }} {{ db_operations_file_path }} {{ high_availability_config_path }}
+  when: enable_service_ha | default(false) | bool
   changed_when: true
+  
 
 - name: Load service HA data
   ansible.builtin.set_fact:
     service_ha_data: "{{ lookup('file', service_ha_config_json) | from_json }}"
+  when: enable_service_ha | default(false) | bool
 
 - name: Generate service node configuration for non-HA nodes
   ansible.builtin.include_tasks: generate_non_ha_servicenode_config.yml
