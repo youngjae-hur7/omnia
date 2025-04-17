@@ -22,9 +22,9 @@
   ansible.builtin.set_fact:
     service_ha_data: "{{ lookup('file', service_ha_config_json) | from_json }}"
 
-- name: Generate service node configuration for non-HA nodes  
+- name: Generate service node configuration for non-HA nodes
   ansible.builtin.include_tasks: generate_non_ha_servicenode_config.yml
-  
+
 - name: Generate service node configuration for active nodes
   ansible.builtin.include_tasks: generate_active_servicenode_config.yml
   loop: "{{ service_ha_data | dict2items }}"

@@ -22,10 +22,10 @@ service_node_base_dir: "{{ oim_shared_path }}/service_nodes"
 passive_node_dir: "{{ service_node_base_dir }}/{{ node.service_tag }}"
 pcs_container_tmpl: "{{ pcs_container_name }}.container.j2"
 pcs_container_tmpl_dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/{{ pcs_container_name }}.container"
-pcs_start_tmpl : "pcs-start.sh.j2"
+pcs_start_tmpl: "pcs-start.sh.j2"
 pcs_start_tmpl_dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/pcs-start.sh"
 file_permissions: '0755'
-corosync_tmpl : "corosync.conf.j2"
+corosync_tmpl: "corosync.conf.j2"
 corosync_tmpl_dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/corosync.conf"
 
 # Usage: configure_nonha_servicenode_config.yml
@@ -36,12 +36,12 @@ pcs_container_tmpl_nonha_dest: "{{ service_node_base_dir }}/{{ node.service_tag 
 pcs_start_tmpl_nonha_dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/pcs-start.sh"
 corosync_non_ha_tmpl: "corosync_non_ha.conf.j2"
 
-#generate_active_servicenode_config.yml
+# Usage: generate_active_servicenode_config.yml
 active_node_corosync_dest: "{{ service_node_base_dir }}/{{ item.key }}/corosync.conf"
 active_service_node_dir: "{{ service_node_base_dir }}/{{ item.key }}"
 active_pcs_container_dest: "{{ service_node_base_dir }}/{{ active_node.service_tag }}/{{ pcs_container_name }}.container"
 
-# main.yml
+# Usage: main.yml
 service_ha_config_json: "/opt/omnia/service_nodes/service_ha_config_data.json"
 python_version: python3
 service_ha_config: "{{ provision_shared_library_path }}/common/service_ha_config.py"

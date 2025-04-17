@@ -46,4 +46,3 @@
   ansible.builtin.command: "{{ xcat_path }}/chdef service -p postbootscripts=\"omnia_service_node_postboot\""
   changed_when: true
   when: service_role_required
-

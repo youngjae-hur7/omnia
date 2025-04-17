@@ -24,16 +24,18 @@
     path: "{{ active_service_node_dir }}"
     state: directory
     mode: "{{ file_permissions }}"
-    
+
 - name: Generate corosync.conf
   ansible.builtin.template:
     src: "{{ corosync_tmpl }}"
     dest: "{{ active_node_corosync_dest }}"
-    
+    mode: '{{ file_permissions }}'
+
 - name: Generate pcs container file
   ansible.builtin.template:
     src: "{{ pcs_container_tmpl }}"
-    dest: "{{ active_pcs_container_dest}}"
+    dest: "{{ active_pcs_container_dest }}"
+    mode: '{{ file_permissions }}'
   vars:
     node_info: "{{ active_node }}"
 
@@ -41,7 +43,7 @@
   ansible.builtin.template:
     src: "{{ pcs_start_tmpl }}"
     dest: "{{ service_node_base_dir }}/{{ active_node.service_tag }}/pcs-start.sh"
-    mode: '0755'
+    mode: '{{ file_permissions }}'
   vars:
     item: "{{ active_node }}"
   
