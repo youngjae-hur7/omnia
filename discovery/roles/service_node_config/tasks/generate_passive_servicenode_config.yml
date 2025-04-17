@@ -20,8 +20,8 @@
     passive_nodes: "{{ group_value | selectattr('active', 'equalto', false) | list }}"
 
 - name: Create directory for passive nodes
-  file:
-    path: "{{ passive_node_dir }}"
+  ansible.builtin.file:
+    path: "{{ service_node_base_dir }}/{{ node.service_tag }}"
     state: directory
     mode: "{{ file_permissions }}"
   loop: "{{ passive_nodes }}"
@@ -30,14 +30,10 @@
     loop_var: node
 
 - name: Generate corosync.conf for passive nodes (same as active)
-  template:
+  ansible.builtin.template:
     src: "{{ corosync_tmpl }}"
-    dest: "{{ corosync_tmpl_dest }}"
+    dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/corosync.conf"
     mode: "{{ file_permissions }}"
-  vars:
-    active_node: "{{ active_node }}"
-    passive_nodes: "{{ passive_nodes }}"
-    node: "{{ node }}"
   loop: "{{ passive_nodes }}"
   loop_control:
     label: "{{ node.service_tag }}"
@@ -46,7 +42,7 @@
 - name: Generate pcs container file for passive nodes
   ansible.builtin.template:
     src: "{{ pcs_container_tmpl }}"
-    dest: "{{ pcs_container_tmpl_dest }}"
+    dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/{{ pcs_container_name }}.container"
     mode: "{{ file_permissions }}"
   vars:
     node_info: "{{ node }}"
@@ -58,10 +54,8 @@
 - name: Generate pcs-start.sh for passive nodes
   ansible.builtin.template:
     src: "{{ pcs_start_tmpl }}"
-    dest: "{{ pcs_start_tmpl_dest }}"
+    dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/pcs-start.sh"
     mode: "{{ file_permissions }}"
-  vars:
-    node: "{{ node }}"
   loop: "{{ passive_nodes }}"
   loop_control:
     label: "{{ node.service_tag }}"
