@@ -79,12 +79,12 @@
   ansible.builtin.command: "{{ xcat_path }}/chdef -t site domain=\"{{ domain_name }}\""
   changed_when: true
 
-- name: Configure service role related details
+- name: Configure service_node role related details
   ansible.builtin.include_tasks: configure_service_role_xcat_details.yml
   when: service_role_required | default(false)
 
-- name: Add setupdhcp attributes for service node group
-  ansible.builtin.command: "{{ xcat_path }}/chdef -t group -o service setupdhcp=1"
+- name: Add setupdhcp attributes for service_node group
+  ansible.builtin.command: "{{ xcat_path }}/chdef -t group -o service_node setupdhcp=1"
   changed_when: true
   when: hierarchical_provision_status | default(false)
 

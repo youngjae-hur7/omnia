@@ -22,11 +22,11 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.discovery.omniadb_connection import get_data_from_db # type: ignore
 
 MANAGEMENT_LAYER_ROLES = {
-    "oim_ha_node", "service", "login", "compiler", "kube_control_plane", "etcd", 
+    "oim_ha_node", "service_node", "login", "compiler", "kube_control_plane", "etcd",
     "slurm_control_node", "slurm_dbd", "auth_server"
     }
 SECOND_LAYER_ROLES = {"default", "kube_node", "slurm_node"}
-NON_SERVICE_ROLES = (MANAGEMENT_LAYER_ROLES | SECOND_LAYER_ROLES) - {"service"}
+NON_SERVICE_ROLES = (MANAGEMENT_LAYER_ROLES | SECOND_LAYER_ROLES) - {"service_node"}
 
 def validate_roles(roles, layer, module, management_layer_roles=MANAGEMENT_LAYER_ROLES, second_layer_roles=SECOND_LAYER_ROLES, non_service_roles=NON_SERVICE_ROLES): # type: ignore
     """
@@ -34,7 +34,7 @@ def validate_roles(roles, layer, module, management_layer_roles=MANAGEMENT_LAYER
     1. Roles should only belong to either management_layer or compute-layer roles.
     2. At least one role should exist in the given layer.
     3. Groups associated with management_layer roles should not be in compute-layer roles.
-    4. Groups assigned to 'service' should not be in other management_layer roles.
+    4. Groups assigned to 'service_node' should not be in other management_layer roles.
 
     :param roles: Dictionary where keys are role names and values are dictionaries with a 'groups'
                   key containing a list of groups.
@@ -64,7 +64,7 @@ def validate_roles(roles, layer, module, management_layer_roles=MANAGEMENT_LAYER
         if not defined_roles.intersection(management_layer_roles):
             raise ValueError("At least one role must be from the management_layer roles.")
     else:
-        if 'service' in defined_roles:
+        if 'service_node' in defined_roles:
             if not defined_roles.intersection(second_layer_roles):
                 raise ValueError(
                     f"At least one role must be defined from - \
@@ -87,15 +87,15 @@ def validate_roles(roles, layer, module, management_layer_roles=MANAGEMENT_LAYER
         errors.append(f"Groups {common_groups} \
                       are assigned to both management_layer and compute-layer roles.")
 
-    # Check 4: Ensure groups in 'service' role are not part of other management_layer roles
-    service_groups = role_groups.get("service", set())
+    # Check 4: Ensure groups in 'service_node' role are not part of other management_layer roles
+    service_groups = role_groups.get("service_node", set())
 
     for role in management_layer_roles:
-        if role != "service":
+        if role != "service_node":
             overlapping_groups = service_groups.intersection(role_groups.get(role, set()))
             if overlapping_groups:
                 errors.append(f"Groups {overlapping_groups} \
-                              from 'service' role are also part of management_layer role '{role}'.")
+                              from 'service_node' role are also part of management_layer role '{role}'.")
 
     # Raise an error if validation fails
     if errors:
@@ -129,7 +129,7 @@ def check_hierarchical_provision(group, groups_data, roles_data, layer):
         return False
     query_result = get_data_from_db(
         table_name='cluster.nodeinfo',
-        filter_dict={'service_tag': parent, 'status': 'booted', 'role': "service"},
+        filter_dict={'service_tag': parent, 'status': 'booted', 'role': "service_node"},
     )
 
     if query_result:
@@ -149,7 +149,7 @@ def filter_roles(groups_data, roles_data, layer):
     if layer == "first":
         valid_roles = set(roles_data.keys()).intersection(MANAGEMENT_LAYER_ROLES)
     else:
-        if 'service' in roles_data:
+        if 'service_node' in roles_data:
             valid_roles = set(roles_data.keys()).intersection(SECOND_LAYER_ROLES)
         else:
             valid_roles = set(roles_data.keys()).intersection(NON_SERVICE_ROLES)
@@ -169,7 +169,7 @@ def roles_groups_mapping(groups_data, roles_data, layer):
         tuple: A tuple containing the following:
             - bmc_check (bool): A boolean indicating if BMC is required.
             - switch_check (bool): A boolean indicating if switch is required.
-            - hierarchical_provision_status (bool): A boolean indicating if hierarchical 
+            - hierarchical_provision_status (bool): A boolean indicating if hierarchical
                                                     provisioning is required.
             - roles_groups_data (dict): A dictionary containing the roles and groups data.
             - groups_roles_info (dict): A dictionary containing the groups and roles information.
@@ -231,17 +231,17 @@ def main():
     This function is the main entry point of the Ansible module.
     It takes three parameters: roles_data, groups_data, and layer.
     The roles_data is a list of dictionaries where each dictionary
-    contains the role name and other details. 
+    contains the role name and other details.
     The groups_data is a dictionary where each key is a group name and the value is another
-    dictionary containing group details. The layer parameter is a string that can be either 
+    dictionary containing group details. The layer parameter is a string that can be either
     "first" or "default". The function processes the roles and groups data, validates the roles,
     and then maps the roles to the groups. It also checks for BMC and switch requirements and
     hierarchical provisioning status. Finally, it returns the processed data in JSON format.
 
     Parameters:
-        roles_data (list): A list of dictionaries where each dictionary contains the role name 
+        roles_data (list): A list of dictionaries where each dictionary contains the role name
                            and other details.
-        groups_data (dict): A dictionary where each key is a group name and the value is another 
+        groups_data (dict): A dictionary where each key is a group name and the value is another
                             dictionary containing group details.
         layer (str): A string that can be either "first" or "default".
 

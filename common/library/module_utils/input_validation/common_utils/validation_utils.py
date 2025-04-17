@@ -259,7 +259,7 @@ def validate_ipv4_range(ip_range) -> bool:
         start_ip = ipaddress.IPv4Address(start)
         end_ip = ipaddress.IPv4Address(end)
 
-        if end_ip > start_ip:
+        if end_ip >= start_ip:
             return True
         else:
             return False

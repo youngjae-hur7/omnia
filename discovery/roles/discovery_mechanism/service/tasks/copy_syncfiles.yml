@@ -19,7 +19,7 @@
     state: directory
     mode: "{{ syncfiles_mode }}"
 
-- name: Copy syncfiles directory from localhost to service host
+- name: Copy syncfiles directory from localhost to service_node host
   ansible.posix.synchronize:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"

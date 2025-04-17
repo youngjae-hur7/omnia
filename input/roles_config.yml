@@ -81,7 +81,7 @@ Groups:
 # | Role Name          | Layer            |     | Role Name   | Layer          |
 # +---------------------+-----------------+     +-------------+----------------+
 # | oim_ha_node        | management       |     | kube_node   | compute        |
-# | service            | management       |     | slurm_node  | compute        |
+# | service_node       | management       |     | slurm_node  | compute        |
 # | login              | management       |     | default     | compute        |
 # | auth_server        | management       |     |             |                |
 # | compiler           | management       |     |             |                |
@@ -116,14 +116,14 @@ Roles:
 # The nodes included in this role will have the necessary tools and
 # configurations needed to be passive OIM nodes.
 #
-# The nodes in this role can be used in case of OIM failure. 
+# The nodes in this role can be used in case of OIM failure.
 #
   # - name: "oim_ha_node"
   #   groups:
   #     - grp0
 
 #
-# Service Role: Service node groups to add into service role can be provided in this role
+# Service Node Role: Service node groups to add into service_node role can be provided in this role
 # ------------------------------------------------------------------------------------
 #
 # This role is used to configure the nodes for service group. It belongs to the management layer.
@@ -133,7 +133,7 @@ Roles:
 #
 # The nodes in this role can be used to run service.
 #
-  # - name: "service"
+  # - name: "service_node"
   #   groups:
   #     - grp0
   #     - grp1

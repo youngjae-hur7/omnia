@@ -17,11 +17,11 @@
   ansible.builtin.set_fact:
     service_node_status: false
 
-- name: Fetch nodes with group service
+- name: Fetch nodes with group service_node
   when: service_role_required | default(false)
   block:
-    - name: Fetch nodes with group service
-      ansible.builtin.command: "{{ xcat_path }}/lsdef service"
+    - name: Fetch nodes with group service_node
+      ansible.builtin.command: "{{ xcat_path }}/lsdef service_node"
       changed_when: false
       register: check_service_nodes
       failed_when: false
@@ -33,7 +33,7 @@
         - check_service_nodes.stderr is defined
         - '"error" not in check_service_nodes.stderr | lower'
 
-    - name: Warning - not found any service nodes
+    - name: Warning - not found any nodes in group service_node
       ansible.builtin.pause:
         seconds: "{{ warning_wait_time }}"
         prompt: "{{ service_nodes_warning_msg }}"
