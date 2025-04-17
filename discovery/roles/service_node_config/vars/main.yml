@@ -19,14 +19,10 @@ pcs_group: "omnia"
 monitor_interval: "30s"
 ha_migration_threshold: 1
 service_node_base_dir: "{{ oim_shared_path }}/service_nodes"
-passive_node_dir: "{{ service_node_base_dir }}/{{ node.service_tag }}"
 pcs_container_tmpl: "{{ pcs_container_name }}.container.j2"
-pcs_container_tmpl_dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/{{ pcs_container_name }}.container"
 pcs_start_tmpl: "pcs-start.sh.j2"
-pcs_start_tmpl_dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/pcs-start.sh"
 file_permissions: '0755'
 corosync_tmpl: "corosync.conf.j2"
-corosync_tmpl_dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/corosync.conf"
 
 # Usage: configure_nonha_servicenode_config.yml
 service_node_dir: "{{ service_node_base_dir }}/{{ item.service_tag }}"
@@ -43,7 +39,7 @@ active_pcs_container_dest: "{{ service_node_base_dir }}/{{ active_node.service_t
 
 # Usage: main.yml
 service_ha_config_json: "/opt/omnia/service_nodes/service_ha_config_data.json"
-python_version: python3
+python_version: "{{ ansible_python_interpreter }}"
 service_ha_config: "{{ provision_shared_library_path }}/common/service_ha_config.py"
 high_availability_config_path: "{{ hostvars['localhost']['input_project_dir'] }}/high_availability_config.yml"
 db_operations_file_path: "{{ provision_shared_library_path }}/db_operations"
