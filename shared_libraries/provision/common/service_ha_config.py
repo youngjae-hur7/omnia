@@ -68,45 +68,56 @@ try:
         sys.exit(1)
 
     results = {}
-    for ha in data.get('service_node_ha', []):
-        if not ha.get('enable_service_ha'):
-            continue
-        if 'service_nodes' not in ha:
-            print("Warning: 'service_nodes' key missing in one of the HA entries; skipping.")
-            continue
+    ha = data.get('service_node_ha', {})
 
-        for node in ha['service_nodes']:
-            vip = node.get('virtual_ip_address', '')
-            active_tag = node.get('active_node_service_tag', '')
-            passive_nodes_nested = node.get('passive_nodes', [])
+    if not isinstance(ha, dict):
+        print("Invalid structure for 'service_node_ha'. It must be a dictionary.")
+        sys.exit(1)
 
-            # Active node lookup
-            active_info = get_node_summary(active_tag)
-            if not active_info:
-                print(f"Warning: Active node with service tag '{active_tag}' not found in DB. Skipping this HA config.")
+    if not ha.get('enable_service_ha'):
+        print("Service HA is disabled in config. Exiting.")
+        sys.exit(0)
+
+    service_nodes = ha.get('service_nodes', [])
+    if not service_nodes:
+        print("No 'service_nodes' found in service_node_ha. Exiting.")
+        sys.exit(1)
+
+    for node in service_nodes:
+        vip = node.get('virtual_ip_address', '')
+        active_tag = node.get('active_node_service_tag', '')
+        passive_nodes_nested = node.get('passive_nodes', [])
+
+        # Active node lookup
+        active_info = get_node_summary(active_tag)
+        if not active_info:
+            print(f"Warning: Active node with service tag '{active_tag}' not found in DB. Skipping this HA config.")
+            continue
+        active_info.update({
+            'virtual_ip': vip,
+            'active': True
+        })
+
+        # Passive nodes lookup
+        passive_info_grouped = []
+        for group in passive_nodes_nested:
+            tags = group.get('node_service_tags', [])
+            if not isinstance(tags, list):
+                print(f"Invalid 'node_service_tags' format under VIP '{vip}'; expected a list. Skipping.")
                 continue
-            active_info.update({
-                'virtual_ip': vip,
-                'active': True
-            })
+            for tag in tags:
+                passive_info = get_node_summary(tag)
+                if passive_info:
+                    passive_info.update({
+                        'virtual_ip': vip,
+                        'active': False
+                    })
+                    passive_info_grouped.append(passive_info)
 
-            # Passive nodes lookup
-            passive_info_grouped = []
-            for group in passive_nodes_nested:
-                tags = group.get('node_service_tags', [])
-                for tag in tags:
-                    passive_info = get_node_summary(tag)
-                    if passive_info:
-                        passive_info.update({
-                            'virtual_ip': vip,
-                            'active': False
-                        })
-                        passive_info_grouped.append(passive_info)
-
-            # Assemble node data
-            node_key = active_info['service_tag']
-            node_data = [active_info] + passive_info_grouped
-            results[node_key] = node_data
+        # Assemble node data
+        node_key = active_info['service_tag']
+        node_data = [active_info] + passive_info_grouped
+        results[node_key] = node_data
 
     if not results:
         print("No valid service HA data found. Exiting without writing output.")
