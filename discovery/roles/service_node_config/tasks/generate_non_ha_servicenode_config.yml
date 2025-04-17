@@ -13,7 +13,7 @@
 # limitations under the License.
 ---
 
-- name: Create directories for each service tag 
+- name: Create directories for each service tag
   ansible.builtin.file:
     path: "{{ service_node_dir }}"
     state: directory
@@ -30,17 +30,19 @@
   ansible.builtin.template:
     src: "{{ corosync_non_ha_tmpl }}"
     dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/corosync.conf"
+    mode: "{{ file_permissions }}"
 
-- name: Generate {{ pcs_container_name }}.container for non-HA nodes
+- name: Generate pcs container file for non-HA nodes
   ansible.builtin.template:
     src: "{{ pcs_container_tmpl }}"
     dest: "{{ pcs_container_tmpl_nonha_dest }}"
+    mode: "{{ file_permissions }}"
   loop: "{{ service_nodes.query_result }}"
   loop_control:
     loop_var: node
   when: node.service_tag not in service_node_ha_data.service_nodes | map(attribute='active_node_service_tag') | list
   vars:
-    node_info: "{{ node }}"  
+    node_info: "{{ node }}"
 
 - name: Generate pcs-start.sh for non-HA nodes
   ansible.builtin.template:
@@ -52,5 +54,4 @@
     loop_var: node
   when: node.service_tag not in service_node_ha_data.service_nodes | map(attribute='active_node_service_tag') | list
   vars:
-    item: "{{ node }}"  
-
+    item: "{{ node }}"

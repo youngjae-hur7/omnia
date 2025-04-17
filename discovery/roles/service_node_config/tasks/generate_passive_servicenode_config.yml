@@ -33,6 +33,7 @@
   template:
     src: "{{ corosync_tmpl }}"
     dest: "{{ corosync_tmpl_dest }}"
+    mode: "{{ file_permissions }}"
   vars:
     active_node: "{{ active_node }}"
     passive_nodes: "{{ passive_nodes }}"
@@ -43,9 +44,10 @@
     loop_var: node
 
 - name: Generate pcs container file for passive nodes
-  template:
+  ansible.builtin.template:
     src: "{{ pcs_container_tmpl }}"
     dest: "{{ pcs_container_tmpl_dest }}"
+    mode: "{{ file_permissions }}"
   vars:
     node_info: "{{ node }}"
   loop: "{{ passive_nodes }}"
@@ -54,7 +56,7 @@
     loop_var: node
 
 - name: Generate pcs-start.sh for passive nodes
-  template:
+  ansible.builtin.template:
     src: "{{ pcs_start_tmpl }}"
     dest: "{{ pcs_start_tmpl_dest }}"
     mode: "{{ file_permissions }}"

@@ -46,5 +46,3 @@
     mode: '{{ file_permissions }}'
   vars:
     item: "{{ active_node }}"
-  
-
