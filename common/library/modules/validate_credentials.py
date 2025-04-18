@@ -33,36 +33,30 @@ def validate_input(field, value, rules):
     """Validates input against rules."""
     if field not in rules:
         return (False, f"Validation rules not found for '{field}'")
-
     rule = rules[field]
     if not rule["minLength"] <= len(value) <= rule["maxLength"]:
         return (False, f"'{field}' length must be between {rule['minLength']} and \
                 {rule['maxLength']} characters")
-
     if "pattern" in rule and not re.match(rule["pattern"], value):
         return (False, f"'{field}' format is invalid. Expected pattern: {rule['pattern']}")
     return (True, f"'{field}' is valid")
 
 def main():
     """Main module function."""
-    parser = ConfigParser()
-    cfg_path = os.path.join(os.getcwd(), 'ansible.cfg')
-    parser.read(cfg_path)
-    module_utils_base = parser.get('defaults', 'module_utils', fallback=None)
-    credentials_schema = os.path.join(module_utils_base,'input_validation','schema',\
-                                      'credential_rules.json')
     module_args = dict(
         credential_field=dict(type="str", required=True),
         credential_input=dict(type="str", required=True),
-        rules_file=dict(type="str", required=False, default=credentials_schema)
+        module_utils_path=dict(type="str", required=False, default=None)
     )
 
     module = AnsibleModule(argument_spec=module_args, supports_check_mode=True)
     params = module.params
-
+    module_utils_base = module.params["module_utils_path"]
+    credentials_schema = os.path.join(module_utils_base,'input_validation','schema',\
+                                      'credential_rules.json')
     # Load validation rules
     try:
-        rules = load_rules(params["rules_file"])
+        rules = load_rules(credentials_schema)
     except ValueError as e:
         module.fail_json(msg=f"Failed to load rules: {e}")
 
