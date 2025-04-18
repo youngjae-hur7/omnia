@@ -57,9 +57,9 @@
         name: deploy_containers/common
         tasks_from: add_known_hosts.yml
 
-# - name: Validate high availability config
-#   ansible.builtin.import_playbook: ../input_validation/validate_config.yml
-#   when: hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.enable_oim_ha | default(false)
+- name: Validate high availability config
+  ansible.builtin.import_playbook: ../input_validation/validate_config.yml
+  when: hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.enable_oim_ha | default(false)
 
 - name: Deploy the PCS container
   hosts: oim
@@ -112,10 +112,19 @@
   hosts: localhost
   connection: local
   tasks:
-    - name: Configure Pulp container tasks # noqa:role-name[path]
-      ansible.builtin.include_role:
-        name: deploy_containers/pulp
-        tasks_from: create_pulp_config.yml
+    - name: Configure Pulp container based on protocol
+      block:
+        - name: Configure Pulp HTTP container tasks
+          ansible.builtin.include_role:
+            name: deploy_containers/pulp
+            tasks_from: create_pulp_config_http.yml
+          when: not hostvars['oim']['pulp_protocol_https']
+
+        - name: Configure Pulp HTTPS container tasks
+          ansible.builtin.include_role:
+            name: deploy_containers/pulp
+            tasks_from: create_pulp_config_https.yml
+          when: hostvars['oim']['pulp_protocol_https']
 
 - name: Reload pulp nginx
   hosts: oim
@@ -125,6 +134,7 @@
       ansible.builtin.include_role:
         name: deploy_containers/pulp
         tasks_from: reload_pulp_nginx.yml
+      when: hostvars['oim']['pulp_protocol_https']
 
 - name: Configure provision container
   hosts: omnia_provision

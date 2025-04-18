@@ -31,7 +31,7 @@ http {
 
     server {
         # Gunicorn docs suggest the use of the "deferred" directive on Linux.
-        listen {{ pulp_container_port }} ssl deferred;
+        listen {{ pulp_container_port_https }} ssl deferred;
 
         # SSL certificates
         ssl_certificate {{ nginx_template_vars.pulp_server_crt_path }};
@@ -108,6 +108,6 @@ http {
         server_name {{ pulp_server_ip }};
 
         # Redirect HTTP to HTTPS
-        return 301 https://{{ pulp_server_ip }}:{{ pulp_container_port }}$request_uri;
+        return 301 https://{{ pulp_server_ip }}:{{ pulp_container_port_https }}$request_uri;
     }
 }

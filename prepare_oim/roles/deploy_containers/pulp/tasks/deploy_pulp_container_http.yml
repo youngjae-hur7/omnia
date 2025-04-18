@@ -18,13 +18,7 @@
     path: "{{ item.path }}"
     state: directory
     mode: "{{ item.mode }}"
-  loop: "{{ pulp_directories }}"
-
-- name: Create nginx.conf file for Pulp
-  ansible.builtin.template:
-    src: "{{ nginx_conf_path }}"
-    dest: "{{ nginx_conf_dest }}"
-    mode: "{{ pulp_dir_permissions }}"
+  loop: "{{ pulp_directories_http }}"
 
 - name: Create settings.py for Pulp
   ansible.builtin.template:
@@ -41,7 +35,7 @@
         state: present
         restart_policy: "no"
         hostname: "{{ pulp_container_name }}"
-        volumes: "{{ volumes }}"
+        volumes: "{{ volumes_http }}"
         privileged: true
         device:
           - "{{ device_name }}"
