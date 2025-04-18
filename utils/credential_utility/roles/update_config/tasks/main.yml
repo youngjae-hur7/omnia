@@ -13,9 +13,9 @@
 # limitations under the License.
 ---
 
-- name: Set library path
+- name: Set common library path
   ansible.builtin.set_fact:
-    module_utils_path: "{{ role_path }}../../../../common/library/module_utils/"
+    module_utils_path: "{{ role_path }}/../../../../common/library/module_utils/"
 
 - name: Fetch omnia credentials
   ansible.builtin.include_tasks: fetch_credentials.yml
