@@ -21,10 +21,6 @@
     log_dir: "{{ base_path }}"
   register: result
 
-- name: Clean DNF cache
-  ansible.builtin.command: dnf clean all
-  changed_when: false
-
 - name: Process URL mirrors from local_repo_config
   process_rpm_config:
     local_config: "{{ result.local_config }}"
