@@ -37,23 +37,19 @@ def fetch_rule(field, rules):
 
 def main():
     """Main function."""
-    parser = ConfigParser()
-    cfg_path = os.path.join(os.getcwd(), 'ansible.cfg')
-    parser.read(cfg_path)
-    module_utils_base = parser.get('defaults', 'module_utils', fallback=None)
-    credentials_schema = os.path.join(module_utils_base,\
-                                      'input_validation','schema','credential_rules.json')
     module_args = dict(
         credential_field=dict(type="str", required=True),
-        rules_file=dict(type="str", required=False, default=credentials_schema)
+        module_utils_path=dict(type="str", required=False, default=None)
     )
 
     module = AnsibleModule(argument_spec=module_args, supports_check_mode=True)
     params = module.params
-
+    module_utils_base = module.params["module_utils_path"]
+    credentials_schema = os.path.join(module_utils_base,'input_validation','schema',\
+                                      'credential_rules.json')
     # Load validation rules
     try:
-        rules = load_rules(params["rules_file"])
+        rules = load_rules(credentials_schema)
     except Exception as e:
         module.fail_json(msg=f"Failed to load rules: {e}")
 

@@ -88,21 +88,17 @@ def main():
         omnia_base_dir=dict(type="str", required=True),
         project_name=dict(type="str", required=True),
         tag_names=dict(type="str", required=True),
-        files=dict(type="list", elements="str", required=False)
+        files=dict(type="list", elements="str", required=False),
+        module_utils_path=dict(type="str", required=False, default=None)
     )
 
     module = AnsibleModule(argument_spec=module_args, supports_check_mode=True)
+    module_utils_base = module.params["module_utils_path"]
     omnia_base_dir = module.params["omnia_base_dir"]
     project_name = module.params["project_name"]
     tag_names = eval(module.params["tag_names"])
     single_files = module.params["files"]
-    parser = ConfigParser()
-    cfg_path = os.path.join(os.getcwd(), 'ansible.cfg')
-    parser.read(cfg_path)
-    module_utils_base = parser.get('defaults', 'module_utils', fallback=None)
     schema_base_file_path = os.path.join(module_utils_base,'input_validation','schema')
-    # module_utils_base = module._module_utils_path
-    # schema_base_file_path = os.path.join(module_utils_base,'input_validation','schema')
     directory_path = os.path.join(omnia_base_dir, project_name)
     input_file_inventory = config.input_file_inventory
     passwords_set = config.passwords_set
