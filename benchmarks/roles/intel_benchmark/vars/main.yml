@@ -19,9 +19,7 @@ input_project_dir: "{{ hostvars['localhost']['input_project_dir'] }}"
 invalid_inventory_fail_msg: "Failed. Invalid inventory format. Provide inventory with slurm_control_node and slurm_node group."
 cluster_os_type_success_msg: "cluster_os_type validated"
 supported_os_check_dict:
-  rhel: ["8.6", "8.7", "8.8", "9.4"]
-  rocky: ["8.8"]
-  ubuntu: ["24.04", "22.04"]
+  rhel: ["9.4"]
 cluster_os_type_fail_msg: "Failed. Incorrect cluster_os_type selected. Supported OS and versions are {{ supported_os_check_dict | string }}"
 
 # Usage: install_packages.yml
