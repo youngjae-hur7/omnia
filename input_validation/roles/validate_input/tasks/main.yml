@@ -17,8 +17,8 @@
     omnia_run_tags: "{{ ansible_run_tags | default([]) }}"
   when: omnia_run_tags is not defined
 
-- name: Set library path
-  debug:
+- name: Set common library path
+  ansible.builtin.set_fact:
     module_utils_path: "{{ role_path }}../../../common/library/module_utils/"
 
 - name: Validate omnia input config
