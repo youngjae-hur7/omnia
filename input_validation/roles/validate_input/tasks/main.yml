@@ -17,6 +17,10 @@
     omnia_run_tags: "{{ ansible_run_tags | default([]) }}"
   when: omnia_run_tags is not defined
 
+- name: Set common library path
+  ansible.builtin.set_fact:
+    module_utils_path: "{{ role_path }}/../../../common/library/module_utils/"
+
 - name: Validate omnia input config
   vars:
     input_validate_tags: "{{ omnia_run_tags | default([]) | difference(['all']) }}"
@@ -25,6 +29,7 @@
     project_name: "{{ project_name }}"
     tag_names: "{{ input_validate_tags }}"
     files: "{{ files | default([]) }}"
+    module_utils_path: "{{ module_utils_path }}"
   register: validation_status
   when: (input_validate_tags | length) > 0
 
