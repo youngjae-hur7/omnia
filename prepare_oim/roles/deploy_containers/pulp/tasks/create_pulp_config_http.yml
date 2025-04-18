@@ -50,4 +50,3 @@
     dest: "{{ config_default_loc }}"
     mode: "{{ logs_dir_permission }}"
     remote_src: true
-
