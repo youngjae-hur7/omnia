@@ -12,6 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
+- name: Clean DNF cache
+  ansible.builtin.command: dnf clean all
+  changed_when: false
+
+- name: Remove pulp.repo if exists
+  ansible.builtin.file:
+    path: "{{ pulp_repo_path }}"
+    state: absent
+
+- name: Regenerate DNF cache using built-in module
+  ansible.builtin.dnf:
+    update_cache: true
+  changed_when: false
+
 - name: Check for data folder existence
   ansible.builtin.stat:
     path: "{{ meta_dest }}"
