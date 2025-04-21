@@ -24,25 +24,27 @@ PACKAGES=(
 # Install each package and log a simple message
 for pkg in "${PACKAGES[@]}"; do
     echo "**** Installing Package - $pkg..." >> "$LOGFILE"
-    dnf install -y "$pkg"
+    dnf install -y "$pkg" >> "$LOGFILE"
     if [[ $? -eq 0 ]]; then
         echo "$pkg installed successfully." >> "$LOGFILE"
     else
         echo "**** Error installing $pkg. Check logs for details." >> "$LOGFILE"
+        echo "**** Exiting this script." >> "$LOGFILE"
+        exit 1
     fi
 done
 
 echo "Updating enviornment variables" >> "$LOGFILE"
 echo "source /etc/profile.d/xcat.sh" >> "/root/.bashrc"
 
-wget "http://{{ admin_nic_ip }}:80/install/xcat-genesis-base-x86_64.tar.gz" -O /tmp/xcat-genesis-base-x86_64.tar.gz 
+wget "http://{{ admin_nic_ip }}:80/install/xcat-genesis-base-x86_64.tar.gz" -O /tmp/xcat-genesis-base-x86_64.tar.gz
 genesis_url_status=$?
 if [ $genesis_url_status -eq 0 ]; then
     tar -zxvf /tmp/xcat-genesis-base-x86_64.tar.gz -C /tmp
     genesis_rpm_file=`rpm -qa | grep xCAT-genesis-base-x86_64`
     rpm -e --nodeps $genesis_rpm_file
     rpm -ivh /tmp/xCAT-genesis-base-x86_64-2.16.4-snap202308211541.noarch.rpm
-    mknb x86_64
+    /opt/xcat/sbin/mknb x86_64
 fi
 
 echo "Install and configure podman" >> "$LOGFILE"
@@ -77,6 +79,11 @@ fi
 # Mount NFS server share path in Omnia share path
 echo "Mounting NFS server share path in Omnia share path" >> "$LOGFILE"
 mount -t nfs -o nosuid,rw,sync,hard,intr,timeo=30 {{ nfs_server_ip }}:{{ nfs_server_share_path }} {{ oim_shared_path }}
+echo "Creating a symlink to /install and /tftpboot"
+sudo rm -rf /install
+ln -s {{ oim_shared_path }}/omnia/provision/install/ /install
+sudo rm -rf /tftpboot
+ln -s {{ oim_shared_path }}/omnia/provision/tftpboot/ /tftpboot
 
 # Validate if NFS server share path is mounted
 echo "Validating if NFS server share path is mounted" >> "$LOGFILE"

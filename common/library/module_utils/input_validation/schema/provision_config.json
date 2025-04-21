@@ -50,7 +50,6 @@
   "required": [
     "node_name",
     "domain_name",
-    "pxe_mapping_file_path",
     "disk_partition",
     "timezone",
     "language",
