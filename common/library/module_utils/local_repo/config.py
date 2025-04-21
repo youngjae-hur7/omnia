@@ -54,6 +54,8 @@ OMNIA_REPO_KEY = "omnia_repo_url_rhel"
 RHEL_OS_URL = "rhel_os_url"
 SOFTWARES_KEY = "softwares"
 USER_REPO_URL = "user_repo_url"
+REPO_CONFIG = { "always": "immediate", "partial": "on_demand", "never": "streamed" }
+pulp_policies = { "immediate": "immediate", "on_demand": "on_demand" , "streamed": "streamed" }
 
 # ----------------------------
 # Used by download_common.py

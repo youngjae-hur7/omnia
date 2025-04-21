@@ -161,7 +161,7 @@ def create_rpm_remote(repo,log):
     """
  
     remote_url = repo["url"]
-    policy_type = "on_demand"
+    policy_type = repo["policy"]
     version = repo.get("version")
     repo_name = repo["package"]
  
