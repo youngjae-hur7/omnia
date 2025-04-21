@@ -32,14 +32,14 @@
 
 - name: Create Pulp config (if file doesn't exist)
   ansible.builtin.command:
-    cmd: "{{ pulp_config_cmd }}"
+    cmd: "{{ pulp_config_cmd_https }}"
   when: not pulp_config_status.stat.exists
   changed_when: false
   no_log: true
 
 - name: Overwrite Pulp config (if file exists)
   ansible.builtin.command:
-    cmd: "{{ pulp_config_cmd_overwrite }}"
+    cmd: "{{ pulp_config_cmd_overwrite_https }}"
   when: pulp_config_status.stat.exists
   changed_when: false
   no_log: true
