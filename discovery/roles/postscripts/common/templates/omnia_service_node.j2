@@ -44,7 +44,7 @@ if [ $genesis_url_status -eq 0 ]; then
     genesis_rpm_file=`rpm -qa | grep xCAT-genesis-base-x86_64`
     rpm -e --nodeps $genesis_rpm_file
     rpm -ivh /tmp/xCAT-genesis-base-x86_64-2.16.4-snap202308211541.noarch.rpm
-    mknb x86_64
+    /opt/xcat/sbin/mknb x86_64
 fi
 
 echo "Install and configure podman" >> "$LOGFILE"
