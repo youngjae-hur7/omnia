@@ -95,3 +95,4 @@ meta_dest: "{{ nfs_shared_path }}/offline_repo/.data"
 meta_dest_mode: '0755'
 metadata_file_path: "{{ meta_dest }}/localrepo_metadata.yml"
 metadata_file_mode: '0644'
+pulp_repo_path: "/etc/yum.repos.d/pulp.repo"
