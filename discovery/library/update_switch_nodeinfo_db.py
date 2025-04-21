@@ -123,6 +123,8 @@ def main():
     domain_name = module.params["domain_name"]
     msg = []
     for group_name, group_data in group_details.items():
+        if not group_data.get("switch_status"):
+            continue
         # Extract switch and bmc details from group_data
         switch_ip = IPv4Address(group_data.get("switch_details", {}).get("ip", ""))
         switch_ports = group_data.get("switch_details", {}).get("ports", "")
@@ -139,10 +141,6 @@ def main():
         admin_uncorrelated_node_start_ip = IPv4Address(admin_uncorrelated_node_start_ip)
         discovery_mechanism = "switch_based"
         bmc_mode = "static"
-
-        # Validate switch IP
-        if not switch_ip:
-            module.fail_json(msg="Switch IP is missing in group_data")
 
         # Check if switchinfo table has entries
         if not check_switch_table():

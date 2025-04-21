@@ -19,7 +19,7 @@ provision_validation_vars:
   - "{{ role_path }}/../mtms/vars/main.yml"
   - "{{ role_path }}/../switch_based/vars/main.yml"
 provision_shared_library_path: /opt/omnia/shared_libraries/provision
-ansible_tag_fail_msg: "Please run the playbook with the tag 'first_layer' only. Other tags are not allowed."
+ansible_tag_fail_msg: "Please run the playbook with the tag 'management_layer' only. Other tags are not allowed."
 
 # Usage: validate_provision_container.yml
 xcatd_service: "xcatd.service"
@@ -50,11 +50,16 @@ spec_syntax_fail_msg: "Failed. Syntax errors present in either network_spec.yml 
 # Usage: include_high_availability_config.yml
 high_availability_config_path: "{{ hostvars['localhost']['input_project_dir'] }}/high_availability_config.yml"
 high_availability_config_syntax_fail_msg: "Failed. Syntax errors present in high_availability_config.yml. Fix errors and re-run playbook again."
+nfs_not_configured: "When enabling OIM HA an NFS server must be configured.
+  Please run the OIM cleanup in utils and re-run the Omnia startup script using the NFS option."
 
-# Usage: fetch_composable_roles_config.yml
-roles_config_path: "{{ hostvars['localhost']['input_project_dir'] }}/roles_config.yml"
-roles_config_syntax_fail_msg: "Failed. Syntax errors present in role_config.yml. Fix errors and re-run playbook again."
+# Usage: include_composable_roles_config.yml
 omnia_metadata_file: "/opt/omnia/.data/oim_metadata.yml"
+# invalid_share_option_msg: |
+#   [ERROR] Invalid value \"{{ omnia_share_option }}\" provided for omnia share path type.
+#   For hierarchical-based discovery and provisioning, this must be set to \"NFS\".
+#   Please rerun 'omnia_startup.sh' and enter correct omnia share path type as \"NFS\"
+#   to continue with hierarchical-based discovery and provisioning.
 
 # Usage: include_local_repo_config.yml
 local_repo_config_file: "{{ hostvars['localhost']['input_project_dir'] }}/local_repo_config.yml"
@@ -143,7 +148,7 @@ fail_cidr_ip_range: "Failed, Cidr overlaps with"
 
 # Usage: validate_discovery_params.yml
 validation_range_file: "{{ provision_shared_library_path }}/validation/validate_input_ranges.py"
-first_layer_discovery_mechanism_fail_msg: |
+management_layer_discovery_mechanism_fail_msg: |
   "Failed. Please provide valid details either for mapping or bmc discovery mechanism for the first layer of nodes and re-run the playbook.
   For mapping discovery, please provide the pxe_mapping_file_path in the provision_config.yml file.
   For bmc discovery, please provide the bmc_details in the roles_config.yml file."
@@ -234,7 +239,7 @@ os_package_map:
 
 # Usage: validate_service_nodes.yml
 service_node_repo_failed_msg: "[Failed] It seems you have not executed local_repo.yml with service_node in software_config.yml.
-service_node package is required for service role provisioning."
+service_node package is required for service_node role provisioning."
 pulp_repo_fail_msg: "Failed. It seems pulp is not configured properly.
 Run local_repo/local_repo.yml with required packages in software_config.yml."
 

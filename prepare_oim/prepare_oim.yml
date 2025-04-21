@@ -23,6 +23,9 @@
         omnia_run_tags: "{{ (ansible_run_tags | default([]) + ['prepare_oim']) | unique }}"
         cacheable: true
 
+- name: Invoke validate_config.yml to perform L1 and L2 validations with prepare_oim tag
+  ansible.builtin.import_playbook: ../input_validation/validate_config.yml
+
 - name: Invoke get_config_credentials.yml
   ansible.builtin.import_playbook: ../utils/credential_utility/get_config_credentials.yml
 
@@ -54,13 +57,34 @@
         name: deploy_containers/common
         tasks_from: add_known_hosts.yml
 
-- name: Deploy all container
+# - name: Validate high availability config
+#   ansible.builtin.import_playbook: ../input_validation/validate_config.yml
+#   when: hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.enable_oim_ha | default(false)
+
+- name: Deploy the PCS container
   hosts: oim
   connection: ssh
   gather_facts: false
   tags: deploy_containers
   roles:
     - role: deploy_containers/common  # noqa:role-name[path]
+    - role: deploy_containers/pcs  # noqa:role-name[path]
+
+- name: Configure admin_ip with VIP if high availability is enabled
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Configure virtual IP as admin_ip task # noqa:role-name[path]
+      ansible.builtin.include_role:
+        name: deploy_containers/common
+        tasks_from: set_vip.yml
+
+- name: Deploy all other containers
+  hosts: oim
+  connection: ssh
+  gather_facts: false
+  tags: deploy_containers
+  roles:
     - role: deploy_containers/provision  # noqa:role-name[path]
     - role: deploy_containers/pulp  # noqa:role-name[path]
     - role: deploy_containers/kubespray  # noqa:role-name[path]
@@ -88,10 +112,29 @@
   hosts: localhost
   connection: local
   tasks:
-    - name: Configure Pulp container tasks # noqa:role-name[path]
+    - name: Configure Pulp container based on protocol
+      block:
+        - name: Configure Pulp HTTP container tasks
+          ansible.builtin.include_role:
+            name: deploy_containers/pulp
+            tasks_from: create_pulp_config_http.yml
+          when: not hostvars['oim']['pulp_protocol_https']
+
+        - name: Configure Pulp HTTPS container tasks
+          ansible.builtin.include_role:
+            name: deploy_containers/pulp
+            tasks_from: create_pulp_config_https.yml
+          when: hostvars['oim']['pulp_protocol_https']
+
+- name: Reload pulp nginx
+  hosts: oim
+  connection: ssh
+  tasks:
+    - name: Reload pulp nginx # noqa:role-name[path]
       ansible.builtin.include_role:
         name: deploy_containers/pulp
-        tasks_from: create_pulp_config.yml
+        tasks_from: reload_pulp_nginx.yml
+      when: hostvars['oim']['pulp_protocol_https']
 
 - name: Configure provision container
   hosts: omnia_provision
@@ -102,14 +145,27 @@
         name: deploy_containers/provision
         tasks_from: configure_provision_container.yml
 
-# PCS container has to be deployed after all containers are deployed and configured
-- name: Deploy pcs container
+- name: Deploy PCS container resources
+  hosts: oim
+  connection: ssh
+  tasks:
+    - name: Create all PCS container resources # noqa:role-name[path]
+      ansible.builtin.include_role:
+        name: deploy_containers/pcs
+        tasks_from: deploy_pcs_container_resources.yml
+
+- name: Save container images to NFS share
   hosts: oim
   connection: ssh
   gather_facts: false
-  tags: deploy_containers
   roles:
-    - role: deploy_containers/pcs  # noqa:role-name[path]
+    - role: save_container_images  # noqa:role-name[path]
+      when: >
+        omnia_share_option == 'NFS' and
+        (
+          (hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.enable_oim_ha | default(false)) or
+          (hostvars['localhost']['has_service_role'] | default(false))
+        )
 
 - name: Prepare oim completion
   hosts: localhost

@@ -1,0 +1,57 @@
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+
+- name: Create directories for each service tag
+  ansible.builtin.file:
+    path: "{{ service_node_dir }}"
+    state: directory
+    mode: "{{ file_permissions }}"
+  loop: "{{ service_nodes.query_result }}"
+  loop_control:
+    label: "{{ item.service_tag }}"
+
+- name: Render corosync.conf for non-HA nodes
+  loop: "{{ service_nodes.query_result }}"
+  loop_control:
+    loop_var: node
+  when: node.service_tag not in service_node_ha_data.service_nodes | map(attribute='active_node_service_tag') | list
+  ansible.builtin.template:
+    src: "{{ corosync_non_ha_tmpl }}"
+    dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/corosync.conf"
+    mode: "{{ file_permissions }}"
+
+- name: Generate pcs container file for non-HA nodes
+  ansible.builtin.template:
+    src: "{{ pcs_container_tmpl }}"
+    dest: "{{ pcs_container_tmpl_nonha_dest }}"
+    mode: "{{ file_permissions }}"
+  loop: "{{ service_nodes.query_result }}"
+  loop_control:
+    loop_var: node
+  when: node.service_tag not in service_node_ha_data.service_nodes | map(attribute='active_node_service_tag') | list
+  vars:
+    node_info: "{{ node }}"
+
+- name: Generate pcs-start.sh for non-HA nodes
+  ansible.builtin.template:
+    src: "{{ pcs_start_tmpl }}"
+    dest: "{{ pcs_start_tmpl_nonha_dest }}"
+    mode: "{{ file_permissions }}"
+  loop: "{{ service_nodes.query_result }}"
+  loop_control:
+    loop_var: node
+  when: node.service_tag not in service_node_ha_data.service_nodes | map(attribute='active_node_service_tag') | list
+  vars:
+    item: "{{ node }}"

@@ -57,7 +57,7 @@
         service_node_repo: "{{ (xcat_repo_list | default([])) + (xcat_dep_list | default([])) | list }}"
       when: xcat_repo_list is defined or xcat_dep_list is defined
 
-    - name: Failed - Service node package is required for service role provisioning
+    - name: Failed - Service node package is required for service_node role provisioning
       ansible.builtin.fail:
         msg: "{{ service_node_repo_warning_msg }}"
       when: service_node_repo | length == 0
