@@ -21,11 +21,6 @@
   loop:
     - "{{ gcc_package_names }}"
 
-- name: Installs clang packages
-  ansible.builtin.package:
-    name: "{{ clang_package }}"
-    state: present
-
 - name: Populate service facts
   ansible.builtin.service_facts:
 
