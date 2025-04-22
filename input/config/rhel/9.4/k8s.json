@@ -1,6 +1,8 @@
 {
     "k8s": {
       "cluster": [
+      {"package": "firewalld", "type": "rpm", "repo_name": "baseos"},
+      {"package": "python3-firewall", "type": "rpm", "repo_name": "baseos"},
       {
         "package": "nvidia-container-toolkit",
         "type": "rpm",
