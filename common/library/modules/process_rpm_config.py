@@ -26,7 +26,8 @@ import requests
 from datetime import datetime
 from functools import partial
 from ansible.module_utils.local_repo.config import (
-    pulp_rpm_commands
+    pulp_rpm_commands,
+    STANDARD_LOG_FILE_PATH
 )
 
 def execute_command(cmd_string, log,type_json=None, seconds=None):
@@ -485,7 +486,7 @@ def main():
     result, output = manage_rpm_repositories_multiprocess(rpm_config,log)
 
     if result is False:
-        module.fail_json(msg=f"Error {output}, check /opt/omnia/log/local_repo/standard.log")
+        module.fail_json(msg=f"Error {output}, check {STANDARD_LOG_FILE_PATH}")
 
     module.exit_json(changed=True, result="RPM Config Processed")
 

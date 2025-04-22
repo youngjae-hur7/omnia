@@ -111,4 +111,4 @@ pulp_rpm_commands = {
     "update_remote_cert": "pulp rpm remote update --name %s --url %s --policy %s --ca-cert %s --client-cert %s --client-key %s",
     "check_distribution": "pulp rpm distribution show --name %s"
 }
-
+STANDARD_LOG_FILE_PATH = "/opt/omnia/log/local_repo/standard.log"
