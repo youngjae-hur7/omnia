@@ -50,7 +50,7 @@ def execute_command(cmd_string, log,type_json=None, seconds=None):
             return False
         if type_json:
             return json.loads(cmd.stdout)
-        return cmd.stdout.strip()
+        return True
     except Exception as e:
         log.error("Exception while executing command: %s", str(e))
         return False
@@ -120,7 +120,7 @@ def create_rpm_repository(repo,log):
     version = repo.get("version")
 
     if skip_config(repo_name, version, log):
-        return False
+        return True
 
     if version != "null":
         repo_name = f"{repo_name}_{version}"
@@ -151,29 +151,29 @@ def show_rpm_repository(repo_name,log):
 def create_rpm_remote(repo,log):
     """
     Create a remote for the RPM repository if it doesn't already exist.
- 
+
     Args:
         repo (dict): A dictionary containing the repository information.
         log (logging.Logger): Logger instance for logging the process and errors.
- 
+
     Returns:
         bool: True if the remote was created or updated successfully, False otherwise.
     """
- 
+
     remote_url = repo["url"]
     policy_type = repo["policy"]
     version = repo.get("version")
     repo_name = repo["package"]
- 
+
     if skip_config(repo_name, version, log):
-        return False
- 
+        return True
+
     if version != "null":
         repo_name = f"{repo_name}_{version}"
- 
+
     remote_name = repo_name
     repo_keys = repo.keys()
-    if "ca_cert" in repo_keys:
+    if "ca_cert" in repo_keys and repo["ca_cert"]:
         ca_cert = f"@{repo['ca_cert']}"
         client_cert = f"@{repo['client_cert']}"
         client_key = f"@{repo['client_key']}"
@@ -230,7 +230,7 @@ def sync_rpm_repository(repo,log):
     version = repo.get("version")
 
     if skip_config(repo_name, version, log):
-        return False
+        return True
 
     if version != "null":
         repo_name = f"{repo_name}_{version}"
@@ -260,7 +260,7 @@ def create_publication(repo,log):
     version = repo.get("version")
 
     if skip_config(repo_name, version, log):
-        return False
+        return True
 
     if version != "null":
         repo_name = f"{repo_name}_{version}"
@@ -287,7 +287,7 @@ def create_distribution(repo, log):
     version = repo.get("version")
 
     if skip_config(repo_name, version, log):
-        return False
+        return True
 
     if version != "null":
         base_path = f" opt/omnia/offline_repo/cluster/rhel/rpms/{package_name}/{version}"
@@ -374,7 +374,7 @@ gpgcheck=0
 
     log.info(f"Created {repo_file_path} with {len(distributions)} repositories")
 
-def manage_rpm_repositories_multiprocess(rpm_config,log):
+def manage_rpm_repositories_multiprocess(rpm_config, log):
     """
     Manage RPM repositories using multiprocessing.
 
@@ -383,35 +383,51 @@ def manage_rpm_repositories_multiprocess(rpm_config,log):
         log (logging.Logger): Logger instance for logging the process and errors.
 
     Returns:
-        None
+        tuple: (bool, str) indicating success and a message
     """
 
-    # Step 1: Concurrent repository creation
-    cpu_count=os.cpu_count()
-    process=min(cpu_count, len(rpm_config))
-    log.info(f"Number of process = {process}")
+    cpu_count = os.cpu_count()
+    process = min(cpu_count, len(rpm_config))
+    log.info(f"Number of processes = {process}")
 
+    # Step 1: Concurrent repository creation
     with multiprocessing.Pool(processes=process) as pool:
-        pool.map(partial(create_rpm_repository, log=log), rpm_config)
+        result = pool.map(partial(create_rpm_repository, log=log), rpm_config)
+    if not all(result):
+        log.error("Failed during creation of RPM repository")
+        return False, "During creation of RPM repository"
 
     # Step 2: Concurrent remote creation
     with multiprocessing.Pool(processes=process) as pool:
-        pool.map(partial(create_rpm_remote, log=log), rpm_config)
+        result = pool.map(partial(create_rpm_remote, log=log), rpm_config)
+    if not all(result):
+        log.error("Failed during creation of RPM remote")
+        return False, "During creation of RPM remote"
 
     # Step 3: Concurrent synchronization
     with multiprocessing.Pool(processes=process) as pool:
-        pool.map(partial(sync_rpm_repository, log=log), rpm_config)
+        result = pool.map(partial(sync_rpm_repository, log=log), rpm_config)
+    if not all(result):
+        log.error("Failed during synchronization of RPM repository")
+        return False, "During synchronization of RPM repository"
 
     # Step 4: Concurrent publication creation
     with multiprocessing.Pool(processes=process) as pool:
-        pool.map(partial(create_publication, log=log), rpm_config)
+        result = pool.map(partial(create_publication, log=log), rpm_config)
+    if not all(result):
+        log.error("Failed during publication of RPM repository")
+        return False, "During publication of RPM repository"
 
     # Step 5: Concurrent distribution creation
     with multiprocessing.Pool(processes=process) as pool:
-        pool.map(partial(create_distribution, log=log), rpm_config)
+        result = pool.map(partial(create_distribution, log=log), rpm_config)
+    if not all(result):
+        log.error("Failed during distribution of RPM repository")
+        return False, "During distribution of RPM repository"
 
     base_urls = get_base_urls(log)
     create_yum_repo_file(base_urls, log)
+    return True, "Success"
 
 def main():
     """
@@ -461,10 +477,12 @@ def main():
         module.fail_json(msg=f"Error parsing JSON: {e}")
 
     # Call the function to manage RPM repositories
-    manage_rpm_repositories_multiprocess(rpm_config,log)
+    result, output = manage_rpm_repositories_multiprocess(rpm_config,log)
+
+    if result is False:
+        module.fail_json(msg=f"Error {output}, check standard.log")
 
     module.exit_json(changed=True, result="RPM Config Processed")
 
 if __name__ == "__main__":
     main()
-
