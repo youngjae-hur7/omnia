@@ -167,7 +167,6 @@ def create_rpm_remote(repo,log):
 
     if skip_config(repo_name, version, log):
         return True
-
     if version != "null":
         repo_name = f"{repo_name}_{version}"
 
