@@ -26,12 +26,12 @@ network_spec: "{{ hostvars['localhost']['input_project_dir'] }}/network_spec.yml
 network_spec_syntax_fail_msg: "Failed. Syntax errors present in network_spec.yml. Fix errors and re-run playbook again."
 pcs_directories:
   - { path: "{{ pcs_container_log_dir }}", mode: "{{ read_write_mode }}" }
-  - { path: "{{ pcs_container_dir }}", mode: "{{ read_write_execute_mode }}" }
+  - { path: "{{ pcs_container_dir }}/corosync", mode: "{{ read_write_execute_mode }}" }
   - { path: "{{ container_systemd_dir }}", mode: "{{ read_write_mode }}" }
 
 pcs_startup_file:
   - {template: "pcs-start.sh.j2", dest: "{{ oim_shared_path }}/omnia/pcs/pcs-start.sh", mode: "{{ read_write_execute_mode }}" }
-  - {template: "corosync.conf.j2", dest: "{{ oim_shared_path }}/omnia/pcs/corosync.conf", mode: "{{ read_write_mode }}" }
+  - {template: "corosync.conf.j2", dest: "{{ oim_shared_path }}/omnia/pcs/corosync/corosync.conf", mode: "{{ read_write_mode }}" }
   - {template: "pcs-container.container.j2", dest: "{{ oim_shared_path }}/omnia/pcs/{{ pcs_container_name }}.container", mode: "{{ read_write_mode }}" }
   - {template: "pcs-container.container.j2", dest: "{{ container_systemd_dir }}/{{ pcs_container_name }}.container", mode: "{{ read_write_mode }}" }
 
@@ -50,7 +50,7 @@ pcs_volumes:
   - /etc/localtime:/etc/localtime:ro
   - /run/podman/podman.sock:/run/podman/podman.sock:ro
   - "{{ pcs_container_dir }}/pcs-start.sh:{{ pcs_resource_script_path }}{{ selinux_option }}"
-  - "{{ pcs_container_dir }}/corosync.conf:/etc/corosync/corosync.conf{{ selinux_option }}"
+  - "{{ pcs_container_dir }}/corosync:/etc/corosync{{ selinux_option }}"
   - "{{ pcs_container_log_dir }}:/var/log/cluster{{ selinux_option }}"
   - "{{ oim_shared_path }}/omnia:/opt/omnia{{ selinux_option }}"
 
