@@ -485,7 +485,7 @@ def main():
     result, output = manage_rpm_repositories_multiprocess(rpm_config,log)
 
     if result is False:
-        module.fail_json(msg=f"Error {output}, check standard.log")
+        module.fail_json(msg=f"Error {output}, check /opt/omnia/log/local_repo/standard.log")
 
     module.exit_json(changed=True, result="RPM Config Processed")
 
