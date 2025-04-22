@@ -40,3 +40,66 @@ k8s_var_dest: "/opt/omnia/kubespray/k8s_all_vars.yml"
 pulp_registry_port: "2225"
 enable_k8s_ha: "{{ hostvars['localhost']['enable_k8s_ha'] }}"
 k8s_vip: "{{ hostvars['localhost']['k8s_vip'] }}"
+
+# Usage: configure_firewall.yml
+common_packages:
+  RedHat:
+    - firewalld
+    - python3-firewall
+  Debian: # OS
+    - firewalld # OS
+    - python3-firewall
+k8s_firewall_ports_list:
+  kube_control_plane:
+    - "443/tcp"
+    - "443/udp"
+    - "22/tcp" # ssh for ansible
+    - "6443/tcp" # kubernetes api
+    - "2379/tcp" # etcd client port
+    - "2379/udp"
+    - "2380/tcp" # etcd peer port
+    - "10250/tcp" # kubelet api
+    - "10257/tcp" # kube-scheduler
+    - "10259/tcp" # kube-controller-manager
+    # calico
+    - "179/tcp" # Calico networking (BGP)
+    - "4789/udp" # Calico CNI with VXLAN enabled
+    - "5473/tcp" # Calico CNI with Typha enabled
+    - "51820/udp" # Calico with IPv4 Wireguard enabled
+    - "51821/udp" # Calico with IPv6 Wireguard enabled
+    # addons
+    - "9100/tcp" # node exporter
+    - "7472/tcp" # metallb metrics ports
+    - "7472/udp" # metallb metrics ports
+    - "7946/tcp" # metallb L2 operating mode
+    - "7946/udp" # metallb L2 operating mode
+    # others
+    - "9090/tcp"
+    - "8080/tcp"
+  etcd:
+    - "2379/tcp" # etcd client port
+    - "2379/udp"
+    - "2380/tcp" # etcd peer port    
+  kube_node:
+    - "22/tcp" # ssh for ansible
+    - "10250/tcp" # kubelet api
+    - "30000-32767/tcp" # kube nodePort range
+    # calico
+    - "179/tcp" # Calico networking (BGP)
+    - "4789/udp" # Calico CNI with VXLAN enabled
+    - "5473/tcp" # Calico CNI with Typha enabled
+    - "51820/udp" # Calico with IPv4 Wireguard enabled
+    - "51821/udp" # Calico with IPv6 Wireguard enabled
+    # addons
+    - "9100/tcp" # node exporter
+    - "7472/tcp" # metallb metrics ports
+    - "7472/udp" # metallb metrics ports
+    - "7946/tcp" # metallb L2 operating mode
+    - "7946/udp" # metallb L2 operating mode
+    # others
+    - "9090/tcp"
+    - "8080/tcp"
+
+web_services:
+  - "http"
+  - "https"
