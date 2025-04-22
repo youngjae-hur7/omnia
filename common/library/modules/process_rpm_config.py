@@ -433,7 +433,7 @@ def manage_rpm_repositories_multiprocess(rpm_config, log):
     base_urls = get_base_urls(log)
     create_yum_repo_file(base_urls, log)
  
-    return True, "RPM repository configuration processed successfully"
+    return True, "success"
 
 def main():
     """
