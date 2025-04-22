@@ -120,7 +120,7 @@ def create_rpm_repository(repo,log):
     version = repo.get("version")
 
     if skip_config(repo_name, version, log):
-        return True
+        return True, repo_name
 
     if version != "null":
         repo_name = f"{repo_name}_{version}"
@@ -128,10 +128,10 @@ def create_rpm_repository(repo,log):
         command = pulp_rpm_commands["create_repository"] % repo_name
         result = execute_command(command,log)
         log.info("Repository %s created.", repo_name)
-        return result
+        return result, repo_name
 
     log.info("Repository %s already exists.", repo_name)
-    return True
+    return True, repo_name
 
 def show_rpm_repository(repo_name,log):
     """
@@ -166,7 +166,7 @@ def create_rpm_remote(repo,log):
     repo_name = repo["package"]
 
     if skip_config(repo_name, version, log):
-        return True
+        return True, repo_name
     if version != "null":
         repo_name = f"{repo_name}_{version}"
 
@@ -180,23 +180,23 @@ def create_rpm_remote(repo,log):
             command = pulp_rpm_commands["create_remote_cert"] % (remote_name, remote_url, policy_type, ca_cert, client_cert, client_key)
             result = execute_command(command,log)
             log.info("Remote %s created.", remote_name)
-            return result
+            return result, repo_name
         else:
             command = pulp_rpm_commands["update_remote_cert"] % (remote_name, remote_url, policy_type, ca_cert, client_cert, client_key)
             log.info("Remote %s already exists.", remote_name)
             result = execute_command(command,log)
-            return result
+            return result, repo_name
     else:
         if not show_rpm_remote(remote_name,log):
             command = pulp_rpm_commands["create_remote"] % (remote_name, remote_url, policy_type)
             result = execute_command(command,log)
             log.info("Remote %s created.", remote_name)
-            return result
+            return result, repo_name
         else:
             command = pulp_rpm_commands["update_remote"] % (remote_name, remote_url, policy_type)
             log.info("Remote %s already exists.", remote_name)
             result = execute_command(command,log)
-            return result
+            return result, repo_name
 
 def show_rpm_remote(remote_name,log):
     """
@@ -229,19 +229,19 @@ def sync_rpm_repository(repo,log):
     version = repo.get("version")
 
     if skip_config(repo_name, version, log):
-        return True
+        return True, repo_name
 
     if version != "null":
         repo_name = f"{repo_name}_{version}"
 
     if check_packages_and_get_url(repo_name,log):
-        return True
+        return True, repo_name
     else:
         remote_name= repo_name
         command = pulp_rpm_commands["sync_repository"] % (repo_name, remote_name)
         result = execute_command(command,log)
         log.info("Repository synced for %s.", repo_name)
-        return result
+        return result, repo_name
 
 def create_publication(repo,log):
     """
@@ -259,7 +259,7 @@ def create_publication(repo,log):
     version = repo.get("version")
 
     if skip_config(repo_name, version, log):
-        return True
+        return True, repo_name
 
     if version != "null":
         repo_name = f"{repo_name}_{version}"
@@ -267,7 +267,7 @@ def create_publication(repo,log):
     command = pulp_rpm_commands["publish_repository"] % repo_name
     result = execute_command(command,log)
     log.info("Publication created for %s.", repo_name)
-    return result
+    return result, repo_name
 
 def create_distribution(repo, log):
     """
@@ -286,7 +286,7 @@ def create_distribution(repo, log):
     version = repo.get("version")
 
     if skip_config(repo_name, version, log):
-        return True
+        return True, repo_name
 
     if version != "null":
         base_path = f" opt/omnia/offline_repo/cluster/rhel/rpms/{package_name}/{version}"
@@ -301,10 +301,10 @@ def create_distribution(repo, log):
     # Check if distribution already exists
     if execute_command(show_command, log):
         log.info(f"Distribution for {package_name} exists. Updating it.")
-        return execute_command(update_command, log)
+        return execute_command(update_command, log), repo_name
     else:
         log.info(f"Distribution for {package_name} does not exist. Creating it.")
-        return execute_command(create_command, log)
+        return execute_command(create_command, log), repo_name
 
 def get_base_urls(log):
     """
@@ -376,57 +376,63 @@ gpgcheck=0
 def manage_rpm_repositories_multiprocess(rpm_config, log):
     """
     Manage RPM repositories using multiprocessing.
-
+ 
     Args:
         rpm_config (list): A list of dictionaries containing the configuration for each RPM repository.
         log (logging.Logger): Logger instance for logging the process and errors.
-
+ 
     Returns:
         tuple: (bool, str) indicating success and a message
     """
-
+ 
     cpu_count = os.cpu_count()
     process = min(cpu_count, len(rpm_config))
     log.info(f"Number of processes = {process}")
-
+ 
     # Step 1: Concurrent repository creation
     with multiprocessing.Pool(processes=process) as pool:
         result = pool.map(partial(create_rpm_repository, log=log), rpm_config)
-    if not all(result):
-        log.error("Failed during creation of RPM repository")
-        return False, "During creation of RPM repository"
-
+    failed = [name for success, name in result if not success]
+    if failed:
+        log.error("Failed during creation of RPM repository for: %s", ", ".join(failed))
+        return False, f"During creation of RPM repository for: {', '.join(failed)}"
+ 
     # Step 2: Concurrent remote creation
     with multiprocessing.Pool(processes=process) as pool:
         result = pool.map(partial(create_rpm_remote, log=log), rpm_config)
-    if not all(result):
-        log.error("Failed during creation of RPM remote")
-        return False, "During creation of RPM remote"
-
+    failed = [name for success, name in result if not success]
+    if failed:
+        log.error("Failed during creation of RPM remote for: %s", ", ".join(failed))
+        return False, f"During creation of RPM remote for: {', '.join(failed)}"
+ 
     # Step 3: Concurrent synchronization
     with multiprocessing.Pool(processes=process) as pool:
         result = pool.map(partial(sync_rpm_repository, log=log), rpm_config)
-    if not all(result):
-        log.error("Failed during synchronization of RPM repository")
-        return False, "During synchronization of RPM repository"
-
+    failed = [name for success, name in result if not success]
+    if failed:
+        log.error("Failed during synchronization of RPM repository for: %s", ", ".join(failed))
+        return False, f"During synchronization of RPM repository for: {', '.join(failed)}"
+ 
     # Step 4: Concurrent publication creation
     with multiprocessing.Pool(processes=process) as pool:
         result = pool.map(partial(create_publication, log=log), rpm_config)
-    if not all(result):
-        log.error("Failed during publication of RPM repository")
-        return False, "During publication of RPM repository"
-
+    failed = [name for success, name in result if not success]
+    if failed:
+        log.error("Failed during publication of RPM repository for: %s", ", ".join(failed))
+        return False, f"During publication of RPM repository for: {', '.join(failed)}"
+ 
     # Step 5: Concurrent distribution creation
     with multiprocessing.Pool(processes=process) as pool:
         result = pool.map(partial(create_distribution, log=log), rpm_config)
-    if not all(result):
-        log.error("Failed during distribution of RPM repository")
-        return False, "During distribution of RPM repository"
-
+    failed = [name for success, name in result if not success]
+    if failed:
+        log.error("Failed during distribution of RPM repository for: %s", ", ".join(failed))
+        return False, f"During distribution of RPM repository for: {', '.join(failed)}"
+ 
     base_urls = get_base_urls(log)
     create_yum_repo_file(base_urls, log)
-    return True, "Success"
+ 
+    return True, "RPM repository configuration processed successfully"
 
 def main():
     """
