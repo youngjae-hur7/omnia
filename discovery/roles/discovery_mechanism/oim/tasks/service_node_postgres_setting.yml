@@ -32,7 +32,7 @@
     - service_nodes.query_result is defined
     - service_nodes.query_result | length < 1
 
-- name: Update PostgreSQL configuration filr and restart PostgreSQL
+- name: Update PostgreSQL configuration file and restart PostgreSQL
   when: service_nodes.query_result | length > 0
   block:
     - name: Update PostgreSQL configuration file with service node IPs
@@ -44,6 +44,21 @@
       loop: "{{ service_nodes.query_result }}"
       loop_control:
         label: "{{ item.admin_ip }}"
+
+    - name: Update PostgreSQL configuration file with service node Virtual IPs
+      ansible.builtin.lineinfile:
+        path: "{{ pg_hba_conf_path }}"
+        line: "host    all          all        {{ item.virtual_ip_address }}/32      md5"
+        state: present
+        regexp: "^host\\s+all\\s+all\\s+{{ item.virtual_ip_address }}/32\\s+md5$"
+      loop: "{{ service_node_ha_data.service_nodes }}"
+      loop_control:
+        label: "{{ item.virtual_ip_address }}"
+      when:
+        - enable_service_ha | default(false)
+        - service_node_ha_data.service_nodes | length > 0
+        - item.virtual_ip_address is defined
+        - item.virtual_ip_address | length > 0
 
     - name: Restart PostgreSQL
       ansible.builtin.service:
