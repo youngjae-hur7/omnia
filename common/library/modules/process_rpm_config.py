@@ -166,6 +166,7 @@ def create_rpm_remote(repo,log):
     policy_type = repo["policy"]
     version = repo.get("version")
     repo_name = repo["package"]
+    result = None
 
     if skip_config(repo_name, version, log):
         return True, repo_name
@@ -182,23 +183,20 @@ def create_rpm_remote(repo,log):
             command = pulp_rpm_commands["create_remote_cert"] % (remote_name, remote_url, policy_type, ca_cert, client_cert, client_key)
             result = execute_command(command,log)
             log.info("Remote %s created.", remote_name)
-            return result, repo_name
         else:
             command = pulp_rpm_commands["update_remote_cert"] % (remote_name, remote_url, policy_type, ca_cert, client_cert, client_key)
             log.info("Remote %s already exists.", remote_name)
             result = execute_command(command,log)
-            return result, repo_name
     else:
         if not show_rpm_remote(remote_name,log):
             command = pulp_rpm_commands["create_remote"] % (remote_name, remote_url, policy_type)
             result = execute_command(command,log)
             log.info("Remote %s created.", remote_name)
-            return result, repo_name
         else:
             command = pulp_rpm_commands["update_remote"] % (remote_name, remote_url, policy_type)
             log.info("Remote %s already exists.", remote_name)
             result = execute_command(command,log)
-            return result, repo_name
+    return result, repo_name
 
 def show_rpm_remote(remote_name,log):
     """
