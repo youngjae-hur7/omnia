@@ -85,7 +85,7 @@
     - name: Generate service node configuration
       ansible.builtin.include_role:
         name: service_node_config      # noqa: role-name[path]
-      when: service_role_required | default(false)
+      when: (discovered_service_nodes | default([])) | length > 0
 
 - name: Update corosync config in PCS container
   hosts: oim

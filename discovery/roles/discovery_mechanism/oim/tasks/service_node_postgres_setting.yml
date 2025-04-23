@@ -13,27 +13,15 @@
 # limitations under the License.
 ---
 
-- name: Get all service nodes from DB
-  community.postgresql.postgresql_query:
-    db: omniadb
-    login_user: postgres
-    query: "SELECT admin_ip, node, hostname, service_tag FROM cluster.nodeinfo WHERE role LIKE '%service_node%';"
-    login_password: "{{ postgresdb_password }}"
-  become: true
-  become_user: postgres
-  register: service_nodes
-  failed_when: false
-  no_log: true
-
 - name: Fail if no service nodes are found
   ansible.builtin.debug:
     msg: "No service nodes found in the database."
   when:
-    - service_nodes.query_result is defined
-    - service_nodes.query_result | length < 1
+    - discovered_service_nodes is defined
+    - discovered_service_nodes | length < 1
 
 - name: Update PostgreSQL configuration file and restart PostgreSQL
-  when: service_nodes.query_result | length > 0
+  when: discovered_service_nodes | length > 0
   block:
     - name: Update PostgreSQL configuration file with service node IPs
       ansible.builtin.lineinfile:
@@ -41,7 +29,7 @@
         line: "host    all          all        {{ item.admin_ip }}/32      md5"
         state: present
         regexp: "^host\\s+all\\s+all\\s+{{ item.admin_ip }}/32\\s+md5$"
-      loop: "{{ service_nodes.query_result }}"
+      loop: "{{ discovered_service_nodes }}"
       loop_control:
         label: "{{ item.admin_ip }}"
 
