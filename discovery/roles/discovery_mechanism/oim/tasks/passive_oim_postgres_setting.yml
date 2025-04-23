@@ -27,7 +27,7 @@
 
 - name: Fail if no passive OIM nodes are found
   ansible.builtin.fail:
-    msg: "{{ db_passive_oim_fail_msg}}"
+    msg: "{{ db_passive_oim_fail_msg }}"
   when:
     - passive_oim_nodes.query_result is defined
     - passive_oim_nodes.query_result | length < 1

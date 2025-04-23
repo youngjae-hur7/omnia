@@ -41,11 +41,12 @@ provision_shared_path: /opt/omnia/provision/
 selinux_policy: "system_u:object_r:container_file_t:s0"
 
 # Usage: update_corosync_config.yml
+omnia_nfs_share: "{{ hostvars['omnia_provision']['oim_shared_path'] }}/omnia"
 read_write_mode: "0644"
 pcs_container_name: omnia_pcs
 nfs_corosync_conf:
   template: "corosync.conf.j2"
-  dest: "{{ hostvars['omnia_provision']['omnia_nfs_share'] }}/pcs/corosync/corosync.conf"
+  dest: "{{ omnia_nfs_share }}/pcs/corosync/corosync.conf"
   mode: "{{ read_write_mode }}"
 
 # Usage: passive_oim_postgres_setting.yml
