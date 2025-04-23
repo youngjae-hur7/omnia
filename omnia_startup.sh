@@ -648,7 +648,7 @@ main() {
             echo -e "${GREEN} 3. Exit. ${NC}"
 
             # Get user input
-            read -p " Enter your choice (1 or 2): " choice
+            read -p " Enter your choice (1, 2 or 3): " choice
 
             # If the user wants to reinstall, call the remove_container function, and then call the setup_omnia_core function
             if [ "$choice" = "1" ]; then
@@ -656,7 +656,7 @@ main() {
                 echo -e "${GREEN} 1. Retain Existing configuration.${NC}"
                 echo -e "${GREEN} 2. Overwrite and create new configuration.${NC}"
                 echo -e "${GREEN} 3. Exit. ${NC}"
-                read -p " Enter your choice (1 or 2): " choice
+                read -p " Enter your choice (1, 2 or 3): " choice
 
                 # If the user wants to retain existing configuration, call the remove_container function
                 if [ "$choice" = "1" ]; then
@@ -671,6 +671,9 @@ main() {
                 # If the user wants to exit, exit
                 elif [ "$choice" = "3" ]; then
                     exit
+                else
+                    echo -e "${RED} Invalid choice. Please choose a valid option.${NC}"
+                    exit 1
                 fi
             # If the user wants to cleanup, call the cleanup function
             elif [ "$choice" = "2" ]; then
@@ -678,6 +681,9 @@ main() {
             # If the user wants to exit, exit
             elif [ "$choice" = "3" ]; then
                 exit
+            else
+                echo -e "${RED} Invalid choice. Please choose a valid option.${NC}"
+                exit 1
             fi
         else
             # If omnia_core container exists and is not running call the remove_container function
