@@ -1,4 +1,4 @@
-#  Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+#  Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -65,15 +65,3 @@
     permanent: true
     immediate: true
   loop: "{{ web_services }}"
-
-# disable firewalld
-# - name: Fetch latest service facts
-#   ansible.builtin.service_facts:
-#   no_log: true
-
-# - name: Stop and disable firewalld
-#   ansible.builtin.service:
-#     name: firewalld
-#     state: stopped
-#     enabled: false
-#   when: "'firewalld.service' in ansible_facts['services'].keys()"
