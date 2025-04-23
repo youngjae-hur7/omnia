@@ -1,0 +1,47 @@
+systemctl start corosync
+systemctl start pacemaker
+# Check if corosync and pacemaker have started
+if ! systemctl status corosync > /dev/null; then
+    echo "Corosync has not started. Exiting with return code 1."
+    exit 1
+fi
+if ! systemctl status pacemaker > /dev/null; then
+    echo "Pacemaker has not started. Exiting with return code 1."
+    exit 1
+fi
+echo "Corosync and Pacemaker have started. Continuing with the script."
+pcs property set stonith-enabled=false
+pcs property set no-quorum-policy=ignore
+
+# Create xcatd-check resource
+pcs resource create xcatd-check ocf:heartbeat:xcatd-remote-check \
+  op monitor interval=30s timeout=10s on-fail=restart \
+  op start timeout=10s on-fail=restart \
+  op stop timeout=10s on-fail=block \
+  meta migration-threshold=3
+
+
+# Constrain preferred active node
+{% if active_node is defined %}
+# Add a Virtual IP (VIP) resource
+pcs resource create vip IPaddr2 ip={{ active_node.virtual_ip }} cidr_netmask=16 nic=eno8303 \
+  op monitor interval=30s
+
+# Group xcatd-check and vip together
+pcs resource group add xcat-group vip xcatd-check
+
+pcs constraint location xcat-group prefers {{ active_node.hostname }}=200
+{% endif %}
+
+{% if passive_nodes is defined %}
+{% for node in passive_nodes %}
+pcs constraint location xcat-group prefers {{ node.hostname }}=100
+{% endfor %}
+{% endif %}
+
+# Stickiness to avoid unnecessary failover
+pcs resource defaults resource-stickiness=100
+# Enable on boot
+pcs cluster enable --all
+echo -e "\n PCS Resource Setup completed for Servicenode HA. Current resource status:\n"
+pcs status resources

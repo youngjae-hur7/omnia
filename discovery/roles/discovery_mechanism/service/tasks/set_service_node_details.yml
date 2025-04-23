@@ -13,20 +13,19 @@
 #  limitations under the License.
 ---
 
+- name: Load service_ha_config if file exists, else set empty dict
+  ansible.builtin.set_fact:
+    service_ha_config: "{{ (lookup('file', service_ha_config_path, errors='ignore') or '{}') | from_json }}"
+
+- name: Get service_tag map
+  get_service_tag_map:
+    hierarchical_service_node_data: "{{ hierarchical_service_node_data }}"
+    service_ha_config: "{{ service_ha_config }}"
+  register: svc_tag_map_result
+
 - name: Create mapping of service_tag to key in hierarchical_service_node_data
   ansible.builtin.set_fact:
-    service_tag_map: >-
-      {{
-        service_tag_map | default({}) | combine({
-          value.service_tag: {"admin_ip": value.admin_ip, "node": key}
-        })
-      }}
-  with_dict: "{{ hierarchical_service_node_data }}"
-  loop_control:
-    label: "{{ item.key }}"
-  vars:
-    key: "{{ item.key }}"
-    value: "{{ item.value }}"
+    service_tag_map: "{{ svc_tag_map_result.service_tag_map }}"
 
 - name: Configure child groups with xcatmaster and servicenode
   ansible.builtin.command: >

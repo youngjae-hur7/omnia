@@ -18,13 +18,13 @@ pcs_container_name: "omnia_pcs"
 pcs_group: "omnia"
 monitor_interval: "30s"
 ha_migration_threshold: 1
-service_node_base_dir: "{{ oim_shared_path }}/service_nodes"
+service_node_base_dir: "/opt/omnia/service_nodes"
 pcs_container_tmpl: "{{ pcs_container_name }}.container.j2"
 pcs_start_tmpl: "pcs-start.sh.j2"
 file_permissions: '0755'
 corosync_tmpl: "corosync.conf.j2"
 
-# Usage: configure_nonha_servicenode_config.yml
+# Usage: configure_non_ha_servicenode_config.yml
 service_node_dir: "{{ service_node_base_dir }}/{{ item.service_tag }}"
 service_admin_nic_ip: "{{ node.admin_ip }}"
 service_node_name: "{{ node.hostname }}"
