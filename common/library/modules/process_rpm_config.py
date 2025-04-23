@@ -14,17 +14,16 @@
 
 #!/usr/bin/python
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.local_repo.standard_logger import setup_standard_logger
 import json
-import logging
 import subprocess
 import multiprocessing
-import sys
 import os
-import requests
 from datetime import datetime
 from functools import partial
+
+import requests
+from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils.local_repo.standard_logger import setup_standard_logger
 from ansible.module_utils.local_repo.config import (
     pulp_rpm_commands,
     STANDARD_LOG_FILE_PATH
@@ -37,8 +36,10 @@ def execute_command(cmd_string, log,type_json=None, seconds=None):
     Args:
         cmd_string (str): The shell command to execute.
         log (logging.Logger): Logger instance for logging the process and errors.
-        type_json (bool, optional): If set to `True`, the function will attempt to parse the command's output as JSON.
-        seconds (float, optional): The maximum time allowed for the command to execute. If `None`, no timeout is enforced.
+        type_json (bool, optional): If set to `True`, the function will attempt to parse the
+        command's output as JSON.
+        seconds (float, optional): The maximum time allowed for the command to execute. If `None`,
+        no timeout is enforced.
 
     Returns:
         str or bool: Returns the command's output as a string, or `False` if the command failed.
@@ -320,7 +321,7 @@ def get_base_urls(log):
     """
 
     result = subprocess.run(['pulp', 'rpm', 'distribution', 'list', '--field', 'base_url,name'],
-                            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
 
     if result.returncode != 0:
         log.info(f"Error fetching distributions: {result.stderr}")
@@ -369,7 +370,7 @@ gpgcheck=0
         repo_content += repo_entry.strip() + "\n\n"
 
     # Write all repositories at once
-    with open(repo_file_path, 'w') as repo_file:
+    with open(repo_file_path, 'w', encoding='utf-8') as repo_file:
         repo_file.write(repo_content.strip() + "\n")
 
     log.info(f"Created {repo_file_path} with {len(distributions)} repositories")
@@ -377,19 +378,19 @@ gpgcheck=0
 def manage_rpm_repositories_multiprocess(rpm_config, log):
     """
     Manage RPM repositories using multiprocessing.
- 
+
     Args:
         rpm_config (list): A list of dictionaries containing the configuration for each RPM repository.
         log (logging.Logger): Logger instance for logging the process and errors.
- 
+
     Returns:
         tuple: (bool, str) indicating success and a message
     """
- 
+
     cpu_count = os.cpu_count()
     process = min(cpu_count, len(rpm_config))
     log.info(f"Number of processes = {process}")
- 
+
     # Step 1: Concurrent repository creation
     with multiprocessing.Pool(processes=process) as pool:
         result = pool.map(partial(create_rpm_repository, log=log), rpm_config)
@@ -397,7 +398,7 @@ def manage_rpm_repositories_multiprocess(rpm_config, log):
     if failed:
         log.error("Failed during creation of RPM repository for: %s", ", ".join(failed))
         return False, f"During creation of RPM repository for: {', '.join(failed)}"
- 
+
     # Step 2: Concurrent remote creation
     with multiprocessing.Pool(processes=process) as pool:
         result = pool.map(partial(create_rpm_remote, log=log), rpm_config)
@@ -405,7 +406,7 @@ def manage_rpm_repositories_multiprocess(rpm_config, log):
     if failed:
         log.error("Failed during creation of RPM remote for: %s", ", ".join(failed))
         return False, f"During creation of RPM remote for: {', '.join(failed)}"
- 
+
     # Step 3: Concurrent synchronization
     with multiprocessing.Pool(processes=process) as pool:
         result = pool.map(partial(sync_rpm_repository, log=log), rpm_config)
@@ -413,7 +414,7 @@ def manage_rpm_repositories_multiprocess(rpm_config, log):
     if failed:
         log.error("Failed during synchronization of RPM repository for: %s", ", ".join(failed))
         return False, f"During synchronization of RPM repository for: {', '.join(failed)}"
- 
+
     # Step 4: Concurrent publication creation
     with multiprocessing.Pool(processes=process) as pool:
         result = pool.map(partial(create_publication, log=log), rpm_config)
@@ -421,7 +422,7 @@ def manage_rpm_repositories_multiprocess(rpm_config, log):
     if failed:
         log.error("Failed during publication of RPM repository for: %s", ", ".join(failed))
         return False, f"During publication of RPM repository for: {', '.join(failed)}"
- 
+
     # Step 5: Concurrent distribution creation
     with multiprocessing.Pool(processes=process) as pool:
         result = pool.map(partial(create_distribution, log=log), rpm_config)
@@ -429,10 +430,10 @@ def manage_rpm_repositories_multiprocess(rpm_config, log):
     if failed:
         log.error("Failed during distribution of RPM repository for: %s", ", ".join(failed))
         return False, f"During distribution of RPM repository for: {', '.join(failed)}"
- 
+
     base_urls = get_base_urls(log)
     create_yum_repo_file(base_urls, log)
- 
+
     return True, "success"
 
 def main():
@@ -455,10 +456,10 @@ def main():
     Returns:
         None
     """
-    module_args = dict(
-        local_config=dict(type="str", required=True),
-        log_dir=dict(type="str", required=False, default="/tmp/thread_logs")
-    )
+    module_args = {
+        "local_config": {"type": "str", "required": True},
+        "log_dir": {"type": "str", "required": False, "default": "/tmp/thread_logs"}
+    }
 
     module = AnsibleModule(argument_spec=module_args, supports_check_mode=False)
 
