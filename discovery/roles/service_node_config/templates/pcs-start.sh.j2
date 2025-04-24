@@ -12,30 +12,32 @@ fi
 echo "Corosync and Pacemaker have started. Continuing with the script."
 pcs property set stonith-enabled=false
 pcs property set no-quorum-policy=ignore
+pcs resource group add {{ pcs_group }}
 
 # Create xcatd-check resource
 pcs resource create xcatd-check ocf:heartbeat:xcatd-remote-check \
   op monitor interval=30s timeout=10s on-fail=restart \
   op start timeout=10s on-fail=restart \
-  op stop timeout=10s on-fail=block \
+  op stop timeout=30s on-fail=block \
+  op restart timeout=30s on-fail=block \
   meta migration-threshold=3
 
 
 # Constrain preferred active node
 {% if active_node is defined %}
-# Add a Virtual IP (VIP) resource
-pcs resource create vip IPaddr2 ip={{ active_node.virtual_ip }} cidr_netmask=16 nic=eno8303 \
-  op monitor interval=30s
+# Add a Service Node Virtual IP (VIP) resource
+pcs resource create SNVIP IPaddr2 ip={{ active_node.virtual_ip }} cidr_netmask={{ network_data.admin_network.netmask_bits }} \
+  op monitor interval={{ monitor_interval }}
 
 # Group xcatd-check and vip together
-pcs resource group add xcat-group vip xcatd-check
+pcs resource group add {{ pcs_group }} SNVIP xcatd-check
 
-pcs constraint location xcat-group prefers {{ active_node.hostname }}=200
+pcs constraint location {{ pcs_group }} prefers {{ active_node.hostname }}=200
 {% endif %}
 
 {% if passive_nodes is defined %}
 {% for node in passive_nodes %}
-pcs constraint location xcat-group prefers {{ node.hostname }}=100
+pcs constraint location {{ pcs_group }} prefers {{ node.hostname }}=100
 {% endfor %}
 {% endif %}
 
