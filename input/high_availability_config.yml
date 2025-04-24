@@ -92,4 +92,6 @@ slurm_head_node_ha:
 k8s_head_node_ha:
   enable_k8s_ha: false
   virtual_ip_address: ""
+  external_loadbalancer_ip: ""
+  loadbalancer_port:
   active_node_service_tags: [] # List of service tags, separated by commas. e.g. ["ABC","DEF"]

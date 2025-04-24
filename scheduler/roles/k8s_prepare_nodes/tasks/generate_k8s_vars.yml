@@ -13,10 +13,28 @@
 #  limitations under the License.
 
 ---
+
 - name: Render vars file - k8s_all_vars.yml for kube version
   ansible.builtin.template:
     src: "{{ k8s_var_final_src }}"
     dest: "{{ k8s_var_dest }}"
     mode: "{{ file_permission }}"
   delegate_to: localhost
+  run_once: true
+
+- name: Render non ha vars file - k8s_all_non_ha_vars.yml
+  ansible.builtin.template:
+    src: "{{ k8s_var_final_non_ha_src }}"
+    dest: "{{ k8s_var_non_ha_dest }}"
+    mode: "{{ file_permission }}"
+  delegate_to: localhost
+  run_once: true
+
+- name: Render ha vars file - k8s_all_ha_vars.yml
+  ansible.builtin.template:
+    src: "{{ k8s_var_final_ha_src }}"
+    dest: "{{ k8s_var_ha_dest }}"
+    mode: "{{ file_permission }}"
+  delegate_to: localhost
+  when: enable_k8s_ha
   run_once: true
