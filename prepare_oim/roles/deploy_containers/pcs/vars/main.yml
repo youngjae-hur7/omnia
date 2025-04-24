@@ -72,6 +72,7 @@ stop_timeout: "90s"
 
 migration_threshold: 0
 ha_migration_threshold: 1
+failure_timeout: "100s"
 pcs_group: omnia
 
 # Usage: pcs-start.sh.j2: omnia_core
