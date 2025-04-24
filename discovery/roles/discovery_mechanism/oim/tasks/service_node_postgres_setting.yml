@@ -15,8 +15,8 @@
 
 - name: Notify if no new service nodes were discovered
   when:
-      - discovered_service_nodes is defined
-      - discovered_service_nodes | length < 1
+    - discovered_service_nodes is defined
+    - discovered_service_nodes | length < 1
   block:
     - name: Warning - No new service node got discovered
       ansible.builtin.pause:
