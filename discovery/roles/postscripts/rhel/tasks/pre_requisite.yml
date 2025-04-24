@@ -33,3 +33,10 @@
   when:
     - not cuda_config_status
     - not amdgpu_config_status
+
+- name: Copy xCAT RHEL8 post script to syncfiles script directory
+  ansible.builtin.copy:
+    src: "{{ xcat_rhel8_post_script }}"
+    dest: "{{ syncfiles_share_path }}/script/"
+    mode: '{{ ofed_permission }}'
+    remote_src: true
