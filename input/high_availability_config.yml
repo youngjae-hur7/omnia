@@ -86,6 +86,8 @@ slurm_head_node_ha:
 # High Availability (HA) Configuration for Kubernetes (K8s) Head Node
 # - enable_k8s_ha: <Mandatory> Indicates whether to enable HA for the Kubernetes (K8s) head node. Set to 'true' to enable, 'false' to disable.
 # - virtual_ip_address: <Mandatory if enable_k8s_ha is true> The virtual IP address for the K8s head node HA setup.
+# - external_loadbalancer_ip: <Optional This IP must differ from virtual_ip_addresss> Specify this to use an external load balancer instead of kube-vip as lb
+# - loadbalancer_port: <Mandatory if external_loadbalancer_ip is specified.> The port must not be in use and cannot be 6443
 # - active_node_service_tags: <Mandatory if enable_k8s_ha is true> List of service tags of active K8s head nodes. Separate tags with commas.
 # ***********************************************************************
 
