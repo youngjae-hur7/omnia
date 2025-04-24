@@ -70,20 +70,6 @@ fi
 sudo systemctl enable podman.socket || { echo "Error enabling podman.socket." >> "$LOGFILE"; exit 1; }
 sudo systemctl start podman.socket || { echo "Error starting podman.socket." >> "$LOGFILE"; exit 1; }
 
-# Making autoconnect to yes for all active nics
-echo "-- Setting autoconnect to yes for all UP nics ---" >> "$LOGFILE"
-for iface in $(ip -o link show | awk -F': ' '{print $2}'); do
-    state=$(cat /sys/class/net/$iface/operstate)
-    if [ "$state" = "up" ]; then
-        uuid=$(nmcli -g UUID,DEVICE,NAME connection show | grep "^.*:$iface" | cut -d: -f1)
-        if [ -n "$uuid" ]; then
-            echo "Enabling autoconnect for ($iface) [UUID=$uuid]" >> "$LOGFILE"
-            nmcli connection modify "$uuid" connection.autoconnect yes
-        else
-            echo "No UUID found for $iface" >> "$LOGFILE"
-        fi
-    fi
-done
 
 {% if omnia_share_option == "NFS" %}
 # Create omnia_path directory if it does not exist
