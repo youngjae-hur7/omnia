@@ -26,3 +26,8 @@
     local_config: "{{ result.local_config }}"
     log_dir: "{{ base_path }}"
   register: rpm_result
+
+- name: Regenerate DNF cache
+  ansible.builtin.dnf:
+    update_cache: true
+  changed_when: false

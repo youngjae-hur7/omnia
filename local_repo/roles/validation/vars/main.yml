@@ -59,7 +59,6 @@ specific_softwares:
   - 'ucx'
   - 'rocm'
   - 'intelgaudi'
-  - 'intel_benchmarks'
   - 'openmpi'
   - 'bcm_roce_libraries'
 versions_fail_msg: "Versions were not defined for the following softwares: {{ failed_softwares | join(', ') }} in software_config.json.

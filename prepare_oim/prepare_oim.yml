@@ -112,10 +112,19 @@
   hosts: localhost
   connection: local
   tasks:
-    - name: Configure Pulp container tasks # noqa:role-name[path]
-      ansible.builtin.include_role:
-        name: deploy_containers/pulp
-        tasks_from: create_pulp_config.yml
+    - name: Configure Pulp container based on protocol
+      block:
+        - name: Configure Pulp HTTP container tasks
+          ansible.builtin.include_role:
+            name: deploy_containers/pulp
+            tasks_from: create_pulp_config_http.yml
+          when: not hostvars['oim']['pulp_protocol_https']
+
+        - name: Configure Pulp HTTPS container tasks
+          ansible.builtin.include_role:
+            name: deploy_containers/pulp
+            tasks_from: create_pulp_config_https.yml
+          when: hostvars['oim']['pulp_protocol_https']
 
 - name: Reload pulp nginx
   hosts: oim
@@ -125,6 +134,7 @@
       ansible.builtin.include_role:
         name: deploy_containers/pulp
         tasks_from: reload_pulp_nginx.yml
+      when: hostvars['oim']['pulp_protocol_https']
 
 - name: Configure provision container
   hosts: omnia_provision
