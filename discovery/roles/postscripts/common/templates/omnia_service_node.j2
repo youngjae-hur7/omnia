@@ -37,6 +37,7 @@ done
 echo "Updating enviornment variables" >> "$LOGFILE"
 echo "source /etc/profile.d/xcat.sh" >> "/root/.bashrc"
 
+echo "Downloading xcat genesis file to /tmp" >> "$LOGFILE"
 wget "http://{{ admin_nic_ip }}:80/install/xcat-genesis-base-x86_64.tar.gz" -O /tmp/xcat-genesis-base-x86_64.tar.gz
 genesis_url_status=$?
 if [ $genesis_url_status -eq 0 ]; then
@@ -44,7 +45,13 @@ if [ $genesis_url_status -eq 0 ]; then
     genesis_rpm_file=`rpm -qa | grep xCAT-genesis-base-x86_64`
     rpm -e --nodeps $genesis_rpm_file
     rpm -ivh /tmp/xCAT-genesis-base-x86_64-2.16.4-snap202308211541.noarch.rpm
-    /opt/xcat/sbin/mknb x86_64
+    echo "Executing mknb x86_64 command -" >> "$LOGFILE"
+    /opt/xcat/sbin/mknb x86_64 >> "$LOGFILE"
+    if [[ $? -eq 0 ]]; then
+        echo " mknb x86_64 command execution successfully." >> "$LOGFILE"
+    else
+        echo "**** [Error] in executing mknb x86_64 command." >> "$LOGFILE"
+    fi
 fi
 
 echo "Install and configure podman" >> "$LOGFILE"
@@ -62,6 +69,21 @@ fi
 
 sudo systemctl enable podman.socket || { echo "Error enabling podman.socket." >> "$LOGFILE"; exit 1; }
 sudo systemctl start podman.socket || { echo "Error starting podman.socket." >> "$LOGFILE"; exit 1; }
+
+# Making autoconnect to yes for all active nics
+echo "-- Setting autoconnect to yes for all UP nics ---" >> "$LOGFILE"
+for iface in $(ip -o link show | awk -F': ' '{print $2}'); do
+    state=$(cat /sys/class/net/$iface/operstate)
+    if [ "$state" = "up" ]; then
+        uuid=$(nmcli -g UUID,DEVICE,NAME connection show | grep "^.*:$iface" | cut -d: -f1)
+        if [ -n "$uuid" ]; then
+            echo "Enabling autoconnect for ($iface) [UUID=$uuid]" >> "$LOGFILE"
+            nmcli connection modify "$uuid" connection.autoconnect yes
+        else
+            echo "No UUID found for $iface" >> "$LOGFILE"
+        fi
+    fi
+done
 
 {% if omnia_share_option == "NFS" %}
 # Create omnia_path directory if it does not exist
