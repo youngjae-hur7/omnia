@@ -17,8 +17,7 @@
   when:
     - vars[username] is defined
     - (vars[username] | length == 0)
-    - username is not search('bmc|switch')
-      or 'bmc' in username and ( composable_roles_output.bmc_static_status or composable_roles_output.switch_status )
+    - username is not search('switch')
       or 'switch' in username and composable_roles_output.switch_status
   block:
     - name: Fetch credential rule for "{{ username }}" # noqa name[template]
@@ -30,6 +29,7 @@
     - name: Prompt user for "{{ username }}" # noqa name[template]
       ansible.builtin.pause:
         prompt: "[{{ username }}] {{ lookup('vars', type.key ~ '_input') }} {{ credential_rule.msg }} Enter value"
+      no_log: true
       register: username_input
 
     - name: Validate mandatory username not empty

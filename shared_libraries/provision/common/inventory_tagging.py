@@ -71,11 +71,12 @@ class InventoryManager:
                 # Write the header to the file
                 file.write(inventory_header)
                 # Write the group name to the file
-                group_name = f"[{filename}]\n"
-                file.write(group_name)
+                if filename != "cluster_layout":
+                    group_name = f"[{filename}]\n"
+                    file.write(group_name)
                 file.flush()
 
-    def get_cluster_details_db(self) -> List[Tuple[str, str, str, str, str, str]]:
+    def get_cluster_details_db(self) -> List[Tuple[str, str, str, str, str, str, str]]:
         """
         Retrieves the details of the cluster from the database.
 
@@ -95,7 +96,7 @@ class InventoryManager:
             self (InventoryManager): The InventoryManager object.
 
         Returns:
-            List[Tuple[str, str, str, str, str, str]]: A list of tuples containing
+            List[Tuple[str, str, str, str, str, str, str]]: A list of tuples containing
             the details of the nodes with the status 'booted'. Each tuple
             contains the node, service tag, hostname, admin IP, CPU, and GPU.
         """
@@ -117,7 +118,8 @@ class InventoryManager:
                         hostname,
                         admin_ip,
                         cpu,
-                        gpu
+                        gpu,
+                        role
                     FROM
                         cluster.nodeinfo
                     WHERE
@@ -190,19 +192,58 @@ class InventoryManager:
                          hostname, inventory_file, type(err), err
                          )
 
-    def update_inventory(self, node_detail: Tuple[str, str, str, str, str, str]) -> None:
+    def add_hostname_cluster_layout_inventory(self, inventory_file: str, hostname: str, roles_name: any) -> None:
+        try:
+
+            # Read the config file
+            config = commentedconfigparser.CommentedConfigParser(allow_no_value=True)
+            config.read(inventory_file, encoding='utf-8')
+
+            roles_list = roles_name.strip().split(",")
+            for group in roles_list:
+                group = group.strip()
+                if 'default' in group:
+                    continue
+                else:
+                    # Check if the section exists, otherwise create it
+                    if not config.has_section(group):
+                        config.add_section(group)
+
+                    # Set the hostname under the correct section
+                    config.set(group, hostname, None)  # Use None as value since no value is required
+
+            # Write the inventory file
+            with open(os.path.abspath(inventory_file), 'w', encoding='utf-8') as configfile:
+                config.write(configfile, space_around_delimiters=False)
+                configfile.flush()
+        except KeyError as e:
+            logger.error("inventory_tagging:add_hostname_cluster_layout_inventory: "
+                         "Error adding hostname %s to inventory file %s. "
+                         "Error type: %s. Error message: %s",
+                         hostname, inventory_file, type(e), e)
+        except (OSError, Exception) as err:  # pylint: disable=W0718
+            logger.error("inventory_tagging:add_hostname_cluster_layout_inventory: "
+                         "Error adding hostname %s to inventory file %s. "
+                         "Error type: %s. "
+                         "Error message: %s",
+                         hostname, inventory_file, type(err), err
+                         )
+
+
+
+    def update_inventory(self, node_detail: Tuple[str, str, str, str, str, str, str]) -> None:
         """
     	Update the inventory based on the given node detail.
 
     	Parameters:
-    	- node_detail (Tuple[str, str, str, str, str, str]): A tuple containing the node detail.
+    	- node_detail (Tuple[str, str, str, str, str, str, str]): A tuple containing the node detail.
 
     	Returns:
     	- None
     	"""
 
         # Unpack the node_detail tuple
-        node, service_tag, hostname, admin_ip, cpu, gpu = node_detail
+        node, service_tag, hostname, admin_ip, cpu, gpu, roles_name = node_detail
         if not hostname:
             logger.warning("inventory_tagging:update_inventory: "
                            "hostname is unavailable for node %s; skipping inventory update", node)
@@ -226,6 +267,10 @@ class InventoryManager:
             inventory_file_name = self.vendors.get("gpu", {}).get(gpu)
             if inventory_file_name:
                 self.add_hostname_inventory(inventory_file_name, hostname)
+        if roles_name:
+            inventory_file_name = "/opt/omnia/omnia_inventory/cluster_layout"
+            if inventory_file_name:
+                self.add_hostname_cluster_layout_inventory(inventory_file_name, hostname, roles_name)
 
     def change_inventory_file_permission(self, inventory_files: List[str]) -> None:
         """

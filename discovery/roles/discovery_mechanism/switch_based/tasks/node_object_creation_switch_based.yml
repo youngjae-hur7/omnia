@@ -15,6 +15,7 @@
 
 - name: Create node object for switch_based discovery
   create_switch_node_object:
+    oim_admin_ip: "{{ admin_nic_ip }}"
   register: switch_node_object_result
 
 - name: Show output of switch node object creation

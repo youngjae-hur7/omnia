@@ -16,6 +16,7 @@ import subprocess
 import sys
 
 db_path = sys.argv[3]
+oim_admin_ip = sys.argv[4]
 sys.path.insert(0, db_path)
 import omniadb_connection
 
@@ -98,13 +99,13 @@ def update_node_obj_nm(chain_os=chain_os):
                 if service_os_image != "None" and 'service' in role:
                     chain_os = f"osimage={service_os_image}"
                 command = ["/opt/xcat/bin/chdef", node_name, f"ip={admin_ip}", f"groups={groups_static},{role},{group_name}",
-                           f"chain={chain_os}"]
+                           f"chain={chain_os}", f"xcatmaster={oim_admin_ip}"]
                 subprocess.run(command)
             if mode == "dynamic":
                 command = ["/opt/xcat/bin/chdef", node_name,
                            f"ip={admin_ip}", f"groups={groups_dynamic}",
                            f"chain={chain_setup},{chain_os}",
-                           f"bmc={bmc_ip}"]
+                           f"bmc={bmc_ip}", f"xcatmaster={oim_admin_ip}"]
                 subprocess.run(command)
 
     cursor.close()

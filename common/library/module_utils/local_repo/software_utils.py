@@ -31,7 +31,8 @@ from ansible.module_utils.local_repo.config import (
     OMNIA_REPO_KEY,
     RHEL_OS_URL,
     SOFTWARES_KEY,
-    USER_REPO_URL
+    USER_REPO_URL,
+    REPO_CONFIG
 )
 
 def load_json(file_path):
@@ -204,7 +205,7 @@ def transform_package_dict(data):
 
     return result
 
-def parse_repo_urls(local_repo_config_path, version_variables):
+def parse_repo_urls(repo_config, local_repo_config_path, version_variables):
     """
     Parses the repository URLs from the given local repository configuration file.
     Args:
@@ -220,6 +221,7 @@ def parse_repo_urls(local_repo_config_path, version_variables):
     repo_entries = local_yaml.get(OMNIA_REPO_KEY, [])
     rhel_repo_entry = local_yaml.get(RHEL_OS_URL,[])
     user_repo_entry = local_yaml.get(USER_REPO_URL,[])
+    policy = REPO_CONFIG.get(repo_config)    
     parsed_repos = []
 
     if user_repo_entry:
@@ -241,7 +243,8 @@ def parse_repo_urls(local_repo_config_path, version_variables):
                 "version": "null",
                 "ca_cert": ca_cert,
                 "client_key": client_key,
-                "client_cert": client_cert
+                "client_cert": client_cert,
+                "policy": policy
             })
 
     for url_ in rhel_repo_entry:
@@ -255,7 +258,8 @@ def parse_repo_urls(local_repo_config_path, version_variables):
             "package": name,
             "url": url,
             "gpgkey": gpgkey if gpgkey else "null",
-            "version": "null"
+            "version": "null",
+            "policy": "on_demand"
         })
 
     for repo in repo_entries:
@@ -281,7 +285,8 @@ def parse_repo_urls(local_repo_config_path, version_variables):
             "package": name,
             "url": rendered_url,
             "gpgkey": gpgkey if gpgkey else "null",
-            "version": version if version else "null"
+            "version": version if version else "null",
+            "policy": "on_demand"
         })
 
     return json.dumps(parsed_repos), True
@@ -457,3 +462,4 @@ def get_software_names(data_path):
     """
     data = load_json(data_path)
     return [software['name'] for software in data.get(SOFTWARES_KEY, [])]
+
