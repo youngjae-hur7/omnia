@@ -47,6 +47,9 @@
 - name: Include vars for {{ oim_os }}
   ansible.builtin.include_vars: "{{ role_path }}/vars/{{ oim_os }}.yml"
 
+- name: Include high_availabiliity variables
+  ansible.builtin.include_tasks: include_high_availability_config.yml
+
 - name: Include composable role data
   ansible.builtin.include_tasks: include_composable_roles_config.yml
 
@@ -55,9 +58,6 @@
 
 - name: Include local_repo variables
   ansible.builtin.include_tasks: include_local_repo_config.yml
-
-- name: Include high_availabiliity variables
-  ansible.builtin.include_tasks: include_high_availability_config.yml
 
 - name: Validate service_node repo
   ansible.builtin.include_tasks: validate_service_node_repo.yml

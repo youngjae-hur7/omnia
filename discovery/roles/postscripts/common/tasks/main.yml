@@ -38,7 +38,7 @@
       ansible.builtin.include_tasks: check_nodes_oim_ha.yml
       when: enable_oim_ha
 
-    - name: Check service node group status
+    - name: Check service_node group status
       ansible.builtin.include_tasks: check_nodes_service.yml
 
     - name: Configuration of postbootscripts
@@ -53,6 +53,6 @@
       ansible.builtin.include_tasks: configure_postscripts.yml
       when: all_node_status
 
-    - name: Configuration of service role postscripts
+    - name: Configuration of service_node role postscripts
       ansible.builtin.include_tasks: configure_postscripts_service.yml
       when: service_node_status

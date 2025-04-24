@@ -1,4 +1,4 @@
-#  Copyright 2023 Dell Inc. or its subsidiaries. All Rights Reserved.
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -89,8 +89,8 @@
       ansible.builtin.set_fact:
         openmpi_compile_cmd: "../configure --prefix={{ omnia_share_path }}/{{ benchmarks_dir_openmpi }}
          --enable-mpi1-compatibility --enable-prte-prefix-by-default
-         {{ '--with-slurm=yes' if slurm_support else '--with-slurm=no' }}{{ ' --with-ucx=' + ucx_dir_data.stat.path + ' ' if ucx_installed else ' ' }}CC=clang
-          CXX=clang++ 2>&1 | tee config.out"
+         {{ '--with-slurm=yes' if slurm_support else '--with-slurm=no' }}{{ ' --with-ucx=' + ucx_dir_data.stat.path + ' ' if ucx_installed else ' ' }}
+         2>&1 | tee config.out"
 
     - name: Create a build directory inside openmpi folder
       ansible.builtin.file:

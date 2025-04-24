@@ -21,7 +21,9 @@ network_spec_syntax_fail_msg: "Failed. Syntax errors present in network_spec.yml
 pulp_server_ip: "{{ hostvars['localhost']['pulp_server_ip'] }}"
 pulp_container_name: "omnia_pulp"
 pulp_port: "2225"
-pulp_status_url: "http://{{ pulp_server_ip }}:{{ pulp_port }}/pulp/api/v3/status/"
+pulp_protocol_https: true
+pulp_status_url_https: "https://{{ pulp_server_ip }}:{{ pulp_port }}/pulp/api/v3/status/"
+pulp_status_url_http: "http://{{ pulp_server_ip }}:{{ pulp_port }}/pulp/api/v3/status/"
 endpoint_retries: 3
 endpoint_delay: 5
 endpoint_timeout: 60

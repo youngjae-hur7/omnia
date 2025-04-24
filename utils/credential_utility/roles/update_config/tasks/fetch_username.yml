@@ -17,18 +17,19 @@
   when:
     - vars[username] is defined
     - (vars[username] | length == 0)
-    - username is not search('bmc|switch')
-      or 'bmc' in username and ( composable_roles_output.bmc_static_status or composable_roles_output.switch_status )
+    - username is not search('switch')
       or 'switch' in username and composable_roles_output.switch_status
   block:
     - name: Fetch credential rule for "{{ username }}" # noqa name[template]
       fetch_credential_rule:
         credential_field: "{{ username }}"
+        module_utils_path: "{{ module_utils_path }}"
       register: credential_rule
 
     - name: Prompt user for "{{ username }}" # noqa name[template]
       ansible.builtin.pause:
         prompt: "[{{ username }}] {{ lookup('vars', type.key ~ '_input') }} {{ credential_rule.msg }} Enter value"
+      no_log: true
       register: username_input
 
     - name: Validate mandatory username not empty
@@ -42,6 +43,7 @@
       validate_credentials:
         credential_field: "{{ username }}"
         credential_input: "{{ username_input.user_input }}"
+        module_utils_path: "{{ module_utils_path }}"
       when: username_input.user_input | length != 0
 
     - name: Update vars file with entered username

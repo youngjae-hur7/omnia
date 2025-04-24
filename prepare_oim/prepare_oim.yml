@@ -23,6 +23,9 @@
         omnia_run_tags: "{{ (ansible_run_tags | default([]) + ['prepare_oim']) | unique }}"
         cacheable: true
 
+- name: Invoke validate_config.yml to perform L1 and L2 validations with prepare_oim tag
+  ansible.builtin.import_playbook: ../input_validation/validate_config.yml
+
 - name: Invoke get_config_credentials.yml
   ansible.builtin.import_playbook: ../utils/credential_utility/get_config_credentials.yml
 
@@ -109,10 +112,19 @@
   hosts: localhost
   connection: local
   tasks:
-    - name: Configure Pulp container tasks # noqa:role-name[path]
-      ansible.builtin.include_role:
-        name: deploy_containers/pulp
-        tasks_from: create_pulp_config.yml
+    - name: Configure Pulp container based on protocol
+      block:
+        - name: Configure Pulp HTTP container tasks
+          ansible.builtin.include_role:
+            name: deploy_containers/pulp
+            tasks_from: create_pulp_config_http.yml
+          when: not hostvars['oim']['pulp_protocol_https']
+
+        - name: Configure Pulp HTTPS container tasks
+          ansible.builtin.include_role:
+            name: deploy_containers/pulp
+            tasks_from: create_pulp_config_https.yml
+          when: hostvars['oim']['pulp_protocol_https']
 
 - name: Reload pulp nginx
   hosts: oim
@@ -122,6 +134,7 @@
       ansible.builtin.include_role:
         name: deploy_containers/pulp
         tasks_from: reload_pulp_nginx.yml
+      when: hostvars['oim']['pulp_protocol_https']
 
 - name: Configure provision container
   hosts: omnia_provision
@@ -146,8 +159,13 @@
   connection: ssh
   gather_facts: false
   roles:
-    - role: save_container_images
-      when: hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.enable_oim_ha and omnia_share_option == 'NFS'
+    - role: save_container_images  # noqa:role-name[path]
+      when: >
+        omnia_share_option == 'NFS' and
+        (
+          (hostvars['localhost']['oim_ha_data'].ansible_facts.oim_ha.enable_oim_ha | default(false)) or
+          (hostvars['localhost']['has_service_role'] | default(false))
+        )
 
 - name: Prepare oim completion
   hosts: localhost

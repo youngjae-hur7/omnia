@@ -24,9 +24,10 @@ xcat_sbin_path: /opt/xcat/sbin
 # Usage: create_osimage.yml
 osimage_search_key: install-compute
 service_osimage_search_key: install-service
-tmp_dir: /tmp/osimages
+tmp_dir: /opt/osimages
 xcat_install_dir: /install
 mode: "755"
+nfs_image_failure: "Failed to create and/or save osimages with NFS"
 
 # Usage: update_ipmi_table.yml
 ipmi_success_msg: "Successfully updated IPMI table"

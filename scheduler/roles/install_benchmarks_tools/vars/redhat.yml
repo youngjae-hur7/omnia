@@ -17,4 +17,3 @@
 gcc_package_names:
   - gcc-c++
   - make
-clang_package: clang

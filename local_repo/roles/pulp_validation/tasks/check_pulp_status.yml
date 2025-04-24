@@ -35,18 +35,24 @@
         - container_info.containers | length == 0 or container_info.containers[0].State.Status != 'running'
 
 - name: Check if Pulp endpoint is up
-  ansible.builtin.uri:
-    url: "{{ pulp_status_url }}"
-    method: GET
-    validate_certs: false
-    return_content: true
-  register: result
-  retries: "{{ endpoint_retries }}"
-  delay: "{{ endpoint_delay }}"
-  timeout: "{{ endpoint_timeout }}"
-  until: result.status == 200
+  block:
+    - name: Set Pulp status URL based on protocol
+      ansible.builtin.set_fact:
+        pulp_status_url: "{{ pulp_status_url_https if pulp_protocol_https else pulp_status_url_http }}"
 
-- name: Fail when Pulp endpoint is not up
-  ansible.builtin.debug:
-    msg: "{{ pulp_status_fail_msg }}"
-  when: result.status != 200
+    - name: Check if Pulp endpoint is up
+      ansible.builtin.uri:
+        url: "{{ pulp_status_url }}"
+        method: GET
+        validate_certs: false
+        return_content: true
+      register: result
+      retries: "{{ endpoint_retries }}"
+      delay: "{{ endpoint_delay }}"
+      timeout: "{{ endpoint_timeout }}"
+      until: result.status == 200
+
+    - name: Fail when Pulp endpoint is not up
+      ansible.builtin.debug:
+        msg: "{{ pulp_status_fail_msg }}"
+      when: result.status != 200

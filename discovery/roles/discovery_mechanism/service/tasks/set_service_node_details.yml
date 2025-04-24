@@ -13,20 +13,32 @@
 #  limitations under the License.
 ---
 
+- name: Create mapping of service_tag to key in hierarchical_service_node_data
+  ansible.builtin.set_fact:
+    service_tag_map: >-
+      {{
+        service_tag_map | default({}) | combine({
+          value.service_tag: {"admin_ip": value.admin_ip, "node": key}
+        })
+      }}
+  with_dict: "{{ hierarchical_service_node_data }}"
+  loop_control:
+    label: "{{ item.key }}"
+  vars:
+    key: "{{ item.key }}"
+    value: "{{ item.value }}"
+
 - name: Configure child groups with xcatmaster and servicenode
   ansible.builtin.command: >
-    {{ xcat_bin_path }}/chdef -t group -o {{ item_group }}
-    servicenode={{ item_service.value.admin_ip }}
-    xcatmaster={{ item_service.value.admin_ip }}
-    conserver={{ item_service.value.admin_ip }}
-    monserver={{ item_service.value.admin_ip }}
-  loop: "{{ hierarchical_service_node_data | dict2items | subelements('value.child_groups') }}"
+    {{ xcat_bin_path }}/chdef {{ item.node }}
+    servicenode={{ service_tag_map[item.parent]['admin_ip'] }}
+    xcatmaster={{ service_tag_map[item.parent]['admin_ip'] }}
+    conserver={{ service_tag_map[item.parent]['admin_ip'] }}
+    monserver={{ service_tag_map[item.parent]['admin_ip'] }}
+  loop: "{{ hostvars['omnia_provision']['discovered_nodes'] }}"
   loop_control:
-    loop_var: item_pair
-  vars:
-    item_service: "{{ item_pair.0 }}"
-    item_group: "{{ item_pair.1 }}"
-  when: item_service.value.service_tag == hostvars[inventory_hostname]['service_tag']
+    loop_var: item
+  when: item.parent == hostvars[inventory_hostname]['service_tag']
   changed_when: true
 
 - name: Make hosts on service nodes

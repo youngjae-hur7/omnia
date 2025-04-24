@@ -13,11 +13,6 @@
 #  limitations under the License.
 ---
 
-- name: Include metadata vars
-  ansible.builtin.include_vars: "{{ omnia_metadata_file }}"
-  register: include_metadata
-  no_log: true
-
 - name: Set Facts for composable roles data
   ansible.builtin.set_fact:
     composable_roles_output: "{{ hostvars['localhost']['composable_roles_output'] }}"
@@ -33,9 +28,24 @@
     groups_roles_info: "{{ composable_roles_output.groups_roles_info }}"
     hierarchical_service_node_data: "{{ composable_roles_output.hierarchical_service_node_data }}"
 
-- name: Set fact for service role required
+# Will uncomment once NFS supported for hierarchical-based discovery
+# - name: Fail if omnia_share_option is not "NFS" during hierarchical-based discovery and provisioning
+#   ansible.builtin.fail:
+#     msg: "{{ invalid_share_option_msg | replace('\n', ' ') }}"
+#   when:
+#     - "'service_node' in roles_data"
+#     - omnia_share_option != 'NFS'
+
+- name: Set fact for service_node role required
   ansible.builtin.set_fact:
-    service_role_required: "{{ 'true' if 'service' in roles_groups_data else 'false' }}"
+    service_role_required: "{{ 'true' if 'service_node' in roles_groups_data else 'false' }}"
+
+- name: Get the group(s) for OIM HA
+  when:
+    - "'oim_ha_node' in roles_data"
+    - enable_oim_ha | default(False)
+  ansible.builtin.set_fact:
+    oim_ha_groups: "{{ roles_data['oim_ha_node']['groups'] | default([]) }}"
 
 - name: Display filtered group wise details
   ansible.builtin.debug:

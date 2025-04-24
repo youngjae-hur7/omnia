@@ -13,6 +13,10 @@
 #  limitations under the License.
 
 ---
+- name: Set Fact for Pulp Deployment Mode
+  ansible.builtin.set_fact:
+    pulp_protocol_https: true
+
 - name: Set fact for hostname enabled
   ansible.builtin.set_fact:
     hostname_enabled: false # Will be set to 'true' if user provides hostname in high_availability_config.yml
@@ -31,5 +35,10 @@
   when: hostname_enabled
   no_log: true
 
-- name: Invoke Pulp Container Deployment Tasks
-  ansible.builtin.include_tasks: deploy_pulp_container.yml
+- name: Invoke Pulp Container Deployment Tasks for HTTP
+  ansible.builtin.include_tasks: deploy_pulp_container_http.yml
+  when: not pulp_protocol_https
+
+- name: Invoke Pulp Container Deployment Tasks for HTTPS
+  ansible.builtin.include_tasks: deploy_pulp_container_https.yml
+  when: pulp_protocol_https
