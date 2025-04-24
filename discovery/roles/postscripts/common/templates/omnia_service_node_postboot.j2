@@ -7,19 +7,41 @@
 # Define log file
 LOGFILE="/var/log/omnia/service_node.log"
 
+log() {
+  echo "$1" >> "$LOGFILE"
+}
+
+run_or_fail() {
+  log "--- Running: $* ---"
+  output=$("$@" 2>&1)
+  if [ $? -ne 0 ]; then
+    log "[ERROR]: Failed to run '$*'"
+    log "[ERROR] MSG: $output"
+    exit 1
+  else
+    log "[DEBUG] $output"
+  fi
+}
+
 echo "--------------------------" >> "$LOGFILE"
 echo "$(date) - INFO - Starting Omnia Service node postboot configuration" >> "$LOGFILE"
 
 # Get node serial
-nodeid=$(dmidecode -s system-serial-number)
-echo "[DEBUG] Current node serial: $nodeid" >> "$LOGFILE"
+log "--- Getting node serial ---"
+nodeid=$(dmidecode -s system-serial-number 2>>"$LOGFILE")
+log "[DEBUG] Current node serial: $nodeid"
 
 ln -sf {{ oim_shared_path }}/omnia/service_nodes/$nodeid/{{ pcs_container_name }}.container \
        {{ container_systemd_dir }}/{{ pcs_container_name }}.container
 
-# Start the pcs container
-systemctl daemon-reload
-sudo systemctl start omnia_pcs
+log "--- Restarting xcatd ---"
+run_or_fail sudo /opt/xcat/sbin/restartxcatd -v
+
+log "--- Reloading systemd ---"
+run_or_fail sudo systemctl daemon-reload
+
+log "--- Starting omnia_pcs container ---"
+run_or_fail sudo systemctl start omnia_pcs
 
 echo "$(date) - INFO - Finished Omnia Service node postboot configuration" >> "$LOGFILE"
 echo "---------------------------"
