@@ -18,12 +18,12 @@
     path: "{{ service_node_dir }}"
     state: directory
     mode: "{{ file_permissions }}"
-  loop: "{{ service_nodes.query_result }}"
+  loop: "{{ discovered_service_nodes }}"
   loop_control:
     label: "{{ item.service_tag }}"
 
 - name: Render corosync.conf for non-HA nodes
-  loop: "{{ service_nodes.query_result }}"
+  loop: "{{ discovered_service_nodes }}"
   loop_control:
     loop_var: node
   when: node.service_tag not in service_node_ha_data.service_nodes | map(attribute='active_node_service_tag') | list
@@ -37,7 +37,7 @@
     src: "{{ pcs_container_tmpl }}"
     dest: "{{ pcs_container_tmpl_nonha_dest }}"
     mode: "{{ file_permissions }}"
-  loop: "{{ service_nodes.query_result }}"
+  loop: "{{ discovered_service_nodes }}"
   loop_control:
     loop_var: node
   when: node.service_tag not in service_node_ha_data.service_nodes | map(attribute='active_node_service_tag') | list
@@ -49,7 +49,7 @@
     src: "{{ pcs_start_tmpl }}"
     dest: "{{ pcs_start_tmpl_nonha_dest }}"
     mode: "{{ file_permissions }}"
-  loop: "{{ service_nodes.query_result }}"
+  loop: "{{ discovered_service_nodes }}"
   loop_control:
     loop_var: node
   when: node.service_tag not in service_node_ha_data.service_nodes | map(attribute='active_node_service_tag') | list
