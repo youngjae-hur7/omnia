@@ -13,12 +13,15 @@
 # limitations under the License.
 ---
 
-- name: Fail if no service nodes are found
-  ansible.builtin.debug:
-    msg: "No service nodes found in the database."
+- name: Notify if no new service nodes were discovered
   when:
-    - discovered_service_nodes is defined
-    - discovered_service_nodes | length < 1
+      - discovered_service_nodes is defined
+      - discovered_service_nodes | length < 1
+  block:
+    - name: Warning - No new service node got discovered
+      ansible.builtin.pause:
+        prompt: "{{ no_service_node_msg }}"
+        seconds: "{{ warning_time_10 }}"
 
 - name: Update PostgreSQL configuration file and restart PostgreSQL
   when: discovered_service_nodes | length > 0

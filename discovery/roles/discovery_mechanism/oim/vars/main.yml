@@ -36,6 +36,8 @@ empty_discover_node_msg: |
    and check if IPMI is enabled on the nodes if using BMC discovery mechanism."
 
 # Usage: service_node_postgres_setting.yml
+no_service_node_msg: "[Warning] No new service nodes discovered, although it is defined in roles_config."
+waiting_time_10: 10
 pg_hba_conf_path: /var/lib/pgsql/data/pg_hba.conf
 provision_shared_path: /opt/omnia/provision/
 selinux_policy: "system_u:object_r:container_file_t:s0"
