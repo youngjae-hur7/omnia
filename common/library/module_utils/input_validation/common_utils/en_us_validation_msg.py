@@ -61,7 +61,7 @@ omnia_repo_url_msg = "Repo urls are empty. Please provide a url and correspondin
 rhel_os_url_msg = "is empty. Please provide a rhel_os_url value."
 ubuntu_os_url_msg = "ubuntu_os_url is empty. Please provide a ubuntu_os_url value."
 
-#omnia_config.yml
+# omnia_config.yml
 invalid_password_msg = "Provided password is invalid. Password must meet the specified requirements: should not be empty, must have a length of at least 8 characters, and should not contain the following characters: '-', '\', "'", or '"'"
 k8s_cni_fail_msg = "k8s_cni is empty or invalid. k8s_cni must be set to either calico or flannel. "
 pod_external_ip_range_fail_msg = "pod_external_ip_range value is either empty or invalid. Please provide one of the following acceptable formats: '10.11.0.100-10.11.0.150' (range between start and end IP addresses) or '10.11.0.0/16' (CIDR notation)."
@@ -93,14 +93,14 @@ appliance_k8s_pod_net_cidr_fail_msg = "appliance_k8s_pod_net_cidr value is eithe
 k8s_prometheus_support_fail_msg = "k8s_prometheus_support must be True when prometheus_gaudi_support is True."
 prometheus_scrape_interval_fail_msg = "prometheus_scrape_interval must be at least 15 when prometheus_gaudi_support is True."
 
-#security_config.yml
+# security_config.yml
 domain_name_fail_msg = "domain_name is empty. Please provide a domain_name value."
 realm_name_fail_msg = "realm_name is empty. Please provide a realm_name value."
 ldap_connection_type_fail_msg = "ldap_connection_type is empty. Please provide a ldap_connection_type value."
 openldap_organization_fail_msg = "openldap_organization is empty. Please provide a openldap_organization value."
 openldap_organizational_unit_fail_msg = "openldap_organizational_unit is empty. Please provide a openldap_organizational_unit value."
 
-#software_config.json
+# software_config.json
 iso_file_path_fail_msg = "The provided ISO file path is invalid. Please ensure that the ISO file exists at the specified iso_file_path."
 iso_file_path_not_contain_iso_msg = "The provided ISO file path must have the .iso extension."
 def iso_file_path_not_contain_os_msg(iso_file_path, provision_os, provision_os_version):
@@ -112,6 +112,11 @@ def os_version_fail_msg(cluster_os_type, min_version, max_version):
 def software_mandatory_fail_msg(software_name):
     return f"in software_config.json. Please add the corresponding field '{software_name}' to the JSON. Look at /examples/template_ubuntu_software_config.json for an example"
 
+# network_spec.json
+range_ip_check_fail_msg = "Failed. IP range should be in valid format (Example: 192.168.1.1-192.168.1.254)"
+network_gateway_fail_msg = "Failed. network_gateway should be a valid IP address (Example: 192.168.1.1)"
+admin_network_missing_msg = "Failed. admin_network configuration is mandatory in network_spec.yml"
+
 # telemetry
 mandatory_field_fail_msg = "must not be empty"
 mysqldb_user_fail_msg = "username should not be kept 'root'."
@@ -120,7 +125,7 @@ metric_collection_timeout_fail_msg = "should be greater than 0 and less than omn
 mount_location_fail_msg = "should have '/' at the end of the path"
 grafana_password_fail_msg = "should not be kept 'admin'"
 
-#security
+# security
 file_path_fail_msg = "path does not exist"
 def tls_ext_fail_msg(valid_extensions):
     extensions_list = ' or '.join(valid_extensions)

@@ -99,4 +99,84 @@ def validate_provision_config(input_file_path, data, logger, module, omnia_base_
 
 def validate_network_spec(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
     errors = []
+
+    if not data.get("Networks"):
+        errors.append(create_error_msg(
+            "Networks",
+            None,
+            en_us_validation_msg.admin_network_missing_msg
+        ))
+        return errors
+
+    for network in data["Networks"]:
+        # Validate admin network
+        if "admin_network" in network:
+            admin_net = network["admin_network"]
+
+            # Validate admin network gateway format
+            if "network_gateway" in admin_net and admin_net["network_gateway"]:
+                gateway = admin_net["network_gateway"]
+                if not validation_utils.validate_ipv4_range(gateway):
+                    errors.append(create_error_msg(
+                        "admin_network.network_gateway",
+                        gateway,
+                        en_us_validation_msg.network_gateway_fail_msg
+                    ))
+
+            # Validate admin network static/dynamic range format
+            if "static_range" in admin_net:
+                static_range = admin_net["static_range"]
+                if not validation_utils.validate_ipv4_range(static_range):
+                    errors.append(create_error_msg(
+                        "admin_network.static_range",
+                        static_range,
+                        en_us_validation_msg.range_ip_check_fail_msg
+                    ))
+
+            if "dynamic_range" in admin_net:
+                dynamic_range = admin_net["dynamic_range"]
+                if not validation_utils.validate_ipv4_range(dynamic_range):
+                    errors.append(create_error_msg(
+                        "admin_network.dynamic_range",
+                        dynamic_range,
+                        en_us_validation_msg.range_ip_check_fail_msg
+                    ))
+
+        # Validate BMC network
+        if "bmc_network" in network:
+            bmc_net = network.get("bmc_network", {})
+
+            # Skip validation if BMC network is empty or not configured
+            if not any(bmc_net.values()):
+                continue
+
+            # Validate BMC network gateway format
+            if bmc_net.get("network_gateway"):
+                gateway = bmc_net["network_gateway"]
+                if not validation_utils.validate_ipv4_range(gateway):
+                    errors.append(create_error_msg(
+                        "bmc_network.network_gateway",
+                        gateway,
+                        en_us_validation_msg.network_gateway_fail_msg
+                    ))
+
+            # Validate BMC network dynamic range and conversion range format
+            if bmc_net.get("dynamic_range"):
+                dynamic_range = bmc_net["dynamic_range"]
+                if not validation_utils.validate_ipv4_range(dynamic_range):
+                    errors.append(create_error_msg(
+                        "bmc_network.dynamic_range",
+                        dynamic_range,
+                        en_us_validation_msg.range_ip_check_fail_msg
+                    ))
+
+            if bmc_net.get("dynamic_conversion_static_range"):
+                conv_range = bmc_net["dynamic_conversion_static_range"]
+                if not validation_utils.validate_ipv4_range(conv_range):
+                    errors.append(create_error_msg(
+                        "bmc_network.dynamic_conversion_static_range",
+                        conv_range,
+                        en_us_validation_msg.range_ip_check_fail_msg
+                    ))
+
     return errors
