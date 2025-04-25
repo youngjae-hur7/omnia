@@ -30,7 +30,7 @@
 #                         - Set the value only for group of nodes belonging to kube_node and slurm_node roles,
 #                         - And empty for other roles.
 #     parent:             - <Conditional Mandatory> list of service tag of associated active service node(s).
-#                         - This field will be empty for group of nodes which is associated with ‘login’, ‘compiler’, ‘service’,
+#                         - This field will be empty for group of nodes which is associated with ‘login’, ‘compiler_node’, ‘service’,
 #                         - ‘auth_server’, ‘kube_control_plane’, ‘etcd’, 'slurm_control_node’, ‘slurm_dbd’.
 #                         - If ‘service’ role is not defined, then value will be empty for worker and default role.
 #     bmc_details:        - <Conditional Mandatory> BMC IP static range in the format 10.5.0.1-10.5.0.200
@@ -84,7 +84,7 @@ Groups:
 # | service_node       | management       |     | slurm_node  | compute        |
 # | login              | management       |     | default     | compute        |
 # | auth_server        | management       |     |             |                |
-# | compiler           | management       |     |             |                |
+# | compiler_node      | management       |     |             |                |
 # | kube_control_plane | management       |     |             |                |
 # | etcd               | management       |     |             |                |
 # | slurm_control_node | management       |     |             |                |
@@ -274,7 +274,7 @@ Roles:
   #     - grp1
 
 #
-# Compiler Role:
+# Compiler Node Role:
 # --------------
 #
 # This role is used to configure the nodes for compilation. It belongs to the management layer.
@@ -284,8 +284,8 @@ Roles:
 #
 # The nodes in this role can be used to compile the code.
 #
-# Compiler Role: Compiler groups to add into compiler role can be provided in this role
-  # - name: "compiler"
+# Compiler Node Role: Compiler groups to add into compiler_node role can be provided in this role
+  # - name: "compiler_node"
   #   groups:
   #     - grp0
   #     - grp1

@@ -19,6 +19,10 @@
 # It's recommended to do extensive tests when installing a new Gaudi node.
 # This can be controlled using var: run_intel_gaudi_tests: true
 
+- name: Include input project directory
+  ansible.builtin.import_playbook: ../include_input_dir.yml
+  when: not (project_dir_status | default(false) | bool)
+
 - name: Include omnia config file
   hosts: localhost
   connection: local

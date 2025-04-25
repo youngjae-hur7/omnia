@@ -21,7 +21,7 @@
             "parent": {
               "type": "string",
               "pattern": "^[a-zA-Z0-9,]*$",
-              "description": "List of service tag of associated active service node(s). This field will be empty for group of nodes which is associated with ‘login’, ‘compiler’, ‘service_node’, ‘kube_control_plane’,’slurm_control_plane’. If ‘service_node’ role is not defined, then value will be empty for worker and default role."
+              "description": "List of service tag of associated active service node(s). This field will be empty for group of nodes which is associated with ‘login’, ‘compiler_node’, ‘service_node’, ‘kube_control_plane’,’slurm_control_plane’. If ‘service_node’ role is not defined, then value will be empty for worker and default role."
             },
             "bmc_details": {
               "type": "object",

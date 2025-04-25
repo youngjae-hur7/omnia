@@ -643,20 +643,55 @@ main() {
         if [ -n "$(echo "$running_containers" | grep -E 'running')" ]; then
             echo -e "${GREEN} Omnia core container is already running.${NC}"
             echo -e "${GREEN} Do you want to:${NC}"
-            echo -e "${GREEN} 1. Reinstall the container.${NC}"
-            echo -e "${GREEN} 2. Delete the container and configurations.${NC}"
-            echo -e "${GREEN} 3. Exit. ${NC}"
+            PS3="Select the option number: "
 
-            # Get user input
-            read -p " Enter your choice (1 or 2): " choice
+            select opt in "Reinstall the container" "Delete the container and configurations" "Exit"; do
+                case $opt in
+                    "Reinstall the container")
+                        choice=1
+                        break
+                        ;;
+                    "Delete the container and configurations")
+                        choice=2
+                        break
+                        ;;
+                    "Exit")
+                        echo "Exiting the script."
+                        exit 0
+                        ;;
+                    *)
+                        echo "Invalid choice. Please try again."
+                        continue
+                        ;;
+                esac
+            done
 
             # If the user wants to reinstall, call the remove_container function, and then call the setup_omnia_core function
             if [ "$choice" = "1" ]; then
                 echo -e "${GREEN} What configuration do you want to use for reinstallation:${NC}"
-                echo -e "${GREEN} 1. Retain Existing configuration.${NC}"
-                echo -e "${GREEN} 2. Overwrite and create new configuration.${NC}"
-                echo -e "${GREEN} 3. Exit. ${NC}"
-                read -p " Enter your choice (1 or 2): " choice
+
+                PS3="Select the option number: "
+
+                select opt in "Retain Existing configuration" "Overwrite and create new configuration" "Exit"; do
+                    case $opt in
+                        "Retain Existing configuration")
+                            choice=1
+                            break
+                            ;;
+                        "Overwrite and create new configuration")
+                            choice=2
+                            break
+                            ;;
+                        "Exit")
+                            echo "Exiting the script."
+                            exit 0
+                            ;;
+                        *)
+                            echo "Invalid choice. Please try again."
+                            continue
+                            ;;
+                    esac
+                done
 
                 # If the user wants to retain existing configuration, call the remove_container function
                 if [ "$choice" = "1" ]; then
@@ -668,16 +703,11 @@ main() {
                 elif [ "$choice" = "2" ]; then
                     cleanup_omnia_core
                     setup_omnia_core
-                # If the user wants to exit, exit
-                elif [ "$choice" = "3" ]; then
-                    exit
                 fi
+
             # If the user wants to cleanup, call the cleanup function
             elif [ "$choice" = "2" ]; then
                 cleanup_omnia_core
-            # If the user wants to exit, exit
-            elif [ "$choice" = "3" ]; then
-                exit
             fi
         else
             # If omnia_core container exists and is not running call the remove_container function
