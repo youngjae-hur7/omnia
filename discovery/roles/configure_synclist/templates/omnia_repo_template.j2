@@ -3,6 +3,8 @@ name=Omnia-Repo-{{ item.name }}
 baseurl= {{ item.base_url }}
 enabled=1
 gpgcheck=0
+sslverify=1
+sslcacert=/etc/pki/ca-trust/source/anchors/pulp_webserver.crt
 skip_if_unavailable=True
 {% if proxy_status is defined and proxy_status %}
 proxy=_none_
