@@ -132,8 +132,6 @@ omnia_repo_url_rhel:
 #   - { url: "https://vault.habana.ai/artifactory/debian {{ os_release }} main", publickey: "https://vault.habana.ai/artifactory/api/gpg/key/public" }
 #   - { url: "https://apt.repos.intel.com/oneapi all main", publickey: "https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB" }
 
-# Optional
-# By default, set to true to use HTTPS for connecting to the Pulp server
-# Set to false to use HTTP for connecting to the Pulp server
-# Accepted values: true or false
+# By default, set to true to enable secure (HTTPS) connection to the Pulp server.
+# This value should not be modified as it is system-defined.
 pulp_protocol_https: true
