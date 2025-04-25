@@ -48,7 +48,7 @@ enable_switch_based_fail_msg = "enable_switch_based must be set to either true o
 language_fail_msg = "Only en-US language supported"
 nodename_chars_fail_msg = "node_name is empty or invalid in provision_config.yml. node_name should not contain _ or . or space or node- as it might result in issues with provisioning/authentication tools like FreeIPA."
 public_nic_fail_msg = "public_nic is empty. Please provide a public_nic value."
-pxe_mapping_file_path_fail_msg = "File path is invalid. Please ensure that the file exists at the specified pxe_mapping_file_path."
+pxe_mapping_file_path_fail_msg = "File path is invalid or its a directory. Please ensure that the file exists at the specified pxe_mapping_file_path."
 pxe_mapping_file_ext_fail_msg = "File path is invalid. Please ensure that the file ends with .csv extension"
 ntp_support_empty_msg = "The ntp_support must have a boolean value set to either true or false."
 
