@@ -16,8 +16,8 @@ pcs resource defaults update migration-threshold={{ sn_ha_migration_threshold }}
 
 # Create xcatd-check resource
 pcs resource create XCATD-CHECK ocf:heartbeat:xcatd-remote-check \
-  op monitor interval={{ monitor_interval }} timeout=10s on-fail=restart \
-  op start timeout=10s on-fail=restart \
+  op monitor interval={{ monitor_interval }} timeout=60s on-fail=restart \
+  op start timeout=60s on-fail=restart \
   op stop timeout=30s on-fail=block
 
 pcs resource group add {{ pcs_group }}  XCATD-CHECK
@@ -27,8 +27,8 @@ pcs resource group add {{ pcs_group }}  XCATD-CHECK
 # Add a Service Node Virtual IP (VIP) resource
 pcs resource create SNVIP IPaddr2 ip={{ active_node.virtual_ip }} cidr_netmask={{ network_data.admin_network.netmask_bits }} \
   op monitor interval={{ monitor_interval }}
-pcs resource group add {{ pcs_group }} xcatd-check
-# Group xcatd-check and vip together
+# Add SNVIP to group
+pcs resource group add {{ pcs_group }} SNVIP
 
 pcs constraint location {{ pcs_group }} prefers {{ active_node.hostname }}=200
 {% endif %}

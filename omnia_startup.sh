@@ -434,12 +434,14 @@ fetch_config() {
 # starting the Podman socket.
 validate_oim() {
     # Check if the hostname is configured with a domain name.
-    if hostname -d; then
-        echo -e "${BLUE}Hostname is configured with a domain name.${NC}"
+    domain_name=$(hostname -d)
+    if [[ -n "$domain_name" ]]; then
+        echo -e "${BLUE}Hostname is configured with a domain name: $domain_name${NC}"
     else
         echo -e "${RED}Invalid hostname, hostname is not configured with a domain name!${NC}"
-        exit 1
+        exit 0
     fi
+
 
     podman --version
 
