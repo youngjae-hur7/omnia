@@ -50,12 +50,6 @@
     state: directory
     mode: "{{ dir_permission }}"
 
-- name: Create script directory under syncfiles directory
-  ansible.builtin.file:
-    path: "{{ syncfiles_share_path }}/script"
-    state: directory
-    mode: "{{ dir_permission }}"
-
 - name: Create PCS directory under syncfiles directory
   ansible.builtin.file:
     path: "{{ syncfiles_share_path }}/pcs"
