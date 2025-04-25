@@ -1,4 +1,4 @@
-#  Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+#  Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -22,3 +22,21 @@
     path: /etc/resolv.conf
     state: absent
     regexp: '^nameserver {{ service_addr }}\.[0-9]+\.[0-9]+'
+
+- name: Disable firewall ports for k8s
+  when: not firewall_disable
+  block:
+    - name: Saving distribution of OS
+      ansible.builtin.set_fact:
+        compute_os: "{{ ansible_distribution | lower }}"
+
+    - name: Update firewall rules
+      ansible.builtin.include_tasks: update_firewall_redhat.yml
+      when: 
+        - compute_os in compute_os_redhat or 
+          compute_os in compute_os_rocky
+
+    - name: Delete temp k8s directory if it exists
+      ansible.builtin.file:
+        path: "{{ k8s_tmp_dir }}"
+        state: absent
