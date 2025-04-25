@@ -13,6 +13,7 @@ echo "Corosync and Pacemaker have started. Continuing with the script."
 pcs property set stonith-enabled=false
 pcs property set no-quorum-policy=ignore
 pcs resource defaults update migration-threshold={{ sn_ha_migration_threshold }}
+pcs resource defaults update failure-timeout={{ failure_timeout }}
 
 # Create xcatd-check resource
 pcs resource create XCATD-CHECK ocf:heartbeat:xcatd-remote-check \
