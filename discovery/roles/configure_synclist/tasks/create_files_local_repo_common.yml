@@ -15,6 +15,7 @@
 - name: Run pulp status command on omnia_core container
   ansible.builtin.command: pulp status
   delegate_to: localhost
+  changed_when: false
   register: pulp_status_output
 
 - name: Set pulp content origin value
