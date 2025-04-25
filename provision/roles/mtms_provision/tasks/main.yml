@@ -51,7 +51,7 @@
     - name: Wait for 5 mins before power on, since it takes some time for nodes to properly power off.
       ansible.builtin.wait_for:
         timeout: "{{ on_timeout }}"
-      when: dynamic_nodes.stdout_lines != "" or bmc_static_nodes | length > 0
+      when: dynamic_nodes.stdout_lines | default('') != "" or bmc_static_nodes | default([]) | length > 0
 
     - name: Power on static nodes
       ansible.builtin.include_tasks: power_on_nodes.yml

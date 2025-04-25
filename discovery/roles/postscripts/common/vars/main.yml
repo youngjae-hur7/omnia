@@ -41,7 +41,7 @@ cuda_core_path: /install/cuda/x86_64/cuda-core
 common_postscripts_path:
   - { src: "{{ role_path }}/templates/omnia_hostname.j2", dest: "/install/postscripts/omnia_hostname", mode: "755" }
   - { src: "{{ role_path }}/templates/omnia_cpu_gpu_info.j2", dest: "/install/postscripts/omnia_cpu_gpu_info", mode: "755" }
-  - { src: "{{ role_path }}/templates/omnia_network.j2", dest: "/install/postscripts/omnia_network", mode: "755" }
+  - { src: "{{ role_path }}/templates/omnia_nic_autoconnect.j2", dest: "/install/postscripts/omnia_nic_autoconnect", mode: "755" }
 
 oim_os_ubuntu: "ubuntu"
 provision_os_ubuntu: "ubuntu"
