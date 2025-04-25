@@ -31,17 +31,21 @@ log "--- Getting node serial ---"
 nodeid=$(dmidecode -s system-serial-number 2>>"$LOGFILE")
 log "[DEBUG] Current node serial: $nodeid"
 
-ln -sf {{ oim_shared_path }}/omnia/service_nodes/$nodeid/{{ pcs_container_name }}.container \
-       {{ container_systemd_dir }}/{{ pcs_container_name }}.container
-
 log "--- Restarting xcatd ---"
 run_or_fail sudo /opt/xcat/sbin/restartxcatd -v
+
+{% if omnia_share_option == "NFS" %}
+
+ln -sf {{ oim_shared_path }}/omnia/service_nodes/$nodeid/{{ pcs_container_name }}.container \
+       {{ container_systemd_dir }}/{{ pcs_container_name }}.container
 
 log "--- Reloading systemd ---"
 run_or_fail sudo systemctl daemon-reload
 
 log "--- Starting omnia_pcs container ---"
 run_or_fail sudo systemctl start omnia_pcs
+
+{% endif %}
 
 echo "$(date) - INFO - Finished Omnia Service node postboot configuration" >> "$LOGFILE"
 echo "---------------------------"
