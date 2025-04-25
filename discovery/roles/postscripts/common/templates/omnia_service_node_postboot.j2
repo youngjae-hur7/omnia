@@ -34,18 +34,21 @@ log "[DEBUG] Current node serial: $nodeid"
 log "--- Restarting xcatd ---"
 run_or_fail sudo /opt/xcat/sbin/restartxcatd -v
 
-{% if omnia_share_option == "NFS" %}
 
-ln -sf {{ oim_shared_path }}/omnia/service_nodes/$nodeid/{{ pcs_container_name }}.container \
-       {{ container_systemd_dir }}/{{ pcs_container_name }}.container
+# Check if the container file exists
+if [ -f "{{ oim_shared_path }}/omnia/service_nodes/$nodeid/{{ pcs_container_name }}.container" ]; then
+    # Create symlink if the file exists
+    ln -sf "{{ oim_shared_path }}/omnia/service_nodes/$nodeid/{{ pcs_container_name }}.container" \
+           "{{ container_systemd_dir }}/{{ pcs_container_name }}.container"
 
-log "--- Reloading systemd ---"
-run_or_fail sudo systemctl daemon-reload
+    log "--- Reloading systemd ---"
+    run_or_fail sudo systemctl daemon-reload
 
-log "--- Starting omnia_pcs container ---"
-run_or_fail sudo systemctl start omnia_pcs
-
-{% endif %}
+    log "--- Starting omnia_pcs container ---"
+    run_or_fail sudo systemctl start omnia_pcs
+else
+    log "Container file {{ oim_shared_path }}/omnia/service_nodes/$nodeid/{{ pcs_container_name }}.container not found. Skipping steps."
+fi
 
 echo "$(date) - INFO - Finished Omnia Service node postboot configuration" >> "$LOGFILE"
 echo "---------------------------"

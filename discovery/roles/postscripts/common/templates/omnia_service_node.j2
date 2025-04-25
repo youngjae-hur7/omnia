@@ -105,10 +105,14 @@ fi
 # Add NFS server share to /etc/fstab to mount on startup
 echo "{{ nfs_server_ip }}:{{ nfs_server_share_path }} {{ oim_shared_path }} nfs nosuid,rw,sync,hard,intr" >> /etc/fstab
 
-# Load container images
-echo "Loading container images" >> "$LOGFILE"
-podman load -i {{ container_images_path }}
 {% endif %}
+# Load container images
+if [ -f "{{ container_images_path }}" ]; then
+    echo "Loading container images" >> "$LOGFILE"
+    podman load -i "{{ container_images_path }}" >> "$LOGFILE" 2>&1
+else
+    echo "Container image file not found at {{ container_images_path }}" >> "$LOGFILE"
+fi
 
 echo "--------------------------" >> "$LOGFILE"
 echo "Service node setup completed successfully." >> "$LOGFILE"
