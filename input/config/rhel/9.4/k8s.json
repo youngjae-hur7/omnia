@@ -1,6 +1,8 @@
 {
     "k8s": {
       "cluster": [
+      {"package": "firewalld", "type": "rpm", "repo_name": "baseos"},
+      {"package": "python3-firewall", "type": "rpm", "repo_name": "baseos"},
       {
         "package": "nvidia-container-toolkit",
         "type": "rpm",
@@ -266,7 +268,12 @@
            "url": "https://github.com/k8snetworkplumbingwg/whereabouts.git",
            "type": "git",
            "version": "v0.8.0"
-        }
+      },
+      {
+        "package": "ghcr.io/kube-vip/kube-vip",
+        "tag": "v0.8.0",
+        "type": "image"
+      }
       ]
     }
   }
