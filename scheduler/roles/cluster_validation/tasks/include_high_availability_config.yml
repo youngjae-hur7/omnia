@@ -28,6 +28,8 @@
   ansible.builtin.set_fact:
     enable_k8s_ha: "{{ include_ha_config.ansible_facts.k8s_head_node_ha.enable_k8s_ha | default(false) }}"
     k8s_vip: "{{ include_ha_config.ansible_facts.k8s_head_node_ha.virtual_ip_address }}"
+    external_lb_ip: "{{ include_ha_config.ansible_facts.k8s_head_node_ha.external_loadbalancer_ip }}"
+    lb_port: "{{ include_ha_config.ansible_facts.k8s_head_node_ha.loadbalancer_port }}"
 
 - name: Validate virtual_ip_address details when enable_k8s_ha is provided
   ansible.builtin.assert:
