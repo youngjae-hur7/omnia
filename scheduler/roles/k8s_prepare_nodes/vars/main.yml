@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 ---
+input_project_dir: "{{ hostvars['localhost']['input_project_dir'] }}"
 
 # Usage: docker_login.yml
 docker_auth_file: "/root/.docker/config.json"
@@ -28,3 +29,83 @@ Remove unreachable IP addresses from kube_node or etcd group of inventory and re
 invalid_nfs_share_path: "Failed. client_share_path: {{ share_path }} in nfs_client_params mentioned in storage_config.yml is not mounted.
 Configure NFS client by providing required inputs in nfs_client_params variable of storage_config.yml.
 Use one of client_share_path in nfs_client_params for usage of k8s in NFS share."
+
+# Usage: fetch_k8s_nodes.yml
+docker_login_fail_msg: "If repo_config: never, please check the credentials and re-execute playbook. Skip otherwise."
+k8s_version: "{{ hostvars['localhost']['k8s_version'] }}"
+
+# Usage: generate_k8s_vars.yml
+k8s_var_final_src: "final_template.j2"
+k8s_var_dest: "/opt/omnia/kubespray/k8s_all_vars.yml"
+k8s_var_final_ha_src: "final_ha_template.j2"
+k8s_var_ha_dest: "/opt/omnia/kubespray/k8s_all_ha_vars.yml"
+k8s_var_final_non_ha_src: "final_non_ha_template.j2"
+k8s_var_non_ha_dest: "/opt/omnia/kubespray/k8s_all_non_ha_vars.yml"
+pulp_registry_port: "2225"
+enable_k8s_ha: "{{ hostvars['localhost']['enable_k8s_ha'] }}"
+k8s_vip: "{{ hostvars['localhost']['k8s_vip'] }}"
+external_lb_ip: "{{ hostvars['localhost']['external_loadbalance_ip'] }}"
+lb_port: "{{ hostvars['localhost']['loadbalance_port'] }}"
+# Usage: configure_firewall.yml
+common_packages:
+  RedHat:
+    - firewalld
+    - python3-firewall
+  Debian: # OS
+    - firewalld # OS
+    - python3-firewall
+firewall_disable: true
+k8s_firewall_ports_list:
+  kube_control_plane:
+    - "443/tcp"
+    - "443/udp"
+    - "22/tcp" # ssh for ansible
+    - "6443/tcp" # kubernetes api
+    - "2379/tcp" # etcd client port
+    - "2379/udp"
+    - "2380/tcp" # etcd peer port
+    - "10250/tcp" # kubelet api
+    - "10257/tcp" # kube-scheduler
+    - "10259/tcp" # kube-controller-manager
+    # calico
+    - "179/tcp" # Calico networking (BGP)
+    - "4789/udp" # Calico CNI with VXLAN enabled
+    - "5473/tcp" # Calico CNI with Typha enabled
+    - "51820/udp" # Calico with IPv4 Wireguard enabled
+    - "51821/udp" # Calico with IPv6 Wireguard enabled
+    # addons
+    - "9100/tcp" # node exporter
+    - "7472/tcp" # metallb metrics ports
+    - "7472/udp" # metallb metrics ports
+    - "7946/tcp" # metallb L2 operating mode
+    - "7946/udp" # metallb L2 operating mode
+    # others
+    - "9090/tcp"
+    - "8080/tcp"
+  etcd:
+    - "2379/tcp" # etcd client port
+    - "2379/udp"
+    - "2380/tcp" # etcd peer port
+  kube_node:
+    - "22/tcp" # ssh for ansible
+    - "10250/tcp" # kubelet api
+    - "30000-32767/tcp" # kube nodePort range
+    # calico
+    - "179/tcp" # Calico networking (BGP)
+    - "4789/udp" # Calico CNI with VXLAN enabled
+    - "5473/tcp" # Calico CNI with Typha enabled
+    - "51820/udp" # Calico with IPv4 Wireguard enabled
+    - "51821/udp" # Calico with IPv6 Wireguard enabled
+    # addons
+    - "9100/tcp" # node exporter
+    - "7472/tcp" # metallb metrics ports
+    - "7472/udp" # metallb metrics ports
+    - "7946/tcp" # metallb L2 operating mode
+    - "7946/udp" # metallb L2 operating mode
+    # others
+    - "9090/tcp"
+    - "8080/tcp"
+
+web_services:
+  - "http"
+  - "https"

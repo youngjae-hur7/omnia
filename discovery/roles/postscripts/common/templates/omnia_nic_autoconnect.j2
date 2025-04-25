@@ -1,0 +1,36 @@
+#!/bin/bash
+################################################################################################################
+#  omnia_nic_autoconnect:
+#      Configure autoconnect to all active nic in all the cluster nodes
+#      The nic name might change between the installation and 1st boot
+#      Active all the nics with network link during system boot
+#
+#################################################################################################################
+
+# Fallback: check if nmcli is available and working
+mncli_available=false
+if command -v nmcli >/dev/null 2>&1; then
+    # Check if we can list connections
+    if nmcli -t -f UUID connection show >/dev/null 2>&1; then
+        mncli_available=true
+    fi
+fi
+
+if [ "$mncli_available" = true ]; then
+  echo "-- No ifcfg-* files found, falling back to nmcli --"
+  for iface in $(ip -o link show | awk -F': ' '{print $2}');
+  do
+    state=$(cat /sys/class/net/$iface/operstate)
+    if [ "$state" = "up" ]; then
+        uuid=$(nmcli -g UUID,DEVICE,NAME connection show | grep ":$iface$" | cut -d: -f1)
+        if [ -n "$uuid" ]; then
+            echo "Enabling autoconnect for $iface (UUID=$uuid)"
+            nmcli connection modify "$uuid" connection.autoconnect yes
+            nmcli connection down "$uuid"
+            nmcli connection up "$uuid"
+        else
+            echo "No UUID found for $iface"
+        fi
+    fi
+  done
+fi
