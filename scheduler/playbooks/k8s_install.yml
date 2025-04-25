@@ -14,12 +14,12 @@
 ---
 
 - name: Kubernetes Installation
-  hosts: localhost 
+  hosts: localhost
   tasks:
     - name: Set k8s_var_input based on k8s_var_file_flag (default to false if not defined)
       ansible.builtin.set_fact:
         k8s_var_input: "{{ 'k8s_all_ha_vars.yml' if (k8s_var_file_flag | default(false)) else 'k8s_all_non_ha_vars.yml' }}"
-    
+
 - name: Start Kubernetes Installations
   hosts: omnia_kubespray
   vars:
