@@ -7,12 +7,6 @@
 #
 #################################################################################################################
 
-[ "$XCATDEBUGMODE" ] || export XCATDEBUGMODE="#TABLEBLANKOKAY:site:key=xcatdebugmode:value#"
-[ "$MASTER_IP" ] || export MASTER_IP="#ENV:MASTER_IP#"
-#INCLUDE:#ENV:XCATROOT#/share/xcat/install/scripts/scriptlib#
-
-# Set ONBOOT=yes using ifcfg-* files if they exist and are usable
-ifcfg_files=($(ls /etc/sysconfig/network-scripts/ifcfg-* | grep -v 'ifcfg-lo'))
 # Fallback: check if nmcli is available and working
 mncli_available=false
 if command -v nmcli >/dev/null 2>&1; then
@@ -22,22 +16,7 @@ if command -v nmcli >/dev/null 2>&1; then
     fi
 fi
 
-if [ ${#ifcfg_files[@]} -gt 0 ]; then
-  echo "-- Using ifcfg method (preferred) --"
-  for i in "${ifcfg_files[@]}";
-  do
-    nicname="${i##*-}"
-    if ethtool $nicname | grep -E -i -q "Link detected.*yes" >/dev/null 2>&1
-    then
-      case "$XCATDEBUGMODE" in
-      "1"|"2")
-          msgutil_r "$MASTER_IP" "info" "set NIC $nicname to be activated on system boot" "/var/log/xcat/xcat.log"
-          ;;
-      esac
-      sed -i 's/ONBOOT=no/ONBOOT=yes/' "$i"
-    fi
-  done
-elif [ "$mncli_available" = true ]; then
+if [ "$mncli_available" = true ]; then
   echo "-- No ifcfg-* files found, falling back to nmcli --"
   for iface in $(ip -o link show | awk -F': ' '{print $2}');
   do
@@ -47,6 +26,8 @@ elif [ "$mncli_available" = true ]; then
         if [ -n "$uuid" ]; then
             echo "Enabling autoconnect for $iface (UUID=$uuid)"
             nmcli connection modify "$uuid" connection.autoconnect yes
+            nmcli connection down "$uuid"
+            nmcli connection up "$uuid"
         else
             echo "No UUID found for $iface"
         fi
