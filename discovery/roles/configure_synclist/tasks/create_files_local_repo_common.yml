@@ -13,7 +13,7 @@
 # limitations under the License.
 ---
 - name: Run pulp status command on omnia_core container
-  ansible.builtin.command: pulp status
+  ansible.builtin.command: /usr/local/bin/pulp status
   delegate_to: localhost
   changed_when: false
   register: pulp_status_output
@@ -24,15 +24,11 @@
 
 - name: Set fact for pulp protocol
   ansible.builtin.set_fact:
-    pulp_protocol: "{{ pulp_content_origin | urlsplit('scheme') }}"
+    pulp_protocol: "{{ pulp_content_origin | urlsplit.scheme | lower }}"
 
 - name: Set fact for pulp server IP or hostname
   ansible.builtin.set_fact:
-    pulp_server_ip: "{{ pulp_content_origin | urlsplit('hostname') }}"
-
-- name: Set fact for pulp_protocol_https
-  ansible.builtin.set_fact:
-    pulp_protocol_https: "{{ pulp_protocol != 'http' }}"
+    pulp_server_ip: "{{ pulp_content_origin | urlsplit.hostname }}"
 
 - name: Create local_repo_access.yml file
   ansible.builtin.template:

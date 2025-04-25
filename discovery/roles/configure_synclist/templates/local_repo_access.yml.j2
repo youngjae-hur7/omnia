@@ -1,4 +1,4 @@
-{% if pulp_protocol_https %}
+{% if pulp_protocol == 'https' %}
 offline_tarball_path: "https://{{ pulp_server_ip }}:2225/pulp/content/opt/omnia/offline_repo/cluster/tarball"
 offline_shell_path: "https://{{ pulp_server_ip }}:2225/pulp/content/opt/omnia/offline_repo/cluster/shell"
 offline_pip_module_path: "https://{{ pulp_server_ip }}:2225/pulp/content/opt/omnia/offline_repo/cluster/pip_module"

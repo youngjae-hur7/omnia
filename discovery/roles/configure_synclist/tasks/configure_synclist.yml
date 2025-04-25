@@ -13,16 +13,6 @@
 # limitations under the License.
 ---
 
-- name: Enable dynamic CA trust store
-  ansible.builtin.command: update-ca-trust force-enable
-  args:
-    creates: "{{ trust_store_path }}"
-
-- name: Ensure ca-certificates is installed
-  ansible.builtin.yum:
-    name: ca-certificates
-    state: present
-
 - name: Create temp directory for synclist
   ansible.builtin.file:
     path: "{{ synclists_dir }}"
