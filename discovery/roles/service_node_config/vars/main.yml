@@ -29,7 +29,7 @@ service_node_dir: "{{ service_node_base_dir }}/{{ item.service_tag }}"
 service_admin_nic_ip: "{{ node.admin_ip }}"
 service_node_name: "{{ node.hostname }}"
 pcs_container_tmpl_nonha_dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/{{ pcs_container_name }}.container"
-pcs_start_tmpl_nonha_dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/{{ pcs_container_name }}.sh"
+pcs_start_tmpl_nonha_dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/pcs-start.sh"
 corosync_non_ha_tmpl: "corosync_non_ha.conf.j2"
 
 # Usage: generate_active_servicenode_config.yml
