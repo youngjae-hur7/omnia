@@ -26,7 +26,6 @@
 
 - name: Generate service node configuration for non-HA nodes
   ansible.builtin.include_tasks: generate_non_ha_servicenode_config.yml
-  when: service_nodes is defined
 
 - name: Generate service node configuration for active nodes
   ansible.builtin.include_tasks: generate_active_servicenode_config.yml

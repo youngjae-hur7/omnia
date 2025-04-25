@@ -66,7 +66,7 @@ supported_roles:
 genesis_package_path:
   - { src: "{{ role_path }}/../rhel/files/xcat-genesis-base-x86_64.tar.gz", dest: "/install/xcat-genesis-base-x86_64.tar.gz", mode: "755" }
 
-# Usage: omnia_pcs_setup.js
+# Usage: omnia_oim_ha_node.js
 container_tar_file: "omnia_images.tar"
 container_images_path: "{{ oim_shared_path }}/omnia/images/{{ container_tar_file }}"
 systemd_link_file: "/etc/systemd/network/98-omnia.link"
