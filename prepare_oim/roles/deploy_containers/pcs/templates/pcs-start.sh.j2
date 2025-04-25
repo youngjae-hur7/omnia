@@ -40,6 +40,7 @@ pcs resource create VIP ocf:heartbeat:IPaddr2 \
         op monitor interval={{ monitor_interval }} --group {{ pcs_group }}
 
 pcs resource defaults update migration-threshold={{ ha_migration_threshold }}
+pcs resource defaults update failure-timeout={{ failure_timeout }}
 {% endif %}
 
 # Initialize the total sleep time

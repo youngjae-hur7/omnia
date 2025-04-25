@@ -31,17 +31,6 @@
     dest: "{{ omnia_service_shell_file_path }}"
     mode: "{{ shell_file_permissions }}"
 
-- name: Copy the systemd service file
-  ansible.builtin.template:
-    src: "{{ omnia_service_template }}"
-    dest: "{{ omnia_service_path }}"
-    mode: "{{ service_file_permissions }}"
-
-- name: Enable omnia service
-  ansible.builtin.service:
-    name: omnia.service
-    enabled: true
-
 - name: Start omnia service
   ansible.builtin.service:
     name: omnia.service
