@@ -439,7 +439,7 @@ validate_oim() {
         echo -e "${BLUE}Hostname is configured with a domain name: $domain_name${NC}"
     else
         echo -e "${RED}Invalid hostname, hostname is not configured with a domain name!${NC}"
-        exit 0
+        exit 1
     fi
 
 
