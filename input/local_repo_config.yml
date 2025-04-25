@@ -134,4 +134,4 @@ omnia_repo_url_rhel:
 
 # By default, set to true to enable secure (HTTPS) connection to the Pulp server.
 # This value should not be modified as it is system-defined.
-pulp_protocol_https: true
+pulp_protocol_https: false
