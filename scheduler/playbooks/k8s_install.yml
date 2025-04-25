@@ -13,11 +13,19 @@
 #  limitations under the License.
 ---
 
+- name: Kubernetes Installation
+  hosts: localhost 
+  tasks:
+    - name: Set k8s_var_input based on k8s_var_file_flag (default to false if not defined)
+      ansible.builtin.set_fact:
+        k8s_var_input: "{{ 'k8s_all_ha_vars.yml' if (k8s_var_file_flag | default(false)) else 'k8s_all_non_ha_vars.yml' }}"
+    
 - name: Start Kubernetes Installations
   hosts: omnia_kubespray
   vars:
     kubespray_nfs_share: "/opt/omnia/kubespray"
     kubespray_logs_path: "/opt/omnia/log/kubespray/k8s_deployment.log"
+    k8s_inv: "{{ kubespray_nfs_share }}/{{ hostvars['127.0.0.1']['k8s_var_input'] }}"
     dir_mode: '0755'
   tasks:
     - name: Install Kubernetes using kubespray
@@ -35,7 +43,7 @@
             set -o pipefail
             /venv/bin/ansible-playbook {{ kubespray_nfs_share }}/k8s_start_setup.yml \
             -i {{ kubespray_nfs_share }}/inv_k8s \
-            --extra-vars "@{{ kubespray_nfs_share }}/k8s_all_vars.yml" -vvv | \
+            --extra-vars "@{{ k8s_inv }}" -vvv | \
             /usr/bin/tee {{ kubespray_logs_path }}
           async: 3600  # Set async timeout (e.g., 1 hour)
           poll: 0  # Non-blocking (continue the playbook without waiting for completion)
