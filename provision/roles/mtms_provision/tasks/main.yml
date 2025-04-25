@@ -32,7 +32,9 @@
         - name: Power off the nodes for static
           ansible.builtin.include_tasks: power_off_nodes.yml
           with_items: "{{ bmc_static_nodes }}"
-          when: bmc_static_node_status
+          when:
+            - bmc_static_node_status
+            - bmc_static_nodes | length > 0
 
     - name: Provision bmc dynamic nodes
       when: discovery_mech_dynamic_bmc
@@ -49,7 +51,7 @@
     - name: Wait for 5 mins before power on, since it takes some time for nodes to properly power off.
       ansible.builtin.wait_for:
         timeout: "{{ on_timeout }}"
-      when: discovery_mech_static_bmc or discovery_mech_dynamic_bmc
+      when: dynamic_nodes.stdout_lines != "" or bmc_static_nodes | length > 0
 
     - name: Power on static nodes
       ansible.builtin.include_tasks: power_on_nodes.yml
@@ -57,6 +59,7 @@
       when:
         - discovery_mech_static_bmc
         - bmc_static_node_status
+        - bmc_static_nodes | length > 0
 
     - name: Power on dynamic nodes
       ansible.builtin.include_tasks: power_on_nodes.yml

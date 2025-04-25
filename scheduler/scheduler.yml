@@ -40,7 +40,7 @@
   when: not ( hostvars['127.0.0.1']['update_inventory_executed'] | default(false) | bool )
 
 - name: Gather facts from all the nodes
-  hosts: slurm_control_node, slurm_node, slurm_dbd, login, kube_control_plane, kube_node, etcd
+  hosts: login, kube_control_plane, kube_node, etcd
   gather_facts: true
 
 - name: Validate scheduler input parameters
@@ -60,12 +60,6 @@
     omnia_kubespray_validation: true
   when: hostvars['127.0.0.1']['k8s_support']
 
-- name: Prepare kube control plane for kubernetes installations
-  hosts: kube_control_plane
-  gather_facts: true
-  roles:
-    - k8s_manager
-
 - name: Prepare kube control plane, kube nodes and etcd for kubernetes installations
   hosts: kube_control_plane, kube_node, etcd
   gather_facts: false
@@ -74,42 +68,34 @@
     - k8s_prepare_nodes
 
 - name: Start Kubernetes Installations
-  hosts: omnia_kubespray
-  vars:
-    kubespray_nfs_share: "/opt/omnia/kubespray"
-    kubespray_logs_path: "/opt/omnia/log/kubespray/k8s_deployment.log"
-    dir_mode: '0755'
+  ansible.builtin.import_playbook: playbooks/k8s_install.yml
+  when:
+    - hostvars['127.0.0.1']['k8s_support']
+    - not hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
+
+- name: Check k8s installation status
+  hosts: kube_control_plane
   tasks:
-    - name: Install Kubernetes using kubespray
+    - name: Check k8s installation status
+      ansible.builtin.include_tasks: roles/k8s_prepare_nodes/tasks/fetch_k8s_nodes.yml
+
+- name: Set fact k8s var file flag
+  hosts: localhost
+  tasks:
+    - name: Set fact k8s var file flag
       when:
         - hostvars['127.0.0.1']['k8s_support']
-        - not hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
-      block:
-        - name: Copy k8s_start_setup to kubespray nfs share
-          ansible.builtin.copy:
-            src: "{{ playbook_dir }}/playbooks/k8s_start_setup.yml"
-            dest: "{{ kubespray_nfs_share }}/k8s_start_setup.yml"
-            mode: "{{ dir_mode }}"
+        - hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
+        - hostvars['127.0.0.1']['enable_k8s_ha']
+      ansible.builtin.set_fact:
+        k8s_var_file_flag: true
 
-        - name: Execute ansible-playbook for Kubernetes setup asynchronously
-          ansible.builtin.shell: |
-            set -o pipefail
-            /venv/bin/ansible-playbook {{ kubespray_nfs_share }}/k8s_start_setup.yml \
-            -i {{ kubespray_nfs_share }}/inv_k8s \
-            --extra-vars "@{{ kubespray_nfs_share }}/k8s_all_vars.yml" -vvv | \
-            /usr/bin/tee {{ kubespray_logs_path }}
-          async: 3600  # Set async timeout (e.g., 1 hour)
-          poll: 0  # Non-blocking (continue the playbook without waiting for completion)
-          register: result  # Register the result to capture job ID
-          changed_when: false
-
-        - name: Wait for the Kubernetes installation to finish. Logs can be checked at {{ kubespray_logs_path }}
-          ansible.builtin.async_status:
-            jid: "{{ result.ansible_job_id }}"  # Job ID from the previous task
-          register: job_result
-          until: job_result.finished
-          retries: 60  # Retry the task 60 times (10 min total)
-          delay: 10  # Wait 10 seconds between retries
+- name: Start Kubernetes HA Installations
+  ansible.builtin.import_playbook: playbooks/k8s_install.yml
+  when:
+    - hostvars['127.0.0.1']['k8s_support']
+    - hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
+    - hostvars['127.0.0.1']['enable_k8s_ha']
 
 - name: Add nodes to kubernetes cluster
   hosts: omnia_kubespray

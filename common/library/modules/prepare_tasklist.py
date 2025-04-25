@@ -78,6 +78,7 @@ def main():
 
         cluster_os_type = user_data['cluster_os_type']
         cluster_os_version = user_data['cluster_os_version']
+        repo_config = user_data['repo_config']
 
         # Append the CSV filename from config (e.g. "software.csv")
         csv_file_path = os.path.join(csv_file_path, SOFTWARE_CSV_FILENAME)
@@ -150,7 +151,7 @@ def main():
             software_dict[software] = tasks
  
         software_dict=transform_package_dict(software_dict)
-        local_config, url_result = parse_repo_urls(local_repo_config_path , version_variables)
+        local_config, url_result = parse_repo_urls(repo_config, local_repo_config_path , version_variables)
         if not url_result:
             module.fail_json(f"{local_config} is not reachable or invalid, please check and provide correct URL")
  
