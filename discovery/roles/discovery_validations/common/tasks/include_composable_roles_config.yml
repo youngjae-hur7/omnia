@@ -24,9 +24,7 @@
     roles_groups_data: "{{ composable_roles_output.roles_groups_data }}"
     bmc_static_status: "{{ composable_roles_output.bmc_static_status }}"
     switch_status: "{{ composable_roles_output.switch_status }}"
-    hierarchical_provision_status: "{{ composable_roles_output.hierarchical_provision_status }}"
     groups_roles_info: "{{ composable_roles_output.groups_roles_info }}"
-    hierarchical_service_node_data: "{{ composable_roles_output.hierarchical_service_node_data }}"
 
 # Will uncomment once NFS supported for hierarchical-based discovery
 # - name: Fail if omnia_share_option is not "NFS" during hierarchical-based discovery and provisioning
@@ -35,6 +33,20 @@
 #   when:
 #     - "'service_node' in roles_data"
 #     - omnia_share_option != 'NFS'
+
+- name: Fetch hierarchical data
+  check_hierarchical_provision:
+    groups_roles_info: "{{ groups_roles_info }}"
+    service_node_ha_data: "{{ service_node_ha_data }}"
+  register: hierarchical_output
+  when: '"management_layer" not in ansible_run_tags'
+
+- name: Set fact for service_node role required
+  ansible.builtin.set_fact:
+    service_role_required: "{{ 'true' if 'service_node' in roles_groups_data else 'false' }}"
+    booted_service_nodes_data: "{{ hierarchical_output.booted_service_nodes_data | default({}) }}"
+    hierarchical_provision_status: "{{ hierarchical_output.hierarchical_provision_status | default(false) }}"
+    groups_roles_info: "{{ hierarchical_output.groups_roles_info | default(groups_roles_info) }}"
 
 - name: Set fact for service_node role required
   ansible.builtin.set_fact:
