@@ -51,12 +51,7 @@
     nfs_used: "{{ omnia_share_option == 'NFS' }}"
 
 - name: Fail if enable_OIM_ha is true, but NFS is not configured
-  when: enable_oim_ha and not nfs_used
-  ansible.builtin.fail:
-    msg: "{{ nfs_not_configured }}"
-
-- name: Fail if enable_service_ha is true, but NFS is not configured
-  when: enable_oim_ha and not nfs_used
+  when: (enable_oim_ha or enable_service_ha) and not nfs_used
   ansible.builtin.fail:
     msg: "{{ nfs_not_configured }}"
 
