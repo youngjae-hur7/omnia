@@ -31,6 +31,17 @@
   ansible.builtin.fail:
     msg: "{{ nfs_not_configured }}"
 
+- name: Check if omnia_images.tar exists
+  ansible.builtin.stat:
+    path: "{{ omnia_images_path }}"
+  register: omnia_images_check
+  changed_when: not omnia_images_check.stat.exists
+
+- name: Fail if omnia_images.tar doesn't exist
+  ansible.builtin.fail:
+    msg: "{{ omnia_images_path_fail_msg }}"
+  when: not omnia_images_check.stat.exists
+
 - name: Fetch hierarchical data
   check_hierarchical_provision:
     groups_roles_info: "{{ groups_roles_info }}"
