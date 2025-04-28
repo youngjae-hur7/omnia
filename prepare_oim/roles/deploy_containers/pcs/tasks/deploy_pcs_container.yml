@@ -61,7 +61,13 @@
     path: "{{ pcs_start_shared_finished }}"
     state: absent
 
+- name: Check if PCS container is running
+  containers.podman.podman_container_info:
+    name: "{{ pcs_container_name }}"
+  register: pcs_container_status
+
 - name: Deploy PCS container and check deployment status
+  when: pcs_container_status.containers | length == 0
   block:
     - name: Deploy the PCS container
       containers.podman.podman_container:
@@ -83,14 +89,14 @@
     - name: Check if PCS container is running after deployment
       containers.podman.podman_container_info:
         name: "{{ pcs_container_name }}"
-      register: pcs_container_status
+      register: deploy_pcs_container_status
 
     - name: Notify user of PCS container deployment status
       ansible.builtin.debug:
         msg: "{{ pcs_container_success_msg }}"
       when:
-        - pcs_container_status.containers | length > 0
-        - pcs_container_status.containers[0].State.Status == 'running'
+        - deploy_pcs_container_status.containers | length > 0
+        - deploy_pcs_container_status.containers[0].State.Status == 'running'
 
   rescue:
     - name: PCS container deployment failed
@@ -105,6 +111,12 @@
   ansible.builtin.systemd:
     name: omnia_pcs
     state: started
+
+- name: Rerun pcs script if the omnia_pcs container was already deployed
+  when: pcs_container_status.containers | length != 0
+  containers.podman.podman_container_exec:
+    name: "{{ pcs_container_name }}"
+    command: "/bin/bash {{ pcs_resource_script_path }}"
 
 - name: Validate pcs-start script completed
   block:

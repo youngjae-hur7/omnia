@@ -93,7 +93,7 @@ def validate_layer_group_separation(logger, roles):
 
     # Define layer roles
     frontend_roles = {
-        "service_node", "login", "auth_server", "compiler",
+        "service_node", "login", "auth_server", "compiler_node",
         "kube_control_plane", "etcd", "slurm_control_node", "slurm_dbd"
     }
     compute_roles = {"kube_node", "slurm_node", "default"}
@@ -155,7 +155,7 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
     MAX_ROLES = 100
 
     roles_per_group = {}
-    empty_parent_roles = {'login', 'compiler', 'service_node', 'kube_control_plane', 'etcd', 'slurm_control_plane', 'slurm_dbd', 'auth_server'}
+    empty_parent_roles = {'login', 'compiler_node', 'service_node', 'kube_control_plane', 'etcd', 'slurm_control_plane', 'slurm_dbd', 'auth_server'}
 
     errors = []
     # Empty file validation
@@ -229,7 +229,7 @@ def validate_roles_config(input_file_path, data, logger, module, omnia_base_dir,
                 if group in groups:
                     # Validate parent field is empty for specific role cases
                     if role[NAME] in empty_parent_roles and not validation_utils.is_string_empty(groups[group].get(PARENT, None)):
-                        # If parent is not empty and group is associated with login, compiler, service_node, kube_control_plane, or slurm_control_plane
+                        # If parent is not empty and group is associated with login, compiler_node, service_node, kube_control_plane, or slurm_control_plane
                         errors.append(create_error_msg(group, f'Group {group} should not have parent defined.', en_us_validation_msg.parent_service_node_msg))
                     if not service_role_defined and (role[NAME] == K8WORKER or role[NAME] == SLURMWORKER or role[NAME] == DEFAULT):
                         # If a service_node role is not present, the parent is not empty and the group is associated with worker or default roles.

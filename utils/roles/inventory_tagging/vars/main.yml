@@ -28,6 +28,7 @@ inventory_files:
   - compute_gpu_amd
   - compute_gpu_intel
   - compute_hostname_ip
+  - cluster_layout
 
 vendors:
   cpu:

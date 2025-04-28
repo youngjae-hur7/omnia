@@ -13,6 +13,20 @@
 # limitations under the License.
 
 ---
+- name: Run pulp status command on omnia_core container
+  ansible.builtin.command: /usr/local/bin/pulp status
+  delegate_to: localhost
+  changed_when: false
+  register: pulp_status_output
+
+- name: Set pulp content origin value
+  ansible.builtin.set_fact:
+    pulp_content_origin: "{{ (pulp_status_output.stdout | from_json).content_settings.content_origin }}"
+
+- name: Set fact for pulp protocol
+  ansible.builtin.set_fact:
+    pulp_protocol: "{{ pulp_content_origin | urlsplit('scheme') | lower }}"
+    pulp_server_ip: "{{ pulp_content_origin | urlsplit('hostname') }}"
 
 - name: Get dependencies from local repo
   block:
@@ -36,10 +50,6 @@
 
 - name: Check if Pulp endpoint is up
   block:
-    - name: Set Pulp status URL based on protocol
-      ansible.builtin.set_fact:
-        pulp_status_url: "{{ pulp_status_url_https if pulp_protocol_https else pulp_status_url_http }}"
-
     - name: Check if Pulp endpoint is up
       ansible.builtin.uri:
         url: "{{ pulp_status_url }}"

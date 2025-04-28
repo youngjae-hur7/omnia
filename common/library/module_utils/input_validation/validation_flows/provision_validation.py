@@ -29,8 +29,8 @@ def validate_provision_config(input_file_path, data, logger, module, omnia_base_
     cluster_os_type = software_config_json["cluster_os_type"]
     cluster_os_version = software_config_json["cluster_os_version"]
     timezone_file_path = os.path.join(module_utils_base,'input_validation','common_utils','timezone.txt')
-    pxe_mapping_file_path = data["pxe_mapping_file_path"]
-    if data["pxe_mapping_file_path"] and not (validation_utils.verify_path(pxe_mapping_file_path)):
+    pxe_mapping_file_path = data.get("pxe_mapping_file_path", '')
+    if pxe_mapping_file_path and not (validation_utils.verify_path(pxe_mapping_file_path)):
         errors.append(create_error_msg("pxe_mapping_file_path", pxe_mapping_file_path, en_us_validation_msg.pxe_mapping_file_path_fail_msg))
 
     timezone = data["timezone"]

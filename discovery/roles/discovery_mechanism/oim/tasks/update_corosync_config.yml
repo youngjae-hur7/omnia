@@ -19,11 +19,6 @@
     dest: "{{ nfs_corosync_conf.dest }}"
     mode: "{{ nfs_corosync_conf.mode }}"
 
-- name: Update corosync config in the PCS container
-  containers.podman.podman_container_exec:
-    name: "{{ pcs_container_name }}"
-    command: "cp {{ corosync_shared_path }} {{ corosync_conf_path }}"
-
 - name: Reload PCS cluster config on active OIM node
   containers.podman.podman_container_exec:
     name: "{{ pcs_container_name }}"

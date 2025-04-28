@@ -38,11 +38,12 @@ file_permissions: 755
 # Usage: configure_postscripts.yml
 mlnx_ofed_repo: /install/ofed
 cuda_core_path: /install/cuda/x86_64/cuda-core
-hostname_postscripts_path:
+common_postscripts_path:
   - { src: "{{ role_path }}/templates/omnia_hostname.j2", dest: "/install/postscripts/omnia_hostname", mode: "755" }
-oim_os_ubuntu: "ubuntu"
-cpu_gpu_info_postscripts_path:
   - { src: "{{ role_path }}/templates/omnia_cpu_gpu_info.j2", dest: "/install/postscripts/omnia_cpu_gpu_info", mode: "755" }
+  - { src: "{{ role_path }}/templates/omnia_nic_autoconnect.j2", dest: "/install/postscripts/omnia_nic_autoconnect", mode: "755" }
+
+oim_os_ubuntu: "ubuntu"
 provision_os_ubuntu: "ubuntu"
 ubuntu_reboot_script_path:
   - { src: "{{ role_path }}/files/omnia_reboot", dest: "/install/postscripts/omnia_reboot", mode: "755" }
@@ -66,6 +67,7 @@ supported_roles:
 genesis_package_path:
   - { src: "{{ role_path }}/../rhel/files/xcat-genesis-base-x86_64.tar.gz", dest: "/install/xcat-genesis-base-x86_64.tar.gz", mode: "755" }
 
-# Usage: omnia_pcs_setup.js
+# Usage: omnia_oim_ha_node.js
 container_tar_file: "omnia_images.tar"
 container_images_path: "{{ oim_shared_path }}/omnia/images/{{ container_tar_file }}"
+systemd_link_file: "/etc/systemd/network/98-omnia.link"

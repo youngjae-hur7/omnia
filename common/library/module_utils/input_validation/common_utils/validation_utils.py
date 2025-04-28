@@ -141,7 +141,9 @@ def is_string_empty(value):
     return len(value.strip()) < 1
 
 def verify_path(file_path):
-    return os.path.exists(file_path)
+    if not os.path.exists(file_path):
+        return False
+    return os.path.isfile(file_path)
 
 def validate_default_lease_time(default_lease_time):
     return 21600 <= int(default_lease_time) <= 31536000

@@ -13,6 +13,10 @@
 #  limitations under the License.
 
 ---
+fail_msg_local_repo_config_file: "local_repo_config.yml file doesn't exist."
+input_project_dir: "{{ hostvars['localhost']['input_project_dir'] }}"
+local_repo_config_file: "{{ input_project_dir }}/local_repo_config.yml"
+local_repo_config_syntax_fail_msg: "Failed. Syntax errors present in local_repo_config.yml. Fix errors and re-run playbook again."
 shared_storage_path: "{{ oim_shared_path }}/omnia"
 pulp_shared_path: "{{ shared_storage_path }}/pulp"
 pulp_logs_dir: "{{ oim_shared_path }}/omnia/log/pulp"
