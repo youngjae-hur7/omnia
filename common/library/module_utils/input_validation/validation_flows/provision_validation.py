@@ -124,8 +124,11 @@ def validate_network_spec(input_file_path, data, logger, module, omnia_base_dir,
                     ))
 
             # Validate admin network static/dynamic range format
-            if "static_range" in admin_net:
+            if "static_range" in admin_net and "dynamic_range" in admin_net:
                 static_range = admin_net["static_range"]
+                dynamic_range = admin_net["dynamic_range"]
+
+                # First validate the IP range format for static and dynamic ranges
                 if not validation_utils.validate_ipv4_range(static_range):
                     errors.append(create_error_msg(
                         "admin_network.static_range",
@@ -133,14 +136,25 @@ def validate_network_spec(input_file_path, data, logger, module, omnia_base_dir,
                         en_us_validation_msg.range_ip_check_fail_msg
                     ))
 
-            if "dynamic_range" in admin_net:
-                dynamic_range = admin_net["dynamic_range"]
                 if not validation_utils.validate_ipv4_range(dynamic_range):
                     errors.append(create_error_msg(
                         "admin_network.dynamic_range",
                         dynamic_range,
                         en_us_validation_msg.range_ip_check_fail_msg
                     ))
+
+                # Then check for overlap between static and dynamic ranges
+                if validation_utils.validate_ipv4_range(static_range) and validation_utils.validate_ipv4_range(dynamic_range):
+                    does_overlap, _ = validation_utils.check_overlap([static_range, dynamic_range])
+                    range_info = {
+                            "static_range": static_range,
+                            "dynamic_range": dynamic_range
+                        }
+                    if does_overlap:
+                        errors.append(create_error_msg(
+                            "admin_network.ranges",range_info,
+                            en_us_validation_msg.range_ip_check_overlap_msg
+                        ))
 
         # Validate BMC network
         if "bmc_network" in network:

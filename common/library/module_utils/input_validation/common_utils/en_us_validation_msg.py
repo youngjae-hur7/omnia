@@ -114,6 +114,7 @@ def software_mandatory_fail_msg(software_name):
 
 # network_spec.json
 range_ip_check_fail_msg = "Failed. IP range should be in valid format (Example: 192.168.1.1-192.168.1.254)"
+range_ip_check_overlap_msg = "Static range and dynamic range in admin_network must not overlap"
 network_gateway_fail_msg = "Failed. network_gateway should be a valid IP address (Example: 192.168.1.1)"
 admin_network_missing_msg = "Failed. admin_network configuration is mandatory in network_spec.yml"
 
