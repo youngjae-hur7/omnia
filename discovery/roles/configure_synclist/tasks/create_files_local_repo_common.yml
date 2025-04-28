@@ -25,9 +25,6 @@
 - name: Set fact for pulp protocol
   ansible.builtin.set_fact:
     pulp_protocol: "{{ pulp_content_origin | urlsplit('scheme') | lower }}"
-
-- name: Set fact for pulp server IP or hostname
-  ansible.builtin.set_fact:
     pulp_server_ip: "{{ pulp_content_origin | urlsplit('hostname') }}"
 
 - name: Create local_repo_access.yml file
