@@ -2,6 +2,11 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
+    "node_name": {
+      "type": "string",
+      "description": "Name of the node.",
+      "pattern": "^[a-zA-Z0-9._-]+$"
+    },
     "domain_name": {
       "type": "string",
       "description": "Domain name.",
@@ -43,6 +48,7 @@
     }
   },
   "required": [
+    "node_name",
     "domain_name",
     "disk_partition",
     "timezone",
