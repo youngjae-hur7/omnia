@@ -31,7 +31,8 @@ from ansible.module_utils.local_repo.config import (
     OMNIA_REPO_KEY,
     RHEL_OS_URL,
     SOFTWARES_KEY,
-    USER_REPO_URL
+    USER_REPO_URL,
+    VAULT_KEY_PATH
 )
 
 def load_json(file_path):
@@ -230,6 +231,12 @@ def parse_repo_urls(local_repo_config_path, version_variables):
             ca_cert = url_.get("sslcacert", "")
             client_key = url_.get("sslclientkey", "")
             client_cert = url_.get("sslclientcert", "")
+            for path in [ca_cert, client_key, client_cert]:
+                mode = "decrypt"
+                if path and is_encrypted(path):
+                    result, message = process_file(path, VAULT_KEY_PATH, mode)
+                    if result is False:
+                        return url, False
 
             if not is_remote_url_reachable(url, client_cert=client_cert, client_key=client_key, ca_cert=ca_cert):
                 return url, False
