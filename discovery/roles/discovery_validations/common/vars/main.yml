@@ -50,7 +50,7 @@ spec_syntax_fail_msg: "Failed. Syntax errors present in either network_spec.yml 
 # Usage: include_high_availability_config.yml
 high_availability_config_path: "{{ hostvars['localhost']['input_project_dir'] }}/high_availability_config.yml"
 high_availability_config_syntax_fail_msg: "Failed. Syntax errors present in high_availability_config.yml. Fix errors and re-run playbook again."
-nfs_not_configured: "When enabling OIM HA an NFS server must be configured.
+nfs_not_configured: "When enabling OIM HA or Service Node HA or Heirarchical cluster an NFS server must be configured.
   Please run the OIM cleanup in utils and re-run the Omnia startup script using the NFS option."
 
 # Usage: include_composable_roles_config.yml
@@ -202,7 +202,7 @@ server_hostname_fail_msg: "Failed. Hostname set is not valid"
 server_domain_name_blank_msg: "Failed. domain_name is not set in hostname. It should have hostname.domain_name format"
 server_domain_name_success_msg: "domain_name in server hostname validated"
 server_domain_name_fail_msg: "Failed. domain_name set is not same as domain_name in provision_config.yml"
-hosts_file_path: /opt/omnia/hosts
+hosts_file_path: /etc/hosts
 hosts_file_mode: "0644"
 hostname_success_msg: "Hostname length successfully validated."
 hostname_fail_msg: "Failed. Hostname must not exceed 65 characters. The domain name and node name,

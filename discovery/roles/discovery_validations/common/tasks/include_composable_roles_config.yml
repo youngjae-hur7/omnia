@@ -26,13 +26,10 @@
     switch_status: "{{ composable_roles_output.switch_status }}"
     groups_roles_info: "{{ composable_roles_output.groups_roles_info }}"
 
-# Will uncomment once NFS supported for hierarchical-based discovery
-# - name: Fail if omnia_share_option is not "NFS" during hierarchical-based discovery and provisioning
-#   ansible.builtin.fail:
-#     msg: "{{ invalid_share_option_msg | replace('\n', ' ') }}"
-#   when:
-#     - "'service_node' in roles_data"
-#     - omnia_share_option != 'NFS'
+- name: Fail if enable_OIM_ha is true, but NFS is not configured
+  when: (enable_oim_ha or enable_service_ha or 'service_node' in roles_data) and not nfs_used
+  ansible.builtin.fail:
+    msg: "{{ nfs_not_configured }}"
 
 - name: Fetch hierarchical data
   check_hierarchical_provision:
