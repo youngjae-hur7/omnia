@@ -90,3 +90,11 @@
     state: present
     create: true
     mode: "{{ hosts_file_mode }}"
+
+- name: Add hosts file entry for localhost
+  ansible.builtin.lineinfile:
+    path: "{{ hosts_file_path }}"
+    line: "127.0.0.1 localhost"
+    state: present
+    create: true
+    mode: "{{ hosts_file_mode }}"
