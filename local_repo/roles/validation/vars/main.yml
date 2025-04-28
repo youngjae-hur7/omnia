@@ -85,9 +85,8 @@ valid_repo_config:
 # Usage: validate_composable_role_config.yml
 fail_msg_composable_config_file: "composable_role_config.yml file doesn't exist."
 # Usage: validate_local_repo_config.yml
-fail_msg_local_repo_config_file: "local_repo_config.yml file doesn't exist."
-local_repo_config_syntax_fail_msg: "Failed. Syntax errors present in local_repo_config.yml. Fix errors and re-run playbook again. Common syntax Errors:
-indentation errors, improper quotes, improper space or tab, missing colon, missing comma etc. "
+input_project_dir: "{{ hostvars['localhost']['input_project_dir'] }}"
+local_repo_config_syntax_fail_msg: "Failed. Syntax errors present in local_repo_config.yml. Fix errors and re-run playbook again."
 repo_store_path_fail_msg: "Failed. Ensure repo_store_path is defined and it should start with '/' and should not end with '/'"
 directory_permissions: "0755"
 rhel_os_url_fail_msg_crb: "Please provide code ready builder repo in rhel_os_url in local_repo_config.yml when cluster_os_type is rhel"
