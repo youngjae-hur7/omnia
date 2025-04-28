@@ -17,7 +17,8 @@
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.discovery.omniadb_connection import get_data_from_db # type: ignore
 
-invalid_tags_msg = "These tags are either not a service node not in booted state."
+invalid_tags_msg = "These tags are either not a service node not in booted state. \
+    Please check in omniadb for the state of nodes."
 
 def get_booted_service_nodes_data():
     """
@@ -129,7 +130,7 @@ def combine_booted_service_with_ha_data(booted_service_nodes_data, service_node_
                  'enable_service_ha': True,
                  'virtual_ip_address': '10.5.0.111',
                  'active': True,
-                 'passive_nodes': ['12BHKH3']
+                 'passive_nodes': ['PQR123']
              },
              'PQR123': {
                  'admin_ip': '10.5.0.11',
@@ -139,12 +140,12 @@ def combine_booted_service_with_ha_data(booted_service_nodes_data, service_node_
                  'enable_service_ha': True,
                  'virtual_ip_address': '10.5.0.111',
                  'active': False,
-                 'active_service_tag': '3G3GTD3'
+                 'active_service_tag': 'ABCD123'
              },
              'XYZ321': {
                  'admin_ip': '10.5.0.12',
-                 'service_tag': 'PQR123',
-                 'node': 'servicenode1ha',
+                 'service_tag': 'XYZ321',
+                 'node': 'servicenode3',
                  'child_groups': []
                  'enable_service_ha': False
              },
