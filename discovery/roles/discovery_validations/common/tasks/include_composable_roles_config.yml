@@ -26,21 +26,34 @@
     switch_status: "{{ composable_roles_output.switch_status }}"
     groups_roles_info: "{{ composable_roles_output.groups_roles_info }}"
 
+- name: Validate in service HA if respective roles are defined
+  when: (enable_oim_ha and not 'oim_ha_node' in roles_data)
+  ansible.builtin.fail:
+    msg: "{{ oim_ha_node_not_found_msg }}"
+
+- name: Validate in service HA if respective roles are defined
+  when: (enable_service_ha and not 'service_node' in roles_data)
+  ansible.builtin.fail:
+    msg: "{{ service_node_not_found_msg }}"
+
 - name: Fail if enable_OIM_ha is true, but NFS is not configured
   when: (enable_oim_ha or enable_service_ha or 'service_node' in roles_data) and not nfs_used
   ansible.builtin.fail:
     msg: "{{ nfs_not_configured }}"
 
-- name: Check if omnia_images.tar exists
-  ansible.builtin.stat:
-    path: "{{ omnia_images_path }}"
-  register: omnia_images_check
-  changed_when: not omnia_images_check.stat.exists
+- name: Check if image tarball is present
+  when: nfs_used
+  block:
+    - name: Check if omnia_images.tar exists
+      ansible.builtin.stat:
+        path: "{{ omnia_images_path }}"
+      register: omnia_images_check
+      changed_when: not omnia_images_check.stat.exists
 
-- name: Fail if omnia_images.tar doesn't exist
-  ansible.builtin.fail:
-    msg: "{{ omnia_images_path_fail_msg }}"
-  when: not omnia_images_check.stat.exists
+    - name: Fail if omnia_images.tar doesn't exist
+      ansible.builtin.fail:
+        msg: "{{ omnia_images_path_fail_msg }}"
+      when: not omnia_images_check.stat.exists
 
 - name: Fetch hierarchical data
   check_hierarchical_provision:
