@@ -15,37 +15,24 @@
 
 - name: Configure firewall rules for kube nodes
   block:
-    - name: Ensure Firewall service running
-      ansible.builtin.systemd_service:
-        name: firewalld
-        state: started
-        enabled: true
-
     - name: Deny kube node related TCP/UDP ports
       ansible.posix.firewalld:
         port: "{{ item }}"
         zone: public
         permanent: true
+        immediate: true
         state: disabled
       loop: "{{ k8s_firewall_ports_list['kube_node'] }}"
       tags: firewalld
 
-    - name: Remove service CIDR from trusted zone
+    - name: Remove Kubernetes CIDRs from trusted firewalld zone
       ansible.posix.firewalld:
-        source: "{{ hostvars['127.0.0.1']['k8s_service_addresses'] }}"
+        source: "{{ item }}"
         zone: trusted
         permanent: true
+        immediate: true
         state: disabled
-
-    - name: Remove pod CIDR from trusted zone
-      ansible.posix.firewalld:
-        source: "{{ hostvars['127.0.0.1']['k8s_pod_network_cidr'] }}"
-        zone: trusted
-        permanent: true
-        state: disabled
-
-    - name: Reload firewalld on kube nodes
-      ansible.builtin.service:
-        name: firewalld
-        state: reloaded
+      loop:
+        - "{{ hostvars['127.0.0.1']['k8s_service_addresses'] }}"
+        - "{{ hostvars['127.0.0.1']['k8s_pod_network_cidr'] }}"
       tags: firewalld

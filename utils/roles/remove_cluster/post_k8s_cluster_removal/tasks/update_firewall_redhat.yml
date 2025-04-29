@@ -13,26 +13,16 @@
 #  limitations under the License.
 ---
 
-- name: Ensure Firewall service running
-  ansible.builtin.systemd_service:
-    name: firewalld
-    state: started
-    enabled: true
-
-- name: Remove service CIDR from trusted zone
+- name: Remove Kubernetes CIDRs from trusted firewalld zone
   ansible.posix.firewalld:
-    source: "{{ hostvars['127.0.0.1']['k8s_service_addresses'] }}"
+    source: "{{ item }}"
     zone: trusted
     permanent: true
+    immediate: true
     state: disabled
-  tags: firewalld
-
-- name: Remove pod CIDR from trusted zone
-  ansible.posix.firewalld:
-    source: "{{ hostvars['127.0.0.1']['k8s_pod_network_cidr'] }}"
-    zone: trusted
-    permanent: true
-    state: disabled
+  loop:
+    - "{{ hostvars['127.0.0.1']['k8s_service_addresses'] }}"
+    - "{{ hostvars['127.0.0.1']['k8s_pod_network_cidr'] }}"
   tags: firewalld
 
 - name: Configure firewall rules for kube_control_plane
@@ -43,14 +33,9 @@
         port: "{{ item }}"
         zone: public
         permanent: true
+        immediate: true
         state: disabled
       loop: "{{ k8s_firewall_ports_list['kube_control_plane'] }}"
-      tags: firewalld
-
-    - name: Reload firewalld on kube_control_plane
-      ansible.builtin.service:
-        name: firewalld
-        state: reloaded
       tags: firewalld
 
 - name: Configure firewall rules for kube nodes
@@ -61,14 +46,9 @@
         port: "{{ item }}"
         zone: public
         permanent: true
+        immediate: true
         state: disabled
       loop: "{{ k8s_firewall_ports_list['kube_node'] }}"
-      tags: firewalld
-
-    - name: Reload firewalld on kube nodes
-      ansible.builtin.service:
-        name: firewalld
-        state: reloaded
       tags: firewalld
 
 - name: Configure firewall rules for etcd
@@ -79,12 +59,7 @@
         port: "{{ item }}"
         zone: public
         permanent: true
+        immediate: true
         state: disabled
       loop: "{{ k8s_firewall_ports_list['etcd'] }}"
-      tags: firewalld
-
-    - name: Reload firewalld on etcd nodes
-      ansible.builtin.service:
-        name: firewalld
-        state: reloaded
       tags: firewalld

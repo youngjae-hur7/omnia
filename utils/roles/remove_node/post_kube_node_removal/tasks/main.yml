@@ -28,9 +28,12 @@
     state: absent
     regexp: '^nameserver {{ service_addr }}\.[0-9]+\.[0-9]+'
 
-- name: Disable firewall ports for kube nodes
-  when: not firewall_disable
-  block:
-    - name: Update firewall rules
-      ansible.builtin.include_tasks: update_firewall_redhat.yml
-      when: ansible_os_family == 'RedHat'
+- name: Gather service facts
+  ansible.builtin.service_facts:
+
+- name: Update firewall rules
+  ansible.builtin.include_tasks: update_firewall_redhat.yml
+  when:
+    - "'firewalld.service' in ansible_facts.services"
+    - ansible_facts.services['firewalld.service'].state == 'running'
+    - ansible_os_family == 'RedHat'

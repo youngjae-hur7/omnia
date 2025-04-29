@@ -12,13 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 ---
-# Usage: main.yml
-firewall_disable: false
 
 # Usage: update_firewall_redhat.yml
 k8s_firewall_ports_list:
   kube_node:
-    # - "22/tcp" # ssh for ansible
     - "10250/tcp" # kubelet api
     - "30000-32767/tcp" # kube nodePort range
     # calico
