@@ -113,6 +113,8 @@ fail_admin_ip_range: "Failed, Admin static and dynamic ranges should not overlda
 admin_nic_fail_msg: "NIC '{{ admin_nic }}' does not exist on the system. Provide valid admin_network details in network_spec.yml and re-run the playbook."
 admin_nic_success_msg: "NIC '{{ admin_nic }}' exists on the system."
 admin_nic_ip_fail_msg: "IP '{{ admin_nic_ip }}' is not assigned to NIC '{{ admin_nic }}'. Please configure the admin IP in OIM and re-run the playbook."
+virtual_ip_fail_msg: "OIM HA is enabled; however, the virtual IP '{{ admin_nic_ip }}' is not assigned to NIC '{{ admin_nic }}'.
+  Please update the high_availability_config.yml and re-run prepare_oim to set the virtual IP."
 admin_nic_ip_success_msg: "IP '{{ admin_nic_ip }}' is assigned to NIC '{{ admin_nic }}'."
 
 # Usage: validate_bmc_nic.yml
