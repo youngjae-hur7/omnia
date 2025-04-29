@@ -15,7 +15,12 @@
 #!/usr/bin/python
 import os
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common_functions import is_encrypted, run_vault_command
+from ansible.module_utils.local_repo.common_functions import is_encrypted, run_vault_command, get_repo_list, load_yaml_file
+from ansible.module_utils.local_repo.config import (
+    USER_REPO_URL,
+    LOCAL_REPO_CONFIG_PATH_DEFAULT,
+    VAULT_KEY_PATH
+)
 
 def process_file(file_path, vault_key, mode):
     """
@@ -59,6 +64,27 @@ def process_file(file_path, vault_key, mode):
         message = f"Invalid mode for {file_path}"
 
     return success, message
+    
+def extract_repos_with_cert(repo_entries):
+    """
+    Returns a list of (name, sslcacert) tuples for repos that include an sslcacert path.
+
+    Args:
+        repo_entries (list): A list of dictionaries, each containing a 'name' and 'url',
+                             and optionally 'sslcacert'.
+
+    Returns:
+        list: A list of tuples (name, sslcacert_path) for entries where sslcacert is present.
+    """
+    results = []
+
+    for entry in repo_entries:
+        sslcacert = entry.get("sslcacert")
+        if sslcacert:  # Only include entries with non-empty sslcacert
+            name = entry.get("name", "unknown")
+            results.append((name, sslcacert))
+
+    return results
 
 def main():
     """
@@ -76,52 +102,26 @@ def main():
     """
     module = AnsibleModule(
     argument_spec={
-        'file_path': {'type': 'str', 'required': False},
-        'dir_path': {'type': 'str', 'required': False},
-        'vault_key': {'type': 'str', 'required': True},
         'mode': {'type': 'str', 'required': True, 'choices': ['encrypt', 'decrypt']}
     },
-    mutually_exclusive=[['file_path', 'dir_path']],
-    required_one_of=[['file_path', 'dir_path']],
     supports_check_mode=False
     )
-    file_path = module.params['file_path']
-    dir_path = module.params['dir_path']
-    vault_key = module.params['vault_key']
     mode = module.params['mode']
-
-    if not os.path.isfile(vault_key):
-        module.fail_json(msg=f"Vault key file not found: {vault_key}")
+    
+    local_repo_conifg = load_yaml_file(LOCAL_REPO_CONFIG_PATH_DEFAULT)
+    user_repos = local_repo_config.get(USER_REPO_URL, [])
+    
+    cert_list = extract_repos_with_cert(user_repos)
+    for name, cert_path in cert_list:
+        if not os.path.isfile(cert_path):
+            module.fail_json(msg=f"Vault key file not found: {cert_path}")
 
     messages = []
     changed = False
-
-    if file_path:
-        result, msg = process_file(file_path, vault_key, mode)
+    for name, cert_path in cert_list:
+        result, msg = process_file(cert_path, VAULT_KEY_PATH, mode)
         if result is False:
             module.fail_json(msg=msg)
-        changed = changed or result
-        messages.append(msg)
-
-    elif dir_path:
-        if not os.path.isdir(dir_path):
-            module.fail_json(msg=f"Directory not found: {dir_path}")
-
-        files = [os.path.join(dir_path, f) for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))]
-        if not files:
-            module.exit_json(changed=False, msg="No files to process in the directory.")
-
-        successes = 0
-        for f in files:
-            result, msg = process_file(f, vault_key, mode)
-            messages.append(msg)
-            if result:
-                changed = True
-                successes += 1
-
-        if successes == 0:
-            module.exit_json(changed=False,
-                msg="No changes made. Files were already in desired state:\n" + "\n".join(messages))
 
     module.exit_json(changed=changed, msg="; ".join(messages))
 
