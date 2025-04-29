@@ -16,7 +16,7 @@
 - name: Task for creating DHCP configuration
   block:
     - name: Create DHCP configuration
-      ansible.builtin.command: "{{ xcat_sbin_path }}/makedhcp -n"
+      ansible.builtin.command: "{{ xcat_sbin_path }}/makedhcp -nl"
       changed_when: true
       register: create_dhcp_config
   rescue:
@@ -37,17 +37,17 @@
         msg: "{{ hosts_entry_warning_msg }} {{ create_hosts_entry.stderr }}"
       when: create_hosts_entry.stderr is defined
 
-- name: Task for applying DHCP configuration
-  block:
-    - name: Apply DHCP Configuration
-      ansible.builtin.command: "{{ xcat_sbin_path }}/makedhcp -l"
-      changed_when: true
-      register: apply_dhcp_config
-  rescue:
-    - name: Verify DHCP configuration applied is successfully
-      ansible.builtin.fail:
-        msg: "{{ dhcp_config_apply_fail_msg }} {{ apply_dhcp_config.stderr }}"
-      when: apply_dhcp_config.stderr is defined
+# - name: Task for applying DHCP configuration
+#   block:
+#     - name: Apply DHCP Configuration
+#       ansible.builtin.command: "{{ xcat_sbin_path }}/makedhcp -l"
+#       changed_when: true
+#       register: apply_dhcp_config
+#   rescue:
+#     - name: Verify DHCP configuration applied is successfully
+#       ansible.builtin.fail:
+#         msg: "{{ dhcp_config_apply_fail_msg }} {{ apply_dhcp_config.stderr }}"
+#       when: apply_dhcp_config.stderr is defined
 
 - name: Task for creating DNS configuration
   block:

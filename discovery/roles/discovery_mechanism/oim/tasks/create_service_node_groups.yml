@@ -13,14 +13,14 @@
 # limitations under the License.
 ---
 
-- name: Update selinux policy
-  ansible.builtin.command: chcon -R {{ selinux_policy }} {{ provision_shared_path }}
-  changed_when: false
+# - name: Update selinux policy
+#   ansible.builtin.command: chcon -R {{ selinux_policy }} {{ provision_shared_path }}
+#   changed_when: false
 
 - name: Create host groups for service node
   ansible.builtin.add_host:
-    name: "{{ hierarchical_service_node_data[item]['admin_ip'] }}"
+    name: "{{ booted_service_nodes_data[item]['admin_ip'] }}"
     groups: "service_nodes"
-    service_tag: "{{ hierarchical_service_node_data[item]['service_tag'] }}"
-    child_groups: "{{ hierarchical_service_node_data[item]['child_groups'] | list }}"
-  loop: "{{ hierarchical_service_node_data.keys() }}"
+    service_tag: "{{ booted_service_nodes_data[item]['service_tag'] }}"
+    # child_groups: "{{ booted_service_nodes_data[item]['child_groups'] | list }}"
+  loop: "{{ booted_service_nodes_data.keys() }}"

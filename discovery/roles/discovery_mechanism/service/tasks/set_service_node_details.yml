@@ -13,27 +13,20 @@
 #  limitations under the License.
 ---
 
-- name: Load service_ha_config if file exists, else set empty dict
-  ansible.builtin.set_fact:
-    service_ha_config: "{{ (lookup('file', service_ha_config_path, errors='ignore') or '{}') | from_json }}"
-
-- name: Get service_tag map
-  get_service_tag_map:
-    hierarchical_service_node_data: "{{ hierarchical_service_node_data }}"
-    service_ha_config: "{{ service_ha_config }}"
-  register: svc_tag_map_result
-
-- name: Create mapping of service_tag to key in hierarchical_service_node_data
-  ansible.builtin.set_fact:
-    service_tag_map: "{{ svc_tag_map_result.service_tag_map }}"
-
-- name: Configure child groups with xcatmaster and servicenode
+- name: Configure compute nodes with xcatmaster and servicenode
   ansible.builtin.command: >
     {{ xcat_bin_path }}/chdef {{ item.node }}
-    servicenode={{ service_tag_map[item.parent]['admin_ip'] }}
-    xcatmaster={{ service_tag_map[item.parent]['admin_ip'] }}
-    conserver={{ service_tag_map[item.parent]['admin_ip'] }}
-    monserver={{ service_tag_map[item.parent]['admin_ip'] }}
+    servicenode={{ sn_ip }}
+    xcatmaster={{ sn_ip }}
+    conserver={{ sn_ip }}
+    monserver={{ sn_ip }}
+  vars:
+    sn_ip: >-
+      {{
+        booted_service_nodes_data[item.parent].virtual_ip_address
+        if booted_service_nodes_data[item.parent].enable_service_ha
+        else booted_service_nodes_data[item.parent].admin_ip
+      }}
   loop: "{{ hostvars['omnia_provision']['discovered_nodes'] }}"
   loop_control:
     loop_var: item
