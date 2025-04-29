@@ -98,6 +98,21 @@ def validate_provision_config(input_file_path, data, logger, module, omnia_base_
     return errors
 
 def validate_network_spec(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
+    """
+    Validates the network specification configuration.
+
+    Args:
+        input_file_path (str): Path to the input configuration file
+        data (dict): The network specification data to validate
+        logger (Logger): Logger instance for logging messages
+        module (AnsibleModule): Ansible module instance
+        omnia_base_dir (str): Base directory path for Omnia
+        module_utils_base (str): Base path for module utilities
+        project_name (str): Name of the project
+
+    Returns:
+        list: List of validation errors, empty if no errors found
+    """
     errors = []
 
     if not data.get("Networks"):
@@ -115,6 +130,20 @@ def validate_network_spec(input_file_path, data, logger, module, omnia_base_dir,
     return errors
 
 def _validate_admin_network(network):
+    """
+    Validates the admin network configuration.
+
+    Args:
+        network (dict): Admin network configuration dictionary containing network settings
+
+    Returns:
+        list: List of validation errors for admin network, empty if no errors found
+
+    Validates:
+        - Netmask bits
+        - Network gateway
+        - Static and dynamic IP ranges
+    """
     errors = []
     if "admin_network" not in network:
         return errors
@@ -152,6 +181,20 @@ def _validate_admin_network(network):
     return errors
 
 def _validate_bmc_network(network):
+    """
+    Validates the BMC (Baseboard Management Controller) network configuration.
+
+    Args:
+        network (dict): BMC network configuration dictionary containing network settings
+
+    Returns:
+        list: List of validation errors for BMC network, empty if no errors found
+
+    Validates:
+        - Netmask bits
+        - Network gateway
+        - Dynamic range and dynamic conversion static range
+    """
     errors = []
     if "bmc_network" not in network:
         return errors
@@ -193,6 +236,21 @@ def _validate_bmc_network(network):
     return errors
 
 def _validate_ip_ranges(static_range, dynamic_range, network_type):
+    """
+    Validates and checks for overlap between static and dynamic IP ranges.
+
+    Args:
+        static_range (str): IP range for static addresses (format: "start_ip-end_ip")
+        dynamic_range (str): IP range for dynamic addresses (format: "start_ip-end_ip")
+        network_type (str): Type of network being validated ("admin_network" or "bmc_network")
+
+    Returns:
+        list: List of validation errors for IP ranges, empty if no errors found
+
+    Validates:
+        - IP range format
+        - Overlap between static and dynamic ranges
+    """
     errors = []
 
     # Validate range formats
