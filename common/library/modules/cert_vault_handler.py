@@ -108,7 +108,7 @@ def main():
     )
     mode = module.params['mode']
     
-    local_repo_conifg = load_yaml_file(LOCAL_REPO_CONFIG_PATH_DEFAULT)
+    local_repo_config = load_yaml_file(LOCAL_REPO_CONFIG_PATH_DEFAULT)
     user_repos = local_repo_config.get(USER_REPO_URL, [])
     
     cert_list = extract_repos_with_cert(user_repos)
