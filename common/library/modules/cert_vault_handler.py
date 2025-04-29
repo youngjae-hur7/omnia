@@ -65,24 +65,28 @@ def process_file(file_path, vault_key, mode):
 
     return success, message
     
-def extract_repos_with_cert(repo_entries):
+def extract_repos_with_certs(repo_entries):
     """
-    Returns a list of (name, sslcacert) tuples for repos that include an sslcacert path.
+    Extracts repositories that include SSL certificate configuration.
 
     Args:
-        repo_entries (list): A list of dictionaries, each containing a 'name' and 'url',
-                             and optionally 'sslcacert'.
+        repo_entries (list): List of dictionaries with possible keys:
+                             'name', 'sslcacert', 'sslclientkey', 'sslclientcert'.
 
     Returns:
-        list: A list of tuples (name, sslcacert_path) for entries where sslcacert is present.
+        list: A list of dictionaries, each containing 'name', 'sslcacert',
+              'sslclientkey', and 'sslclientcert' for repos where 'sslcacert' is present.
     """
     results = []
 
     for entry in repo_entries:
-        sslcacert = entry.get("sslcacert")
-        if sslcacert:  # Only include entries with non-empty sslcacert
-            name = entry.get("name", "unknown")
-            results.append((name, sslcacert))
+        if "sslcacert" in entry and entry["sslcacert"]:
+            results.append({
+                "name": entry.get("name", "unknown"),
+                "sslcacert": entry["sslcacert"],
+                "sslclientkey": entry.get("sslclientkey", ""),
+                "sslclientcert": entry.get("sslclientcert", "")
+            })
 
     return results
 
@@ -111,18 +115,26 @@ def main():
     local_repo_config = load_yaml_file(LOCAL_REPO_CONFIG_PATH_DEFAULT)
     user_repos = local_repo_config.get(USER_REPO_URL, [])
     
-    cert_list = extract_repos_with_cert(user_repos)
-    for name, cert_path in cert_list:
-        if not os.path.isfile(cert_path):
-            module.fail_json(msg=f"Vault key file not found: {cert_path}")
-
+    cert_entries = extract_repos_with_cert(user_repos)
+    for entry in cert_entries:
+        for key in ["sslcacert", "sslclientkey", "sslclientcert"]:
+            path = entry.get(key)
+            if path and not os.path.isfile(path):
+                module.fail_json(msg=f"Missing {key} for repo '{entry['name']}': {path}")
+                
     messages = []
     changed = False
-    for name, cert_path in cert_list:
-        result, msg = process_file(cert_path, VAULT_KEY_PATH, mode)
-        if result is False:
-            module.fail_json(msg=msg)
-
+    for entry in cert_entries:
+        for key in ["sslcacert", "sslclientkey", "sslclientcert"]:
+            path = entry.get(key)
+            if path:
+                result, msg = process_file(path, VAULT_KEY_PATH, mode)
+                if result is False:
+                    module.fail_json(msg=f"Failed to decrypt {key} for repo '{entry['name']}': {msg}")
+                else:
+                    messages.append(msg)
+                    changed = True
+                    
     module.exit_json(changed=changed, msg="; ".join(messages))
 
 if __name__ == '__main__':
