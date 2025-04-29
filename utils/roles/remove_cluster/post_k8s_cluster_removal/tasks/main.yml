@@ -32,8 +32,8 @@
 
     - name: Update firewall rules
       ansible.builtin.include_tasks: update_firewall_redhat.yml
-      when: 
-        - compute_os in compute_os_redhat or 
+      when:
+        - compute_os in compute_os_redhat or
           compute_os in compute_os_rocky
 
     - name: Delete temp k8s directory if it exists

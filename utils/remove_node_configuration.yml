@@ -146,6 +146,7 @@
   tags: kube_node
   hosts: remove_kube_node
   connection: ssh
+  gather_facts: false
   roles:
     - { role: remove_node/post_kube_node_removal } # noqa: role-name[path]
 
