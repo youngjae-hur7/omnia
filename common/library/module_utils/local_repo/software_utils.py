@@ -238,7 +238,7 @@ def parse_repo_urls(repo_config, local_repo_config_path, version_variables):
                 if path and is_encrypted(path):
                     result, message = process_file(path, VAULT_KEY_PATH, mode)
                     if result is False:
-                        return url, False
+                        return f"Error during decrypt for user repository path:{path}", False
 
             if not is_remote_url_reachable(url, client_cert=client_cert, client_key=client_key, ca_cert=ca_cert):
                 return url, False
