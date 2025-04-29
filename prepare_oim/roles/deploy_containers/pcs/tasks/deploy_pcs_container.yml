@@ -67,7 +67,7 @@
   register: pcs_container_status
 
 - name: Deploy PCS container and check deployment status
-  when: pcs_container_status.containers | length == 0
+  when: pcs_container_status.containers | length == 0 or pcs_container_status.containers[0].State.Status != 'running'
   block:
     - name: Deploy the PCS container
       containers.podman.podman_container:
@@ -113,7 +113,7 @@
     state: started
 
 - name: Rerun pcs script if the omnia_pcs container was already deployed
-  when: pcs_container_status.containers | length != 0
+  when: pcs_container_status.containers | length != 0 and pcs_container_status.containers[0].State.Status == 'running'
   containers.podman.podman_container_exec:
     name: "{{ pcs_container_name }}"
     command: "/bin/bash {{ pcs_resource_script_path }}"

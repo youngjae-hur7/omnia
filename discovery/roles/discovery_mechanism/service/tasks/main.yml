@@ -18,9 +18,9 @@
     msg: "{{ hostvars[inventory_hostname]['service_tag'] }}"
     verbosity: 2
 
-- name: Set fact hierarchical_service_node_data
+- name: Set fact booted_service_nodes_data
   ansible.builtin.set_fact:
-    hierarchical_service_node_data: "{{ hostvars['omnia_provision']['hierarchical_service_node_data'] }}"
+    booted_service_nodes_data: "{{ hostvars['omnia_provision']['booted_service_nodes_data'] }}"
 
 - name: Rename nic interface on service node
   ansible.builtin.include_tasks: rename_service_node_nic.yml

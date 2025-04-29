@@ -18,6 +18,10 @@
   register: include_metadata
   no_log: true
 
+- name: Register NFS Check
+  ansible.builtin.set_fact:
+    nfs_used: "{{ omnia_share_option == 'NFS' }}"
+
 - name: Include high_availability_config.yml
   block:
     - name: Include high_availability_config.yml
@@ -45,15 +49,6 @@
 - name: Parse service_node_ha_data
   ansible.builtin.set_fact:
     service_node_ha_data: "{{ high_availability_config.ansible_facts.service_node_ha | default({}) }}"
-
-- name: Register NFS Check
-  ansible.builtin.set_fact:
-    nfs_used: "{{ omnia_share_option == 'NFS' }}"
-
-- name: Fail if enable OIM is true, but NFS is not configured
-  when: enable_oim_ha and not nfs_used
-  ansible.builtin.fail:
-    msg: "{{ nfs_not_configured }}"
 
 - name: Get OIM node name
   ansible.builtin.command: hostname -s

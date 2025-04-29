@@ -6,31 +6,58 @@
 #      Active all the nics with network link during system boot
 #
 #################################################################################################################
+echo "Starting to process .nmconnection files..."
 
-# Fallback: check if nmcli is available and working
-mncli_available=false
+# Check if nmcli is available
+nmcli_available=false
 if command -v nmcli >/dev/null 2>&1; then
-    # Check if we can list connections
     if nmcli -t -f UUID connection show >/dev/null 2>&1; then
-        mncli_available=true
+        nmcli_available=true
     fi
 fi
 
-if [ "$mncli_available" = true ]; then
-  echo "-- No ifcfg-* files found, falling back to nmcli --"
-  for iface in $(ip -o link show | awk -F': ' '{print $2}');
-  do
-    state=$(cat /sys/class/net/$iface/operstate)
-    if [ "$state" = "up" ]; then
-        uuid=$(nmcli -g UUID,DEVICE,NAME connection show | grep ":$iface$" | cut -d: -f1)
-        if [ -n "$uuid" ]; then
-            echo "Enabling autoconnect for $iface (UUID=$uuid)"
-            nmcli connection modify "$uuid" connection.autoconnect yes
-            nmcli connection down "$uuid"
-            nmcli connection up "$uuid"
+if [ "$nmcli_available" = true ]; then
+    echo "-- nmcli is available, proceeding to check NICs --"
+
+    # Loop through all interfaces except 'lo'
+    for iface in $(ip -o link show | awk -F': ' '{print $2}' | grep -v lo); do
+        state=$(cat /sys/class/net/$iface/operstate)
+
+        echo "DEBUG: Checking interface: $iface, state: $state"
+
+        if [ "$state" = "up" ]; then
+            echo "DEBUG: Interface $iface is UP, checking corresponding .nmconnection file..."
+
+            conn_file="/etc/NetworkManager/system-connections/${iface}.nmconnection"
+
+            if [ -f "$conn_file" ]; then
+                echo "DEBUG: Found connection file: $conn_file"
+
+                # Check if link is detected (physical connection)
+                if ethtool "$iface" | grep -E -i "Link detected.*yes" >/dev/null 2>&1; then
+                    echo "DEBUG: Link detected for $iface, modifying autoconnect..."
+
+                    # Modify autoconnect
+                    sed -i 's/autoconnect=false/autoconnect=true/' "$conn_file"
+                else
+                    echo "DEBUG: Link NOT detected for $iface, skipping modification..."
+                fi
+            else
+                echo "DEBUG: Connection file for $iface does not exist, skipping..."
+            fi
         else
-            echo "No UUID found for $iface"
+            echo "DEBUG: Interface $iface is NOT UP, skipping..."
         fi
-    fi
-  done
+    done
+
+    # Restart NetworkManager to apply changes
+    echo "DEBUG: Restarting NetworkManager service..."
+    systemctl restart NetworkManager
+
+    # Show active connections after restart
+    echo "DEBUG: Showing nmcli connection show output:"
+    nmcli connection show
+else
+    echo "-- nmcli not available, exiting --"
+    exit 1
 fi

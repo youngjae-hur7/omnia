@@ -22,6 +22,9 @@
 - name: Validate network spec
   ansible.builtin.include_tasks: validate_network_spec.yml
 
+- name: Include local_repo_config vars
+  ansible.builtin.include_tasks: include_local_repo_config.yml
+
 - name: Validate high availability config
   ansible.builtin.include_tasks: validate_high_availability.yml
 

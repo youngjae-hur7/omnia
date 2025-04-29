@@ -12,6 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
+- name: Run pulp status command on omnia_core container
+  ansible.builtin.command: /usr/local/bin/pulp status
+  delegate_to: localhost
+  changed_when: false
+  register: pulp_status_output
+
+- name: Set pulp content origin value
+  ansible.builtin.set_fact:
+    pulp_content_origin: "{{ (pulp_status_output.stdout | from_json).content_settings.content_origin }}"
+
+- name: Set fact for pulp protocol
+  ansible.builtin.set_fact:
+    pulp_protocol: "{{ pulp_content_origin | urlsplit('scheme') | lower }}"
+    pulp_server_ip: "{{ pulp_content_origin | urlsplit('hostname') }}"
 
 - name: Create local_repo_access.yml file
   ansible.builtin.template:
