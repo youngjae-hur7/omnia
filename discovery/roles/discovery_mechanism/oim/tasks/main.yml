@@ -47,7 +47,7 @@
     - name: Update postgres config for passive OIM nodes
       when: enable_oim_ha | default(false)
       ansible.builtin.include_tasks: passive_oim_postgres_setting.yml
-    
+
     - name: Update DHCP config file for OIM HA
       when: enable_oim_ha | default(false)
       ansible.builtin.include_tasks: update_dhcp_conf.yml
