@@ -37,7 +37,7 @@ SOFTWARE_CSV_HEADER = "name,status"
 # Software tasklist Defaults
 # Used by prepare_tasklist.py
 # ----------------------------
-LOCAL_REPO_CONFIG_PATH_DEFAULT = ""
+LOCAL_REPO_CONFIG_PATH_DEFAULT = "/opt/omnia/input/project_default/local_repo_config.yml"
 SOFTWARE_CSV_FILENAME = "software.csv"
 FRESH_INSTALLATION_STATUS = True
 
