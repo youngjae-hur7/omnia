@@ -51,7 +51,7 @@ else
 fi
 
 # Applying mount based on fstab entry
-mount -a
+run_or_fail mount -a
 
 echo "$(date) - INFO - Finished Omnia Service node postboot configuration" >> "$LOGFILE"
 echo "---------------------------"
