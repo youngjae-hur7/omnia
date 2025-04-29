@@ -19,10 +19,10 @@
 
 - name: Process and configure local_repo_config
   ansible.builtin.include_tasks: process_rpm_repo.yml
-
+  
 - name: Encrypt user certificates if exist
   cert_vault_handler:
-   mode: encrypt
+    mode: encrypt
   register: vault_result
   
 - name: Execute tasks for each group
