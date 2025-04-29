@@ -14,5 +14,8 @@ Volume={{ oim_shared_path }}/omnia:/opt/omnia
 Network=host
 PodmanArgs=--privileged
 
+[Service]
+Restart=always
+
 [Install]
 WantedBy=multi-user.target default.target

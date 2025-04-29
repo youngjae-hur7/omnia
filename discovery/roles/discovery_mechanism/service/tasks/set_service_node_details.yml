@@ -13,6 +13,26 @@
 #  limitations under the License.
 ---
 
+- name: Gathering service facts
+  ansible.builtin.service_facts:
+
+- name: Try restart xcatd service if not running
+  block:
+    - name: Try restart xcatd service if not running
+      ansible.builtin.systemd:
+        name: xcatd
+        state: restarted
+      register: xcatd_restart
+      until: xcatd_restart is not failed
+      retries: "{{ service_retries }}"
+      when:
+        - xcatd_service in ansible_facts.services
+        - "'running' not in ansible_facts.services[xcatd_service].state"
+  rescue:
+    - name: Unable to start xcatd services
+      ansible.builtin.debug:
+        msg: "{{ xcat_start_fail_msg }}"
+
 - name: Configure compute nodes with xcatmaster and servicenode
   ansible.builtin.command: >
     {{ xcat_bin_path }}/chdef {{ item.node }}
@@ -48,7 +68,7 @@
 - name: Task for creating DHCP configuration
   block:
     - name: Create DHCP configuration
-      ansible.builtin.command: "{{ xcat_sbin_path }}/makedhcp -n"
+      ansible.builtin.command: "{{ xcat_sbin_path }}/makedhcp -nl"
       changed_when: true
       register: create_dhcp_config
   rescue:

@@ -65,6 +65,12 @@ omnia_images_path_fail_msg: |
 #   For hierarchical-based discovery and provisioning, this must be set to \"NFS\".
 #   Please rerun 'omnia_startup.sh' and enter correct omnia share path type as \"NFS\"
 #   to continue with hierarchical-based discovery and provisioning.
+service_node_not_found_msg: |
+  "Service role not defiened in roles_config.yml but enable_service_ha is made as True.
+  Kindly define service_node role in roles config and rerun the playbook."
+oim_ha_node_not_found_msg: |
+  "Service role not defiened in roles_config.yml but enable_service_ha is made as True.
+  Kindly define service_node role in roles config and rerun the playbook."
 
 # Usage: include_local_repo_config.yml
 local_repo_config_file: "{{ hostvars['localhost']['input_project_dir'] }}/local_repo_config.yml"

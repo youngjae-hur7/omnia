@@ -22,6 +22,9 @@ dhcp_config_fail_msg: "Failed. makedhcp -n command is not successful. Error:"
 hosts_entry_warning_msg: "[WARNING] makehosts command is not successful. Error:"
 dhcp_config_apply_fail_msg: "Failed. makedhcp -a command is not successful. Error:"
 dns_config_warning_msg: "[WARNING] makedns -n command is not successful. Error:"
+service_retries: 3
+xcatd_service: "xcatd.service"
+xcat_start_fail_msg: "Failed to start xcatd services on {{ hostvars[inventory_hostname]['service_tag'] }}"
 
 # Usage: copy_syncfiles.yml
 syncfiles_mode: "0755"

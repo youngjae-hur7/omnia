@@ -50,5 +50,8 @@ else
     log "Container file {{ oim_shared_path }}/omnia/service_nodes/$nodeid/{{ pcs_container_name }}.container not found. Skipping steps."
 fi
 
+# Applying mount based on fstab entry
+run_or_fail mount -a
+
 echo "$(date) - INFO - Finished Omnia Service node postboot configuration" >> "$LOGFILE"
 echo "---------------------------"
