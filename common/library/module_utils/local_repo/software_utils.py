@@ -20,7 +20,7 @@ from collections import defaultdict
 import re
 from jinja2 import Template
 import requests
-from ansible.module_utils.local_repo.common_functions import is_encrypted
+from ansible.module_utils.local_repo.common_functions import is_encrypted, process_file
 # Import default variables from config.py
 from ansible.module_utils.local_repo.config import (
     PACKAGE_TYPES,
