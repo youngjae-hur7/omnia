@@ -98,58 +98,24 @@
     - hostvars['127.0.0.1']['enable_k8s_ha']
 
 - name: Add nodes to kubernetes cluster
-  hosts: omnia_kubespray
-  vars:
-    kubespray_nfs_share: "/opt/omnia/kubespray"
-    kubespray_logs_path: "/opt/omnia/log/kubespray/k8s_add_node.log"
-    dir_mode: '0755'
-  tasks:
-    - name: Add nodes to kubernetes cluster using kubespray
-      when:
-        - hostvars['127.0.0.1']['k8s_support']
-        - hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
-        - hostvars[groups['kube_control_plane'][0]]['k8s_new_nodes'] != ''
-      block:
-        - name: Copy k8s_add_node to kubespray nfs share
-          ansible.builtin.copy:
-            src: "{{ playbook_dir }}/playbooks/k8s_add_node.yml"
-            dest: "{{ kubespray_nfs_share }}/k8s_add_node.yml"
-            mode: "{{ dir_mode }}"
+  ansible.builtin.import_playbook: playbooks/k8s_add_node_install.yml
+  when:
+    - hostvars['127.0.0.1']['k8s_support']
+    - hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
+    - hostvars[groups['kube_control_plane'][0]]['k8s_new_nodes'] != ''
 
-        - name: Execute ansible-playbook for Kubernetes setup asynchronously
-          ansible.builtin.shell: |
-            set -o pipefail
-            /venv/bin/ansible-playbook {{ kubespray_nfs_share }}/k8s_add_node.yml \
-              -i {{ kubespray_nfs_share }}/inv_k8s \
-              --extra-vars "@{{ kubespray_nfs_share }}/k8s_all_vars.yml" -vvv | \
-              /usr/bin/tee {{ kubespray_logs_path }}
-          args:
-            executable: /bin/bash  # Ensures bash is used for `set -o pipefail`
-          async: 3600  # Run asynchronously for up to 1 hour
-          poll: 0  # Non-blocking execution
-          register: result  # Capture the job ID
-          changed_when: false
+      #- name: Update containerd config on nodes
+      #hosts: kube_control_plane, kube_node
+      #gather_facts: false
+      #roles:
+      #- update_containerd_config
 
-        - name: Wait for the Kubernetes installation to finish. Logs can be checked at {{ kubespray_logs_path }}
-          ansible.builtin.async_status:
-            jid: "{{ result.ansible_job_id }}"  # Job ID from the previous task
-          register: job_result
-          until: job_result.finished
-          retries: 60  # Retry the task 60 times (10 min total)
-          delay: 10  # Wait 10 seconds between retries
-
-- name: Update containerd config on nodes
-  hosts: kube_control_plane, kube_node
-  gather_facts: false
-  roles:
-    - update_containerd_config
-
-- name: Start K8s worker servers on kube control nodes
-  hosts: kube_control_plane
-  gather_facts: false
-  roles:
-    - k8s_start_services
-    - multus_and_whereabouts
+      #- name: Start K8s worker servers on kube control nodes
+      #hosts: kube_control_plane
+      #gather_facts: false
+      #roles:
+      #- k8s_start_services
+      #- multus_and_whereabouts
 
 - name: Install Slurm
   hosts: slurm_control_node, slurm_node, login
