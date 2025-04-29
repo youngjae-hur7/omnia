@@ -13,13 +13,17 @@
 #  limitations under the License.
 ---
 
-- name: Create a dictionary of NICs to their IPs
+- name: Create a dictionary of NICs to their IPs safely
   ansible.builtin.set_fact:
     nic_ip_mapping: >-
       {{
         nic_ip_mapping | default({}) |
-        combine({item: ([ansible_facts[item].ipv4.address] | default([])) +
-        (ansible_facts[item].ipv4_secondaries | default([]) | map(attribute='address') | list)
+        combine({
+          item: (
+            ([ansible_facts[item].ipv4] | selectattr('address', 'defined') | map(attribute='address') | list)
+            +
+            (ansible_facts[item].ipv4_secondaries | default([]) | selectattr('address', 'defined') | map(attribute='address') | list)
+          )
         })
       }}
   with_items: "{{ ansible_facts.interfaces }}"
