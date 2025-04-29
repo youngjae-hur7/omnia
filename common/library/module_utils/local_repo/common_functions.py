@@ -93,3 +93,46 @@ def run_vault_command(command, file_path, vault_key):
     ]
     result = subprocess.run(cmd, capture_output=True, text=True, check = True)
     return result.returncode, result.stdout.strip(), result.stderr.strip()
+
+def process_file(file_path, vault_key, mode):
+    """
+    Encrypt or decrypt a file using Ansible Vault.
+
+    Args:
+        file_path (str): The path to the file.
+        vault_key (str): The path to the Ansible Vault key.
+        mode (str): The mode of operation, either 'encrypt' or 'decrypt'.
+
+    Returns:
+        tuple: A tuple containing a boolean indicating whether the operation was successful and a message.
+    """
+    if not os.path.isfile(file_path):
+        return False, f"File not found: {file_path}"
+
+    currently_encrypted = is_encrypted(file_path)
+    success = False
+    message = ""
+
+    if mode == 'encrypt':
+        if currently_encrypted:
+            success, message = True, f"Already encrypted: {file_path}"
+        else:
+            code, out, err = run_vault_command('encrypt', file_path, vault_key)
+            if code == 0:
+                success, message = True, f"Encrypted: {file_path}"
+            else:
+                message = f"Failed to encrypt {file_path}: {err}"
+
+    elif mode == 'decrypt':
+        if not currently_encrypted:
+            success, message = True, f"Already decrypted: {file_path}"
+        else:
+            code, out, err = run_vault_command('decrypt', file_path, vault_key)
+            if code == 0:
+                success, message = True, f"Decrypted: {file_path}"
+            else:
+                message = f"Failed to decrypt {file_path}: {err}"
+    else:
+        message = f"Invalid mode for {file_path}"
+
+    return success, message
