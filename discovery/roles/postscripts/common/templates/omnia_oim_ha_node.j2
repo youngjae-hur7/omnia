@@ -87,7 +87,6 @@ if ! ifconfig | grep -w {{ hostvars['omnia_provision']['admin_nic'] }}; then
 fi
 
 # Enable and start the pcs container
-sudo systemctl enable omnia_pcs || { echo "Error enabling omnia_pcs service." >> "$LOGFILE"; exit 1; }
 sudo systemctl start omnia_pcs || { echo "Error starting omnia_pcs service." >> "$LOGFILE"; exit 1; }
 echo "$(date) - INFO - Finished OIM Passive node setup." >> "$LOGFILE"
 echo "---------------------------"
