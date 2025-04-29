@@ -15,55 +15,12 @@
 #!/usr/bin/python
 import os
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.local_repo.common_functions import is_encrypted, run_vault_command, get_repo_list, load_yaml_file
+from ansible.module_utils.local_repo.common_functions import process_file, load_yaml_file
 from ansible.module_utils.local_repo.config import (
     USER_REPO_URL,
     LOCAL_REPO_CONFIG_PATH_DEFAULT,
     VAULT_KEY_PATH
 )
-
-def process_file(file_path, vault_key, mode):
-    """
-    Encrypt or decrypt a file using Ansible Vault.
-
-    Args:
-        file_path (str): The path to the file.
-        vault_key (str): The path to the Ansible Vault key.
-        mode (str): The mode of operation, either 'encrypt' or 'decrypt'.
-
-    Returns:
-        tuple: A tuple containing a boolean indicating whether the operation was successful and a message.
-    """
-    if not os.path.isfile(file_path):
-        return False, f"File not found: {file_path}"
-
-    currently_encrypted = is_encrypted(file_path)
-    success = False
-    message = ""
-
-    if mode == 'encrypt':
-        if currently_encrypted:
-            success, message = True, f"Already encrypted: {file_path}"
-        else:
-            code, out, err = run_vault_command('encrypt', file_path, vault_key)
-            if code == 0:
-                success, message = True, f"Encrypted: {file_path}"
-            else:
-                message = f"Failed to encrypt {file_path}: {err}"
-
-    elif mode == 'decrypt':
-        if not currently_encrypted:
-            success, message = True, f"Already decrypted: {file_path}"
-        else:
-            code, out, err = run_vault_command('decrypt', file_path, vault_key)
-            if code == 0:
-                success, message = True, f"Decrypted: {file_path}"
-            else:
-                message = f"Failed to decrypt {file_path}: {err}"
-    else:
-        message = f"Invalid mode for {file_path}"
-
-    return success, message
     
 def extract_repos_with_certs(repo_entries):
     """
