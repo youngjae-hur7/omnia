@@ -72,7 +72,7 @@ def main():
     local_repo_config = load_yaml_file(LOCAL_REPO_CONFIG_PATH_DEFAULT)
     user_repos = local_repo_config.get(USER_REPO_URL, [])
     
-    cert_entries = extract_repos_with_cert(user_repos)
+    cert_entries = extract_repos_with_certs(user_repos)
     for entry in cert_entries:
         for key in ["sslcacert", "sslclientkey", "sslclientcert"]:
             path = entry.get(key)
