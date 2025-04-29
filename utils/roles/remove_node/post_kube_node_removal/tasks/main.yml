@@ -31,12 +31,6 @@
 - name: Disable firewall ports for kube nodes
   when: not firewall_disable
   block:
-    - name: Saving distribution of OS
-      ansible.builtin.set_fact:
-        compute_os: "{{ ansible_distribution | lower }}"
-
     - name: Update firewall rules
       ansible.builtin.include_tasks: update_firewall_redhat.yml
-      when:
-        - compute_os in compute_os_redhat or
-          compute_os in compute_os_rocky
+      when: ansible_os_family == 'RedHat'

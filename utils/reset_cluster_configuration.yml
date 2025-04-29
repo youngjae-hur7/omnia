@@ -89,7 +89,7 @@
             - user_inventory_path is defined
             - (user_inventory_path | length > 0)
 
-        - name: Execute ansible-playbook for Kubernetes setup asynchronously
+        - name: Execute ansible-playbook for Kubernetes reset asynchronously
           ansible.builtin.shell:
             cmd: >-
               set -o pipefail &&

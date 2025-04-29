@@ -13,9 +13,7 @@
 #  limitations under the License.
 ---
 # Usage: main.yml
-compute_os_redhat: "redhat"
-compute_os_rocky: "rocky"
-firewall_disable: true
+firewall_disable: false
 
 # Usage: update_firewall_redhat.yml
 k8s_firewall_ports_list:

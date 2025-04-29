@@ -12,6 +12,29 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 ---
+
+- name: Ensure Firewall service running
+  ansible.builtin.systemd_service:
+    name: firewalld
+    state: started
+    enabled: true
+
+- name: Remove service CIDR from trusted zone
+  ansible.posix.firewalld:
+    source: "{{ hostvars['127.0.0.1']['k8s_service_addresses'] }}"
+    zone: trusted
+    permanent: true
+    state: disabled
+  tags: firewalld
+
+- name: Remove pod CIDR from trusted zone
+  ansible.posix.firewalld:
+    source: "{{ hostvars['127.0.0.1']['k8s_pod_network_cidr'] }}"
+    zone: trusted
+    permanent: true
+    state: disabled
+  tags: firewalld
+
 - name: Configure firewall rules for kube_control_plane
   when: "'kube_control_plane' in group_names"
   block:

@@ -54,7 +54,7 @@ common_packages:
   Debian: # OS
     - firewalld # OS
     - python3-firewall
-firewall_disable: true
+firewall_disable: false
 k8s_firewall_ports_list:
   kube_control_plane:
     - "443/tcp"

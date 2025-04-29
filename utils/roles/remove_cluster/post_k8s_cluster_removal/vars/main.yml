@@ -13,14 +13,14 @@
 #  limitations under the License.
 ---
 # Usage: main.yml
-compute_os_redhat: "redhat"
-compute_os_rocky: "rocky"
 k8s_tmp_dir: "/root/k8s"
-firewall_disable: true
+firewall_disable: false
 
 # Usage: update_firewall_redhat.yml
 k8s_firewall_ports_list:
   kube_control_plane:
+    - "443/tcp"
+    - "443/udp"
     - "6443/tcp" # kubernetes api
     - "2379/tcp" # etcd client port
     - "2379/udp"
