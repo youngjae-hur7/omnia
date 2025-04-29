@@ -118,13 +118,13 @@
           ansible.builtin.include_role:
             name: deploy_containers/pulp
             tasks_from: create_pulp_config_http.yml
-          when: not hostvars['oim']['pulp_protocol_https']
+          when: not pulp_protocol_https
 
         - name: Configure Pulp HTTPS container tasks
           ansible.builtin.include_role:
             name: deploy_containers/pulp
             tasks_from: create_pulp_config_https.yml
-          when: hostvars['oim']['pulp_protocol_https']
+          when: pulp_protocol_https
 
 - name: Reload pulp nginx
   hosts: oim
@@ -134,7 +134,7 @@
       ansible.builtin.include_role:
         name: deploy_containers/pulp
         tasks_from: reload_pulp_nginx.yml
-      when: hostvars['oim']['pulp_protocol_https']
+      when: hostvars['localhost']['pulp_protocol_https']
 
 - name: Configure provision container
   hosts: omnia_provision
