@@ -51,3 +51,6 @@ nfs_corosync_conf:
 
 # Usage: passive_oim_postgres_setting.yml
 db_passive_oim_fail_msg: "No passive OIM nodes found in the database."
+
+# Usage: update_dhcp_conf.yml
+dhcp_conf_file: "/etc/dhcp/dhcpd.conf"
