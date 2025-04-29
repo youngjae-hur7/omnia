@@ -20,7 +20,7 @@ from collections import defaultdict
 import re
 from jinja2 import Template
 import requests
-
+from ansible.module_utils.local_repo.common_functions import is_encrypted, process_file
 # Import default variables from config.py
 from ansible.module_utils.local_repo.config import (
     PACKAGE_TYPES,
@@ -32,6 +32,7 @@ from ansible.module_utils.local_repo.config import (
     RHEL_OS_URL,
     SOFTWARES_KEY,
     USER_REPO_URL,
+    VAULT_KEY_PATH,
     REPO_CONFIG
 )
 
@@ -232,6 +233,12 @@ def parse_repo_urls(repo_config, local_repo_config_path, version_variables):
             ca_cert = url_.get("sslcacert", "")
             client_key = url_.get("sslclientkey", "")
             client_cert = url_.get("sslclientcert", "")
+            for path in [ca_cert, client_key, client_cert]:
+                mode = "decrypt"
+                if path and is_encrypted(path):
+                    result, message = process_file(path, VAULT_KEY_PATH, mode)
+                    if result is False:
+                        return f"Error during decrypt for user repository path:{path}", False
 
             if not is_remote_url_reachable(url, client_cert=client_cert, client_key=client_key, ca_cert=ca_cert):
                 return url, False

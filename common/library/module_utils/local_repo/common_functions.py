@@ -1,6 +1,20 @@
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
-import yaml
 import subprocess
+import yaml
 
 def load_yaml_file(path):
     """
@@ -17,7 +31,7 @@ def load_yaml_file(path):
     """
     if not os.path.isfile(path):
         raise FileNotFoundError(f"Config file not found: {path}")
-    with open(path, "r") as file:
+    with open(path, "r", encoding = "utf-8") as file:
         return yaml.safe_load(file)
 
 def get_repo_list(config_file, repo_key):
@@ -45,52 +59,80 @@ def is_file_exists(file_path):
     """
     return os.path.isfile(file_path)
 
-def decrypt_certificate(cert_path, vault_password_file):
+def is_encrypted(file_path):
     """
-    Decrypts the given certificate file using Ansible Vault.
+    Check if a file encrypted at the given path.
 
     Args:
-        cert_path (str): The path to the certificate file.
-        vault_password_file (str): The path to the Ansible Vault password file.
+        file_path (str): The path to the file.
 
     Returns:
-        int: 1 if successful, 0 if failed.
+        bool: True if the file encrypted, False otherwise.
     """
-    if not os.path.exists(cert_path):
-        return 0
+    with open(file_path, 'r', encoding = 'utf-8') as f:
+        first_line = f.readline()
+    return "$ANSIBLE_VAULT" in first_line
 
-    try:
-        subprocess.run(
-            ["ansible-vault", "decrypt", cert_path, "--vault-password-file", vault_password_file],
-            check=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-        )
-        return 1
-    except subprocess.CalledProcessError:
-        return 0
-
-def encrypt_certificate(cert_path, vault_password_file):
+def run_vault_command(command, file_path, vault_key):
     """
-    Encrypts the given certificate file using Ansible Vault.
+    Run ansible-vault command at the given path.
 
     Args:
-        cert_path (str): The path to the certificate file.
-        vault_password_file (str): The path to the Ansible Vault password file.
+        command (str): Command to execute
+        file_path (str): The path to the file.
+        vault_key (str): key string
 
     Returns:
-        int: 1 if successful, 0 if failed.
+        bool: True/False based on execute command.
     """
-    if not os.path.exists(cert_path):
-        return 0
+    cmd = [
+        "ansible-vault",
+        command,
+        file_path,
+        "--vault-password-file", vault_key
+    ]
+    result = subprocess.run(cmd, capture_output=True, text=True, check = True)
+    return result.returncode, result.stdout.strip(), result.stderr.strip()
 
-    try:
-        subprocess.run(
-            ["ansible-vault", "encrypt", cert_path, "--vault-password-file", vault_password_file],
-            check=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-        )
-        return 1
-    except subprocess.CalledProcessError:
-        return 0
+def process_file(file_path, vault_key, mode):
+    """
+    Encrypt or decrypt a file using Ansible Vault.
+
+    Args:
+        file_path (str): The path to the file.
+        vault_key (str): The path to the Ansible Vault key.
+        mode (str): The mode of operation, either 'encrypt' or 'decrypt'.
+
+    Returns:
+        tuple: A tuple containing a boolean indicating whether the operation was successful and a message.
+    """
+    if not os.path.isfile(file_path):
+        return False, f"File not found: {file_path}"
+
+    currently_encrypted = is_encrypted(file_path)
+    success = False
+    message = ""
+
+    if mode == 'encrypt':
+        if currently_encrypted:
+            success, message = True, f"Already encrypted: {file_path}"
+        else:
+            code, out, err = run_vault_command('encrypt', file_path, vault_key)
+            if code == 0:
+                success, message = True, f"Encrypted: {file_path}"
+            else:
+                message = f"Failed to encrypt {file_path}: {err}"
+
+    elif mode == 'decrypt':
+        if not currently_encrypted:
+            success, message = True, f"Already decrypted: {file_path}"
+        else:
+            code, out, err = run_vault_command('decrypt', file_path, vault_key)
+            if code == 0:
+                success, message = True, f"Decrypted: {file_path}"
+            else:
+                message = f"Failed to decrypt {file_path}: {err}"
+    else:
+        message = f"Invalid mode for {file_path}"
+
+    return success, message
