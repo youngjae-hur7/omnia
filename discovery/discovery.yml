@@ -140,16 +140,16 @@
     - role: monitor_thread
 
 # Commenting as syncfiles are not needed with NFS, which is now must for hierarchical provision
-# - name: Copying syncfiles for discovery from service nodes
-#   hosts: service_nodes
-#   connection: ssh
-#   tasks:
-#     - name: Discover all nodes
-#       ansible.builtin.include_role:
-#         name: discovery_mechanism/service     # noqa: role-name[path]
-#         tasks_from: copy_syncfiles.yml
-#       when:
-#         - hostvars['omnia_provision']['hierarchical_provision_status'] | default(false)
+- name: Copying syncfiles for discovery from service nodes
+  hosts: service_nodes
+  connection: ssh
+  tasks:
+    - name: Discover all nodes
+      ansible.builtin.include_role:
+        name: discovery_mechanism/service     # noqa: role-name[path]
+        tasks_from: copy_syncfiles.yml
+      when:
+        - hostvars['omnia_provision']['hierarchical_provision_status'] | default(false)
 #         - hostvars['omnia_provision']['omnia_share_option'] == 'Local'
 
 - name: Update metadata
