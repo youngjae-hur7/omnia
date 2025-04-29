@@ -269,7 +269,7 @@ def validate_ipv4_range(ip_range) -> bool:
 def validate_netmask_bits(bits):
     try:
         bits_int = int(bits)
-        if 0 <= bits_int <= 32:
+        if 1 <= bits_int <= 32:
             return True
         else:
             return False
