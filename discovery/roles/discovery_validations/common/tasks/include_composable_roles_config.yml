@@ -24,17 +24,37 @@
     roles_groups_data: "{{ composable_roles_output.roles_groups_data }}"
     bmc_static_status: "{{ composable_roles_output.bmc_static_status }}"
     switch_status: "{{ composable_roles_output.switch_status }}"
-    hierarchical_provision_status: "{{ composable_roles_output.hierarchical_provision_status }}"
     groups_roles_info: "{{ composable_roles_output.groups_roles_info }}"
-    hierarchical_service_node_data: "{{ composable_roles_output.hierarchical_service_node_data }}"
 
-# Will uncomment once NFS supported for hierarchical-based discovery
-# - name: Fail if omnia_share_option is not "NFS" during hierarchical-based discovery and provisioning
-#   ansible.builtin.fail:
-#     msg: "{{ invalid_share_option_msg | replace('\n', ' ') }}"
-#   when:
-#     - "'service_node' in roles_data"
-#     - omnia_share_option != 'NFS'
+- name: Fail if enable_OIM_ha is true, but NFS is not configured
+  when: (enable_oim_ha or enable_service_ha or 'service_node' in roles_data) and not nfs_used
+  ansible.builtin.fail:
+    msg: "{{ nfs_not_configured }}"
+
+- name: Check if omnia_images.tar exists
+  ansible.builtin.stat:
+    path: "{{ omnia_images_path }}"
+  register: omnia_images_check
+  changed_when: not omnia_images_check.stat.exists
+
+- name: Fail if omnia_images.tar doesn't exist
+  ansible.builtin.fail:
+    msg: "{{ omnia_images_path_fail_msg }}"
+  when: not omnia_images_check.stat.exists
+
+- name: Fetch hierarchical data
+  check_hierarchical_provision:
+    groups_roles_info: "{{ groups_roles_info }}"
+    service_node_ha_data: "{{ service_node_ha_data }}"
+  register: hierarchical_output
+  when: '"management_layer" not in ansible_run_tags'
+
+- name: Set fact for service_node role required
+  ansible.builtin.set_fact:
+    service_role_required: "{{ 'true' if 'service_node' in roles_groups_data else 'false' }}"
+    booted_service_nodes_data: "{{ hierarchical_output.booted_service_nodes_data | default({}) }}"
+    hierarchical_provision_status: "{{ hierarchical_output.hierarchical_provision_status | default(false) }}"
+    groups_roles_info: "{{ hierarchical_output.groups_roles_info | default(groups_roles_info) }}"
 
 - name: Set fact for service_node role required
   ansible.builtin.set_fact:

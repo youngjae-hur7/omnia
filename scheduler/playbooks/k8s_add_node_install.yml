@@ -13,48 +13,29 @@
 #  limitations under the License.
 ---
 
-- name: Kubernetes Installation
-  hosts: localhost
-  tasks:
-    - name: Set k8s_var_input based on k8s_var_file_flag (default to false if not defined)
-      ansible.builtin.set_fact:
-        k8s_var_input: "{{ 'k8s_all_ha_vars.yml' if (k8s_var_file_flag | default(false)) else 'k8s_all_non_ha_vars.yml' }}"
-        k8s_log_file: "{{ 'k8s_kubevip_deployment.log' if (k8s_var_file_flag | default(false)) else 'k8s_deployment.log' }}"
-        k8s_task_name: "{{ 'Start k8s kubevip installation' if (k8s_var_file_flag | default(false)) else 'Start Kubernetes Installations' }}"
-
-    - name: Delete the old kubespray log file if it exists
-      ansible.builtin.file:
-        path: "/opt/omnia/log/kubespray/{{ hostvars['127.0.0.1']['k8s_log_file'] }}"
-        state: absent
-
-    - name: Create a new empty kubespray log file
-      ansible.builtin.file:
-        path: "/opt/omnia/log/kubespray/{{ hostvars['127.0.0.1']['k8s_log_file'] }}"
-        state: touch
-        mode: '0644'
-
-- name: "{{ hostvars['127.0.0.1']['k8s_task_name'] }}"
+- name: Add nodes to kubernetes cluster
   hosts: omnia_kubespray
   vars:
     kubespray_nfs_share: "/opt/omnia/kubespray"
-    kubespray_logs_path: "/opt/omnia/log/kubespray/{{ hostvars['127.0.0.1']['k8s_log_file'] }}"
-    k8s_inv: "{{ kubespray_nfs_share }}/{{ hostvars['127.0.0.1']['k8s_var_input'] }}"
+    kubespray_logs_path: "/opt/omnia/log/kubespray/k8s_add_node.log"
+    k8s_inv: "{{ kubespray_nfs_share }}/k8s_all_vars.yml"
     dir_mode: '0755'
   tasks:
-    - name: Install Kubernetes using kubespray
+    - name: Add nodes to kubernetes cluster using kubespray
       when:
-        - hostvars['127.0.0.1']['k8s_support']
+        - hostvars[groups['kube_control_plane'][0]]['k8s_installation_status']
+        - hostvars[groups['kube_control_plane'][0]]['k8s_new_nodes'] != ''
       block:
-        - name: Copy k8s_start_setup to kubespray nfs share
+        - name: Copy k8s_add_node to kubespray nfs share
           ansible.builtin.copy:
-            src: "{{ playbook_dir }}/k8s_start_setup.yml"
-            dest: "{{ kubespray_nfs_share }}/k8s_start_setup.yml"
+            src: "{{ playbook_dir }}/k8s_add_node.yml"
+            dest: "{{ kubespray_nfs_share }}/k8s_add_node.yml"
             mode: "{{ dir_mode }}"
 
         - name: Execute ansible-playbook for Kubernetes setup asynchronously
           ansible.builtin.shell: |
             set -o pipefail
-            /venv/bin/ansible-playbook {{ kubespray_nfs_share }}/k8s_start_setup.yml \
+            /venv/bin/ansible-playbook {{ kubespray_nfs_share }}/k8s_add_node.yml \
             -i {{ kubespray_nfs_share }}/inv_k8s \
             --extra-vars "@{{ k8s_inv }}" -vvv | \
             /usr/bin/tee {{ kubespray_logs_path }}

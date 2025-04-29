@@ -83,8 +83,11 @@
   ansible.builtin.include_tasks: configure_service_role_xcat_details.yml
   when: service_role_required | default(false)
 
-- name: Add setupdhcp attributes for service_node group
-  ansible.builtin.command: "{{ xcat_path }}/chdef -t group -o service_node setupdhcp=1"
+- name: Add setupdhcp attributes for booted service nodes group
+  ansible.builtin.command: >
+    {{ xcat_path }}/chdef
+    {{ booted_service_nodes_data.keys() | map('extract', booted_service_nodes_data) | map(attribute='node') | join(',') }}
+    setupdhcp=1
   changed_when: true
   when: hierarchical_provision_status | default(false)
 

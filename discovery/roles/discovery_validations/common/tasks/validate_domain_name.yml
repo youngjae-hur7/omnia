@@ -83,10 +83,18 @@
     regexp: "^(.*){{ oim_hostname }}"
     state: absent
 
-- name: Add hosts file entry
+- name: Add hosts file entry for Omnia Infrastructure Manager
   ansible.builtin.lineinfile:
     path: "{{ hosts_file_path }}"
     line: "{{ pxe_nic_ip }} {{ oim_hostname }}"
     state: present
     create: true
     mode: "{{ hosts_file_mode }}"
+
+- name: Ensure 127.0.0.1 localhost entry exists uniquely
+  ansible.builtin.lineinfile:
+    path: "{{ hosts_file_path }}"
+    regexp: '^127\.0\.0\.1\s+.*\blocalhost\b'
+    line: '127.0.0.1 localhost'
+    state: present
+    insertafter: EOF
