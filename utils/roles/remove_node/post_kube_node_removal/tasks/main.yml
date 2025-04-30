@@ -1,4 +1,4 @@
-#  Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+#  Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -27,3 +27,13 @@
     path: /etc/resolv.conf
     state: absent
     regexp: '^nameserver {{ service_addr }}\.[0-9]+\.[0-9]+'
+
+- name: Gather service facts
+  ansible.builtin.service_facts:
+
+- name: Update firewall rules
+  ansible.builtin.include_tasks: update_firewall_redhat.yml
+  when:
+    - "'firewalld.service' in ansible_facts.services"
+    - ansible_facts.services['firewalld.service'].state == 'running'
+    - ansible_os_family == 'RedHat'
