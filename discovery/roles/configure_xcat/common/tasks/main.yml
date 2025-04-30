@@ -34,13 +34,19 @@
 
     - name: Update networks table
       ansible.builtin.include_tasks: update_xcat_network.yml
-      when: bmc_nic != ""
+      when: bmc_details_status
+
+    - name: Update networks table for switch discovery
+      ansible.builtin.include_tasks: configure_switch_xcat_network.yml
+      when:
+        - switch_status | default(false)
 
     - name: Create xcat osimage
       ansible.builtin.include_tasks: create_osimage.yml
 
     - name: Fetch osimage name
       ansible.builtin.include_tasks: fetch_osimage.yml
+      when: not nfs_used
 
     - name: Configure xCAT on {{ provision_os }}
       ansible.builtin.include_tasks: "{{ role_path }}/../{{ provision_os }}/tasks/main.yml"

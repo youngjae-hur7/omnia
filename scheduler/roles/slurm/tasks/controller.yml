@@ -173,13 +173,6 @@
         - "{{ ['SLURM_CONF', env_slurm_conf] }}"
         - "{{ ['LD_LIBRARY_PATH', ld_library_path] }}"
 
-- name: Comment line beginning with PATH= in /etc/bashrc
-  ansible.builtin.replace:
-    path: "/etc/bashrc"
-    regexp: '^(PATH=.*)$'
-    replace: '# \1'
-    backup: true
-
 - name: Enable etc enviroment
   ansible.builtin.shell: source {{ sys_env_path }} # noqa: command-instead-of-shell
   changed_when: false

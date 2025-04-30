@@ -13,6 +13,15 @@
 # limitations under the License.
 ---
 
+- name: Include metadata vars
+  ansible.builtin.include_vars: "{{ omnia_metadata_file }}"
+  register: include_metadata
+  no_log: true
+
+- name: Register NFS Check
+  ansible.builtin.set_fact:
+    nfs_used: "{{ omnia_share_option == 'NFS' }}"
+
 - name: Include high_availability_config.yml
   block:
     - name: Include high_availability_config.yml
@@ -28,6 +37,24 @@
   ansible.builtin.set_fact:
     enable_oim_ha: "{{ high_availability_config.ansible_facts.oim_ha.enable_oim_ha | default(false) }}"
 
-- name: Register NFS Check
+- name: Parse high_availability_config data
   ansible.builtin.set_fact:
-    nfs_used: "{{ omnia_share_option == 'NFS' }}"
+    oim_ha_data: "{{ high_availability_config | default({}) | combine({item.key: item.value}) }}"
+  with_dict: "{{ oim_ha }}"
+
+- name: Set service_node_ha_status
+  ansible.builtin.set_fact:
+    enable_service_ha: "{{ high_availability_config.ansible_facts.service_node_ha.enable_service_ha | default(false) }}"
+
+- name: Parse service_node_ha_data
+  ansible.builtin.set_fact:
+    service_node_ha_data: "{{ high_availability_config.ansible_facts.service_node_ha | default({}) }}"
+
+- name: Get OIM node name
+  ansible.builtin.command: hostname -s
+  register: oim_node_name
+  changed_when: false
+
+- name: Register OIM node name
+  ansible.builtin.set_fact:
+    oim_node_name: "{{ oim_node_name.stdout }}"

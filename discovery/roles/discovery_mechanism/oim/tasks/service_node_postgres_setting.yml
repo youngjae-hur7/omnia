@@ -13,27 +13,18 @@
 # limitations under the License.
 ---
 
-- name: Get all service nodes from DB
-  community.postgresql.postgresql_query:
-    db: omniadb
-    login_user: postgres
-    query: "SELECT admin_ip, node FROM cluster.nodeinfo WHERE role LIKE '%service%';"
-    login_password: "{{ postgresdb_password }}"
-  become: true
-  become_user: postgres
-  register: service_nodes
-  failed_when: false
-  no_log: true
-
-- name: Fail if no service nodes are found
-  ansible.builtin.debug:
-    msg: "No service nodes found in the database."
+- name: Notify if no new service nodes were discovered
   when:
-    - service_nodes.query_result is defined
-    - service_nodes.query_result | length < 1
+    - discovered_service_nodes is defined
+    - discovered_service_nodes | length < 1
+  block:
+    - name: Warning - No new service node got discovered
+      ansible.builtin.pause:
+        prompt: "{{ no_service_node_msg }}"
+        seconds: "{{ warning_time_10 }}"
 
-- name: Update PostgreSQL configuration filr and restart PostgreSQL
-  when: service_nodes.query_result | length > 0
+- name: Update PostgreSQL configuration file and restart PostgreSQL
+  when: discovered_service_nodes | length > 0
   block:
     - name: Update PostgreSQL configuration file with service node IPs
       ansible.builtin.lineinfile:
@@ -41,9 +32,24 @@
         line: "host    all          all        {{ item.admin_ip }}/32      md5"
         state: present
         regexp: "^host\\s+all\\s+all\\s+{{ item.admin_ip }}/32\\s+md5$"
-      loop: "{{ service_nodes.query_result }}"
+      loop: "{{ discovered_service_nodes }}"
       loop_control:
         label: "{{ item.admin_ip }}"
+
+    - name: Update PostgreSQL configuration file with service node Virtual IPs
+      ansible.builtin.lineinfile:
+        path: "{{ pg_hba_conf_path }}"
+        line: "host    all          all        {{ item.virtual_ip_address }}/32      md5"
+        state: present
+        regexp: "^host\\s+all\\s+all\\s+{{ item.virtual_ip_address }}/32\\s+md5$"
+      loop: "{{ service_node_ha_data.service_nodes }}"
+      loop_control:
+        label: "{{ item.virtual_ip_address }}"
+      when:
+        - enable_service_ha | default(false)
+        - service_node_ha_data.service_nodes | length > 0
+        - item.virtual_ip_address is defined
+        - item.virtual_ip_address | length > 0
 
     - name: Restart PostgreSQL
       ansible.builtin.service:

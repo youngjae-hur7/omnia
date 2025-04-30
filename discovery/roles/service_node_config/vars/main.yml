@@ -1,0 +1,46 @@
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+
+# Usage: configure_passive_servicenode_config.yml
+pcs_container_name: "omnia_pcs"
+pcs_group: "omnia"
+monitor_interval_30s: "30s"
+timeout_60s: "60s"
+sn_ha_migration_threshold: 3
+service_node_base_dir: "/opt/omnia/service_nodes"
+pcs_container_tmpl: "{{ pcs_container_name }}.container.j2"
+pcs_start_tmpl: "pcs-start.sh.j2"
+file_permissions: '0755'
+corosync_tmpl: "corosync.conf.j2"
+
+# Usage: configure_non_ha_servicenode_config.yml
+service_node_dir: "{{ service_node_base_dir }}/{{ item.service_tag }}"
+service_admin_nic_ip: "{{ node.admin_ip }}"
+service_node_name: "{{ node.hostname }}"
+pcs_container_tmpl_nonha_dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/{{ pcs_container_name }}.container"
+pcs_start_tmpl_nonha_dest: "{{ service_node_base_dir }}/{{ node.service_tag }}/pcs-start.sh"
+corosync_non_ha_tmpl: "corosync_non_ha.conf.j2"
+
+# Usage: generate_active_servicenode_config.yml
+active_node_corosync_dest: "{{ service_node_base_dir }}/{{ item.key }}/corosync.conf"
+active_service_node_dir: "{{ service_node_base_dir }}/{{ item.key }}"
+active_pcs_container_dest: "{{ service_node_base_dir }}/{{ active_node.service_tag }}/{{ pcs_container_name }}.container"
+
+# Usage: main.yml
+service_ha_config_json: "/opt/omnia/service_nodes/service_ha_config_data.json"
+python_version: "{{ ansible_python_interpreter }}"
+service_ha_config: "{{ provision_shared_library_path }}/common/service_ha_config.py"
+high_availability_config_path: "{{ hostvars['localhost']['input_project_dir'] }}/high_availability_config.yml"
+db_operations_file_path: "{{ provision_shared_library_path }}/db_operations"

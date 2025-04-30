@@ -19,7 +19,6 @@ omnia_service_dir: "/opt/omnia/services"
 mount_dir_perm: "0775"
 omnia_service_shell_file_path: "{{ omnia_service_dir }}/omnia_service_script.sh"
 shell_file_permissions: "0777"
-omnia_service_path: /etc/systemd/system/omnia.service
 service_file_permissions: "0644"
 omnia_service_shell_template: "{{ role_path }}/templates/omnia_service_script.sh.j2"
 omnia_service_template: "{{ role_path }}/templates/omnia_service.j2"

@@ -13,32 +13,9 @@
 #  limitations under the License.
 ---
 
-- name: Include metadata vars
-  ansible.builtin.include_vars: "{{ omnia_metadata_file }}"
-  register: include_metadata
-  no_log: true
-
-- name: Include roles_config.yml
-  block:
-    - name: Include roles_config.yml
-      ansible.builtin.include_vars: "{{ roles_config_path }}"
-      register: include_roles_config
-      tags: init
-  rescue:
-    - name: Failed to include  roles_config.yml
-      ansible.builtin.fail:
-        msg: "{{ roles_config_syntax_fail_msg }} Error: {{ include_roles_config.message }}"
-
-- name: Determine layer
+- name: Set Facts for composable roles data
   ansible.builtin.set_fact:
-    layer: "{{ 'first' if 'first_layer' in ansible_run_tags else 'default' }}"
-
-- name: Fetch composable roles data
-  fetch_roles_config:
-    roles_data: "{{ Roles }}"
-    groups_data: "{{ Groups }}"
-    layer: "{{ layer }}"
-  register: composable_roles_output
+    composable_roles_output: "{{ hostvars['localhost']['composable_roles_output'] }}"
 
 - name: Set Facts for composable roles data
   ansible.builtin.set_fact:
@@ -47,13 +24,61 @@
     roles_groups_data: "{{ composable_roles_output.roles_groups_data }}"
     bmc_static_status: "{{ composable_roles_output.bmc_static_status }}"
     switch_status: "{{ composable_roles_output.switch_status }}"
-    hierarchical_provision_status: "{{ composable_roles_output.hierarchical_provision_status }}"
     groups_roles_info: "{{ composable_roles_output.groups_roles_info }}"
-    hierarchical_service_node_data: "{{ composable_roles_output.hierarchical_service_node_data }}"
 
-- name: Set fact for service role required
+- name: Validate in service HA if respective roles are defined
+  when: (enable_oim_ha and not 'oim_ha_node' in roles_data)
+  ansible.builtin.fail:
+    msg: "{{ oim_ha_node_not_found_msg }}"
+
+- name: Validate in service HA if respective roles are defined
+  when: (enable_service_ha and not 'service_node' in roles_data)
+  ansible.builtin.fail:
+    msg: "{{ service_node_not_found_msg }}"
+
+- name: Fail if enable_OIM_ha is true or service role defined, but NFS is not configured
+  when: (enable_oim_ha or enable_service_ha or 'service_node' in roles_data) and not nfs_used
+  ansible.builtin.fail:
+    msg: "{{ nfs_not_configured }}"
+
+- name: Check if image tarball is present
+  when: (enable_oim_ha or enable_service_ha or 'service_node' in roles_data)
+  block:
+    - name: Check if omnia_images.tar exists
+      ansible.builtin.stat:
+        path: "{{ omnia_images_path }}"
+      register: omnia_images_check
+      changed_when: not omnia_images_check.stat.exists
+
+    - name: Fail if omnia_images.tar doesn't exist
+      ansible.builtin.fail:
+        msg: "{{ omnia_images_path_fail_msg }}"
+      when: not omnia_images_check.stat.exists
+
+- name: Fetch hierarchical data
+  check_hierarchical_provision:
+    groups_roles_info: "{{ groups_roles_info }}"
+    service_node_ha_data: "{{ service_node_ha_data }}"
+  register: hierarchical_output
+  when: '"management_layer" not in ansible_run_tags'
+
+- name: Set fact for service_node role required
   ansible.builtin.set_fact:
-    service_role_required: "{{ 'true' if 'service' in roles_groups_data else 'false' }}"
+    service_role_required: "{{ 'true' if 'service_node' in roles_groups_data else 'false' }}"
+    booted_service_nodes_data: "{{ hierarchical_output.booted_service_nodes_data | default({}) }}"
+    hierarchical_provision_status: "{{ hierarchical_output.hierarchical_provision_status | default(false) }}"
+    groups_roles_info: "{{ hierarchical_output.groups_roles_info | default(groups_roles_info) }}"
+
+- name: Set fact for service_node role required
+  ansible.builtin.set_fact:
+    service_role_required: "{{ 'true' if 'service_node' in roles_groups_data else 'false' }}"
+
+- name: Get the group(s) for OIM HA
+  when:
+    - "'oim_ha_node' in roles_data"
+    - enable_oim_ha | default(False)
+  ansible.builtin.set_fact:
+    oim_ha_groups: "{{ roles_data['oim_ha_node']['groups'] | default([]) }}"
 
 - name: Display filtered group wise details
   ansible.builtin.debug:

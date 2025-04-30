@@ -1,4 +1,4 @@
-# Copyright 2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+# Copyright 2025 Dell Inc. or its subsidiaries. All Rights Reserved.
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -132,3 +132,6 @@ omnia_repo_url_rhel:
 #   - { url: "https://vault.habana.ai/artifactory/debian {{ os_release }} main", publickey: "https://vault.habana.ai/artifactory/api/gpg/key/public" }
 #   - { url: "https://apt.repos.intel.com/oneapi all main", publickey: "https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB" }
 
+# By default, set to false to enable secure (HTTP) connection to the Pulp server.
+# Update to true if required to connect to the Pulp server using HTTPS.
+pulp_protocol_https: false

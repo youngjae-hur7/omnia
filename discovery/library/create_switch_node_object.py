@@ -18,11 +18,10 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.omniadb_connection import execute_select_query
 import subprocess
 
-def create_node_object():
+def create_node_object(oim_admin_ip):
     """
     Create node objects in the database based on switch information.
     """
-
     sql = '''SELECT switch_name, switch_port FROM cluster.nodeinfo WHERE switch_port IS NOT NULL and switch_name IS NOT NULL'''
     switch_port_output = execute_select_query(query=sql)
 
@@ -42,21 +41,27 @@ def create_node_object():
             groups_switch_based += ',' + row_output['role']
             groups_switch_based += ',' + row_output['group_name']
             command = [
-                "/opt/xcat/bin/chdef", row_output['node'], f"groups={groups_switch_based}", "mgt=ipmi", "cons=ipmi",
-                f"ip={row_output['admin_ip']}", f"bmc={row_output['bmc_ip']}", "netboot=xnba", "installnic=mac", "primarynic=mac",
-                f"switch={row_output['switch_ip']}", f"switchport={row_output['switch_port']}"
+                "/opt/xcat/bin/chdef", row_output['node'],
+                f"groups={groups_switch_based}", "mgt=ipmi", "cons=ipmi",
+                f"ip={row_output['admin_ip']}", f"bmc={row_output['bmc_ip']}",
+                "netboot=xnba", "installnic=mac", "primarynic=mac",
+                f"switch={row_output['switch_name']}", f"switchport={row_output['switch_port']}",
+                f"xcatmaster={oim_admin_ip}"
             ]
             result = subprocess.run(command, capture_output=True, text=True)
-            msg += f"Created node object {row_output['node']} for switch details - ip: {row_output['switch_ip']}, port: {row_output['switch_port']}, name: {row_output['switch_name']}\n"
-
+            if result.returncode != 0:
+                msg += f"Error creating node {row_output['node']}: {result.stderr}\n"
+            else:
+                msg += f"Created node object {row_output['node']} for switch details - ip: {row_output['switch_ip']}, port: {row_output['switch_port']}, name: {row_output['switch_name']}\n"
     return msg
 
 def main():
-    module = AnsibleModule(
-        argument_spec={},
-        supports_check_mode=True
+    module_args = dict(
+        oim_admin_ip = dict(type='str', required=True)
     )
-    results = create_node_object()
+    module = AnsibleModule(argument_spec=module_args, supports_check_mode=True)
+    oim_admin_ip = module.params['oim_admin_ip']
+    results = create_node_object(oim_admin_ip)
 
     module.exit_json(changed=True, results=results)
 

@@ -24,19 +24,7 @@
 - name: Validate input parameters of provision vars are not empty
   ansible.builtin.fail:
     msg: "{{ input_provision_fail_msg }}"
-  when:
-    - timezone | default("", true) | length < 1 or
-      language | default("", true) | length < 1 or
-      default_lease_time | default("", true) | string | length < 1
-
-- name: Validate default lease time
-  ansible.builtin.assert:
-    that:
-      - default_lease_time|int
-      - default_lease_time|int <= 31536000
-      - default_lease_time|int >= 21600
-    success_msg: "{{ default_lease_time_success_msg }}"
-    fail_msg: "{{ default_lease_time_fail_msg }}"
+  when: language | default("", true) | length < 1
 
 - name: Assert that disk_partition does not have duplicate entries
   ansible.builtin.assert:
@@ -44,26 +32,6 @@
       - disk_partition | map(attribute='mount_point')| list | unique | length == disk_partition | map(attribute='mount_point')| list | length
     success_msg: "{{ disk_partition_success_msg }}"
     fail_msg: "{{ disk_partition_fail_msg }}"
-
-- name: Convert timezone.txt to linux format
-  ansible.builtin.command: dos2unix {{ timezone_file_path }}
-  failed_when: false
-  changed_when: false
-
-- name: Searching for timezone
-  ansible.builtin.lineinfile:
-    path: "{{ timezone_file_path }}"
-    line: "{{ timezone }}"
-    state: present
-  check_mode: true
-  register: timezone_search
-
-- name: Assert timezone
-  ansible.builtin.assert:
-    that: timezone_search is not changed
-    success_msg: "{{ timezone_success_msg }}"
-    fail_msg: "{{ timezone_fail_msg }}"
-  register: timezone_check
 
 - name: Assert language for provisioning nodes
   ansible.builtin.fail:

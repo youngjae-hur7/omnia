@@ -26,7 +26,7 @@ all_nodes_warning_msg: "[WARNING] Not found any nodes using the given discovery 
 Verify all the input parameters are valid and re-run discovery_provision.yml"
 
 # Usage: check_nodes_service.yml
-service_nodes_warning_msg: "[WARNING] Service nodes not found. The service role is mentioned in the roles_config.yml file,
+service_nodes_warning_msg: "[WARNING] Service nodes not found. The service_node role is mentioned in the roles_config.yml file,
 but no nodes were found for this role using the specified discovery mechanism.
 Please verify that all the input parameters are valid and re-run the discovery_provision.yml"
 
@@ -38,11 +38,12 @@ file_permissions: 755
 # Usage: configure_postscripts.yml
 mlnx_ofed_repo: /install/ofed
 cuda_core_path: /install/cuda/x86_64/cuda-core
-hostname_postscripts_path:
+common_postscripts_path:
   - { src: "{{ role_path }}/templates/omnia_hostname.j2", dest: "/install/postscripts/omnia_hostname", mode: "755" }
-oim_os_ubuntu: "ubuntu"
-cpu_gpu_info_postscripts_path:
   - { src: "{{ role_path }}/templates/omnia_cpu_gpu_info.j2", dest: "/install/postscripts/omnia_cpu_gpu_info", mode: "755" }
+  - { src: "{{ role_path }}/templates/omnia_nic_autoconnect.j2", dest: "/install/postscripts/omnia_nic_autoconnect", mode: "755" }
+
+oim_os_ubuntu: "ubuntu"
 provision_os_ubuntu: "ubuntu"
 ubuntu_reboot_script_path:
   - { src: "{{ role_path }}/files/omnia_reboot", dest: "/install/postscripts/omnia_reboot", mode: "755" }
@@ -57,13 +58,16 @@ warning_time: 30
 async_time: 300
 poll_time: 15
 supported_roles:
-  - service
+  - service_node
   - slurm_control_node
   - slurm_dbd
   - slurm_node
 
 # Usage: configure_service_node.yml
-servive_node_postscripts_path:
-  - { src: "{{ role_path }}/templates/omnia_service.j2", dest: "/install/postscripts/omnia_service", mode: "755" }
 genesis_package_path:
   - { src: "{{ role_path }}/../rhel/files/xcat-genesis-base-x86_64.tar.gz", dest: "/install/xcat-genesis-base-x86_64.tar.gz", mode: "755" }
+
+# Usage: omnia_oim_ha_node.js
+container_tar_file: "omnia_images.tar"
+container_images_path: "{{ oim_shared_path }}/omnia/images/{{ container_tar_file }}"
+systemd_link_file: "/etc/systemd/network/98-omnia.link"

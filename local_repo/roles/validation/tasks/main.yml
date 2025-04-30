@@ -28,3 +28,17 @@
 
 - name: Validate software json files present in config directory
   ansible.builtin.include_tasks: validate_json_path.yml
+
+- name: Validate user_repo certificates
+  validate_user_repo:
+    certs_path: "{{ user_repo_cert_dir }}"
+    local_repo_config_path: "{{ local_repo_config_file }}"
+    repo_key: "user_repo_url"
+  register: cert_check_result
+  failed_when: cert_check_result.failed | default(false)
+
+- name: Run custom module to check user registry reachability
+  check_user_registry:
+    config_file: "{{ local_repo_config_file }}"
+    timeout: "{{ time_out }}"
+  register: registry_check_result

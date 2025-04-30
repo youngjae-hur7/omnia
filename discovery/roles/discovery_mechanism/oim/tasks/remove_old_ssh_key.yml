@@ -18,7 +18,7 @@
     db: omniadb
     login_user: postgres
     query: |
-      SELECT admin_ip,hostname,node,role
+      SELECT admin_ip,hostname,node,role,parent,service_tag
       FROM cluster.nodeinfo
       WHERE node!='oim' AND (status IS NULL OR status != 'booted');
     login_password: "{{ postgresdb_password }}"
@@ -34,6 +34,16 @@
   when:
     - query_status.query_result is defined
     - query_status.query_result | length < 1
+
+- name: Set fact discovered_nodes for task on service nodes
+  ansible.builtin.set_fact:
+    discovered_nodes: "{{ query_status.query_result | list }}"
+    discovered_service_nodes: >-
+      {{
+        query_status.query_result
+        | selectattr('role', 'search', 'service_node')
+        | list
+      }}
 
 - name: Remove old ssh key for IP of all discovered nodes
   when: query_status.query_result is defined

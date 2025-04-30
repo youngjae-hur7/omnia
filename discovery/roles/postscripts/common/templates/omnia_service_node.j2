@@ -1,0 +1,126 @@
+#!/bin/bash
+################################################################################################################
+#  omnia_servie_role:
+#      Install packages required for service node and configure the environment
+#
+#################################################################################################################
+
+# Define log file
+LOGFILE="/var/log/xcat/xcat.log"
+
+echo "--------------------------" >> "$LOGFILE"
+echo "Starting service node setup" >> "$LOGFILE"
+
+# List of required packages
+PACKAGES=(
+    "initscripts"
+    "xCATsn"
+    "goconserver"
+    "perl-Net-Telnet"
+    "perl-Expect"
+    "rsync"
+)
+
+# Install each package and log a simple message
+for pkg in "${PACKAGES[@]}"; do
+    echo "**** Installing Package - $pkg..." >> "$LOGFILE"
+    dnf install -y "$pkg" >> "$LOGFILE"
+    if [[ $? -eq 0 ]]; then
+        echo "$pkg installed successfully." >> "$LOGFILE"
+    else
+        echo "**** Error installing $pkg. Check logs for details." >> "$LOGFILE"
+        echo "**** Exiting this script." >> "$LOGFILE"
+        exit 1
+    fi
+done
+
+echo "Updating enviornment variables" >> "$LOGFILE"
+echo "source /etc/profile.d/xcat.sh" >> "/root/.bashrc"
+
+echo "Downloading xcat genesis file to /tmp" >> "$LOGFILE"
+wget "http://{{ admin_nic_ip }}:80/install/xcat-genesis-base-x86_64.tar.gz" -O /tmp/xcat-genesis-base-x86_64.tar.gz
+genesis_url_status=$?
+if [ $genesis_url_status -eq 0 ]; then
+    tar -zxvf /tmp/xcat-genesis-base-x86_64.tar.gz -C /tmp
+    genesis_rpm_file=`rpm -qa | grep xCAT-genesis-base-x86_64`
+    rpm -e --nodeps $genesis_rpm_file
+    rpm -ivh /tmp/xCAT-genesis-base-x86_64-2.16.4-snap202308211541.noarch.rpm
+    echo "Executing mknb x86_64 command -" >> "$LOGFILE"
+    /opt/xcat/sbin/mknb x86_64 >> "$LOGFILE"
+    if [[ $? -eq 0 ]]; then
+        echo " mknb x86_64 command execution successfully." >> "$LOGFILE"
+    else
+        echo "**** [Error] in executing mknb x86_64 command." >> "$LOGFILE"
+    fi
+fi
+
+echo "Install and configure podman" >> "$LOGFILE"
+
+if [ -f "/etc/debian_version" ];then
+  str_os_type="debian"
+else
+  str_os_type="redhat"
+fi
+
+# Install and configure podman
+if [ "$str_os_type" = "redhat" ]; then
+    sudo dnf install -y podman
+fi
+
+sudo systemctl enable podman.socket || { echo "Error enabling podman.socket." >> "$LOGFILE"; exit 1; }
+sudo systemctl start podman.socket || { echo "Error starting podman.socket." >> "$LOGFILE"; exit 1; }
+
+
+{% if omnia_share_option == "NFS" %}
+# Create omnia_path directory if it does not exist
+echo "Creating omnia shared path directory if it does not exist" >> "$LOGFILE"
+mkdir -p {{ oim_shared_path }}
+
+# Validate if NFS server is reachable
+echo "Validating if NFS server is reachable" >> "$LOGFILE"
+ping -c1 -W1 {{ nfs_server_ip }} > /dev/null
+if [ $? -ne 0 ]; then
+    echo -e "NFS server {{ nfs_server_ip }} is not reachable." >> "$LOGFILE"
+    exit 1
+fi
+
+# Mount NFS server share path in Omnia share path
+echo "Mounting NFS server share path in Omnia share path" >> "$LOGFILE"
+mount -t nfs -o nosuid,rw,sync,hard,intr,timeo=30 {{ nfs_server_ip }}:{{ nfs_server_share_path }} {{ oim_shared_path }}
+echo "Creating a mount for to /install and /tftpboot"
+sudo mkdir -p /install
+mount -t nfs -o nosuid,rw,sync,hard,intr,timeo=30 {{ nfs_server_ip }}:{{ nfs_server_share_path }}/omnia/provision/install /install
+sudo mkdir -p /tftpboot
+mount -t nfs -o nosuid,rw,sync,hard,intr,timeo=30 {{ nfs_server_ip }}:{{ nfs_server_share_path }}/omnia/provision/tftpboot /tftpboot
+sudo rm -rf /etc/hosts
+ln -s {{ oim_shared_path }}/omnia/hosts /etc/hosts
+# sudo rm -rf /etc/dhcp
+# ln -s {{ oim_shared_path }}/omnia/provision/xcatdata/etc/dhcp /etc/dhcp
+
+
+# Validate if NFS server share path is mounted
+echo "Validating if NFS server share path is mounted" >> "$LOGFILE"
+if grep -qs "{{ nfs_server_ip }}:{{ nfs_server_share_path }}" /proc/mounts; then
+    echo -e "NFS server share path is mounted." >> "$LOGFILE"
+else
+    echo -e "NFS server share path is not mounted. Provide valid NFS server details" >> "$LOGFILE"
+    exit 1
+fi
+
+# Add NFS server share to /etc/fstab to mount on startup
+echo "Adding entry in /etc/fstab for mount on startup"
+echo "{{ nfs_server_ip }}:{{ nfs_server_share_path }} {{ oim_shared_path }} nfs nosuid,rw,sync,hard,intr" >> /etc/fstab
+echo "{{ nfs_server_ip }}:{{ nfs_server_share_path }}/omnia/provision/install /install nfs nosuid,rw,sync,hard,intr" >> /etc/fstab
+echo "{{ nfs_server_ip }}:{{ nfs_server_share_path }}/omnia/provision/tftpboot /tftpboot nfs nosuid,rw,sync,hard,intr" >> /etc/fstab
+
+{% endif %}
+# Load container images
+if [ -f "{{ container_images_path }}" ]; then
+    echo "Loading container images" >> "$LOGFILE"
+    podman load -i "{{ container_images_path }}" >> "$LOGFILE" 2>&1
+else
+    echo "Container image file not found at {{ container_images_path }}" >> "$LOGFILE"
+fi
+
+echo "--------------------------" >> "$LOGFILE"
+echo "Service node setup completed successfully." >> "$LOGFILE"

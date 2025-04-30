@@ -30,7 +30,7 @@
   failed_when: false
   changed_when: false
   when:
-    - '"first_layer" not in ansible_run_tags'
+    - '"management_layer" not in ansible_run_tags'
     - discovery_mech_dynamic_bmc
 
 - name: Delete the extra node objects
@@ -40,5 +40,5 @@
 
 - name: Call node update for BMC
   ansible.builtin.command: |
-     {{ python_version }} {{ update_node_obj_path }} {{ provision_os_image }} {{ service_os_image }} {{ mtms_db_path }}
+     {{ python_version }} {{ update_node_obj_path }} {{ provision_os_image }} {{ service_os_image }} {{ mtms_db_path }} {{ admin_nic_ip }}
   changed_when: false

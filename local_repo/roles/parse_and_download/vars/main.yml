@@ -13,10 +13,9 @@
 # limitations under the License.
 ---
 
-group_name: "group1"
 nfs_shared_path: "/opt/omnia"
 repo_store_path: "{{ nfs_shared_path }}"
-base_path: "{{ nfs_shared_path }}/offline_repo/{{ group_name }}"
+base_path: "{{ nfs_shared_path }}/log/local_repo"
 local_repo_config_path: "{{ project_input_path }}/local_repo_config.yml"
 user_json_file: "{{ project_input_path }}/software_config.json"
 clean_rpms: true
@@ -95,3 +94,4 @@ meta_dest: "{{ nfs_shared_path }}/offline_repo/.data"
 meta_dest_mode: '0755'
 metadata_file_path: "{{ meta_dest }}/localrepo_metadata.yml"
 metadata_file_mode: '0644'
+pulp_repo_path: "/etc/yum.repos.d/pulp.repo"

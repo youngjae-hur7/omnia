@@ -1,0 +1,57 @@
+#!/bin/bash
+################################################################################################################
+#  omnia_service_node_postboot:
+#      Configure Omnia's service nodes
+#
+#################################################################################################################
+# Define log file
+LOGFILE="/var/log/xcat/xcat.log"
+
+log() {
+  echo "$1" >> "$LOGFILE"
+}
+
+run_or_fail() {
+  log "--- Running: $* ---"
+  output=$("$@" 2>&1)
+  if [ $? -ne 0 ]; then
+    log "[ERROR]: Failed to run '$*'"
+    log "[ERROR] MSG: $output"
+    exit 1
+  else
+    log "[DEBUG] $output"
+  fi
+}
+
+echo "--------------------------" >> "$LOGFILE"
+echo "$(date) - INFO - Starting Omnia Service node postboot configuration" >> "$LOGFILE"
+
+# Get node serial
+log "--- Getting node serial ---"
+nodeid=$(dmidecode -s system-serial-number 2>>"$LOGFILE")
+log "[DEBUG] Current node serial: $nodeid"
+
+log "--- Restarting xcatd ---"
+run_or_fail sudo /opt/xcat/sbin/restartxcatd -v
+
+
+# Check if the container file exists
+if [ -f "{{ oim_shared_path }}/omnia/service_nodes/$nodeid/{{ pcs_container_name }}.container" ]; then
+    # Create symlink if the file exists
+    ln -sf "{{ oim_shared_path }}/omnia/service_nodes/$nodeid/{{ pcs_container_name }}.container" \
+           "{{ container_systemd_dir }}/{{ pcs_container_name }}.container"
+
+    log "--- Reloading systemd ---"
+    run_or_fail sudo systemctl daemon-reload
+
+    log "--- Starting omnia_pcs container ---"
+    run_or_fail sudo systemctl start omnia_pcs
+else
+    log "Container file {{ oim_shared_path }}/omnia/service_nodes/$nodeid/{{ pcs_container_name }}.container not found. Skipping steps."
+fi
+
+# Applying mount based on fstab entry
+run_or_fail mount -a
+
+echo "$(date) - INFO - Finished Omnia Service node postboot configuration" >> "$LOGFILE"
+echo "---------------------------"

@@ -43,6 +43,8 @@ provision_cleanup_directory:
   - "{{ omnia_nfs_share }}/provision"
   - "{{ omnia_nfs_share }}/log/provision"
   - "{{ omnia_nfs_share }}/.data/provision_metadata.yml"
+  - "{{ omnia_nfs_share }}/.postgres"
+  - "{{ omnia_nfs_share }}/service_nodes"
 xcat_firewall_ports:
   - "3001/tcp"
   - "3001/udp"

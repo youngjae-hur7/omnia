@@ -24,23 +24,20 @@
   ansible.builtin.include_tasks: configure_postscripts_ntp.yml
   when: ntp_support
 
-- name: Copy hostname script to postscripts
+- name: Copy omnia common scripts to postscripts
   ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     mode: "{{ item.mode }}"
-  with_items: "{{ hostname_postscripts_path }}"
+  with_items: "{{ common_postscripts_path }}"
+
+- name: Configure postscripts to configure network
+  ansible.builtin.command: "{{ xcat_path }}/chdef all -p postscripts=omnia_nic_autoconnect"
+  changed_when: true
 
 - name: Configure postscripts to configure hostname
   ansible.builtin.command: "{{ xcat_path }}/chdef all -p postscripts=omnia_hostname"
   changed_when: true
-
-- name: Copy CPU GPU info script to postscripts
-  ansible.builtin.template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    mode: "{{ item.mode }}"
-  with_items: "{{ cpu_gpu_info_postscripts_path }}"
 
 - name: Configure postscripts to get cpu info
   ansible.builtin.command: "{{ xcat_path }}/chdef all -p postscripts=omnia_cpu_gpu_info"
@@ -70,6 +67,7 @@
   when:
     - ofed_config_status
     - ofed_repo_stat.stat.exists
+    - not enable_oim_ha
 
 - name: Verify CUDA repo created
   ansible.builtin.stat:
@@ -83,16 +81,21 @@
   when:
     - cuda_config_status
     - cuda_repo_stat.stat.exists
+    - not enable_oim_ha
 
 - name: Configure postscripts for ROCm
   ansible.builtin.command: "{{ xcat_path }}/chdef all -p postscripts=omnia_rocm"
   changed_when: true
-  when: amdgpu_config_status
+  when:
+    - amdgpu_config_status
+    - not enable_oim_ha
 
 - name: Configure postscripts for ROCm
   ansible.builtin.command: "{{ xcat_path }}/chdef all -p postscripts=omnia_racadm"
   changed_when: true
-  when: racadm_config_status
+  when:
+    - racadm_config_status
+    - not enable_oim_ha
 
 # - name: Configure postscripts for Intel Gaudi
 #   ansible.builtin.command: "{{ xcat_path }}/chdef all -p postscripts=omnia_intelgaudi"
