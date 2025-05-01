@@ -11,15 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Configuration module for input validation utilities."""
 
 from datetime import datetime
 import os
 
-input_validator_log = '/opt/omnia/log/core/playbooks/input_validator/'
+INPUT_VALIDATOR_LOG = '/opt/omnia/log/core/playbooks/input_validator/'
 
 module_log_dir = {
-    "input_validator_log": input_validator_log + "/_"+ datetime.now().strftime('_%d-%m-%Y.log')
-}
+    "input_validator_log": INPUT_VALIDATOR_LOG +
+    "/_" + datetime.now().strftime('_%d-%m-%Y.log')}
 
 # dict to hold the file names. If any file's name changes just change it here.
 files = {
@@ -120,8 +121,16 @@ os_version_ranges = {
     "ubuntu": ["20.04", "22.04", "24.04"]
 }
 
-# Dict of the file that can be encrypted and it's ansible vault key
 def get_vault_password(yaml_file):
+    """
+    Get the vault password file name for a given YAML file.
+
+    Args:
+        yaml_file (str): Path to the YAML file
+
+    Returns:
+        str: Name of the vault password file
+    """
     vault_passwords = {
         "omnia_config_credentials.yml": ".omnia_config_credentials_key",
     }
