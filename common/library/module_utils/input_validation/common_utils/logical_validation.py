@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #!/usr/bin/python
-# pylint: disable=import-error,wrong-import-position, too-many-arguments, too-many-positional-arguments
+# pylint: disable=import-error,wrong-import-position,too-many-arguments,too-many-positional-arguments
 """Module for validating input configuration files using logical validation rules."""
 
 import sys
