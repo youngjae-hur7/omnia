@@ -11,17 +11,39 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#!/usr/bin/python
+# pylint: disable=import-error,wrong-import-position, too-many-arguments, too-many-positional-arguments
+"""Module for validating input configuration files using logical validation rules."""
 
 import sys
 sys.path.append("module_utils/validation_flows")
+from ansible.module_utils.input_validation.validation_flows import ( # type: ignore
+    roles_validation, common_validation, provision_validation)
 
-from ansible.module_utils.input_validation.validation_flows import provision_validation
-from ansible.module_utils.input_validation.validation_flows import common_validation
-from ansible.module_utils.input_validation.validation_flows import roles_validation
 
-# L2 Validation Code - validate anything that could not have been validated with JSON schema
-# Main validation code that calls one of the validation functions based on the tag(s) used. input_file_inventory in validate_input.py contains dict of the tags being called.
-def validate_input_logic(input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name):
+def validate_input_logic(
+    input_file_path,
+    data,
+    logger,
+    module,
+    omnia_base_dir,
+    module_utils_base=None,
+    project_name=None):
+    """
+    Validate input configuration files using logical validation rules.
+
+    Args:
+        input_file_path: Path to the input configuration file
+        data: Configuration data to validate
+        logger: Logger object for logging messages
+        module: Ansible module object
+        omnia_base_dir: Base directory for Omnia
+        module_utils_base: Base directory for module utils (optional)
+        project_name: Name of the project (optional)
+
+    Returns:
+        dict: Validation results from the specific validation function
+    """
     # Based on the file_name, run validation function
     validation_functions = {
         "provision_config.yml": provision_validation.validate_provision_config,
@@ -40,17 +62,22 @@ def validate_input_logic(input_file_path, data, logger, module, omnia_base_dir, 
         "login_node_security_config.yml": common_validation.validate_login_node_security_config,
         "site_config.yml": common_validation.validate_site_config,
         "roles_config.yml": roles_validation.validate_roles_config,
-        "high_availability_config.yml": common_validation.validate_high_availability_config
-    }
+        "high_availability_config.yml": common_validation.validate_high_availability_config}
 
     path_parts = input_file_path.split("/")
     file_name = path_parts[-1]
     validation_function = validation_functions.get(file_name, None)
-    print("validation_function", validation_function)
+
     if validation_function:
         return validation_function(
-            input_file_path, data, logger, module, omnia_base_dir, module_utils_base, project_name
-        )
-    else:
-        message = f"Unsupported file: {input_file_path, data}"
-        logger.error(message)
+            input_file_path,
+            data,
+            logger,
+            module,
+            omnia_base_dir,
+            module_utils_base,
+            project_name)
+
+    message = f"Unsupported file: {input_file_path, data}"
+    logger.error(message)
+    return {}
