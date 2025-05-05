@@ -717,7 +717,7 @@ main() {
             echo -e "${RED} The Omnia Core container is present but not in running state.${NC}"
             echo -e "${GREEN} Only the core container can be cleanup can be performed.${NC}"
             echo -e "${GREEN} Container Configurations in the shared directory will not be cleaned up.${NC}"
-            echo -e "${GREEN} Do you want to preform cleanup:${NC}"
+            echo -e "${GREEN} Do you want to perform cleanup:${NC}"
             echo -e "${GREEN} 1. Yes.${NC}"
             echo -e "${GREEN} 2. No. ${NC}"
             read -p " Enter your choice (1 or 2): " choice
