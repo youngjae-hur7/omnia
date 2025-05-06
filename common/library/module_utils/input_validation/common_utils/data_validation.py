@@ -17,9 +17,9 @@
 
 import json
 import jsonschema
-from . import data_fetch as get
-from . import en_us_validation_msg
-from . import logical_validation
+import ansible.module_utils.input_validation.common_utils.data_fetch as get
+from ansible.module_utils.input_validation.common_utils import en_us_validation_msg
+from ansible.module_utils.input_validation.common_utils import logical_validation
 
 
 def schema(input_file_path, schema_file_path, passwords_set,
