@@ -17,12 +17,12 @@ Provides functions for recursive file searching, file path manipulation,
 and loading data from JSON and YAML files.
 """
 #!/usr/bin/python
-
+# pylint: disable=import-error
 import glob
 import os
 import json
-from . import validation_utils
-from . import config
+from ansible.module_utils.input_validation.common_utils import validation_utils
+from ansible.module_utils.input_validation.common_utils import config
 
 # Function to get all files of a specific type recursively from a directory
 
