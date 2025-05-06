@@ -13,14 +13,8 @@
 # limitations under the License.
 """Configuration module for input validation utilities."""
 
-from datetime import datetime
 import os
 
-INPUT_VALIDATOR_LOG = '/opt/omnia/log/core/playbooks/input_validator/'
-
-module_log_dir = {
-    "input_validator_log": INPUT_VALIDATOR_LOG +
-    "/_" + datetime.now().strftime('_%d-%m-%Y.log')}
 
 # dict to hold the file names. If any file's name changes just change it here.
 files = {
