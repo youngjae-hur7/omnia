@@ -17,10 +17,17 @@
 
 import json
 import jsonschema
-import ansible.module_utils.input_validation.common_utils.data_fetch as get
-from ansible.module_utils.input_validation.common_utils import en_us_validation_msg
-from ansible.module_utils.input_validation.common_utils import logical_validation
+import os
 
+if os.getenv('UNIT_TESTING') == 'true':
+    import input_validation.common_utils.data_fetch as get
+    from input_validation.common_utils import logical_validation, en_us_validation_msg
+else:
+    import ansible.module_utils.input_validation.common_utils.data_fetch as get # type: ignore
+    from ansible.module_utils.input_validation.common_utils import ( # type: ignore
+        en_us_validation_msg,
+        logical_validation
+    )
 
 def schema(input_file_path, schema_file_path, passwords_set,
            omnia_base_dir, project_name, logger, module):

@@ -21,8 +21,14 @@ and loading data from JSON and YAML files.
 import glob
 import os
 import json
-from ansible.module_utils.input_validation.common_utils import validation_utils
-from ansible.module_utils.input_validation.common_utils import config
+
+if os.getenv('UNIT_TESTING') == 'true':
+    from input_validation.common_utils import validation_utils, config
+else:
+    from ansible.module_utils.input_validation.common_utils import ( # type: ignore
+        validation_utils,
+        config
+    )
 
 # Function to get all files of a specific type recursively from a directory
 

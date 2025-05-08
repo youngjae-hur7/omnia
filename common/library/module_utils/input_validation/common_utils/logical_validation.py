@@ -15,10 +15,20 @@
 # pylint: disable=import-error,wrong-import-position,too-many-arguments,too-many-positional-arguments
 """Module for validating input configuration files using logical validation rules."""
 
-import sys
-sys.path.append("module_utils/validation_flows")
-from ansible.module_utils.input_validation.validation_flows import ( # type: ignore
-    roles_validation, common_validation, provision_validation)
+import os
+
+if os.getenv('UNIT_TESTING') == 'true':
+    from input_validation.validation_flows import (
+        roles_validation,
+        common_validation,
+        provision_validation
+    )
+else:
+    from ansible.module_utils.input_validation.validation_flows import ( # type: ignore
+        roles_validation,
+        common_validation,
+        provision_validation
+    )
 
 
 def validate_input_logic(
